@@ -18,6 +18,8 @@ jobs:
         run: |
           node --check app.js
           node --check sw.js
+          node --check services/capabilities.js
+          node --check services/stt-core.js
       - name: Statische Verträge prüfen
         run: python3 tests/validate_static.py
       - name: Shell-Syntax prüfen
