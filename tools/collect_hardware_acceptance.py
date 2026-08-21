@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 STATUS_FILE = ROOT / "PROJEKTSTATUS.json"
 DIAGNOSTICS_FILE = ROOT / "diagnostics/DIAGNOSTICS_CONTRACT.json"
+RESOURCE_SCHEMA_VERSION = 1
 
 
 def sha256_file(path: Path) -> str:
@@ -70,14 +71,10 @@ def detect_ram_mb() -> int:
 
             class MemoryStatusEx(ctypes.Structure):
                 _fields_ = [
-                    ("dwLength", ctypes.c_ulong),
-                    ("dwMemoryLoad", ctypes.c_ulong),
-                    ("ullTotalPhys", ctypes.c_ulonglong),
-                    ("ullAvailPhys", ctypes.c_ulonglong),
-                    ("ullTotalPageFile", ctypes.c_ulonglong),
-                    ("ullAvailPageFile", ctypes.c_ulonglong),
-                    ("ullTotalVirtual", ctypes.c_ulonglong),
-                    ("ullAvailVirtual", ctypes.c_ulonglong),
+                    ("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
+                    ("ullTotalPhys", ctypes.c_ulonglong), ("ullAvailPhys", ctypes.c_ulonglong),
+                    ("ullTotalPageFile", ctypes.c_ulonglong), ("ullAvailPageFile", ctypes.c_ulonglong),
+                    ("ullTotalVirtual", ctypes.c_ulonglong), ("ullAvailVirtual", ctypes.c_ulonglong),
                     ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
                 ]
 
@@ -90,10 +87,35 @@ def detect_ram_mb() -> int:
     raise SystemExit("FEHLER: Gesamtspeicher konnte nicht zuverlässig ermittelt werden")
 
 
+def load_resource_metrics(path: Path) -> dict:
+    if not path.is_file():
+        raise SystemExit(f"FEHLER: Ressourcenmessung fehlt oder ist keine Datei: {path}")
+    try:
+        record = load_json(path)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"FEHLER: Ressourcenmessung ist kein gültiges JSON: {exc}") from exc
+    required = {
+        "schema_version", "duration_seconds", "sample_interval_ms", "peak_processes",
+        "peak_ram_mb", "cpu_avg_pct", "cpu_max_pct", "command_exit_code",
+    }
+    missing = sorted(required - set(record))
+    if missing:
+        raise SystemExit("FEHLER: Ressourcenmessung unvollständig: " + ", ".join(missing))
+    if record["schema_version"] != RESOURCE_SCHEMA_VERSION:
+        raise SystemExit(f"FEHLER: Unbekannte Ressourcen-Schemaversion: {record['schema_version']}")
+    if float(record["duration_seconds"]) <= 0 or float(record["peak_ram_mb"]) <= 0:
+        raise SystemExit("FEHLER: Ressourcenmessung enthält keine positiven Laufzeit-/RAM-Werte")
+    if int(record["sample_interval_ms"]) < 50 or int(record["peak_processes"]) < 1:
+        raise SystemExit("FEHLER: Ressourcenmessung enthält ungültige Messparameter")
+    if float(record["cpu_avg_pct"]) < 0 or float(record["cpu_max_pct"]) < float(record["cpu_avg_pct"]):
+        raise SystemExit("FEHLER: Ressourcenmessung enthält inkonsistente CPU-Werte")
+    if record["command_exit_code"] not in (None, 0):
+        raise SystemExit("FEHLER: Ressourcenmessung stammt von einem fehlgeschlagenen Testprozess")
+    return record
+
+
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Erzeugt einen Hardware-Abnahmenachweis aus real gemessenen Werten."
-    )
+    parser = argparse.ArgumentParser(description="Erzeugt einen Hardware-Abnahmenachweis aus real gemessenen Werten.")
     parser.add_argument("--package", required=True, type=Path, help="Tatsächlich getestetes Installationspaket")
     parser.add_argument("--model", required=True, type=Path, help="Tatsächlich verwendete whisper.cpp-Modelldatei")
     parser.add_argument("--microphone", required=True, help="Bezeichnung des real getesteten Mikrofons")
@@ -103,7 +125,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--segments-lost", type=int, required=True)
     parser.add_argument("--realtime-factor-avg", type=float, required=True)
     parser.add_argument("--realtime-factor-max", type=float, required=True)
-    parser.add_argument("--peak-ram-mb", type=float, required=True)
+    resources = parser.add_mutually_exclusive_group(required=True)
+    resources.add_argument("--peak-ram-mb", type=float, help="Manuell übernommener Peak-RAM-Wert (Legacy/Fallback)")
+    resources.add_argument("--resource-metrics", type=Path, help="RESOURCE_METRICS.json aus measure_process_resources.py")
     parser.add_argument("--error-code", action="append", default=[], help="Beobachteter NAQYA-Diagnosecode; mehrfach erlaubt")
     parser.add_argument("--installed", action="store_true")
     parser.add_argument("--application-started", action="store_true")
@@ -117,7 +141,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def validate_inputs(args: argparse.Namespace) -> None:
+def validate_inputs(args: argparse.Namespace, peak_ram_mb: float) -> None:
     for label, path in (("Paket", args.package), ("Modell", args.model)):
         if not path.is_file():
             raise SystemExit(f"FEHLER: {label} fehlt oder ist keine Datei: {path}")
@@ -128,13 +152,12 @@ def validate_inputs(args: argparse.Namespace) -> None:
         raise SystemExit(f"FEHLER: Profil {args.profile} benötigt mindestens {minimum} Sekunden")
     if args.segments_total < 1 or not 0 <= args.segments_lost <= args.segments_total:
         raise SystemExit("FEHLER: Segmentwerte sind inkonsistent")
-    if min(args.realtime_factor_avg, args.realtime_factor_max, args.peak_ram_mb) <= 0:
+    if min(args.realtime_factor_avg, args.realtime_factor_max, peak_ram_mb) <= 0:
         raise SystemExit("FEHLER: RTF- und RAM-Messwerte müssen größer als 0 sein")
 
     if args.result == "PASS":
         confirmations = {
-            "--installed": args.installed,
-            "--application-started": args.application_started,
+            "--installed": args.installed, "--application-started": args.application_started,
             "--bundled-sidecar-used": args.bundled_sidecar_used,
             "--protected-model-path-used": args.protected_model_path_used,
             "--microphone-capture-ok": args.microphone_capture_ok,
@@ -150,7 +173,9 @@ def validate_inputs(args: argparse.Namespace) -> None:
 
 def main() -> None:
     args = parse_args()
-    validate_inputs(args)
+    resource_metrics = load_resource_metrics(args.resource_metrics) if args.resource_metrics else None
+    peak_ram_mb = float(resource_metrics["peak_ram_mb"]) if resource_metrics else float(args.peak_ram_mb)
+    validate_inputs(args, peak_ram_mb)
 
     status = load_json(STATUS_FILE)
     diagnostics_contract = load_json(DIAGNOSTICS_FILE)
@@ -165,57 +190,47 @@ def main() -> None:
     if unknown:
         raise SystemExit("FEHLER: Unbekannte Diagnosecodes: " + ", ".join(unknown))
 
+    measurements = {
+        "duration_seconds": args.duration_seconds,
+        "segments_total": args.segments_total,
+        "segments_lost": args.segments_lost,
+        "realtime_factor_avg": args.realtime_factor_avg,
+        "realtime_factor_max": args.realtime_factor_max,
+        "peak_ram_mb": peak_ram_mb,
+    }
+    if resource_metrics:
+        measurements.update({
+            "resource_metrics_sha256": sha256_file(args.resource_metrics),
+            "resource_duration_seconds": float(resource_metrics["duration_seconds"]),
+            "cpu_avg_pct": float(resource_metrics["cpu_avg_pct"]),
+            "cpu_max_pct": float(resource_metrics["cpu_max_pct"]),
+        })
+
     record = {
         "schema_version": 1,
         "evidence_fingerprint": status["release_nachweis"]["evidence_fingerprint"],
         "test_profile": args.profile,
-        "platform": {
-            "os": detect_os(),
-            "os_version": platform.version().strip() or platform.release().strip(),
-            "architecture": detect_architecture(),
-        },
-        "device": {
-            "cpu": detect_cpu(),
-            "ram_mb": detect_ram_mb(),
-            "microphone": args.microphone.strip(),
-        },
+        "platform": {"os": detect_os(), "os_version": platform.version().strip() or platform.release().strip(), "architecture": detect_architecture()},
+        "device": {"cpu": detect_cpu(), "ram_mb": detect_ram_mb(), "microphone": args.microphone.strip()},
         "package": {
-            "file": str(args.package.resolve()),
-            "sha256": sha256_file(args.package),
-            "installed": args.installed,
-            "application_started": args.application_started,
-            "bundled_sidecar_used": args.bundled_sidecar_used,
+            "file": str(args.package.resolve()), "sha256": sha256_file(args.package), "installed": args.installed,
+            "application_started": args.application_started, "bundled_sidecar_used": args.bundled_sidecar_used,
         },
-        "model": {
-            "file": str(args.model.resolve()),
-            "sha256": sha256_file(args.model),
-            "protected_path_used": args.protected_model_path_used,
-        },
+        "model": {"file": str(args.model.resolve()), "sha256": sha256_file(args.model), "protected_path_used": args.protected_model_path_used},
         "audio": {
-            "microphone_capture_ok": args.microphone_capture_ok,
-            "live_dictation_ok": args.live_dictation_ok,
-            "temp_wav_cleanup_ok": args.temp_wav_cleanup_ok,
-            "provider": "whisper.cpp-sidecar",
+            "microphone_capture_ok": args.microphone_capture_ok, "live_dictation_ok": args.live_dictation_ok,
+            "temp_wav_cleanup_ok": args.temp_wav_cleanup_ok, "provider": "whisper.cpp-sidecar",
         },
-        "measurements": {
-            "duration_seconds": args.duration_seconds,
-            "segments_total": args.segments_total,
-            "segments_lost": args.segments_lost,
-            "realtime_factor_avg": args.realtime_factor_avg,
-            "realtime_factor_max": args.realtime_factor_max,
-            "peak_ram_mb": args.peak_ram_mb,
-        },
-        "diagnostics": {
-            "contract_sha256": actual_diag_sha,
-            "observed_error_codes": error_codes,
-        },
+        "measurements": measurements,
+        "diagnostics": {"contract_sha256": actual_diag_sha, "observed_error_codes": error_codes},
         "result": args.result,
     }
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Hardware-Nachweis geschrieben: {args.output}")
-    print(f"Ergebnis: {args.result} | Profil: {args.profile} | Segmente verloren: {args.segments_lost}")
+    source = "RESOURCE_METRICS.json" if resource_metrics else "manuell"
+    print(f"Ergebnis: {args.result} | Profil: {args.profile} | Peak-RAM: {peak_ram_mb:.3f} MB ({source}) | Segmente verloren: {args.segments_lost}")
 
 
 if __name__ == "__main__":
