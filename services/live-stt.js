@@ -6,6 +6,10 @@ const LIVE_STT_SEGMENT_MS=4000;
 // ENTWICKLERHINWEIS: Die Promise-Kette serialisiert STT-Segmente absichtlich, damit Textreihenfolge und Messwerte stabil bleiben.
 const liveState={capture:null,queue:Promise.resolve(),stopping:false,segments:0,audioMs:0,sttMs:0,modelId:null,modelPath:'',transcript:''};
 
+function liveDiagnosticFailure(code,error,detail={}){
+  try{return window.NAQYA?.diagnostics?.failure?.(code,error,detail)||null}catch{return null}
+}
+
 async function materializePreferredModel(){
   if(!window.NAQYA?.nativeBridge?.available?.())throw new Error('Native Desktop-Brücke ist nicht verfügbar.');
   if(!state.models?.length)throw new Error('Noch kein lokales Sprachmodell importiert. Unter Einstellungen zuerst ein .bin- oder .gguf-Modell hinzufügen.');
@@ -40,6 +44,7 @@ async function transcribeLiveSegment(segment,sessionId){
     if(status){const factor=liveState.audioMs?liveState.sttMs/liveState.audioMs:0;status.textContent=`Offline-Live-Diktat · ${liveState.segments} Segmente · Echtzeitfaktor ${factor.toFixed(2)}`}
   }catch(err){
     if(String(err?.message||err).includes('Sprachmodell'))await invalidateCachedModelPath();
+    liveDiagnosticFailure('NAQYA-STT-4002',err,{where:'liveSTT.transcribeLiveSegment',how:'4-Sekunden-Live-Segment über lokalen STT-Provider',context:{segment_duration_ms:segment.durationMs||0,segment_number:liveState.segments+1},dialog:true});
     throw err;
   }
 }
@@ -58,7 +63,10 @@ async function startNativeLiveDictation(){
       console.error('Live-STT Segment:',err);await updateSession(active.sessionId,{nativeSttError:String(err.message||err)});const s=$('#dictationStatus');if(s)s.textContent=`Lokale Transkription: ${err.message||err}`;
     });
     return liveState.queue;
-  },onError:err=>{const s=$('#dictationStatus');if(s)s.textContent=`PCM-Erfassung: ${err.message||err}`;}});
+  },onError:err=>{
+    liveDiagnosticFailure('NAQYA-STT-4003',err,{where:'liveSTT.LivePcmCapture',how:'Web-Audio-PCM-Erfassung 16 kHz Mono',dialog:true});
+    const s=$('#dictationStatus');if(s)s.textContent=`PCM-Erfassung: ${err.message||err}`;
+  }});
   await liveState.capture.start();
   if(status)status.textContent='Offline-Live-Diktat läuft · 16 kHz Mono PCM · whisper.cpp';
   render();
@@ -97,6 +105,9 @@ async function stopNativeLiveDictation(){
     }
     if(status){const factor=liveState.audioMs?liveState.sttMs/liveState.audioMs:0;status.textContent=`Diktat gespeichert · ${liveState.segments} Segmente · Echtzeitfaktor ${factor.toFixed(2)}`}
     await refresh();
+  }catch(error){
+    liveDiagnosticFailure('NAQYA-STT-4005',error,{where:'liveSTT.stopNativeLiveDictation',how:'Aufnahme stoppen, STT-Warteschlange leeren und Sitzung finalisieren',dialog:true});
+    throw error;
   }finally{liveState.capture=null;liveState.stopping=false;liveState.modelPath='';liveState.modelId=null;liveState.transcript=''}
 }
 
@@ -106,8 +117,12 @@ toggleDictation=async function(){
   if(state.activeRecorder){const status=$('#dictationStatus');if(status)status.textContent='Bitte zuerst die laufende Aufnahme beenden.';return}
   const providers=window.NAQYA?.stt?.providers?.()||{};
   if(providers.nativeWhisper){
-    try{await startNativeLiveDictation();return}catch(err){const status=$('#dictationStatus');if(status)status.textContent=`Native Offline-STT nicht startbar: ${err.message}`;if(!providers.browserOnDevice)return}
+    try{await startNativeLiveDictation();return}catch(err){
+      liveDiagnosticFailure('NAQYA-STT-4004',err,{where:'liveSTT.toggleDictation',how:'Native Offline-Live-STT starten',result:providers.browserOnDevice?'Native STT nicht startbar; lokaler Browser-Fallback ist verfügbar':String(err.message||err),context:{browser_on_device_fallback:Boolean(providers.browserOnDevice)},dialog:!providers.browserOnDevice});
+      const status=$('#dictationStatus');if(status)status.textContent=`Native Offline-STT nicht startbar: ${err.message}`;if(!providers.browserOnDevice)return
+    }
   }
+  if(!providers.nativeWhisper&&!providers.browserOnDevice)liveDiagnosticFailure('NAQYA-STT-4001',new Error('Keine lokale STT-Engine verfügbar.'),{where:'liveSTT.toggleDictation',how:'Lokale Providerwahl',dialog:true});
   await previousToggleDictation();
 };
 

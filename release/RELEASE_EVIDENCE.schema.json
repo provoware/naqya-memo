@@ -14,6 +14,7 @@
     "whisper",
     "desktop_package",
     "runtime_dependencies",
+    "diagnostics_contract",
     "toolchain",
     "ci",
     "validations"
@@ -28,6 +29,18 @@
     "whisper": {"type": "object"},
     "desktop_package": {"type": "object"},
     "runtime_dependencies": {"type": "object"},
+    "diagnostics_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "schema_version", "event_schema_version", "format", "sha256"],
+      "properties": {
+        "file": {"const": "diagnostics/DIAGNOSTICS_CONTRACT.json"},
+        "schema_version": {"const": 1},
+        "event_schema_version": {"const": 1},
+        "format": {"const": "NAQYA-DIAGNOSTICS"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
     "toolchain": {"type": "object"},
     "ci": {"type": "object"},
     "validations": {"type": "object"}

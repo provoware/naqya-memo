@@ -49,10 +49,20 @@ Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dies
 - `docs/ENTWICKLERDOKUMENTATION.md` ist die kanonische technische Übergabe für fremde Entwickler und muss Architekturkarte, Vertrauensgrenzen, lokale Prüfungen und den nächsten konkreten Arbeitsblock enthalten.
 - Codekommentare bleiben sparsam. Kommentiert wird vor allem **warum** eine Sicherheitsgrenze, Reihenfolge, Migration oder Supply-Chain-Festlegung existiert; offensichtlicher Code wird nicht nacherzählt.
 - Für schwer erkennbare Invarianten wird bevorzugt der Marker `ENTWICKLERHINWEIS` direkt an der betroffenen Stelle verwendet.
-- Lange Begründungen gehören in die Entwickler- oder Fach­dokumentation und werden nicht mehrfach in Quellcode, README und AGENTS kopiert.
+- Lange Begründungen gehören in die Entwickler- oder Fachdokumentation und werden nicht mehrfach in Quellcode, README und AGENTS kopiert.
 - Bei neuen kritischen Modulen oder geänderten Architektur-/Build-/Releasepfaden werden Repository-Landkarte und Änderungsmatrix in der Entwicklerdokumentation geprüft.
 - Produktversion und Datenbankschema sind getrennte Verträge. `DB_VERSION` wird ausschließlich bei IndexedDB-Migrationen verändert; eine Produktversion darf nicht automatisch die Datenbankversion erhöhen.
 - Veraltete Versionskonstanten in Laufzeitcode, Backup-Metadaten oder UI gelten als Dokumentations-/Statusdrift und müssen behoben oder explizit im TODO geführt werden.
+
+## Diagnose-, Logging- und Evidence-Regeln
+- `diagnostics/DIAGNOSTICS_CONTRACT.json` ist der kanonische Maschinenvertrag für Ereignisschema, Fehlercodes, Privacy-Regeln, Deduplizierung und sichere Aktionen.
+- Fehlercodes werden **niemals umgedeutet oder wiederverwendet**. Eine neue Bedeutung erhält einen neuen Code.
+- Runtime-Diagnosen dürfen standardmäßig keine Audioinhalte, Transkripte, Dokument-/Notiztexte, Secrets, Tokens oder vollständige Benutzerpfade speichern.
+- Der Puffer speichert nur bereits bereinigte Ereignisse und ist hart begrenzt; unbegrenztes Logging ist verboten.
+- Wiederholungen dürfen nur über explizit freigegebene Safe Actions erfolgen; `retry-once` maximal einmal pro Ereignis. Keine automatischen Retry-Endlosschleifen.
+- Diagnosefehler dürfen keine Produktfunktion zum Absturz bringen; der Loggingpfad arbeitet fail-safe.
+- `RELEASE_EVIDENCE.json` bindet den exakten Diagnosevertrag über dessen SHA-256. Runtime-Diagnoseexporte müssen denselben Contract-SHA mitführen, damit Release → Runtime-Ereignis nachvollziehbar bleibt.
+- Bei Änderungen an Diagnosecodes, Privacy-Regeln, Safe Actions oder Ereignisschema müssen mindestens `services/diagnostics.js`, `diagnostics/DIAGNOSTICS_CONTRACT.json`, `tests/validate_diagnostics.py`, `tests/diagnostics_runtime.test.js` und `docs/DIAGNOSE_LOGGING.md` gemeinsam geprüft werden.
 
 ## Pflichtdateien bei Änderungen
 Bei jeder funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung sind mindestens folgende Dateien auf Aktualisierungsbedarf zu prüfen:
@@ -79,13 +89,14 @@ Vor Freigabe oder Merge sind je nach Änderungsumfang mindestens zu prüfen:
 1. JSON-Strukturprüfung **mit Duplicate-Key-Erkennung**
 2. Textintegrität und Merge-Konfliktmarker
 3. JavaScript-Syntaxprüfung
-4. Rust-Formatprüfung
-5. `cargo check`
-6. statische Projektverträge
-7. Shell-Syntaxprüfung
-8. Sidecar-Build und Integritätsprüfung, wenn native Runtime betroffen ist
-9. vollständiger Desktop-Bundle-Test, sobald Bundle-/Releasefähigkeit Bestandteil des Ziels ist
-10. reale Plattform-/Hardwareabnahme, sobald sie Bestandteil des Freigabeziels ist
+4. Diagnose-Laufzeitregression und Diagnosevertrag, wenn Diagnose/Runtime betroffen sind
+5. Rust-Formatprüfung
+6. `cargo check`
+7. statische Projektverträge
+8. Shell-Syntaxprüfung
+9. Sidecar-Build und Integritätsprüfung, wenn native Runtime betroffen ist
+10. vollständiger Desktop-Bundle-Test, sobald Bundle-/Releasefähigkeit Bestandteil des Ziels ist
+11. reale Plattform-/Hardwareabnahme, sobald sie Bestandteil des Freigabeziels ist
 
 Fehlgeschlagene Gates werden ursachenbezogen korrigiert. Keine fachfremden Änderungen in denselben Fix mischen.
 
@@ -113,25 +124,25 @@ Fehlgeschlagene Gates werden ursachenbezogen korrigiert. Keine fachfremden Ände
 `TODO.md`, `PROJEKTSTATUS.json`, README, CHANGELOG und PR-Beschreibung dürfen keinen bereits erledigten oder noch nicht umgesetzten Stand behaupten. Historische Entwicklungsdokumente müssen klar als historisch gekennzeichnet sein, wenn darin Aussagen enthalten sind, die heute überholt sind.
 
 ## Aktueller validierter Stand
-**0.5.0 – Tauri-Sidecar-Integration & Repository-Konsolidierung**
+**0.5.1-B1 – Linux-Bundle, Release-Nachweis & deterministische DEB-Reproduzierbarkeit**
 
 Bereits umgesetzt:
-- reproduzierbarer whisper.cpp-Runtimevertrag
-- Tauri-Sidecar-Konfiguration über `externalBin`
-- Linux-x86_64-Sidecar-Build und SHA-256-Prüfung im CI
-- Sidecar vor externem CLI-Fallback
-- diagnostizierbare Runtimequelle
-- geschützter Modellpfad und segmentiertes Offline-Live-STT
-- Repository- und Textintegritätsverträge
-- professioneller Entwickler-Einstieg und technische Übergabedokumentation
+- deterministisches Desktop-Frontend-Staging über `dist/`
+- reales Linux-DEB mit gebündeltem, startbarem whisper.cpp-Sidecar
+- SHA-256-, Laufzeitabhängigkeits- und Paketkontextprüfung
+- maschinenlesbarer und menschenlesbarer Release-Nachweis
+- deterministisches DEB-Repacking mit festem `SOURCE_DATE_EPOCH`
+- reproduzierbarer whisper.cpp-Runtimevertrag und geschützter Modellpfad
+- Repository-, Textintegritäts- und Entwicklerübergabeverträge
 
 ## Nächster Entwicklungsblock
-**0.5.1 – Linux-Bundle-Abnahme, Release-Nachweis & Windows-Sidecar**
+**0.5.1-C – Diagnose, Debugging, Logging & Evidence-Bindung**
 
 Reihenfolge:
-1. deterministisches Desktop-Frontend-Staging einführen und `frontendDist` vom Repository-Stamm lösen
-2. vollständiges Linux-Tauri-Bundle end-to-end bauen und Sidecar-Inhalt/Start nachweisen
-3. maschinenlesbaren Release-Nachweis erzeugen
-4. Windows-x86_64-Sidecar und Windows-Bundle reproduzierbar bauen
-5. reale Linux-/Windows-Hardware- und Mikrofonabnahme
-6. danach AudioWorklet- und Langzeithärtung
+1. stabilen Diagnose-/Fehlercodevertrag und Privacy-Regeln festlegen
+2. begrenztes, deduplizierendes Offline-Logging mit menschen- und maschinenlesbarem Export integrieren
+3. laienverständlichen Auswahldialog mit ausschließlich sicheren Aktionen ergänzen
+4. Native-Bridge- und Live-STT-Fehlerpfade instrumentieren
+5. Diagnosevertrag per SHA-256 an `RELEASE_EVIDENCE.json` binden
+6. Laufzeit- und statische Regressionstests vollständig grün abschließen
+7. erst danach README-/TODO-Fortschritt von 56 % auf 78 % anheben

@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+DIAGNOSTICS_CONTRACT = ROOT / "diagnostics/DIAGNOSTICS_CONTRACT.json"
 
 
 def sha256_file(path: Path) -> str:
@@ -74,6 +75,7 @@ def main() -> None:
         "Build-Sidecar": source_sidecar,
         "Laufzeitabhängigkeitsbericht": deps,
         "Frontend-Manifest": dist_manifest,
+        "Diagnosevertrag": DIAGNOSTICS_CONTRACT,
     }.items():
         if not path.is_file():
             raise SystemExit(f"FEHLER: {label} fehlt: {path}")
@@ -85,6 +87,12 @@ def main() -> None:
 
     version = json.loads((ROOT / "VERSION.json").read_text(encoding="utf-8"))
     whisper = json.loads((ROOT / "src-tauri/sidecar/whisper-runtime.json").read_text(encoding="utf-8"))
+    diagnostics = json.loads(DIAGNOSTICS_CONTRACT.read_text(encoding="utf-8"))
+    if diagnostics.get("schema_version") != 1 or diagnostics.get("event_schema_version") != 1:
+        raise SystemExit("FEHLER: Nicht unterstützter Diagnosevertrag.")
+    if diagnostics.get("format") != "NAQYA-DIAGNOSTICS":
+        raise SystemExit("FEHLER: Diagnoseformat stimmt nicht mit dem Releasevertrag überein.")
+
     commit = git_commit()
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise SystemExit(f"FEHLER: Ungültiger Quellcommit: {commit}")
@@ -94,6 +102,7 @@ def main() -> None:
     if source_hash != packaged_hash:
         raise SystemExit("FEHLER: Gepackter Sidecar weicht bytegenau vom validierten Build-Sidecar ab.")
 
+    diagnostics_contract_sha256 = sha256_file(DIAGNOSTICS_CONTRACT)
     generated_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     dependency_text = deps.read_text(encoding="utf-8", errors="replace")
     evidence = {
@@ -136,6 +145,13 @@ def main() -> None:
             "report_sha256": sha256_file(deps),
             "lines": [line for line in dependency_text.splitlines() if line.strip()],
         },
+        "diagnostics_contract": {
+            "file": "diagnostics/DIAGNOSTICS_CONTRACT.json",
+            "schema_version": diagnostics["schema_version"],
+            "event_schema_version": diagnostics["event_schema_version"],
+            "format": diagnostics["format"],
+            "sha256": diagnostics_contract_sha256,
+        },
         "toolchain": {
             "rustc": command_version("rustc", "--version"),
             "cargo": command_version("cargo", "--version"),
@@ -156,6 +172,7 @@ def main() -> None:
             "packaged_sidecar_started": True,
             "runtime_dependencies_resolved": True,
             "package_repack_deterministic": True,
+            "diagnostics_contract_bound": True,
         },
     }
 
@@ -172,6 +189,7 @@ def main() -> None:
         "Wie: deterministisches Frontend-Staging, statischer whisper.cpp-Sidecar, Tauri-Bundle, deterministisches DEB-Repacking, Paketstart- und Abhängigkeitsprüfung\n"
         f"Sidecar: {packaged_hash} ({sidecar.stat().st_size} Bytes)\n"
         f"Paket: {evidence['desktop_package']['sha256']} ({package.stat().st_size} Bytes)\n"
+        f"Diagnosevertrag: {diagnostics_contract_sha256} (Schema {diagnostics['schema_version']}, Ereignisschema {diagnostics['event_schema_version']})\n"
         "DEB-Reproduzierbarkeit: dpkg-deb-normalized-v1\n"
         "Ergebnis: BUNDLE-VALIDIERT\n",
         encoding="utf-8",
