@@ -13,6 +13,11 @@ window.NAQYA.nativeBridge={
     if(!invoke)return {available:false,platform:'browser',whisper:false};
     return invoke('naqya_capabilities');
   },
+  async materializeModel({name,modelBase64,sha256=null}){
+    const invoke=tauriInvoke();
+    if(!invoke)throw new Error('Native Desktop-Brücke ist nicht verfügbar.');
+    return invoke('naqya_materialize_model',{request:{name,modelBase64,sha256}});
+  },
   async transcribe({audioBase64,modelPath,language='de',threads=null}){
     const invoke=tauriInvoke();
     if(!invoke)throw new Error('Native Desktop-Brücke ist nicht verfügbar.');
