@@ -15,14 +15,25 @@ function browserOnDeviceAvailable(){
   if(!C)return false;
   try{return 'processLocally' in C.prototype||'processLocally' in new C()}catch{return false}
 }
+async function blobToBase64(blob){
+  const bytes=new Uint8Array(await blob.arrayBuffer());
+  let binary='';
+  const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk)binary+=String.fromCharCode(...bytes.subarray(i,i+chunk));
+  return btoa(binary);
+}
 
 window.NAQYA.stt={
   profiles:PROFILES,
   providers(){
     return {
       browserOnDevice:browserOnDeviceAvailable(),
-      nativeWhisper:Boolean(window.NAQYANativeSTT?.transcribe||window.NAQYANativeSTT?.startLive)
+      nativeWhisper:Boolean(window.NAQYA.nativeBridge?.available?.())
     };
+  },
+  async nativeCapabilities(){
+    if(!window.NAQYA.nativeBridge?.available?.())return {available:false,platform:'browser',whisper:false};
+    return window.NAQYA.nativeBridge.capabilities();
   },
   createBrowserRecognition(language='de-DE'){
     if(!browserOnDeviceAvailable())throw new Error('Lokale Browser-Spracherkennung ist auf diesem Gerät nicht verfügbar.');
@@ -34,9 +45,11 @@ window.NAQYA.stt={
     recognition.processLocally=true;
     return recognition;
   },
-  async transcribeNative(blob,{language='de',profile='ausgewogen'}={}){
-    if(!window.NAQYANativeSTT?.transcribe)throw new Error('Native whisper.cpp-Brücke ist nicht verfügbar.');
-    return window.NAQYANativeSTT.transcribe(blob,{language,profile});
+  async transcribeNative(blob,{language='de',modelPath='',threads=null}={}){
+    if(!window.NAQYA.nativeBridge?.available?.())throw new Error('Native whisper.cpp-Brücke ist nicht verfügbar.');
+    if(!modelPath)throw new Error('Für die native Transkription fehlt der lokale Modellpfad.');
+    const audioBase64=await blobToBase64(blob);
+    return window.NAQYA.nativeBridge.transcribe({audioBase64,modelPath,language,threads});
   },
   validateModelFile(file){
     if(!file)return {ok:false,reason:'Keine Modelldatei gewählt.'};
