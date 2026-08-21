@@ -14,12 +14,16 @@ jobs:
           python3 -m json.tool VERSION.json >/dev/null
           python3 -m json.tool PROJEKTSTATUS.json >/dev/null
           python3 -m json.tool manifest.webmanifest >/dev/null
+          python3 -m json.tool src-tauri/tauri.conf.json >/dev/null
       - name: JavaScript-Syntax prüfen
         run: |
           node --check app.js
           node --check sw.js
           node --check services/capabilities.js
+          node --check services/native-bridge.js
           node --check services/stt-core.js
+      - name: Rust formatieren/prüfen
+        run: cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
       - name: Statische Verträge prüfen
         run: python3 tests/validate_static.py
       - name: Shell-Syntax prüfen
