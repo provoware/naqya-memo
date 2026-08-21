@@ -44,9 +44,17 @@ python3 tools/measure_process_resources.py \
 
 ## Direkter Ressourcenimport 0.5.1-E5
 
-Der Hardware-Collector kann die von E4 erzeugte Datei jetzt direkt mit `--resource-metrics` übernehmen. Damit wird Peak-RAM nicht mehr manuell abgeschrieben. Zusätzlich werden SHA-256 der Ressourcenmessung, Messdauer und CPU Ø/Maximum in `HARDWARE_ACCEPTANCE.json` übernommen.
+Der Hardware-Collector kann die von E4 erzeugte Datei direkt mit `--resource-metrics` übernehmen. Damit wird Peak-RAM nicht mehr manuell abgeschrieben. Zusätzlich werden SHA-256 der Ressourcenmessung, Messdauer und CPU Ø/Maximum in `HARDWARE_ACCEPTANCE.json` übernommen.
 
 Der Import ist fail-closed: unbekannte Schemaversionen, fehlende Pflichtfelder, nicht-positive Laufzeit/RAM-Werte, inkonsistente CPU-Werte oder ein fehlgeschlagener gestarteter Testprozess werden abgelehnt. `--resource-metrics` und der alte Fallback `--peak-ram-mb` schließen sich gegenseitig aus.
+
+## Direkter Runtime-Import 0.5.1-E6
+
+Der Collector akzeptiert jetzt `--runtime-metrics RUNTIME_METRICS.json`. Die Datei muss den E3-Vertrag `nativeSttRuntimeMetrics` enthalten; alternativ ist ein Envelope mit `format: "NAQYA-LIVE-STT-RUNTIME"`, `schemaVersion: 1` und dem Objekt unter `metrics` zulässig.
+
+Aus der Runtime-Datei werden Testdauer, Segmente gesamt/erfolgreich/verloren und RTF Ø/Maximum direkt übernommen. Der Collector prüft zusätzlich Segmentbilanz, Audio-/STT-Zeiten und berechnet den RTF-Durchschnitt erneut aus `sttElapsedMs / transcribedAudioMs`. Stimmen die Werte nicht reproduzierbar zusammen, bricht der Import ab. Die Quelldatei wird per SHA-256 an `HARDWARE_ACCEPTANCE.json` gebunden.
+
+Wenn `--runtime-metrics` verwendet wird, dürfen `--duration-seconds`, `--segments-total`, `--segments-lost`, `--realtime-factor-avg` und `--realtime-factor-max` nicht gleichzeitig angegeben werden. Der alte manuelle Weg bleibt als Fallback erhalten.
 
 Empfohlener realer Smoke-Ablauf:
 
@@ -60,11 +68,7 @@ python3 tools/collect_hardware_acceptance.py \
   --model /pfad/ggml-base.bin \
   --microphone "USB Audio Device" \
   --profile smoke \
-  --duration-seconds 120 \
-  --segments-total 30 \
-  --segments-lost 0 \
-  --realtime-factor-avg 0.41 \
-  --realtime-factor-max 0.63 \
+  --runtime-metrics RUNTIME_METRICS.json \
   --resource-metrics RESOURCE_METRICS.json \
   --installed \
   --application-started \
@@ -77,7 +81,7 @@ python3 tools/collect_hardware_acceptance.py \
   --output HARDWARE_ACCEPTANCE.json
 ```
 
-Der Collector bleibt bewusst fail-closed: Standardergebnis ist `FAIL`. Für `PASS` müssen alle realen Bestätigungen explizit gesetzt sein und `segments_lost` muss `0` sein. Segmentzahl/-verlust und RTF stammen seit E3 aus `nativeSttRuntimeMetrics`; Peak-RAM und CPU können seit E5 ohne manuelle Übertragung aus E4 importiert werden.
+Der Collector bleibt bewusst fail-closed: Standardergebnis ist `FAIL`. Für `PASS` müssen alle realen Bestätigungen explizit gesetzt sein und `segments_lost` muss `0` sein. Segmentzahl/-verlust und RTF können seit E6 ohne manuelles Abschreiben aus E3 importiert werden; Peak-RAM und CPU können seit E5 ohne manuelle Übertragung aus E4 importiert werden.
 
 ## Prüfung
 
