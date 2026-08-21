@@ -4,9 +4,9 @@ Offline-first Organizer für Termine, Fristen, Aufgaben, Dokumente, Fotos, Audio
 
 ## Stand
 
-**0.3.0 – NATIVE WHISPER RUNTIME & DESKTOP BRIDGE**
+**0.4.0 – AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT**
 
-NAQYA bleibt vollständig lokal nutzbar und erweitert den bisherigen PWA-Kern um eine Tauri-2-Desktop-Grundstruktur. Die neue Desktop-Brücke kann lokale whisper.cpp-CLI-Laufzeiten erkennen und über einen kontrollierten Rust-Befehl ansprechen. Ein Cloud-Fallback bleibt ausgeschlossen.
+NAQYA verarbeitet Sprache weiterhin ohne Cloudpflicht. Version 0.4.0 schließt die drei zentralen Desktop-Lücken der vorherigen Stufe: lokale Audio-Normalisierung auf 16 kHz Mono-WAV, kontrollierte Materialisierung importierter Sprachmodelle in einen geschützten NAQYA-Modellpfad und segmentierte native Live-Transkription über whisper.cpp.
 
 ## Schnellstart PWA
 
@@ -31,26 +31,60 @@ Dann `http://127.0.0.1:8765` öffnen.
 
 > Mikrofon, Service Worker und PWA-Installation benötigen einen sicheren Kontext. `localhost`/`127.0.0.1` gilt dafür als sicher.
 
-## Neu in 0.3.0
+## Neu in 0.4.0
 
-- Tauri-2-Desktop-Grundstruktur in `src-tauri/`
-- JavaScript↔Rust-Brücke `services/native-bridge.js`
-- nativer Fähigkeiten-Check über `naqya_capabilities`
-- lokale whisper.cpp-CLI-Erkennung über `PATH` oder `NAQYA_WHISPER_CLI`
-- nativer Transkriptionsbefehl `naqya_transcribe`
-- lokale WAV→Text-Verarbeitung mit frei wählbarem Modellpfad, Sprache und Threadzahl
-- temporäre Audioarbeitsdateien werden nach der Transkription entfernt
-- maximale Einzeltranskriptionsgröße 512 MiB
-- STT-Providerkern erkennt Browser-On-Device und Tauri-Native getrennt
-- Offline-Cache und Qualitätsprüfung auf die Native-Bridge erweitert
+- lokale Web-Audio-Normalisierung auf **16.000 Hz, Mono, PCM16/WAV**
+- 4-Sekunden-PCM-Fenster für native Live-Transkription
+- Originalaufnahme und 3-Sekunden-Recovery bleiben parallel erhalten
+- echte lokale Live-STT-Warteschlange statt paralleler unkontrollierter Transkriptionsaufrufe
+- Messung von Audiozeit, Transkriptionszeit und Echtzeitfaktor
+- importierte `.bin`/`.gguf`-Modelle werden beim ersten nativen Diktat in den geschützten App-Datenpfad übertragen
+- Modelltransfer speicherschonend in **4-MiB-Blöcken**
+- native SHA-256-Prüfung des vollständigen Modells
+- atomare Aktivierung erst nach erfolgreicher Integritätsprüfung
+- Transkription akzeptiert nur Modelle aus dem kontrollierten NAQYA-Modellpfad
+- abgebrochene Modelltransfers werden bereinigt
+- PWA-Offline-Cache auf die 0.4-Dienste erweitert
+- CI prüft JavaScript, statische Verträge sowie Rust/Tauri-Kompilierung
+
+## Desktop-Spracherkennung
+
+Die Desktop-Brücke erkennt `whisper-cli` entweder:
+
+1. im lokalen `PATH`, oder
+2. über die Umgebungsvariable `NAQYA_WHISPER_CLI`.
+
+Ein importiertes Modell wird nicht direkt aus einem beliebigen Dateipfad an whisper.cpp übergeben. NAQYA überträgt es zuerst in den eigenen App-Datenbereich, prüft SHA-256 und verwendet anschließend ausschließlich diesen kontrollierten Pfad.
+
+Der Live-Diktatpfad lautet:
+
+```text
+Mikrofon
+  ↓
+Originalaufnahme + 3-s-Recovery
+  ↓
+Web Audio PCM
+  ↓
+16 kHz / Mono / WAV
+  ↓
+4-s-Live-Segment
+  ↓
+whisper.cpp lokal
+  ↓
+Transkriptsegment
+  ↓
+persistenter Diktattext
+```
 
 ## Bereits enthalten
 
+- Tauri-2-Desktop-Grundstruktur
+- JavaScript↔Rust-Brücke
 - persistente Audioaufnahme in 3-Sekunden-Segmenten
 - Crash-/Unterbrechungs-Recovery
-- direktes Abspielen gespeicherter Aufnahmen
-- vier lokale Sprachprofile: Schnell, Ausgewogen, Genau, Maximum
-- lokaler Import von `.bin`/`.gguf`-Sprachmodellen mit SHA-256
+- Browser-On-Device-STT, sofern tatsächlich lokal verfügbar
+- vier Sprachprofile: Schnell, Ausgewogen, Genau, Maximum
+- lokaler Import von `.bin`/`.gguf`-Sprachmodellen
 - vollständiges Binärbackup für Dokumente und Audio
 - modernes responsives Kachel-Dashboard
 - vier Themes und fünf Schrift-/Sichtbarkeitsprofile
@@ -62,21 +96,39 @@ Dann `http://127.0.0.1:8765` öffnen.
 - persistente Chronologie
 - globale lokale Suche
 - Diagnosebereich
-- automatisierte Qualitätsprüfung via GitHub Actions
 
 ## Datenschutz
 
 Der Kern benötigt keinen Account, keine Cloud und keine Telemetrie. Diktat startet nur mit einer lokal verfügbaren STT-Engine. Es gibt keinen automatischen Online-Fallback.
 
-## Technische Grenzen von 0.3.0
+## Technische Grenzen von 0.4.0
 
-- whisper.cpp selbst wird noch nicht als reproduzierbares Sidecar mitgeliefert. Die Desktop-Laufzeit erwartet `whisper-cli` im `PATH` oder über `NAQYA_WHISPER_CLI`.
-- Der native Transkriptionsbefehl erwartet WAV. Browser-Aufnahmen liegen je nach Browser als WebM/Opus vor und benötigen noch einen lokalen Normalisierungsadapter.
-- In IndexedDB importierte Sprachmodelle müssen für die native Desktop-Laufzeit noch in einen kontrollierten Dateipfad materialisiert werden.
-- Reale Linux-/Windows-Latenz-, CPU-, RAM- und Langzeittests stehen noch aus.
+- whisper.cpp selbst wird weiterhin noch nicht als reproduzierbares Sidecar mit der Anwendung ausgeliefert.
+- Die Live-PCM-Erfassung nutzt aktuell `ScriptProcessor` als breit kompatiblen Übergangsadapter. Eine spätere AudioWorklet-Umstellung ist vorgesehen.
+- Reale Linux-/Windows-Abnahmen mit verschiedenen CPUs, Modellen, Mikrofonen und Langzeitaufnahmen stehen noch aus.
+- Das Vollbackup verwendet weiterhin JSON/Base64 und ist bei sehr großen Datenbeständen speicherintensiv.
+- Android- und iOS-Native-STT folgen später.
 
-Siehe `docs/NATIVE_WHISPER_DESKTOP.md`.
+## Qualitätsprüfung
+
+GitHub Actions prüft:
+
+- JSON-Struktur
+- JavaScript-Syntax
+- Rust-Formatierung
+- Rust/Tauri-Kompilierung
+- statische Architekturverträge
+- Shell-Syntax
 
 ## Roadmap
 
-Nächster Hauptblock: **0.4.0 – AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT**. Ziel ist die automatische lokale WebM/Opus→PCM/WAV-Normalisierung, sichere Modellmaterialisierung, segmentweise native Transkription und messbare Live-Latenz.
+Nächster Hauptblock: **0.5.0 – DESKTOP SELF-SETUP, WHISPER SIDECAR & REAL-HARDWARE-ABNAHME**.
+
+Ziele:
+
+- reproduzierbare lokale whisper.cpp-Bereitstellung
+- Self-Setup/Diagnose für Einsteiger
+- erste echte Linux-Referenzabnahme
+- Windows-Abnahme
+- Latenz-, CPU-, RAM- und 30/60-Minuten-Diktattests
+- AudioWorklet als moderner Live-PCM-Pfad

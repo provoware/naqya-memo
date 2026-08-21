@@ -18,14 +18,24 @@ window.NAQYA.capabilities={
       }
       if(navigator.storage?.persisted)storage.persisted=await navigator.storage.persisted();
     }catch{}
+    let native={available:false,platform:'browser',whisper:false,logicalCpus:null,modelStore:null};
+    try{
+      if(window.NAQYA?.nativeBridge?.available?.())native=await window.NAQYA.nativeBridge.capabilities();
+    }catch(error){native={...native,error:String(error?.message||error)}}
     return {
       indexedDB:'indexedDB' in window,
       serviceWorker:'serviceWorker' in navigator,
       mediaDevices:Boolean(navigator.mediaDevices?.getUserMedia),
       mediaRecorder:'MediaRecorder' in window,
+      webAudio:Boolean(window.AudioContext||window.webkitAudioContext),
       speechRecognition:Boolean(SpeechCtor),
       onDeviceSpeech,
-      nativeWhisper:Boolean(window.NAQYANativeSTT?.transcribe||window.NAQYANativeSTT?.startLive),
+      nativeBridge:Boolean(native.available),
+      nativeWhisper:Boolean(native.whisper),
+      nativePlatform:native.platform||'browser',
+      nativeLogicalCpus:native.logicalCpus??null,
+      nativeModelStore:native.modelStore??null,
+      nativeError:native.error||null,
       cryptoSubtle:Boolean(window.crypto?.subtle),
       fileReader:'FileReader' in window,
       online:navigator.onLine,

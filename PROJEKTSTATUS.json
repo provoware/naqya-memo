@@ -1,8 +1,8 @@
 {
   "kanonischer_name": "PROVOWARE – NAQYA Memo Tool 2026",
   "repo": "provoware/naqya-memo",
-  "version": "0.3.0",
-  "entwicklungsphase": "NATIVE WHISPER RUNTIME & DESKTOP BRIDGE",
+  "version": "0.4.0",
+  "entwicklungsphase": "AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT",
   "status": "ENTWICKLUNG",
   "referenzplattform": "PWA + Tauri Desktop",
   "zielplattformen": ["Linux", "Windows", "Android", "iPhone/iPad", "PWA"],
@@ -13,6 +13,12 @@
     "audio_offline": true,
     "audio_segment_recovery": true,
     "audio_segment_ms": 3000,
+    "audio_normalisierung_web_audio": true,
+    "audio_normalisierung_pcm_hz": 16000,
+    "audio_normalisierung_mono": true,
+    "native_live_stt_segment_ms": 4000,
+    "native_live_stt_queue": true,
+    "live_stt_realtime_factor_metric": true,
     "live_diktat_on_device_browser": "feature-detect",
     "stt_provider_contract": true,
     "tauri_desktop_scaffold": true,
@@ -21,6 +27,10 @@
     "whisper_cpp_native_command": true,
     "whisper_cpp_native_runtime_bundled": false,
     "sprachmodell_manager": true,
+    "sprachmodell_native_materialisierung": true,
+    "sprachmodell_transfer_chunk_bytes": 4194304,
+    "sprachmodell_sha256_native": true,
+    "sprachmodell_atomare_aktivierung": true,
     "faehigkeiten_diagnose": true,
     "dokumente": true,
     "projekte": true,
@@ -31,10 +41,11 @@
     "backup_sha256": true
   },
   "bekannte_grenzen": [
-    "whisper.cpp wird noch nicht als Binärdatei mit dem Repository ausgeliefert; die Desktop-Laufzeit erkennt whisper-cli über PATH oder NAQYA_WHISPER_CLI.",
-    "Der native Transkriptionsbefehl erwartet derzeit WAV-Audiodaten. Die PWA-Aufnahme erzeugt je nach Browser WebM/Opus; ein lokaler Konvertierungsadapter ist der nächste notwendige Schritt.",
-    "Importierte Browser-Sprachmodelle liegen als IndexedDB-Blob vor und müssen für die native Desktop-Laufzeit noch in einen kontrollierten lokalen Modellpfad materialisiert werden.",
-    "Reale Linux-/Windows-Geräteabnahmen und Laufzeitmessungen stehen noch aus."
+    "whisper.cpp wird noch nicht als reproduzierbares Binär-Sidecar mitgeliefert; whisper-cli muss lokal über PATH oder NAQYA_WHISPER_CLI verfügbar sein.",
+    "Die Live-PCM-Erfassung verwendet im 0.4-Desktop-Pfad Web Audio ScriptProcessor als breit kompatiblen Übergangsadapter; eine AudioWorklet-Umstellung ist für die Härtungsstufe vorgesehen.",
+    "Die segmentierte native Transkription ist implementiert, benötigt aber reale Linux-/Windows-Latenz-, CPU-, RAM- und Langzeittests mit installierter whisper.cpp-Laufzeit und echten Modellen.",
+    "Das Vollbackup nutzt weiterhin JSON/Base64 und ist für sehr große Datenbestände speicherintensiver als ein streamingfähiger Container.",
+    "Native Mobiladapter für Android und iPhone/iPad stehen weiterhin aus."
   ],
-  "naechster_meilenstein": "0.4.0 – AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT"
+  "naechster_meilenstein": "0.5.0 – DESKTOP SELF-SETUP, WHISPER SIDECAR & REAL-HARDWARE-ABNAHME"
 }

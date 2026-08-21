@@ -1,14 +1,17 @@
 {
   "produkt": "PROVOWARE – NAQYA Memo Tool 2026",
-  "version": "0.3.0",
-  "phase": "NATIVE WHISPER RUNTIME & DESKTOP BRIDGE",
+  "version": "0.4.0",
+  "phase": "AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT",
   "status": "ENTWICKLUNG",
   "schema_version": 2,
   "offline_first": true,
   "cloud_required": false,
   "account_required": false,
   "audio_segment_ms": 3000,
+  "live_stt_segment_ms": 4000,
+  "stt_pcm_rate_hz": 16000,
   "backup_schema": 2,
   "desktop_runtime": "tauri-2",
-  "native_stt_provider": "whisper.cpp-cli"
+  "native_stt_provider": "whisper.cpp-cli",
+  "model_transfer_chunk_bytes": 4194304
 }

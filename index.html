@@ -85,10 +85,13 @@
   </form>
 </dialog>
 
-<dialog id="helpDialog"><div class="dialog-head"><h2>NAQYA Soforthilfe</h2><button class="icon-button" onclick="this.closest('dialog').close()" aria-label="Schließen">✕</button></div><div class="help-content"><h3>1. Schnell speichern</h3><p>Nutze „＋ Neu“, Audio oder Diktat. Ein Titel ist hilfreich, aber nicht zwingend.</p><h3>2. Audio bleibt lokal</h3><p>Aufnahmen werden in kurzen Segmenten lokal gesichert. Wird die App unerwartet beendet, versucht NAQYA vorhandene Segmente beim nächsten Start wiederherzustellen.</p><h3>3. Offline-Diktat</h3><p>NAQYA verwendet nur lokale Spracherkennung. In der Desktop-App kann die native whisper.cpp-Brücke verwendet werden, sobald whisper-cli und ein lokales Sprachmodell eingerichtet sind. Es gibt keinen Cloud-Fallback.</p><h3>4. Später organisieren</h3><p>Projekt, Kategorie und Tags können jederzeit ergänzt werden.</p><h3>5. Backup</h3><p>Das Vollbackup sichert Metadaten und Binärdateien lokal und validiert Prüfsummen beim Import.</p></div></dialog>
+<dialog id="helpDialog"><div class="dialog-head"><h2>NAQYA Soforthilfe</h2><button class="icon-button" onclick="this.closest('dialog').close()" aria-label="Schließen">✕</button></div><div class="help-content"><h3>1. Schnell speichern</h3><p>Nutze „＋ Neu“, Audio oder Diktat. Ein Titel ist hilfreich, aber nicht zwingend.</p><h3>2. Audio bleibt lokal</h3><p>Aufnahmen werden in kurzen Segmenten lokal gesichert. Wird die App unerwartet beendet, versucht NAQYA vorhandene Segmente beim nächsten Start wiederherzustellen.</p><h3>3. Offline-Diktat</h3><p>NAQYA verwendet nur lokale Spracherkennung. In der Desktop-App werden Live-Segmente lokal auf 16 kHz Mono-WAV normalisiert und über whisper.cpp transkribiert. Es gibt keinen Cloud-Fallback.</p><h3>4. Sprachmodell</h3><p>Importierte Modelle werden beim ersten nativen Diktat in 4-MiB-Blöcken in den lokalen NAQYA-Modellpfad übertragen und per SHA-256 geprüft.</p><h3>5. Später organisieren</h3><p>Projekt, Kategorie und Tags können jederzeit ergänzt werden.</p><h3>6. Backup</h3><p>Das Vollbackup sichert Metadaten und Binärdateien lokal und validiert Prüfsummen beim Import.</p></div></dialog>
 <script src="services/capabilities.js" defer></script>
 <script src="services/native-bridge.js" defer></script>
 <script src="services/stt-core.js" defer></script>
+<script src="services/audio-normalizer.js" defer></script>
 <script src="app.js" defer></script>
+<script src="services/live-stt.js" defer></script>
+<script src="services/release-04.js" defer></script>
 </body>
 </html>
