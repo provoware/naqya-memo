@@ -1,8 +1,8 @@
 # TODO – NAQYA
 
 Stand: 2026-08-21
-Aktueller Entwicklungsstrang: `0.5.0-B – Tauri-Sidecar-Integration`
-Aktueller PR: `#8`
+Aktueller Entwicklungsstand: `0.5.0 – Desktop Sidecar Integration & Hardening`
+Aktueller Pflegezweig: `pflege/0.5.0-status-konsistenz`
 
 ## P0 – Freigabekritisch
 
@@ -11,42 +11,29 @@ Komponente: Repository / Freigabe / CI
 
 Abnahmekriterien:
 - vor jeder Iteration aktuellen `main`-Commit prüfen
-- aktuellen Arbeitszweig und Head-SHA prüfen
-- zugehörigen PR-Status und Mergefähigkeit prüfen
+- Arbeitszweig, Head-SHA, PR-Status und Mergefähigkeit prüfen
 - prüfen, ob der letzte freigegebene Stand tatsächlich nach `main` gemergt wurde
 - CI für den exakten aktuellen Head-SHA prüfen
 - nach jeder Iteration denselben Abgleich erneut durchführen
 - nach Merge neuen `main`-Commit dokumentieren
 - bei Abweichungen zuerst Repository-/PR-/CI-Synchronität herstellen
 
-### [in Arbeit] Linux-Tauri-Sidecar vollständig validieren
-Komponente: Tauri / whisper.cpp / Linux x86_64
-
-Abnahmekriterien:
-- reproduzierbarer Build aus dem fest gepinnten whisper.cpp-Commit erfolgreich
-- erzeugtes Sidecar-Artefakt per SHA-256 geprüft
-- `cargo fmt --check` erfolgreich
-- `cargo check` mit `tauri-plugin-shell` und `externalBin` erfolgreich
-- statische Verträge erfolgreich
-- Shell-Syntaxprüfung erfolgreich
-- exakter PR-Head vollständig grün
-
 Aktueller Stand:
-- realer Linux-Sidecar-Build: erfolgreich
-- SHA-256-Artefaktprüfung: erfolgreich
-- Rust-Formatprüfung: erfolgreich
-- `cargo check`: erfolgreich im vorherigen vollständig geprüften Kandidaten
-- nach Dokumentations-/Vertragsänderungen muss CI für den neuen exakten Head erneut vollständig grün sein
+- PR #8 ist erfolgreich nach `main` gemergt
+- Merge-Commit: `29a07f918d32ab1cf3be9df299d213121849d3b3`
+- letzter geprüfter PR-Head: `1279b4bde3623ab86d1475975fb6e88c9f875473`
+- Qualitätsprüfung Run #144 für diesen Head: erfolgreich
+- veralteter Parallel-PR #3 wurde als überholt geschlossen
 
-### [offen] PR #8 erst nach vollständigem Qualitätsgate promoten
-Komponente: Freigabe
+### [in Arbeit] 0.5.0-Metadaten und Projektstatus konsistent nachziehen
+Komponente: Versionierung / Dokumentation / Offline-Cache
 
 Abnahmekriterien:
-- vollständiger CI-Erfolg für den aktuellen PR-Head
-- PR aus Entwurfsstatus nehmen
-- Squash-Merge mit erwarteter Head-SHA
-- resultierenden `main`-Commit dokumentieren
-- anschließend Repository- und Merge-Stand erneut prüfen
+- `VERSION.json`, `PROJEKTSTATUS.json`, Tauri-Version und Cargo-Version auf `0.5.0`
+- Sidecar-Status entspricht dem realen gemergten Code
+- Service-Worker-Cache auf `naqya-0.5.0`
+- statische Verträge prüfen die neuen 0.5-Invarianten
+- CI für exakten Pflegezweig-Head vollständig grün
 
 ## P1 – Hohe Priorität
 
@@ -63,13 +50,10 @@ Abnahmekriterien:
 Komponente: Release / Integrität
 
 Abnahmekriterien:
-- Plattform
-- Upstream-Commit
-- Dateiname
-- Dateigröße
+- Plattform, Upstream-Commit, Dateiname und Dateigröße
 - SHA-256
-- Buildzeitpunkt bzw. Buildnachweis
-- nachvollziehbare Zuordnung zum NAQYA-Release
+- Buildnachweis
+- eindeutige Zuordnung zum NAQYA-Release
 
 ### [offen] Reale Linux-Desktop-Abnahme durchführen
 Komponente: Linux / Mikrofon / STT
@@ -117,46 +101,50 @@ Abnahmekriterien:
 
 ## P3 – Wartbarkeit und Dokumentation
 
-### [offen] Versionsangaben für 0.5.x konsistent anheben
-Komponente: Versionierung
-
-Abnahmekriterien:
-- `VERSION.json`
-- `PROJEKTSTATUS.json`
-- `src-tauri/Cargo.toml`
-- `src-tauri/tauri.conf.json`
-- Service-Worker-Cachebezeichner
-- README und relevante Dokumentation
-
-Hinweis: erst durchführen, wenn der genaue Freigabeumfang von 0.5.x feststeht.
-
-### [offen] CHANGELOG für Sidecar-Entwicklungsstrang ergänzen
+### [offen] CHANGELOG für 0.5.0 konsolidieren
 Komponente: Dokumentation
 
 Abnahmekriterien:
-- 0.5.0-Vertrag
-- 0.5.0-B Tauri-Integration
-- bekannte Einschränkungen
-- tatsächliche Freigabegates
+- Runtimevertrag, Tauri-Sidecar-Integration und Sicherheitsänderungen zusammenführen
+- bekannte Einschränkungen klar benennen
+- tatsächliche Freigabegates dokumentieren
+
+### [offen] Veraltete Release-04-Bezeichnungen prüfen
+Komponente: Wartbarkeit
+
+Abnahmekriterien:
+- feststellen, ob `services/release-04.js` nur historischer Modulname oder fachlich überholt ist
+- keine reine Umbenennung ohne Nutzen
+- bei Änderung alle Offline-Cache-, HTML- und Testreferenzen atomar anpassen
 
 ## Erledigt
 
 ### [erledigt] Reproduzierbaren whisper.cpp-Runtimevertrag festlegen
-Ergebnis:
-- Upstream auf `ggml-org/whisper.cpp` festgelegt
-- Version/Commit fest gepinnt
+- Upstream und Commit fest gepinnt
 - CPU-Releaseprofil mit `GGML_NATIVE=OFF`
 - Linux-/Windows-Zielnamen definiert
 - SHA-256-Erzeugung vorgesehen
-- Laufzeit-Downloads und ungeprüfte Aktivierung ausgeschlossen
+- Laufzeit-Downloads ausgeschlossen
 
 ### [erledigt] Native Runtime-Sicherheit härten
-Ergebnis:
 - generische `main`-PATH-Erkennung entfernt
 - expliziter `NAQYA_WHISPER_CLI`-Pfad kanonisiert
-- temporäre STT-Dateien in privaten Tauri-App-Cache verschoben
-- kollisionsgeschützte Dateierzeugung mit `create_new(true)`
+- private Tauri-App-Cache-Tempdateien
+- kollisionsgeschützte Dateierzeugung
 - `sync_all()` vor Übergabe an whisper.cpp
+
+### [erledigt] Linux-Tauri-Sidecar integrieren und CI-validieren
+- `tauri-plugin-shell` und `externalBin`
+- reproduzierbarer Linux-x86_64-Sidecar-Build
+- SHA-256-Artefaktprüfung
+- Sidecar vor externem CLI-Fallback
+- Runtimequelle diagnostizierbar
+- PR #8 erfolgreich gemergt
+
+### [erledigt] Überholten Parallel-PR #3 bereinigen
+- Branch war gegenüber `main` 31 Commits voraus und 36 Commits zurück
+- Inhalt inzwischen durch validierte PRs #4 bis #8 ersetzt
+- PR nachvollziehbar als überholt geschlossen
 
 ## Pflegevertrag
 Diese Datei wird bei jeder relevanten funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung geprüft und aktualisiert. Zusätzlich wird vor und nach jeder Iteration der reale Repository-, PR-, Merge- und CI-Stand geprüft. Erledigte Punkte zunächst in `Erledigt` verschieben; neue Risiken oder Folgearbeiten sofort aufnehmen.
