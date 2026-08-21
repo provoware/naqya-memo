@@ -1,5 +1,19 @@
 # Änderungsprotokoll
 
+## 0.3.0 – NATIVE WHISPER RUNTIME & DESKTOP BRIDGE
+
+- Tauri-2-Desktop-Grundstruktur für Linux/Windows ergänzt
+- native JavaScript↔Rust-Brücke für Fähigkeiten und Transkription
+- `naqya_capabilities` erkennt Plattform, CPU-Anzahl und verfügbare whisper.cpp-CLI
+- `naqya_transcribe` führt vollständig lokale whisper.cpp-Transkription über WAV + lokalen Modellpfad aus
+- `NAQYA_WHISPER_CLI` als expliziter lokaler Runtime-Pfad unterstützt
+- Größenbegrenzung und Fehlerbehandlung für native Einzeltranskription
+- temporäre Audiodateien werden nach der Verarbeitung entfernt
+- STT-Core auf die Tauri-Brücke erweitert
+- Offline-Service-Worker auf Native-Bridge-Komponente aktualisiert
+- statische Tests für Tauri-, Rust- und Native-Bridge-Verträge ergänzt
+- bekannte Grenzen für WebM→WAV, Modellmaterialisierung und gebündelte Runtime transparent dokumentiert
+
 ## 0.2.0 – AUDIO & OFFLINE-STT CORE
 
 - persistente Audioaufnahme in 3-Sekunden-Segmenten
