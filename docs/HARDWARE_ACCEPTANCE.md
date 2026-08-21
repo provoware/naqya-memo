@@ -18,24 +18,13 @@ Ein `PASS` ist nur zulässig, wenn Paketinstallation und App-Start bestätigt si
 
 ## Runtime-Messadapter 0.5.1-E3
 
-Die native Live-STT-Sitzung führt jetzt zusätzlich zu den bisherigen Summen einen expliziten Runtime-Metrikvertrag in der jeweiligen `audioSessions`-Sitzung. `nativeSttRuntimeMetrics` enthält keine Transkripte oder Audiodaten, sondern ausschließlich technische Messwerte:
-
-- `segmentsTotal`: alle zur STT übergebenen Segmente,
-- `segmentsSucceeded`: erfolgreich transkribierte Segmente,
-- `segmentsLost`: STT-Segmente mit Fehler,
-- `capturedAudioMs`: Audiodauer aller übergebenen Segmente,
-- `transcribedAudioMs`: Audiodauer der erfolgreich transkribierten Segmente,
-- `sttElapsedMs`: kumulierte native STT-Laufzeit,
-- `realtimeFactorAvg`: kumulierte STT-Zeit geteilt durch erfolgreich transkribierte Audiodauer,
-- `realtimeFactorMax`: schlechtester Echtzeitfaktor eines erfolgreich transkribierten Segments.
-
-Damit stammen Segmentverlust und RTF-Maximum nicht mehr aus manueller Schätzung. Ein fehlgeschlagenes STT-Segment wird sofort als verloren gezählt und zusammen mit dem Sitzungsstand persistiert. Die Metriken sind weiterhin nur Messdaten; sie erzeugen selbst kein `PASS`.
+Die native Live-STT-Sitzung führt zusätzlich einen datensparsamen Runtime-Metrikvertrag in `audioSessions`. `nativeSttRuntimeMetrics` enthält ausschließlich technische Messwerte: Segmente gesamt/erfolgreich/verloren, erfasste und transkribierte Audiodauer, kumulierte native STT-Zeit sowie RTF Durchschnitt/Maximum. Fehlgeschlagene STT-Segmente werden sofort als verloren gezählt und mit dem Sitzungsstand persistiert. Die Metriken erzeugen selbst kein `PASS`.
 
 ## Prozess-Ressourcenmessung 0.5.1-E4
 
-`tools/measure_process_resources.py` misst Peak-RAM sowie CPU-Durchschnitt/-Maximum ohne zusätzliche Python-Pakete. Gemessen wird nicht nur ein einzelner Prozess, sondern die gesamte Prozessfamilie des Zielprozesses; dadurch kann der von NAQYA gestartete whisper.cpp-Sidecar in die Messung einfließen.
+`tools/measure_process_resources.py` misst Peak-RAM sowie CPU-Durchschnitt/-Maximum ohne zusätzliche Python-Pakete. Gemessen wird die gesamte Prozessfamilie des Zielprozesses, damit der von NAQYA gestartete whisper.cpp-Sidecar einbezogen werden kann.
 
-Eine bereits laufende Anwendung kann über ihre PID beobachtet werden:
+Bereits laufende Anwendung:
 
 ```bash
 python3 tools/measure_process_resources.py \
@@ -43,7 +32,7 @@ python3 tools/measure_process_resources.py \
   --output RESOURCE_METRICS.json
 ```
 
-Alternativ kann der Messer den Testprozess selbst starten:
+Testprozess direkt starten und messen:
 
 ```bash
 python3 tools/measure_process_resources.py \
@@ -51,17 +40,21 @@ python3 tools/measure_process_resources.py \
   --command /pfad/zu/naqya
 ```
 
-Der Nachweis enthält `peak_ram_mb`, `cpu_avg_pct`, `cpu_max_pct`, Messdauer, Intervall und die höchste gleichzeitig beobachtete Prozesszahl. Die Datei enthält keine Audio- oder Transkriptinhalte und erzeugt selbst keine Hardwarefreigabe. Für `HARDWARE_ACCEPTANCE.json` bleibt ausschließlich der reale Peak-RAM des tatsächlich getesteten NAQYA-Laufs maßgeblich.
+`RESOURCE_METRICS.json` enthält Peak-RAM, CPU Ø/Maximum, Messdauer, Messintervall, Prozesszahl und optional den Exit-Code des gestarteten Prozesses. Audio und Transkripte werden nicht gespeichert.
 
-## Evidence-Collector
+## Direkter Ressourcenimport 0.5.1-E5
 
-`tools/collect_hardware_acceptance.py` erzeugt den Nachweis aus real gemessenen Werten. Er arbeitet ohne zusätzliche Python-Abhängigkeiten und ermittelt Betriebssystem, x86_64-Architektur, CPU, Gesamtspeicher sowie SHA-256 von Paket und Modell selbst. Evidence-Fingerprint und Diagnosevertrag werden direkt gegen den aktuellen Repository-Stand gebunden.
+Der Hardware-Collector kann die von E4 erzeugte Datei jetzt direkt mit `--resource-metrics` übernehmen. Damit wird Peak-RAM nicht mehr manuell abgeschrieben. Zusätzlich werden SHA-256 der Ressourcenmessung, Messdauer und CPU Ø/Maximum in `HARDWARE_ACCEPTANCE.json` übernommen.
 
-Der Collector erfindet keine Freigabe: Standardergebnis ist `FAIL`. Für `PASS` müssen alle sicherheitsrelevanten Bestätigungen explizit gesetzt sein und `segments_lost` muss `0` sein.
+Der Import ist fail-closed: unbekannte Schemaversionen, fehlende Pflichtfelder, nicht-positive Laufzeit/RAM-Werte, inkonsistente CPU-Werte oder ein fehlgeschlagener gestarteter Testprozess werden abgelehnt. `--resource-metrics` und der alte Fallback `--peak-ram-mb` schließen sich gegenseitig aus.
 
-Beispiel für einen realen Smoke-Test:
+Empfohlener realer Smoke-Ablauf:
 
 ```bash
+python3 tools/measure_process_resources.py \
+  --output RESOURCE_METRICS.json \
+  --command /pfad/zu/naqya
+
 python3 tools/collect_hardware_acceptance.py \
   --package /pfad/NAQYA_0.5.0_amd64.deb \
   --model /pfad/ggml-base.bin \
@@ -72,7 +65,7 @@ python3 tools/collect_hardware_acceptance.py \
   --segments-lost 0 \
   --realtime-factor-avg 0.41 \
   --realtime-factor-max 0.63 \
-  --peak-ram-mb 512 \
+  --resource-metrics RESOURCE_METRICS.json \
   --installed \
   --application-started \
   --bundled-sidecar-used \
@@ -84,11 +77,11 @@ python3 tools/collect_hardware_acceptance.py \
   --output HARDWARE_ACCEPTANCE.json
 ```
 
-Die Messwerte `duration-seconds`, `segments-*`, `realtime-factor-*` und `peak-ram-mb` müssen aus dem realen Test stammen. Seit E3 können Segmentzahl, Segmentverlust und RTF-Werte direkt aus `nativeSttRuntimeMetrics` der realen Sitzung übernommen werden. Seit E4 kann Peak-RAM mit `measure_process_resources.py` aus der realen NAQYA-Prozessfamilie erfasst werden.
+Der Collector bleibt bewusst fail-closed: Standardergebnis ist `FAIL`. Für `PASS` müssen alle realen Bestätigungen explizit gesetzt sein und `segments_lost` muss `0` sein. Segmentzahl/-verlust und RTF stammen seit E3 aus `nativeSttRuntimeMetrics`; Peak-RAM und CPU können seit E5 ohne manuelle Übertragung aus E4 importiert werden.
 
 ## Prüfung
 
-Schema-/Vertragsprüfung ohne erfundene Messdaten:
+Schema-/Vertragsprüfung:
 
 ```bash
 python3 tests/validate_hardware_acceptance.py --schema-only
