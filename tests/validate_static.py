@@ -48,7 +48,7 @@ for needle in ('89 %','8 von 9 Hauptpunkten',FINGERPRINT,CONTRACT_SHA,'0.5.1-E â
     assert needle in readme
 
 release_generator = (root / 'tools/generate_release_evidence.py').read_text()
-for needle in ('evidence_fingerprint','error_catalog_sha256','diagnostics_contract','NAQYA_SOURCE_COMMIT'):
+for needle in ('evidence_fingerprint','diagnostic_codes_sha256','diagnostics_contract','NAQYA_SOURCE_COMMIT'):
     assert needle in release_generator
 
 comparison = (root / 'tests/compare_release_evidence.py').read_text()
