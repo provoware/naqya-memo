@@ -19,21 +19,11 @@ Abnahmekriterien:
 - temporäre WAV-Dateien werden zuverlässig bereinigt
 - Providerdiagnose zeigt `whisper.cpp-sidecar`
 - absichtlich provozierte Diagnose-/Fehlercodes entsprechen dem unveränderten Diagnosevertrag
-- Evidence-Fingerprint der getesteten Software wird in der Hardwareabnahme gebunden
+- Evidence-Fingerprint der getesteten Software wird in `HARDWARE_ACCEPTANCE.json` gebunden
 - kurze sowie mindestens 30-minütige Sitzung ohne Datenverlust
+- keine Hardware-Freigabe ohne real gemessenen und validierten Nachweis
 
 ## P1 – Hohe Priorität
-
-### [offen] Maschinenlesbaren Hardware-Abnahmevertrag einführen
-Komponente: Qualität / Evidence / Support
-
-Abnahmekriterien:
-- versioniertes Schema für Hardware-Abnahmen
-- Bindung an den validierten Evidence-Fingerprint
-- Plattform, OS-Version, CPU/RAM, Mikrofon, Modell-SHA und Paketbezug erfassbar
-- Testdauer, Segmentzahl, Echtzeitfaktor, Fehlercodes und Ergebnis dokumentierbar
-- keine Hardware-Freigabe ohne reale Messdaten
-- Validator lehnt unvollständige oder nicht zum Evidence-Fingerprint passende Nachweise ab
 
 ### [offen] Langzeit- und Lasttests für Live-STT durchführen
 Komponente: Performance / Stabilität
@@ -44,6 +34,7 @@ Abnahmekriterien:
 - Echtzeitfaktor pro Referenzmodell dokumentiert
 - kontrolliertes Verhalten bei langsamer Transkription
 - Diagnose-Ringpuffer bleibt begrenzt und performant
+- Messwerte werden im Hardware-Abnahmevertrag erfasst
 
 ## P2 – Qualitätsausbau
 
@@ -78,7 +69,7 @@ Abnahmekriterien:
 
 ## Entwickler-Übergabecheckliste
 
-### Aktuelle Übergabebereitschaft 0.5.1-D
+### Aktuelle Übergabebereitschaft 0.5.1-D / E1-Vertrag
 
 - [x] professioneller Entwickler-Einstieg und technische Übergabedokumentation
 - [x] PWA-/Backup-Produktversion gegen `VERSION.json` abgesichert
@@ -92,6 +83,7 @@ Abnahmekriterien:
 - [x] Linux-/Windows-Evidence automatisiert verglichen
 - [x] plattformübergreifender Evidence-Fingerprint validiert: `018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf`
 - [x] Diagnose-Contract-SHA: `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
+- [x] maschinenlesbares Hardware-Abnahmeschema und Validator vorhanden
 - [ ] reale Linux-/Windows-Hardware-, Mikrofon- und Langzeitabnahme abschließen
 
 ### Vor jeder künftigen Entwicklerübergabe
@@ -101,9 +93,21 @@ Abnahmekriterien:
 - [ ] Qualitätsgate für den exakten Übergabe-Head vollständig grün
 - [ ] paketbezogene Evidence bei Release-relevanten Änderungen geprüft
 - [ ] Diagnose-Contract-SHA und Evidence-Fingerprint zwischen Plattformen geprüft
+- [ ] reale Hardwarefreigaben nur mit validiertem `HARDWARE_ACCEPTANCE.json`
 - [ ] nach Merge resultierenden `main` erneut geprüft
 
 ## Erledigt
+
+### [erledigt] 0.5.1-E1 – Maschinenlesbarer Hardware-Abnahmevertrag
+Ergebnis:
+- `hardware/HARDWARE_ACCEPTANCE.schema.json` als versionierter Vertrag eingeführt
+- Hardware-Nachweise an den aktuell validierten Evidence-Fingerprint und Diagnosevertrag gebunden
+- Linux/Windows, OS-Version, CPU/RAM, Mikrofon, Paket-/Modell-SHA und geschützten Modellpfad erfassbar
+- Testdauer, Segmentzahl/-verlust, Echtzeitfaktor, Peak-RAM und beobachtete Diagnosecodes erfassbar
+- Profile `long30` / `long60` erzwingen mindestens 1800 / 3600 Sekunden reale Messdauer
+- `PASS` verlangt gestartete App, gebündelten Sidecar, geschützten Modellpfad, funktionierende Mikrofon-/Live-Diktat-/WAV-Bereinigung und 0 Segmentverluste
+- `tests/validate_hardware_acceptance.py` prüft Schema und reale Nachweise; CI-Paketdaten allein erzeugen ausdrücklich keine Hardwarefreigabe
+- Hauptfortschritt bleibt korrekt bei 8 von 9 / 89 %, da reale Hardwaremessungen noch fehlen
 
 ### [erledigt] 0.5.1-D – Windows-Bundle & Plattform-Evidence
 Ergebnis:

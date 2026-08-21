@@ -18,6 +18,7 @@ jobs:
           python3 -m json.tool src-tauri/sidecar/whisper-runtime.json >/dev/null
           python3 -m json.tool diagnostics/DIAGNOSTICS_CONTRACT.json >/dev/null
           python3 -m json.tool release/RELEASE_EVIDENCE.schema.json >/dev/null
+          python3 -m json.tool hardware/HARDWARE_ACCEPTANCE.schema.json >/dev/null
       - name: Text- und Merge-Integrität prüfen
         run: python3 tests/validate_text_integrity.py
       - name: JavaScript-Syntax prüfen
@@ -36,11 +37,12 @@ jobs:
           node tests/diagnostics_runtime.test.js
           python3 tests/validate_diagnostics.py
           python3 tests/validate_platform_diagnostics.py
-      - name: Windows-, Plattform- und Fingerprintvertrag statisch prüfen
+      - name: Windows-, Plattform-, Fingerprint- und Hardwarevertrag statisch prüfen
         run: |
-          python3 -m py_compile tools/generate_release_evidence.py tests/validate_release_evidence.py tests/compare_release_evidence.py tests/validate_platform_diagnostics.py tests/validate_windows_release_contract.py tests/validate_evidence_fingerprint.py
+          python3 -m py_compile tools/generate_release_evidence.py tests/validate_release_evidence.py tests/compare_release_evidence.py tests/validate_platform_diagnostics.py tests/validate_windows_release_contract.py tests/validate_evidence_fingerprint.py tests/validate_hardware_acceptance.py
           python3 tests/validate_windows_release_contract.py
           python3 tests/validate_evidence_fingerprint.py
+          python3 tests/validate_hardware_acceptance.py --schema-only
       - name: Desktop-Frontend stagen und prüfen
         run: |
           python3 tools/stage_desktop_frontend.py
