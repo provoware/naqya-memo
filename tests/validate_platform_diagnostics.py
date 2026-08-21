@@ -12,7 +12,7 @@ EXPECTED_EVENT_SCHEMA = 1
 raw = CONTRACT.read_bytes()
 actual_sha256 = hashlib.sha256(raw).hexdigest()
 assert actual_sha256 == EXPECTED_SHA256, (
-    "Diagnosevertrag driftet: Linux und Windows müssen in 0.5.1-D bytegenau denselben Vertrag verwenden. "
+    "Diagnosevertrag driftet: Linux und Windows müssen bytegenau denselben Vertrag verwenden. "
     f"Erwartet {EXPECTED_SHA256}, erhalten {actual_sha256}"
 )
 
@@ -21,7 +21,6 @@ assert contract["format"] == "NAQYA-DIAGNOSTICS"
 assert contract["schema_version"] == EXPECTED_SCHEMA
 assert contract["event_schema_version"] == EXPECTED_EVENT_SCHEMA
 
-# Expliziter Semantikanker: derselbe Fehlercode muss auf jeder Plattform dasselbe bedeuten.
 stt_4002 = contract["codes"]["NAQYA-STT-4002"]
 assert stt_4002["category"] == "stt"
 assert stt_4002["severity"] == "error"
@@ -29,12 +28,17 @@ assert stt_4002["what"] == "Live-STT-Segment konnte nicht transkribiert werden"
 assert stt_4002["options"] == ["settings", "export-json", "export-text", "close"]
 
 status = json.loads(STATUS.read_text(encoding="utf-8"))
-evidence_contract = status["release_nachweis"]["diagnostics_contract"]
+release = status["release_nachweis"]
+evidence_contract = release["diagnostics_contract"]
 assert evidence_contract["file"] == "diagnostics/DIAGNOSTICS_CONTRACT.json"
 assert evidence_contract["sha256"] == EXPECTED_SHA256
 assert evidence_contract["schema_version"] == EXPECTED_SCHEMA
 assert evidence_contract["event_schema_version"] == EXPECTED_EVENT_SCHEMA
 assert evidence_contract["format"] == "NAQYA-DIAGNOSTICS"
-assert status["naechster_meilenstein"].startswith("0.5.1-D – WINDOWS-X86_64-BUNDLE")
+assert release["linux_bundle_validiert"] is True
+assert release["windows_bundle_validiert"] is True
+assert release["plattform_evidence_validiert"] is True
+assert status["aktueller_arbeitsstand"].startswith("0.5.1-D – WINDOWS-BUNDLE")
+assert status["naechster_meilenstein"].startswith("0.5.1-E – REALE HARDWAREABNAHME")
 
-print("NAQYA Plattform-Diagnosevertrag: PASS")
+print("NAQYA Plattform-Diagnosevertrag: PASS – D plattformübergreifend abgeschlossen")
