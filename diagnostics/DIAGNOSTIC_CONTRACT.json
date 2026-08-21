@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "contract_id": "naqya-diagnostics-v1",
+  "error_code_namespace": "NAQYA",
+  "event_id_format": "NAQYA-EVT-<unix_ms>-<sequence>",
+  "principles": {
+    "offline_first": true,
+    "no_sensitive_payloads": true,
+    "user_safe_actions_only": true,
+    "stable_codes": true
+  },
+  "safe_actions": [
+    {
+      "id": "RETRY_ONCE",
+      "label_de": "Vorgang einmal erneut versuchen",
+      "description_de": "Den gleichen lokalen Vorgang genau einmal erneut starten. Keine Daten löschen und keine Online-Dienste verwenden."
+    },
+    {
+      "id": "OPEN_DIAGNOSTICS",
+      "label_de": "Diagnose öffnen",
+      "description_de": "Diagnoseansicht öffnen und Fehlercode, Ereignis-ID, Runtimequelle und Versionsstand prüfen."
+    },
+    {
+      "id": "CHECK_RUNTIME",
+      "label_de": "Lokale Spracherkennung prüfen",
+      "description_de": "Prüfen, ob der gebündelte whisper.cpp-Sidecar verfügbar ist. Einen externen Fallback nicht ungeprüft erzwingen."
+    },
+    {
+      "id": "REIMPORT_MODEL",
+      "label_de": "Sprachmodell neu importieren",
+      "description_de": "Das lokale Modell erneut über den NAQYA-Modellimport einlesen und die SHA-256-Prüfung vollständig abschließen lassen."
+    },
+    {
+      "id": "CHECK_STORAGE",
+      "label_de": "Lokalen Speicher prüfen",
+      "description_de": "Freien Speicher und Schreibrechte des lokalen NAQYA-Daten- beziehungsweise Cachebereichs prüfen."
+    },
+    {
+      "id": "KEEP_DATA_AND_STOP",
+      "label_de": "Vorgang sicher beenden",
+      "description_de": "Den fehlgeschlagenen Vorgang beenden, vorhandene Daten unverändert lassen und keine automatische Reparatur mit Datenverlust ausführen."
+    }
+  ],
+  "error_codes": [
+    {"code": "NAQYA-STT-001", "component": "native-stt", "condition": "bundled-sidecar-unavailable", "safe_action": "CHECK_RUNTIME"},
+    {"code": "NAQYA-STT-002", "component": "native-stt", "condition": "bundled-sidecar-runtime-failure", "safe_action": "OPEN_DIAGNOSTICS"},
+    {"code": "NAQYA-STT-003", "component": "native-stt", "condition": "approved-fallback-unavailable", "safe_action": "CHECK_RUNTIME"},
+    {"code": "NAQYA-STT-004", "component": "native-stt", "condition": "approved-fallback-runtime-failure", "safe_action": "OPEN_DIAGNOSTICS"},
+    {"code": "NAQYA-STT-005", "component": "native-stt", "condition": "invalid-normalized-wav", "safe_action": "RETRY_ONCE"},
+    {"code": "NAQYA-STT-006", "component": "native-stt", "condition": "single-transcription-audio-too-large", "safe_action": "KEEP_DATA_AND_STOP"},
+    {"code": "NAQYA-STT-007", "component": "native-stt", "condition": "private-temp-audio-failure", "safe_action": "CHECK_STORAGE"},
+    {"code": "NAQYA-MODEL-001", "component": "model-store", "condition": "invalid-model-name-or-type", "safe_action": "REIMPORT_MODEL"},
+    {"code": "NAQYA-MODEL-002", "component": "model-store", "condition": "model-transfer-missing-or-finished", "safe_action": "REIMPORT_MODEL"},
+    {"code": "NAQYA-MODEL-003", "component": "model-store", "condition": "model-sha256-mismatch", "safe_action": "REIMPORT_MODEL"},
+    {"code": "NAQYA-MODEL-004", "component": "model-store", "condition": "model-file-unusually-small", "safe_action": "REIMPORT_MODEL"},
+    {"code": "NAQYA-MODEL-005", "component": "model-store", "condition": "model-outside-trusted-store", "safe_action": "REIMPORT_MODEL"},
+    {"code": "NAQYA-RUNTIME-001", "component": "runtime", "condition": "app-data-path-unavailable", "safe_action": "CHECK_STORAGE"},
+    {"code": "NAQYA-RUNTIME-002", "component": "runtime", "condition": "app-cache-path-unavailable", "safe_action": "CHECK_STORAGE"}
+  ]
+}
