@@ -57,7 +57,7 @@ agents = (root / 'AGENTS.md').read_text()
 for needle in [
     'TODO.md','Qualitätsgate','Sidecar- und Runtime-Regeln','Pflichtdateien bei Änderungen',
     'Repository- und Merge-Pflicht je Iteration','Merge-Konflikt- und Textintegritätsregeln',
-    'resultierenden `main`-Stand'
+    'Nach jedem Merge'
 ]:
     assert needle in agents, f'AGENTS-Vertrag unvollständig: {needle}'
 
