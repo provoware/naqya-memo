@@ -8,7 +8,9 @@ Offline-first Organizer für Termine, Fristen, Aufgaben, Dokumente, Fotos, Audio
 
 NAQYA verarbeitet Sprache lokal und ohne Cloudpflicht. Der Quellstand integriert `whisper.cpp` als bevorzugte native Tauri-Runtime. Tauri ist über `bundle.externalBin` für den Sidecar `naqya-whisper` konfiguriert; GitHub Actions baut den Linux-x86_64-Sidecar reproduzierbar aus dem fest gepinnten Upstream-Commit und prüft das erzeugte Artefakt per SHA-256.
 
-Wichtig: Ein vollständiges Endanwender-Desktoppaket mit eingebettetem Sidecar ist **noch nicht als Release end-to-end abgenommen**. Aktuell validiert CI den Sidecar-Build, seine Integrität sowie Rust/Tauri per `cargo check`. Die vollständige Bundle-Abnahme ist der nächste Freigabeschritt.
+Für den laufenden 0.5.1-Block ist das Desktop-Frontend jetzt deterministisch gestagt: `tools/stage_desktop_frontend.py` erzeugt vor dem Tauri-Build ein frisches `dist/` aus genau 14 erlaubten Runtime-Dateien. Tauri verwendet `frontendDist: ../dist` statt des gesamten Repository-Stamms. Ein Manifest weist Dateigröße und SHA-256 jeder gestagten Runtime-Datei nach; CI prüft Dateisatz, Hashes und Konfiguration automatisch.
+
+Wichtig: Ein vollständiges Endanwender-Desktoppaket mit eingebettetem Sidecar ist **noch nicht als Release end-to-end abgenommen**. Das Frontend-Staging, der Sidecar-Build, seine Integrität sowie Rust/Tauri per `cargo check` sind getrennt validiert; die vollständige Bundle-Abnahme bleibt der nächste Freigabeschritt.
 
 Beim Entwickleraudit wurde außerdem eine klar abgegrenzte Restinkonsistenz gefunden: `app.js` verwendet intern noch die Produktversionskonstante `0.2.0`, obwohl der kanonische Projektstand 0.5.0 ist. Diese Konstante beeinflusst UI- und Backup-Metadaten und ist als P1 in `TODO.md` aufgenommen. `DB_VERSION=2` ist davon unabhängig und korrekt das IndexedDB-Schema.
 
@@ -63,6 +65,17 @@ Die Entwicklerdokumentation beschreibt ausdrücklich, welche scheinbar „verein
 - wenige gezielte `ENTWICKLERHINWEIS`-Kommentare sichern schwer erkennbare Invarianten direkt im Code
 - Entwickler-Übergabecheckliste macht offene und erledigte Übergabepunkte direkt abhakbar
 
+## In Arbeit für 0.5.1
+
+Bereits umgesetzt und zu validieren/promoten:
+
+- deterministisches Desktop-Frontend-Staging nach `dist/`
+- explizite Allowlist von 14 Runtime-Dateien statt Repository-Stamm als Tauri-Frontend
+- `NAQYA_FRONTEND_MANIFEST.json` mit Dateigröße und SHA-256 je gestagter Datei
+- `beforeBuildCommand` führt das Staging vor dem Tauri-Build automatisch aus
+- CI-Vertrag prüft exakten Dateisatz, Hashidentität und Tauri-Konfiguration
+- `dist/` ist generiertes Buildartefakt und wird nicht committed
+
 ## Desktop-Spracherkennung
 
 Die native Runtime-Priorität lautet:
@@ -114,6 +127,7 @@ Der Kern benötigt keinen Account, keine Cloud und keine Telemetrie. Es gibt kei
 - Tauri-Sidecar-Konfiguration und Rust-Kompilierungsprüfung
 - statische Architektur-, Sicherheits-, Text- und Dokumentationsverträge
 - Entwicklerdokumentation und Übergabeverträge werden durch statische/Textintegritätsprüfungen mitgesichert
+- deterministisches Desktop-Frontend-Staging mit exaktem Dateisatz und SHA-256-/Größenmanifest
 
 ## Noch nicht als Release abgenommen
 
@@ -134,6 +148,7 @@ GitHub Actions prüft derzeit:
 - Konsistenz zentraler Dokumentationsaussagen
 - Vorhandensein und Kernverträge der Entwicklerdokumentation
 - JavaScript-Syntax
+- deterministisches Desktop-Frontend-Staging, exakten Runtime-Dateisatz und SHA-256-Identität
 - reproduzierbaren Linux-Sidecar-Build
 - SHA-256 des erzeugten Sidecars
 - Rust-Formatierung
@@ -164,10 +179,10 @@ Die Dokumente zu 0.2, 0.3 und 0.4 bleiben als **historische Entwicklungsverträg
 Reihenfolge:
 
 1. die kleine PWA-Produktversionsdrift korrigieren und per Konsistenztest absichern
-2. Frontend deterministisch in ein eigenes Desktop-`dist/` stagen und `frontendDist` vom Repository-Stamm lösen
-3. vollständiges Linux-Tauri-Bundle bauen und nachweisen, dass der Sidecar enthalten und startbar ist
-4. Sidecar-Laufzeitabhängigkeiten im Paketkontext prüfen, nicht nur Executable und SHA-256
-5. maschinenlesbaren Release-Nachweis mit Plattform, Upstream-Commit, Dateiname, Dateigröße, SHA-256 und Buildumgebung erzeugen
+2. vollständiges Linux-Tauri-Bundle auf Basis des deterministischen `dist/` bauen
+3. nachweisen, dass Frontend, Sidecar und notwendige Laufzeitbibliotheken im Paketkontext korrekt enthalten sind
+4. den Sidecar aus dem erzeugten Paket tatsächlich starten und Runtimequelle diagnostizieren
+5. maschinenlesbaren Release-Nachweis mit Plattform, Upstream-Commit, Frontend-Manifest, Dateiname, Dateigröße, SHA-256 und Buildumgebung erzeugen
 6. denselben Buildvertrag auf Windows x86_64 übertragen
 7. reale Linux-/Windows-Mikrofon- und Hardwareabnahme
 8. danach AudioWorklet und Langzeithärtung
