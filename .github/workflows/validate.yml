@@ -1,0 +1,24 @@
+name: NAQYA Qualitätsprüfung
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JSON prüfen
+        run: |
+          python3 -m json.tool VERSION.json >/dev/null
+          python3 -m json.tool PROJEKTSTATUS.json >/dev/null
+          python3 -m json.tool manifest.webmanifest >/dev/null
+      - name: JavaScript-Syntax prüfen
+        run: |
+          node --check app.js
+          node --check sw.js
+      - name: Statische Verträge prüfen
+        run: python3 tests/validate_static.py
+      - name: Shell-Syntax prüfen
+        run: bash -n START_NAQYA.sh
