@@ -3,6 +3,8 @@
 Stand: 2026-08-21
 Aktueller Entwicklungsstrang: `0.5.x – Repository-Konsolidierung`
 Aktueller PR: wird für die Konsolidierungsiteration neu erstellt
+Aktueller Entwicklungsstand: `0.5.0 – Desktop Sidecar Integration & Hardening`
+Aktueller Pflegezweig: `pflege/0.5.0-status-konsistenz`
 
 ## P0 – Freigabekritisch
 
@@ -13,6 +15,7 @@ Abnahmekriterien:
 - vor jeder Iteration aktuellen `main`-Commit prüfen
 - Arbeitszweig, Head-SHA, PR-Status und Mergefähigkeit prüfen
 - veraltete offene PRs und widersprüchliche Parallelstände identifizieren
+- prüfen, ob der letzte freigegebene Stand tatsächlich nach `main` gemergt wurde
 - CI für den exakten aktuellen Head-SHA prüfen
 - nach jeder Iteration denselben Abgleich erneut durchführen
 - nach Merge neuen `main`-Commit dokumentieren
@@ -41,6 +44,21 @@ Abnahmekriterien:
 - `.sidecar-build/`, `src-tauri/binaries/`, Tauri-Targets und temporäre Dateien ignoriert
 - lokale `.gguf`-/`.bin`-Modelle werden nicht versehentlich versioniert
 - statischer Vertrag prüft zentrale Ignore-Regeln
+- PR #8 ist erfolgreich nach `main` gemergt
+- Merge-Commit: `29a07f918d32ab1cf3be9df299d213121849d3b3`
+- letzter geprüfter PR-Head: `1279b4bde3623ab86d1475975fb6e88c9f875473`
+- Qualitätsprüfung Run #144 für diesen Head: erfolgreich
+- veralteter Parallel-PR #3 wurde als überholt geschlossen
+
+### [in Arbeit] 0.5.0-Metadaten und Projektstatus konsistent nachziehen
+Komponente: Versionierung / Dokumentation / Offline-Cache
+
+Abnahmekriterien:
+- `VERSION.json`, `PROJEKTSTATUS.json`, Tauri-Version und Cargo-Version auf `0.5.0`
+- Sidecar-Status entspricht dem realen gemergten Code
+- Service-Worker-Cache auf `naqya-0.5.0`
+- statische Verträge prüfen die neuen 0.5-Invarianten
+- CI für exakten Pflegezweig-Head vollständig grün
 
 ## P1 – Hohe Priorität
 
@@ -58,6 +76,8 @@ Komponente: Release / Integrität
 
 Abnahmekriterien:
 - Plattform, Upstream-Commit, Dateiname, Dateigröße und SHA-256
+- Plattform, Upstream-Commit, Dateiname und Dateigröße
+- SHA-256
 - Buildnachweis
 - eindeutige Zuordnung zum NAQYA-Release
 
@@ -117,6 +137,23 @@ Hinweis: Die aktuell verfügbare GitHub-Schnittstelle unterstützt das sichere L
 Ergebnis:
 - PR #8 ist nach `main` gemergt
 - Linux-Sidecar-Build, SHA-256-Prüfung, Rust-Format, `cargo check`, statische Verträge und Shell-Syntax waren im Qualitätsgate erfolgreich
+## P3 – Wartbarkeit und Dokumentation
+
+### [offen] CHANGELOG für 0.5.0 konsolidieren
+Komponente: Dokumentation
+
+Abnahmekriterien:
+- Runtimevertrag, Tauri-Sidecar-Integration und Sicherheitsänderungen zusammenführen
+- bekannte Einschränkungen klar benennen
+- tatsächliche Freigabegates dokumentieren
+
+### [offen] Veraltete Release-04-Bezeichnungen prüfen
+Komponente: Wartbarkeit
+
+Abnahmekriterien:
+- feststellen, ob `services/release-04.js` nur historischer Modulname oder fachlich überholt ist
+- keine reine Umbenennung ohne Nutzen
+- bei Änderung alle Offline-Cache-, HTML- und Testreferenzen atomar anpassen
 
 ### [erledigt] Veralteten PR #3 schließen
 Ergebnis:
@@ -128,13 +165,34 @@ Ergebnis:
 - CPU-Releaseprofil mit `GGML_NATIVE=OFF`
 - Linux-/Windows-Zielnamen definiert
 - SHA-256 und keine ungeprüften Laufzeit-Downloads
+- Upstream und Commit fest gepinnt
+- CPU-Releaseprofil mit `GGML_NATIVE=OFF`
+- Linux-/Windows-Zielnamen definiert
+- SHA-256-Erzeugung vorgesehen
+- Laufzeit-Downloads ausgeschlossen
 
 ### [erledigt] Native Runtime-Sicherheit härten
-Ergebnis:
 - generische `main`-PATH-Erkennung entfernt
 - `NAQYA_WHISPER_CLI` kanonisiert
 - STT-Tempdateien in privaten Tauri-App-Cache verschoben
 - kollisionsgeschützte Dateierzeugung und `sync_all()`
+- expliziter `NAQYA_WHISPER_CLI`-Pfad kanonisiert
+- private Tauri-App-Cache-Tempdateien
+- kollisionsgeschützte Dateierzeugung
+- `sync_all()` vor Übergabe an whisper.cpp
+
+### [erledigt] Linux-Tauri-Sidecar integrieren und CI-validieren
+- `tauri-plugin-shell` und `externalBin`
+- reproduzierbarer Linux-x86_64-Sidecar-Build
+- SHA-256-Artefaktprüfung
+- Sidecar vor externem CLI-Fallback
+- Runtimequelle diagnostizierbar
+- PR #8 erfolgreich gemergt
+
+### [erledigt] Überholten Parallel-PR #3 bereinigen
+- Branch war gegenüber `main` 31 Commits voraus und 36 Commits zurück
+- Inhalt inzwischen durch validierte PRs #4 bis #8 ersetzt
+- PR nachvollziehbar als überholt geschlossen
 
 ## Pflegevertrag
 Diese Datei wird bei jeder relevanten funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung geprüft und aktualisiert. Zusätzlich wird vor und nach jeder Iteration der reale Repository-, PR-, Merge- und CI-Stand geprüft.

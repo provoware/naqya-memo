@@ -29,6 +29,12 @@ Mindestens zu prüfen und im Status zu berücksichtigen:
 
 Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dieser Zustand bereinigt. Neue Funktionsarbeit beginnt erst danach.
 
+## Repository-Hygiene
+- Veraltete oder durch neuere Architekturpfade ersetzte PRs nicht offen liegen lassen; nachvollziehbar als überholt schließen.
+- Keine alten Parallelzweige in neue Arbeit hineinmergen, wenn ihre Inhalte bereits durch neuere, validierte Iterationen ersetzt wurden.
+- Dokumentations-, Versions- und Projektstatusangaben dürfen dem realen `main` nicht hinterherlaufen.
+- Aufräumarbeiten getrennt von größeren Funktionsänderungen halten, damit Review und Rückrollback eindeutig bleiben.
+
 ## Pflichtdateien bei Änderungen
 Bei jeder funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung sind mindestens folgende Dateien auf Aktualisierungsbedarf zu prüfen:
 - `AGENTS.md`
@@ -68,8 +74,8 @@ Fehlgeschlagene Gates werden ursachenbezogen korrigiert. Keine fachfremden Ände
 ## Versions- und Freigaberegeln
 - `main` enthält nur validierte Stände.
 - Größere Funktionsschritte über eigenen Zweig und Pull Request entwickeln.
-- PR zunächst als Entwurf führen, solange die Qualitätsprüfung nicht vollständig grün ist.
-- Merge bevorzugt als Squash mit erwarteter Head-SHA absichern.
+- PR zunächst als Entwurf führen, solange die Qualitätsprüfung noch nicht vollständig grün ist.
+- Merge bevorzugt mit erwarteter Head-SHA absichern.
 - Nach Merge den resultierenden `main`-Commit dokumentieren.
 - Version, Projektstatus, Tauri-Version, Offline-Cache und Dokumentation müssen denselben realen Entwicklungsstand beschreiben.
 - Eine Iteration gilt erst als abgeschlossen, wenn Repository-, PR-, CI- und Dokumentationsstand übereinstimmen.
@@ -86,3 +92,18 @@ Ziele:
 - Versions- und Statusmetadaten auf 0.5.0 synchronisieren,
 - statische Verträge gegen erneute Metadaten-Drift absichern,
 - danach Windows-Sidecar, Release-Nachweis und reale Hardwareabnahme fortsetzen.
+Aktueller Entwicklungsstand: `0.5.0 – Desktop Sidecar Integration & Hardening`.
+
+Bereits erreicht:
+- reproduzierbarer whisper.cpp-Runtimevertrag,
+- gebündelter Tauri-Sidecar über `externalBin`,
+- Linux-x86_64-Build und SHA-256-Prüfung im CI,
+- Sidecar vor externem CLI-Fallback,
+- diagnostizierbare Runtimequelle,
+- geschützter Modellpfad und segmentiertes Offline-Live-STT.
+
+Nächster Schwerpunkt:
+- Windows-x86_64-Sidecar reproduzierbar bauen und bundeln,
+- Release-Manifest für konkrete Sidecar-Artefakte,
+- reale Linux-/Windows-Hardware- und Mikrofonabnahme,
+- danach AudioWorklet- und Langzeithärtung.

@@ -24,6 +24,7 @@ assert version['stt_pcm_rate_hz']==16000
 assert version['model_transfer_chunk_bytes']==4194304
 assert version['native_stt_provider']=='whisper.cpp-sidecar'
 assert version['native_stt_fallback']=='whisper-cli'
+assert version['native_stt_fallback']=='whisper.cpp-cli'
 assert status['kernfunktionen']['audio_segment_recovery'] is True
 assert status['kernfunktionen']['audio_normalisierung_web_audio'] is True
 assert status['kernfunktionen']['audio_normalisierung_pcm_hz']==16000
@@ -34,6 +35,8 @@ assert status['kernfunktionen']['sprachmodell_atomare_aktivierung'] is True
 assert status['kernfunktionen']['whisper_cpp_native_runtime_bundled'] is True
 assert status['kernfunktionen']['whisper_cpp_sidecar_preferred'] is True
 assert status['kernfunktionen']['whisper_cpp_runtime_manifest'] is True
+assert status['kernfunktionen']['whisper_cpp_external_cli_fallback'] is True
+assert status['kernfunktionen']['whisper_cpp_runtime_source_diagnostic'] is True
 assert manifest['start_url']=='./'
 assert tauri['bundle']['externalBin']==['binaries/naqya-whisper']
 
@@ -111,3 +114,4 @@ for f in [
     assert not re.search(r'https?://(?!127\.0\.0\.1|localhost)',text), f'Externe Laufzeit-URL in {f}'
 
 print('NAQYA 0.5 static validation + Sidecar-Integration + Repository-Konsolidierung: PASS')
+print('NAQYA 0.5 static validation + Sidecar-Integration + Projektsteuerung: PASS')
