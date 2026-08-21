@@ -1,5 +1,23 @@
 # Änderungsprotokoll
 
+## 0.4.0 – AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT
+
+- lokale Web-Audio-Normalisierung auf 16 kHz, Mono, PCM16/WAV
+- native Live-STT arbeitet mit 4-Sekunden-PCM-Segmenten
+- Originalaufnahme und 3-Sekunden-Recovery bleiben parallel aktiv
+- segmentierte whisper.cpp-Aufrufe werden über eine lokale Warteschlange serialisiert
+- Audiozeit, Transkriptionszeit, Segmentzahl und Echtzeitfaktor werden pro Sitzung erfasst
+- importierte `.bin`/`.gguf`-Modelle werden speicherschonend in 4-MiB-Blöcken in den nativen NAQYA-Modellpfad übertragen
+- native SHA-256-Prüfung vor Aktivierung eines Sprachmodells
+- atomare Modellaktivierung nach erfolgreicher Integritätsprüfung
+- abgebrochene Modelltransfers werden bereinigt
+- native Transkription akzeptiert nur Modelle innerhalb des geschützten NAQYA-Modellpfads
+- WAV-Header wird vor whisper.cpp-Aufruf validiert
+- Fähigkeiten-Diagnose fragt jetzt reale Tauri-/whisper.cpp-Fähigkeiten ab
+- Offline-Service-Worker auf alle 0.4-Laufzeitmodule erweitert
+- GitHub Actions um JavaScript-Prüfung aller neuen Module sowie Rust/Tauri-Kompilierungsprüfung erweitert
+- bekannte Grenze: whisper.cpp wird noch nicht als reproduzierbares Sidecar mitgeliefert
+
 ## 0.3.0 – NATIVE WHISPER RUNTIME & DESKTOP BRIDGE
 
 - Tauri-2-Desktop-Grundstruktur für Linux/Windows ergänzt
