@@ -1,12 +1,13 @@
 {
   "kanonischer_name": "PROVOWARE – NAQYA Memo Tool 2026",
   "repo": "provoware/naqya-memo",
-  "version": "0.2.0",
-  "entwicklungsphase": "AUDIO & OFFLINE-STT CORE",
+  "version": "0.3.0",
+  "entwicklungsphase": "NATIVE WHISPER RUNTIME & DESKTOP BRIDGE",
   "status": "ENTWICKLUNG",
-  "referenzplattform": "PWA",
+  "referenzplattform": "PWA + Tauri Desktop",
   "zielplattformen": ["Linux", "Windows", "Android", "iPhone/iPad", "PWA"],
   "hauptdatei": "index.html",
+  "native_hauptmodul": "src-tauri/src/lib.rs",
   "kernfunktionen": {
     "indexeddb": true,
     "pwa_offline": true,
@@ -16,9 +17,19 @@
     "live_diktat_on_device_browser": "feature-detect",
     "stt_provider_contract": true,
     "whisper_cpp_native_bridge_contract": true,
-    "whisper_cpp_native_runtime": false,
+    "whisper_cpp_native_runtime": true,
+    "whisper_rs_version": "0.16.0",
+    "native_pcm_sample_rate_hz": 16000,
+    "native_pcm_live_capture": true,
+    "native_transkript_segmentierung": true,
+    "native_realtime_factor_messung": true,
+    "native_context_cache": true,
     "sprachmodell_manager": true,
+    "native_modellimport_chunked": true,
+    "native_modellimport_chunk_bytes": 1048576,
+    "native_modell_sha256": true,
     "faehigkeiten_diagnose": true,
+    "tauri_desktop": true,
     "dokumente": true,
     "projekte": true,
     "tags": true,
@@ -28,9 +39,11 @@
     "backup_sha256": true
   },
   "bekannte_grenzen": [
-    "Die PWA enthält noch keine native whisper.cpp-Laufzeit; der Providervertrag und Modellmanager sind vorbereitet.",
-    "Das Vollbackup nutzt derzeit ein selbstenthaltendes JSON/Base64-Paket und ist bei sehr großen Datenbeständen speicherintensiv.",
-    "Reale Plattformabnahmen für iPhone, Android, Linux und Windows stehen noch aus."
+    "Die native Desktop-Runtime ist implementiert, reale Linux- und Windows-Paketabnahmen stehen aber noch aus.",
+    "Für natives Live-Diktat muss mindestens ein kompatibles lokales Whisper-Modell installiert oder im Release gebündelt sein.",
+    "Das Live-Diktat verarbeitet derzeit etwa 3-Sekunden-PCM-Blöcke; adaptive Fenster und VAD werden in der Härtung weiter optimiert.",
+    "Das Vollbackup nutzt weiterhin ein selbstenthaltendes JSON/Base64-Paket und ist bei sehr großen Datenbeständen speicherintensiv.",
+    "Native iPhone-/Android-Brücken sind noch nicht Teil von 0.3.0."
   ],
-  "naechster_meilenstein": "0.3.0 – NATIVE WHISPER RUNTIME & DESKTOP BRIDGE"
+  "naechster_meilenstein": "0.3.1 – DESKTOP HARDENING & RELEASE PACKAGING"
 }
