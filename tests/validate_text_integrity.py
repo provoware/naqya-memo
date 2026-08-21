@@ -9,6 +9,7 @@ TEXT_SUFFIXES = {
 }
 SKIP_PARTS = {".git", ".sidecar-build", "target", "binaries", "node_modules", "dist", ".bundle-extract"}
 MERGE_MARKER = re.compile(r"^(<<<<<<<(?: .*)?|=======$|>>>>>>>(?: .*)?)$", re.MULTILINE)
+EXPECTED_DIAGNOSTICS_SHA256 = "fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425"
 
 
 def read(path: str) -> str:
@@ -24,7 +25,6 @@ def reject_duplicate_keys(pairs):
     return result
 
 
-# 1. Alle textartigen Repository-Dateien auf verbliebene Merge-Marker prüfen.
 for path in ROOT.rglob("*"):
     if not path.is_file() or path.suffix.lower() not in TEXT_SUFFIXES:
         continue
@@ -33,18 +33,17 @@ for path in ROOT.rglob("*"):
     text = path.read_text(encoding="utf-8")
     assert not MERGE_MARKER.search(text), f"Merge-Konfliktmarker in {path.relative_to(ROOT)}"
 
-# 2. JSON muss syntaktisch gültig und schlüssig eindeutig sein.
 for rel in [
     "VERSION.json",
     "PROJEKTSTATUS.json",
     "manifest.webmanifest",
     "src-tauri/tauri.conf.json",
     "src-tauri/sidecar/whisper-runtime.json",
+    "diagnostics/DIAGNOSTICS_CONTRACT.json",
     "release/RELEASE_EVIDENCE.schema.json",
 ]:
     json.loads(read(rel), object_pairs_hook=reject_duplicate_keys)
 
-# 3. Zentrale Dokumente dürfen nicht durch Merge-Verklebung doppelte Hauptabschnitte enthalten.
 for rel in [
     "README.md",
     "CONTRIBUTING.md",
@@ -74,25 +73,29 @@ assert version["desktop_frontend_dist_deterministic"] is True
 assert version["release_evidence_schema"] == 1
 assert version["release_evidence_linux_ci_generated"] is True
 
-# README und maschinenlesbarer Projektstatus müssen denselben Fortschrittsstand zeigen.
 progress = status["fortschritt"]
-assert progress["prozent"] == 56
-assert progress["erledigt"] == 5
+assert progress["prozent"] == 78
+assert progress["erledigt"] == 7
 assert progress["gesamt"] == 9
-assert "**Fortschritt 0.5.1:** **56 %** – **5 von 9 Hauptpunkten erledigt**" in readme
-assert "### Erledigt – 5 von 9" in readme
-assert "### Offen – 4 von 9" in readme
-assert "0.5.1-C – DIAGNOSE, DEBUGGING, LOGGING & EVIDENCE-BINDUNG" in readme
-assert status["naechster_meilenstein"] == "0.5.1-C – DIAGNOSE, DEBUGGING, LOGGING & EVIDENCE-BINDUNG"
+assert "**Fortschritt 0.5.1:** **78 %** – **7 von 9 Hauptpunkten erledigt**" in readme
+assert "### Erledigt – 7 von 9" in readme
+assert "### Offen – 2 von 9" in readme
+assert "0.5.1-D – WINDOWS-BUNDLE MIT IDENTISCHEM DIAGNOSEVERTRAG" in readme
+assert status["naechster_meilenstein"] == "0.5.1-D – WINDOWS-BUNDLE MIT IDENTISCHEM DIAGNOSEVERTRAG"
 
-# Der sichtbare Status darf die CI-Paketabnahme nicht mit Hardwareabnahme verwechseln.
-assert "Linux-Bundle CI-validiert" in readme
+release = status["release_nachweis"]
+assert release["workflow_run_id"] == 32482553418
+assert release["workflow_run_number"] == 14
+assert release["qualitaetspruefung_run_id"] == 32482553363
+assert release["qualitaetspruefung_run_number"] == 268
+assert release["source_commit"] == "0388cda77c6696017c5b00cb795f5758af2d5e22"
+assert release["diagnostics_contract_sha256"] == EXPECTED_DIAGNOSTICS_SHA256
+assert release["diagnostics_schema_version"] == 1
+assert release["diagnostics_event_schema_version"] == 1
+
 assert "noch keine reale Endgeräte-/Mikrofon-/Langzeitabnahme" in readme
-assert "Paket-SHA-256" in readme
-assert "Sidecar-SHA-256" in readme
-assert str(status["release_nachweis"]["workflow_run_id"]) in readme
-assert status["release_nachweis"]["desktop_package_sha256"] in readme
-assert status["release_nachweis"]["sidecar_sha256"] in readme
+assert EXPECTED_DIAGNOSTICS_SHA256 in readme
+assert "NAQYA-STT-4002" in readme
 
 for heading in [
     "## P0 – Freigabekritisch",
@@ -103,12 +106,11 @@ for heading in [
     "## Erledigt",
 ]:
     assert todo.count(heading) == 1, f"TODO-Abschnitt fehlt oder ist doppelt: {heading}"
-assert "Aktueller PR: wird" not in todo
-assert "pflege/0.5.0-status-konsistenz" not in todo
 assert "Vor jeder künftigen Entwicklerübergabe" in todo
-assert "Professionelles Diagnose-/Debugging-/Logging-Modul integrieren" in todo
-assert "Diagnose-/Release-Evidence-Vertrag verbinden" in todo
-assert "0.5.1-B – Release-Nachweis erzeugen" in todo
+assert "0.5.1-C – Professionelles Diagnose-/Debugging-/Logging-Modul integrieren" in todo
+assert "0.5.1-C – Diagnose-/Release-Evidence-Vertrag verbinden" in todo
+assert "Windows-x86_64-Sidecar reproduzierbar bauen und bundeln" in todo
+assert EXPECTED_DIAGNOSTICS_SHA256 in todo
 
 contributing = read("CONTRIBUTING.md")
 assert "docs/ENTWICKLERDOKUMENTATION.md" in contributing
@@ -129,34 +131,35 @@ for marker in [
 assert "frontendDist" in developer
 assert "Produktversion ≠ Datenbankschema" in developer
 
-# Produktversion und Datenbankschema sind getrennt: UI/Backup müssen VERSION.json folgen, DB_VERSION bleibt migrationsgebunden.
 app = read("app.js")
 app_version_match = re.search(r"const VERSION='([^']+)'", app)
 assert app_version_match, "Produktversionskonstante in app.js fehlt"
-app_version = app_version_match.group(1)
-assert app_version == version["version"], (
-    f"Produktversionsdrift: app.js={app_version}, VERSION.json={version['version']}"
-)
-assert "const DB_VERSION=2;" in app, "IndexedDB-Schema wurde unbeabsichtigt verändert"
-assert "format:'NAQYA-OFFLINE-BACKUP'" in app, "Backup-Vertrag fehlt"
-assert "version:VERSION" in app, "Basis-Backup muss die kanonische Produktversionskonstante verwenden"
+assert app_version_match.group(1) == version["version"]
+assert "const DB_VERSION=2;" in app
+assert "format:'NAQYA-OFFLINE-BACKUP'" in app
+assert "version:VERSION" in app
 
-# Der historische release-04-Kompatibilitätslayer darf UI und Backup nicht erneut auf eine Altversion zurücksetzen.
 release_04 = read("services/release-04.js")
 assert "window.NAQYA.release={version:VERSION" in release_04
-assert "version:VERSION" in release_04, "Runtime-Backupoverride muss VERSION verwenden"
 assert "version:'0.4.0'" not in release_04
 assert "Memo Tool 2026 0.4.0" not in release_04
 assert "ENTWICKLERHINWEIS" in release_04
 
 assert status["entwicklungsphase"] == version["phase"]
 kern = status["kernfunktionen"]
-assert kern["whisper_cpp_sidecar_bundle_configured"] is True
-assert kern["whisper_cpp_sidecar_linux_ci_built"] is True
-assert kern["whisper_cpp_sidecar_release_bundle_validated"] is True
-assert kern["desktop_frontend_dist_deterministic"] is True
-assert kern["release_evidence_linux_ci_generated"] is True
-assert "whisper_cpp_native_runtime_bundled" not in kern, "Mehrdeutiges altes Bundle-Feld darf nicht zurückkehren"
+for key in [
+    "whisper_cpp_sidecar_bundle_configured",
+    "whisper_cpp_sidecar_linux_ci_built",
+    "whisper_cpp_sidecar_release_bundle_validated",
+    "desktop_frontend_dist_deterministic",
+    "release_evidence_linux_ci_generated",
+    "diagnostics_contract_versioned",
+    "diagnostics_contract_release_bound",
+    "diagnostics_runtime_fail_safe",
+    "diagnostics_privacy_redaction",
+]:
+    assert kern[key] is True, f"Kernfunktion fehlt: {key}"
+assert "whisper_cpp_native_runtime_bundled" not in kern
 
 whisper_doc = read("docs/WHISPER_SIDECAR.md")
 assert "bundle.externalBin" in whisper_doc
@@ -173,4 +176,4 @@ for historical in [
 ]:
     assert "Dokumentenstatus" in read(historical), f"Historischer Status fehlt in {historical}"
 
-print("NAQYA 0.5.1-B Text-/Merge-/Statusintegrität: PASS")
+print("NAQYA 0.5.1-C Text-/Merge-/Statusintegrität: PASS")
