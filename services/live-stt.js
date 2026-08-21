@@ -12,8 +12,7 @@ async function materializePreferredModel(){
   const model=state.models.find(m=>String(m.name||'').toLowerCase().includes(wanted))||state.models[0];
   if(model.nativePath&&model.materializedSha256===model.sha256){liveState.modelId=model.id;liveState.modelPath=model.nativePath;return model.nativePath}
   if(!model.blob)throw new Error('Die gespeicherte Modelldatei enthält keine lokalen Binärdaten.');
-  const modelBase64=await blobToBase64(model.blob);
-  const result=await window.NAQYA.nativeBridge.materializeModel({name:model.name,modelBase64,sha256:model.sha256||null});
+  const result=await window.NAQYA.nativeBridge.materializeModel({name:model.name,blob:model.blob,sha256:model.sha256||null});
   const updated={...model,nativePath:result.path,materializedSha256:result.sha256||model.sha256,status:'native-bereit',materializedAt:new Date().toISOString()};
   await put('models',updated);state.models=await all('models');liveState.modelId=model.id;liveState.modelPath=result.path;
   return result.path;
