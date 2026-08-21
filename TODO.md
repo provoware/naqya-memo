@@ -6,6 +6,19 @@ Aktueller PR: `#8`
 
 ## P0 – Freigabekritisch
 
+### [in Arbeit] Repository- und Merge-Stand je Iteration prüfen
+Komponente: Repository / Freigabe / CI
+
+Abnahmekriterien:
+- vor jeder Iteration aktuellen `main`-Commit prüfen
+- aktuellen Arbeitszweig und Head-SHA prüfen
+- zugehörigen PR-Status und Mergefähigkeit prüfen
+- prüfen, ob der letzte freigegebene Stand tatsächlich nach `main` gemergt wurde
+- CI für den exakten aktuellen Head-SHA prüfen
+- nach jeder Iteration denselben Abgleich erneut durchführen
+- nach Merge neuen `main`-Commit dokumentieren
+- bei Abweichungen zuerst Repository-/PR-/CI-Synchronität herstellen
+
 ### [in Arbeit] Linux-Tauri-Sidecar vollständig validieren
 Komponente: Tauri / whisper.cpp / Linux x86_64
 
@@ -22,7 +35,8 @@ Aktueller Stand:
 - realer Linux-Sidecar-Build: erfolgreich
 - SHA-256-Artefaktprüfung: erfolgreich
 - Rust-Formatprüfung: erfolgreich
-- `cargo check`: zuletzt noch laufend
+- `cargo check`: erfolgreich im vorherigen vollständig geprüften Kandidaten
+- nach Dokumentations-/Vertragsänderungen muss CI für den neuen exakten Head erneut vollständig grün sein
 
 ### [offen] PR #8 erst nach vollständigem Qualitätsgate promoten
 Komponente: Freigabe
@@ -32,6 +46,7 @@ Abnahmekriterien:
 - PR aus Entwurfsstatus nehmen
 - Squash-Merge mit erwarteter Head-SHA
 - resultierenden `main`-Commit dokumentieren
+- anschließend Repository- und Merge-Stand erneut prüfen
 
 ## P1 – Hohe Priorität
 
@@ -144,4 +159,4 @@ Ergebnis:
 - `sync_all()` vor Übergabe an whisper.cpp
 
 ## Pflegevertrag
-Diese Datei wird bei jeder relevanten funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung geprüft und aktualisiert. Erledigte Punkte zunächst in `Erledigt` verschieben; neue Risiken oder Folgearbeiten sofort aufnehmen.
+Diese Datei wird bei jeder relevanten funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung geprüft und aktualisiert. Zusätzlich wird vor und nach jeder Iteration der reale Repository-, PR-, Merge- und CI-Stand geprüft. Erledigte Punkte zunächst in `Erledigt` verschieben; neue Risiken oder Folgearbeiten sofort aufnehmen.
