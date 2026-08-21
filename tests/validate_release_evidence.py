@@ -30,14 +30,20 @@ TARGETS = {
 }
 
 
+def canonical_json_bytes(value: object) -> bytes:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
+def sha256_json(value: object) -> str:
+    return hashlib.sha256(canonical_json_bytes(value)).hexdigest()
+
+
 def validate_schema_contract() -> None:
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
     assert schema["$schema"].endswith("2020-12/schema")
     assert schema["title"] == "NAQYA Release Evidence"
-    assert "desktop_package" in schema["required"]
-    assert "whisper" in schema["required"]
-    assert "diagnostics_contract" in schema["required"]
-    assert "validations" in schema["required"]
+    for key in ("desktop_package", "whisper", "diagnostics_contract", "evidence_fingerprint", "validations"):
+        assert key in schema["required"]
 
 
 def main() -> None:
@@ -91,6 +97,25 @@ def main() -> None:
     assert diagnostics["format"] == contract["format"] == "NAQYA-DIAGNOSTICS"
     assert diagnostics["sha256"] == EXPECTED_DIAGNOSTICS_SHA256
 
+    codes_sha = sha256_json(contract["codes"])
+    expected_inputs = {
+        "fingerprint_schema_version": 1,
+        "naqya_version": source["naqya_version"],
+        "source_commit": source["commit"],
+        "whisper_commit": whisper["commit"],
+        "diagnostics_contract_sha256": diagnostics["sha256"],
+        "diagnostics_schema_version": diagnostics["schema_version"],
+        "diagnostics_event_schema_version": diagnostics["event_schema_version"],
+        "diagnostic_codes_sha256": codes_sha,
+    }
+    fingerprint = evidence["evidence_fingerprint"]
+    assert fingerprint["schema_version"] == 1
+    assert fingerprint["algorithm"] == "sha256"
+    assert fingerprint["diagnostic_codes_sha256"] == codes_sha
+    assert fingerprint["inputs"] == expected_inputs
+    assert fingerprint["sha256"] == sha256_json(expected_inputs)
+    assert re.fullmatch(r"[0-9a-f]{64}", fingerprint["sha256"])
+
     validations = evidence["validations"]
     for key in (
         "frontend_manifest_verified",
@@ -99,6 +124,7 @@ def main() -> None:
         "runtime_dependencies_resolved",
         "package_reproducibility_verified",
         "diagnostics_contract_bound",
+        "evidence_fingerprint_verified",
     ):
         assert validations[key] is True, f"Release-Gate nicht erfüllt: {key}"
 
@@ -115,8 +141,8 @@ def main() -> None:
         assert str(evidence["ci"]["run_number"] or "").isdigit()
 
     print(
-        "NAQYA Release-Nachweis inklusive Plattform-, Paket- und Diagnosebindung: "
-        f"PASS ({target['os']}/{target['rust_target']})"
+        "NAQYA Release-Nachweis inklusive Plattform-, Paket-, Diagnose- und Fingerprint-Bindung: "
+        f"PASS ({target['os']}/{target['rust_target']}, {fingerprint['sha256']})"
     )
 
 

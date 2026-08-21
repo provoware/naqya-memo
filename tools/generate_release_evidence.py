@@ -39,6 +39,35 @@ def sha256_file(path: Path) -> str:
     return hasher.hexdigest()
 
 
+def canonical_json_bytes(value: object) -> bytes:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
+def sha256_json(value: object) -> str:
+    return hashlib.sha256(canonical_json_bytes(value)).hexdigest()
+
+
+def evidence_fingerprint(version: dict, commit: str, whisper: dict, diagnostics: dict, contract_sha: str) -> dict:
+    codes_sha = sha256_json(diagnostics["codes"])
+    inputs = {
+        "fingerprint_schema_version": 1,
+        "naqya_version": version["version"],
+        "source_commit": commit,
+        "whisper_commit": whisper["upstream_commit"],
+        "diagnostics_contract_sha256": contract_sha,
+        "diagnostics_schema_version": diagnostics["schema_version"],
+        "diagnostics_event_schema_version": diagnostics["event_schema_version"],
+        "diagnostic_codes_sha256": codes_sha,
+    }
+    return {
+        "schema_version": 1,
+        "algorithm": "sha256",
+        "sha256": sha256_json(inputs),
+        "diagnostic_codes_sha256": codes_sha,
+        "inputs": inputs,
+    }
+
+
 def command_version(*args: str) -> str:
     try:
         result = subprocess.run(args, check=True, capture_output=True, text=True, timeout=30)
@@ -154,6 +183,7 @@ def main() -> None:
     if source_hash != packaged_hash:
         raise SystemExit("FEHLER: Gepackter Sidecar weicht bytegenau vom validierten Build-Sidecar ab.")
 
+    fingerprint = evidence_fingerprint(version, commit, whisper, diagnostics, diagnostics_contract_sha256)
     generated_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     dependency_text = deps.read_text(encoding="utf-8", errors="replace")
     validations = {
@@ -163,6 +193,7 @@ def main() -> None:
         "runtime_dependencies_resolved": True,
         "package_reproducibility_verified": True,
         "diagnostics_contract_bound": True,
+        "evidence_fingerprint_verified": True,
     }
     if args.target_os == "linux":
         validations["package_repack_deterministic"] = True
@@ -228,6 +259,7 @@ def main() -> None:
             "format": diagnostics["format"],
             "sha256": diagnostics_contract_sha256,
         },
+        "evidence_fingerprint": fingerprint,
         "toolchain": toolchain,
         "ci": {
             "provider": "github-actions" if os.environ.get("GITHUB_ACTIONS") == "true" else "lokal",
@@ -254,6 +286,8 @@ def main() -> None:
         f"Sidecar: {packaged_hash} ({sidecar.stat().st_size} Bytes)\n"
         f"Paket: {evidence['desktop_package']['sha256']} ({package.stat().st_size} Bytes)\n"
         f"Diagnosevertrag: {diagnostics_contract_sha256} (Schema {diagnostics['schema_version']}, Ereignisschema {diagnostics['event_schema_version']})\n"
+        f"Evidence-Fingerprint: {fingerprint['sha256']}\n"
+        f"Fehlercode-Katalog: {fingerprint['diagnostic_codes_sha256']}\n"
         f"Reproduzierbarkeit: {reproducibility_profile}\n"
         "Ergebnis: BUNDLE-VALIDIERT\n",
         encoding="utf-8",
