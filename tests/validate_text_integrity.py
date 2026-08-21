@@ -119,7 +119,15 @@ assert app_version == version["version"], (
 )
 assert "const DB_VERSION=2;" in app, "IndexedDB-Schema wurde unbeabsichtigt verändert"
 assert "format:'NAQYA-OFFLINE-BACKUP'" in app, "Backup-Vertrag fehlt"
-assert "version:VERSION" in app, "Backup muss die kanonische Produktversionskonstante verwenden"
+assert "version:VERSION" in app, "Basis-Backup muss die kanonische Produktversionskonstante verwenden"
+
+# Der historische release-04-Kompatibilitätslayer darf UI und Backup nicht erneut auf eine Altversion zurücksetzen.
+release_04 = read("services/release-04.js")
+assert "window.NAQYA.release={version:VERSION" in release_04
+assert "version:VERSION" in release_04, "Runtime-Backupoverride muss VERSION verwenden"
+assert "version:'0.4.0'" not in release_04
+assert "Memo Tool 2026 0.4.0" not in release_04
+assert "ENTWICKLERHINWEIS" in release_04
 
 status = json.loads(read("PROJEKTSTATUS.json"), object_pairs_hook=reject_duplicate_keys)
 assert status["entwicklungsphase"] == version["phase"]
