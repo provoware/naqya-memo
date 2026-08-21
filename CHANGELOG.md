@@ -1,5 +1,18 @@
 # Änderungsprotokoll
 
+## 0.5.1-D – WINDOWS-BUNDLE, PLATTFORM-EVIDENCE & FINGERPRINT
+
+- whisper.cpp `v1.9.2` aus Commit `306c88f4d1286aec1bf96e544632897886af5501` für Windows x86_64/MSVC reproduzierbar gebaut
+- echtes Tauri-NSIS-Bundle erzeugt und den daraus extrahierten `naqya-whisper.exe` gestartet
+- Build- und Paket-Sidecar bytegenau per SHA-256 verglichen
+- Linux- und Windows-Release-Evidence automatisiert auf gemeinsamen Quellstand, whisper.cpp-Provenienz und identischen Diagnosevertrag geprüft
+- plattformübergreifenden Evidence-Fingerprint eingeführt; Paket- und Sidecar-Binärhashes bleiben bewusst plattformspezifisch
+- validierter Evidence-Fingerprint: `018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf`
+- Diagnosevertrag unverändert gebunden: SHA-256 `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
+- Projektstatus auf **89 % / 8 von 9 Hauptpunkten** synchronisiert
+- statischen Vertragsmarker `error_catalog_sha256` auf den tatsächlich verwendeten Namen `diagnostic_codes_sha256` korrigiert
+- nächster Block: 0.5.1-E mit realer Hardware-/Mikrofonabnahme, Langzeitmessungen und anschließendem AudioWorklet-Vergleich
+
 ## 0.5.1-C – DIAGNOSE, LOGGING & EVIDENCE-BINDUNG
 
 - `diagnostics/DIAGNOSTICS_CONTRACT.json` als kanonischen versionierten Diagnosevertrag eingeführt
@@ -14,11 +27,7 @@
 - echten Node-Laufzeittest für Ringpuffer, Deduplizierung, Privacy und Retry-Verhalten ergänzt
 - Diagnosevertrag in Offline-Cache und deterministisches Desktop-`dist/` aufgenommen
 - `RELEASE_EVIDENCE.json` bindet Diagnoseformat, Schema, Ereignisschema und Contract-SHA
-- Linux-Bundle-Nachweis #14 und Qualitätsprüfung #268 für Quellcommit `0388cda77c6696017c5b00cb795f5758af2d5e22` erfolgreich
 - validierter Diagnosevertrag: SHA-256 `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
-- aktuelles Linux-DEB: 4.989.730 Bytes, SHA-256 `491f8d8c16683a9dd93695acfe9ad8b4a03fa3e07cb29a22184f5187491874c8`
-- Projektfortschritt auf 7 von 9 Hauptpunkten beziehungsweise 78 % angehoben
-- für 0.5.1-D festgelegt: Windows muss denselben Diagnosevertrag unverändert wiederverwenden; vorhandene Codes behalten plattformübergreifend dieselbe Bedeutung
 
 ## 0.5.1-B1 – DETERMINISTISCHE DEB-REPRODUZIERBARKEIT
 
@@ -39,7 +48,6 @@
 - enthaltenen `naqya-whisper` aus dem Paketkontext gestartet
 - Laufzeitabhängigkeiten geprüft und Build-/Paket-Sidecar per SHA-256 abgeglichen
 - `RELEASE_EVIDENCE.schema.json`, JSON- und Textnachweis eingeführt
-- Projektfortschritt zunächst auf 5 von 9 beziehungsweise 56 % festgelegt
 
 ## 0.5.1-A – PRODUKTVERSIONS-KONSISTENZ
 
