@@ -5,7 +5,6 @@ on:
     paths:
       - '.github/workflows/bundle-linux.yml'
       - 'VERSION.json'
-      - 'PROJEKTSTATUS.json'
       - 'index.html'
       - 'styles.css'
       - 'styles-02.css'
@@ -17,6 +16,7 @@ on:
       - 'src-tauri/**'
       - 'tools/build_whisper_sidecar.sh'
       - 'tools/stage_desktop_frontend.py'
+      - 'tools/repack_deb_deterministic.sh'
       - 'tools/generate_release_evidence.py'
       - 'tests/validate_dist.py'
       - 'tests/validate_release_evidence.py'
@@ -26,7 +26,6 @@ on:
     paths:
       - '.github/workflows/bundle-linux.yml'
       - 'VERSION.json'
-      - 'PROJEKTSTATUS.json'
       - 'index.html'
       - 'styles.css'
       - 'styles-02.css'
@@ -38,6 +37,7 @@ on:
       - 'src-tauri/**'
       - 'tools/build_whisper_sidecar.sh'
       - 'tools/stage_desktop_frontend.py'
+      - 'tools/repack_deb_deterministic.sh'
       - 'tools/generate_release_evidence.py'
       - 'tests/validate_dist.py'
       - 'tests/validate_release_evidence.py'
@@ -82,14 +82,21 @@ jobs:
       - name: Linux-DEB bauen
         run: cargo tauri build --bundles deb
 
+      - name: DEB-Metadaten deterministisch normalisieren
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          mapfile -t packages < <(find src-tauri/target/release/bundle/deb -maxdepth 1 -type f -name '*.deb' -print)
+          [[ ${#packages[@]} -eq 1 ]] || { echo "FEHLER: Erwartet genau ein Tauri-DEB, gefunden: ${#packages[@]}" >&2; exit 19; }
+          bash tools/repack_deb_deterministic.sh "${packages[0]}" release/NAQYA-0.5.0-linux-x86_64.deb
+
       - name: Paketinhalt und Sidecar im Paketkontext prüfen
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p release .bundle-extract
-          mapfile -t packages < <(find src-tauri/target/release/bundle/deb -maxdepth 1 -type f -name '*.deb' -print)
-          [[ ${#packages[@]} -eq 1 ]] || { echo "FEHLER: Erwartet genau ein DEB-Paket, gefunden: ${#packages[@]}" >&2; exit 20; }
-          cp "${packages[0]}" release/NAQYA-0.5.0-linux-x86_64.deb
+          rm -rf .bundle-extract
+          mkdir -p .bundle-extract
           dpkg-deb -x release/NAQYA-0.5.0-linux-x86_64.deb .bundle-extract
           mapfile -t sidecars < <(find .bundle-extract -type f -name 'naqya-whisper*' -print)
           [[ ${#sidecars[@]} -eq 1 ]] || { echo "FEHLER: Erwartet genau einen gepackten Sidecar, gefunden: ${#sidecars[@]}" >&2; exit 21; }
@@ -117,7 +124,8 @@ jobs:
             --source-sidecar src-tauri/binaries/naqya-whisper-x86_64-unknown-linux-gnu \
             --runtime-deps release/runtime-deps.txt \
             --sidecar-started \
-            --dependencies-resolved
+            --dependencies-resolved \
+            --package-repack-deterministic
           python3 tests/validate_release_evidence.py release/RELEASE_EVIDENCE.json
 
       - name: Nachweisartefakte sichern
