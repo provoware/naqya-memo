@@ -9,6 +9,8 @@ SKIP_PARTS = {'.git','.sidecar-build','target','binaries','node_modules','dist',
 MERGE_MARKER = re.compile(r'^(<<<<<<<(?: .*)?|=======$|>>>>>>>(?: .*)?)$', re.MULTILINE)
 CONTRACT_SHA = 'fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425'
 FINGERPRINT = '018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf'
+CURRENT_STAGE = '0.5.1-D'
+NEXT_STAGE = '0.5.1-E'
 
 
 def read(path):
@@ -38,6 +40,10 @@ version = json.loads(read('VERSION.json'), object_pairs_hook=reject_duplicate_ke
 status = json.loads(read('PROJEKTSTATUS.json'), object_pairs_hook=reject_duplicate_keys)
 contract = json.loads(read('diagnostics/DIAGNOSTICS_CONTRACT.json'), object_pairs_hook=reject_duplicate_keys)
 readme = read('README.md')
+todo = read('TODO.md')
+agents = read('AGENTS.md')
+developer = read('docs/ENTWICKLERDOKUMENTATION.md')
+changelog = read('CHANGELOG.md')
 
 assert version['version'] == status['version'] == '0.5.0'
 assert version['phase'] == status['entwicklungsphase']
@@ -48,6 +54,20 @@ assert '**Fortschritt 0.5.1:** **89 %** – **8 von 9 Hauptpunkten erledigt**' i
 assert '### Erledigt – 8 von 9' in readme
 assert '### Offen – 1 von 9' in readme
 assert status['naechster_meilenstein'] == '0.5.1-E – REALE HARDWAREABNAHME, AUDIOWORKLET & LANGZEITHÄRTUNG'
+
+# Dokumentationsstatus muss denselben D-Stand beschreiben; alte C-/78-%-Kopfstände sind verboten.
+assert 'Aktueller Arbeitsstand: **0.5.1-D – Windows-Bundle & Plattform-Evidence**' in todo
+assert 'Fortschritt 0.5.1: **89 % – 8 von 9 Hauptpunkten erledigt**' in todo
+assert 'Nächster Entwicklungsblock: **0.5.1-E – Reale Hardwareabnahme, AudioWorklet & Langzeithärtung**' in todo
+assert '### [offen] Windows-x86_64-Sidecar reproduzierbar bauen und bundeln' not in todo
+assert '### [erledigt] 0.5.1-D – Windows-Bundle & Plattform-Evidence' in todo
+assert '**0.5.1-D – Windows-Bundle & Plattform-Evidence, 89 % / 8 von 9 Hauptpunkten**' in agents
+assert '**0.5.1-E – Reale Hardwareabnahme, AudioWorklet & Langzeithärtung**' in agents
+assert 'Entwicklungsstand **0.5.1-D**, Fortschritt **89 % / 8 von 9**' in developer
+assert '**0.5.1-E – Reale Hardwareabnahme, AudioWorklet & Langzeithärtung**' in developer
+assert '## 0.5.1-D – WINDOWS-BUNDLE, PLATTFORM-EVIDENCE & FINGERPRINT' in changelog
+for document in (readme, todo, agents, developer, changelog):
+    assert FINGERPRINT in document, 'Evidence-Fingerprint fehlt in aktueller D-Dokumentation'
 
 release = status['release_nachweis']
 for key in ('linux_bundle_validiert','windows_bundle_validiert','diagnostics_evidence_validiert','plattform_evidence_validiert','evidence_fingerprint_validiert'):
@@ -71,4 +91,4 @@ release_04 = read('services/release-04.js')
 assert 'window.NAQYA.release={version:VERSION' in release_04
 assert "version:'0.4.0'" not in release_04
 
-print('NAQYA 0.5.1-D Text-/Merge-/Statusintegrität: PASS')
+print('NAQYA 0.5.1-D Text-/Merge-/Dokumentations-/Statusintegrität: PASS')
