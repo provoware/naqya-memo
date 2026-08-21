@@ -1,148 +1,114 @@
 # AGENTS.md – NAQYA Entwicklungsvertrag
 
 ## Zweck
-Diese Datei ist die verbindliche Arbeitsanweisung für alle künftigen Entwicklungsänderungen an NAQYA. Sie wird bei jeder relevanten Änderung mitgeprüft und bei Bedarf aktualisiert.
+Diese Datei ist die verbindliche Arbeitsanweisung für alle künftigen Änderungen an NAQYA. Sie wird bei jeder relevanten technischen, sicherheits-, Build-, CI-, Release- oder Architekturänderung mitgeprüft.
 
 ## Grundregeln
-- Nutzerseitige Benennungen, Statusangaben, Berichte und Dokumentation grundsätzlich auf Deutsch halten.
 - Änderungen klein, nachvollziehbar und rückrollbar umsetzen.
-- Kein Merge nach `main`, solange der exakte PR-Head nicht vollständig durch das Qualitätsgate gelaufen ist.
-- Bei sicherheits-, Runtime-, Build- oder Releaseänderungen zuerst bestehende Verträge lesen und danach gezielt härten.
-- Keine stillen Fallbacks. Fallbacks müssen diagnostizierbar, dokumentiert und testbar sein.
-- Keine ungeprüften Laufzeit-Downloads für kritische Binärartefakte oder Sprachmodelle.
-- Reproduzierbarkeit, SHA-256-Nachweis und Plattformbindung haben Vorrang vor Komfort-Abkürzungen.
-- Build-, Ziel-, Cache-, Modell- und temporäre Laufzeitartefakte gehören nicht ins Repository und sind über `.gitignore` abzusichern.
+- Kein Merge nach `main`, solange der exakte PR-Head nicht vollständig grün validiert ist.
+- Stabilität, Wartbarkeit, Sicherheit, Reproduzierbarkeit und nachvollziehbare Evidence haben Vorrang vor Funktionsmenge.
+- Keine stillen Fallbacks, ungeprüften Runtime-Downloads oder ungebundenen kritischen Artefakte.
+- Build-, Cache-, Modell- und temporäre Artefakte gehören nicht ins Repository.
 
 ## Repository- und Merge-Pflicht je Iteration
-Vor Beginn **und** nach Abschluss jeder Entwicklungsiteration wird der reale GitHub-Stand geprüft. Annahmen aus vorherigen Chatnachrichten ersetzen diese Prüfung nicht.
-
-Mindestens zu prüfen:
+Vor Beginn und nach Abschluss jeder Iteration werden real geprüft:
 - aktueller `main`-Commit
-- aktueller Arbeitszweig und Head-SHA
-- zugehöriger Pull Request: offen/geschlossen, Entwurf/Review, mergefähig/nicht mergefähig
-- ob der letzte freigegebene Stand tatsächlich nach `main` gemergt wurde
-- ob der Arbeitszweig auf dem aktuellen `main` basiert oder hinter `main` zurückliegt
-- CI-/Qualitätsgate für den **exakten aktuellen Head-SHA**
-- offene Review-Threads oder blockierende Prüfungen
-- veraltete offene PRs oder widersprüchliche Parallelstände
-- nach einem Merge: resultierenden `main`-Commit erneut prüfen und dokumentieren
+- Arbeitszweig und Head-SHA
+- zugehöriger Pull Request einschließlich Draft-/Mergezustand
+- CI für den exakten Head-SHA
+- offene Review-Threads
+- veraltete Parallel-PRs oder widersprüchliche Stände
+- nach Merge der resultierende `main`
 
-Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dieser Zustand bereinigt. Neue Funktionsarbeit beginnt erst danach.
+Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst diese Drift beseitigt.
 
 ## Merge-Konflikt- und Textintegritätsregeln
-- Konflikte niemals durch bloßes Aneinanderhängen beider Varianten auflösen.
-- Für jede widersprüchliche Aussage wird genau eine kanonische Fassung gewählt.
-- Doppelte JSON-Schlüssel sind verboten, auch wenn Standardparser sie akzeptieren.
-- README-Abschnitte, TODO-Blöcke und Statusfelder dürfen nicht mehrfach mit konkurrierendem Inhalt vorkommen.
-- Merge-Konfliktmarker wie `<<<<<<<`, `=======` und `>>>>>>>` dürfen in produktiven Text-/Quell-Dateien nicht verbleiben.
-- Nach jedem Merge muss der **resultierende `main`-Stand** erneut geprüft werden; ein grüner PR-Head allein reicht bei manueller Konfliktauflösung nicht als Nachweis.
-- `README.md` ist die kanonische menschenlesbare Gesamtübersicht und muss den realen Code-, CI- und Freigabestand korrekt wiedergeben.
-
-## Repository-Hygiene
-- Veraltete oder durch neuere Architekturpfade ersetzte PRs nicht offen liegen lassen; nachvollziehbar als überholt schließen.
-- Keine alten Parallelzweige in neue Arbeit hineinmergen, wenn ihre Inhalte bereits durch neuere, validierte Iterationen ersetzt wurden.
-- Dokumentations-, Versions- und Projektstatusangaben dürfen dem realen `main` nicht hinterherlaufen.
-- Aufräumarbeiten getrennt von größeren Funktionsänderungen halten, damit Review und Rückrollback eindeutig bleiben.
+- Konflikte niemals durch blindes Aneinanderhängen beider Varianten lösen.
+- Doppelte JSON-Schlüssel und Merge-Marker sind verboten.
+- README, TODO und Projektstatus dürfen keine konkurrierenden Stände enthalten.
+- Nach Merge muss der resultierende `main` erneut geprüft werden.
 
 ## Code- und Entwicklerdokumentationsregeln
-- `CONTRIBUTING.md` ist der kurze GitHub-Einstieg; längere technische Erklärungen werden dort nicht dupliziert.
-- `docs/ENTWICKLERDOKUMENTATION.md` ist die kanonische technische Übergabe für fremde Entwickler und muss Architekturkarte, Vertrauensgrenzen, lokale Prüfungen und den nächsten konkreten Arbeitsblock enthalten.
-- Codekommentare bleiben sparsam. Kommentiert wird vor allem **warum** eine Sicherheitsgrenze, Reihenfolge, Migration oder Supply-Chain-Festlegung existiert; offensichtlicher Code wird nicht nacherzählt.
-- Für schwer erkennbare Invarianten wird bevorzugt der Marker `ENTWICKLERHINWEIS` direkt an der betroffenen Stelle verwendet.
-- Lange Begründungen gehören in die Entwickler- oder Fachdokumentation und werden nicht mehrfach in Quellcode, README und AGENTS kopiert.
-- Bei neuen kritischen Modulen oder geänderten Architektur-/Build-/Releasepfaden werden Repository-Landkarte und Änderungsmatrix in der Entwicklerdokumentation geprüft.
-- Produktversion und Datenbankschema sind getrennte Verträge. `DB_VERSION` wird ausschließlich bei IndexedDB-Migrationen verändert; eine Produktversion darf nicht automatisch die Datenbankversion erhöhen.
-- Veraltete Versionskonstanten in Laufzeitcode, Backup-Metadaten oder UI gelten als Dokumentations-/Statusdrift und müssen behoben oder explizit im TODO geführt werden.
+- `CONTRIBUTING.md` ist der kurze Einstieg.
+- `docs/ENTWICKLERDOKUMENTATION.md` ist die kanonische technische Übergabe.
+- Codekommentare erklären nur schwer erkennbare Gründe und Invarianten; bevorzugter Marker: `ENTWICKLERHINWEIS`.
+- Produktversion und `DB_VERSION` bleiben getrennte Verträge.
+- README, TODO, CHANGELOG, `PROJEKTSTATUS.json`, Entwicklerdokumentation und relevante Tests werden bei jeder Iteration auf Aktualisierungsbedarf geprüft.
 
 ## Diagnose-, Logging- und Evidence-Regeln
-- `diagnostics/DIAGNOSTICS_CONTRACT.json` ist der kanonische Maschinenvertrag für Ereignisschema, Fehlercodes, Privacy-Regeln, Deduplizierung und sichere Aktionen.
-- Fehlercodes werden **niemals umgedeutet oder wiederverwendet**. Eine neue Bedeutung erhält einen neuen Code.
-- Runtime-Diagnosen dürfen standardmäßig keine Audioinhalte, Transkripte, Dokument-/Notiztexte, Secrets, Tokens oder vollständige Benutzerpfade speichern.
-- Der Puffer speichert nur bereits bereinigte Ereignisse und ist hart begrenzt; unbegrenztes Logging ist verboten.
-- Wiederholungen dürfen nur über explizit freigegebene Safe Actions erfolgen; `retry-once` maximal einmal pro Ereignis. Keine automatischen Retry-Endlosschleifen.
-- Diagnosefehler dürfen keine Produktfunktion zum Absturz bringen; der Loggingpfad arbeitet fail-safe.
-- `RELEASE_EVIDENCE.json` bindet den exakten Diagnosevertrag über dessen SHA-256. Runtime-Diagnoseexporte müssen denselben Contract-SHA mitführen, damit Release → Runtime-Ereignis nachvollziehbar bleibt.
-- Bei Änderungen an Diagnosecodes, Privacy-Regeln, Safe Actions oder Ereignisschema müssen mindestens `services/diagnostics.js`, `diagnostics/DIAGNOSTICS_CONTRACT.json`, `tests/validate_diagnostics.py`, `tests/diagnostics_runtime.test.js` und `docs/DIAGNOSE_LOGGING.md` gemeinsam geprüft werden.
+- `diagnostics/DIAGNOSTICS_CONTRACT.json` ist der kanonische Maschinenvertrag.
+- Fehlercodes werden niemals umgedeutet oder wiederverwendet; neue Bedeutung benötigt einen neuen Code.
+- Runtime-Diagnosen speichern standardmäßig keine Audio-, Transkript-, Dokument-/Notiz-, Secret-, Token- oder vollständigen Benutzerpfaddaten.
+- Der Ringpuffer enthält höchstens 200 bereits bereinigte Ereignisse.
+- Identische Wiederholungen werden im definierten Zeitfenster dedupliziert und über `repeat_count` gezählt.
+- `retry-once` ist maximal einmal pro Ereignis zulässig; keine automatische Retry-Endlosschleife.
+- Diagnosefehler dürfen Produktfunktionen nicht zum Absturz bringen.
+- `RELEASE_EVIDENCE.json` bindet den exakten Diagnosevertrag über SHA-256.
 
-## Pflichtdateien bei Änderungen
-Bei jeder funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung sind mindestens folgende Dateien auf Aktualisierungsbedarf zu prüfen:
-- `AGENTS.md`
-- `TODO.md`
-- `README.md`
-- `CONTRIBUTING.md`
-- `docs/ENTWICKLERDOKUMENTATION.md`
-- `CHANGELOG.md`
-- `PROJEKTSTATUS.json`
-- `VERSION.json`
-- `LAIENANLEITUNG.md`, wenn sich Bedienung, Installation oder Voraussetzungen ändern
-- relevante Dateien unter `docs/`
-- relevante Tests unter `tests/`
-- `.github/workflows/validate.yml`, falls sich Prüf- oder Buildverträge ändern
-
-Wenn keine inhaltliche Änderung nötig ist, bleibt die Datei unverändert; die Prüfung selbst ist trotzdem Pflicht.
-
-## TODO-Vertrag
-`TODO.md` ist die operative Restarbeitenliste. Einträge enthalten nach Möglichkeit Priorität, Status, Komponente und klare Abnahmekriterien. Erledigte Punkte werden zunächst im Abschnitt `Erledigt` dokumentiert. Die Entwickler-Übergabecheckliste muss bei einer Übergabe oder einem größeren Meilenstein sichtbar abgearbeitet werden.
+### Plattformübergreifende Diagnoseinvariante
+Für 0.5.1-C/D gilt verbindlich:
+- Diagnose-Contract-SHA-256: `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
+- Schema-Version: `1`
+- Ereignisschema-Version: `1`
+- Format: `NAQYA-DIAGNOSTICS`
+- Linux und Windows verwenden bytegenau denselben `diagnostics/DIAGNOSTICS_CONTRACT.json`.
+- Plattformports dürfen Adapter, Paketierung und Runtimeintegration erweitern, aber den Diagnosevertrag nicht still verändern.
+- `NAQYA-STT-4002` bedeutet auf allen Plattformen unverändert „Live-STT-Segment konnte nicht transkribiert werden“.
+- Eine legitime spätere Vertragsänderung benötigt einen eigenen expliziten Diagnosevertrags-Meilenstein, neue Evidence und bewusst aktualisierte Regressionstests; sie darf nicht als Nebenwirkung eines Plattformports erfolgen.
+- `tests/validate_platform_diagnostics.py` ist die harte CI-Sperre gegen stille Contract-Drift.
 
 ## Qualitätsgate
-Vor Freigabe oder Merge sind je nach Änderungsumfang mindestens zu prüfen:
-1. JSON-Strukturprüfung **mit Duplicate-Key-Erkennung**
-2. Textintegrität und Merge-Konfliktmarker
-3. JavaScript-Syntaxprüfung
-4. Diagnose-Laufzeitregression und Diagnosevertrag, wenn Diagnose/Runtime betroffen sind
-5. Rust-Formatprüfung
-6. `cargo check`
-7. statische Projektverträge
-8. Shell-Syntaxprüfung
-9. Sidecar-Build und Integritätsprüfung, wenn native Runtime betroffen ist
-10. vollständiger Desktop-Bundle-Test, sobald Bundle-/Releasefähigkeit Bestandteil des Ziels ist
-11. reale Plattform-/Hardwareabnahme, sobald sie Bestandteil des Freigabeziels ist
+Vor Merge sind je nach Änderungsumfang mindestens zu prüfen:
+1. JSON-Struktur und Duplicate Keys
+2. Text-/Merge-Integrität
+3. JavaScript-Syntax
+4. Diagnose-Laufzeitregression
+5. `tests/validate_platform_diagnostics.py`
+6. deterministisches Desktop-Staging
+7. Rust-Formatierung und `cargo check`
+8. statische Projektverträge
+9. Sidecar-Build und Integrität
+10. vollständiger Bundle-Test, sobald Bundlefähigkeit Ziel ist
+11. reale Hardwareabnahme nur dann als erledigt markieren, wenn sie tatsächlich erfolgt ist
 
-Fehlgeschlagene Gates werden ursachenbezogen korrigiert. Keine fachfremden Änderungen in denselben Fix mischen.
+Fehlgeschlagene Gates werden ursachenbezogen korrigiert; fachfremde Umbauten werden nicht in denselben Fix gemischt.
 
 ## Sidecar- und Runtime-Regeln
-- `whisper.cpp` wird nur aus dem festgelegten Upstream und Commit gebaut.
-- Tauri ist über `externalBin` für den Sidecar konfiguriert.
-- Der Sidecar ist gegenüber PATH-basierten Fallbacks zu bevorzugen.
-- Fallbacks dürfen den Sidecar nicht still überstimmen.
-- Die tatsächlich verwendete Runtimequelle muss diagnostizierbar sein.
-- CI-Build eines Sidecars darf nicht mit einer vollständigen Endanwender-Bundle-Abnahme verwechselt werden.
-- Release-Artefakte benötigen SHA-256-Nachweis und Zuordnung zur Buildumgebung.
-- Linux und Windows werden als getrennte Abnahmeziele behandelt.
+- whisper.cpp bleibt auf Upstream `v1.9.2`, Commit `306c88f4d1286aec1bf96e544632897886af5501` gepinnt.
+- Tauri bindet den Sidecar über `externalBin`.
+- Gebündelter Sidecar hat Vorrang vor kontrolliertem externem Fallback.
+- Ein gestarteter, aber fehlerhafter Sidecar darf nicht still durch PATH-Fallback ersetzt werden.
+- Die tatsächlich verwendete Runtimequelle ist diagnostizierbar.
+- Linux und Windows sind getrennte Bundle-/Hardware-Abnahmeziele, verwenden aber denselben Diagnosevertrag.
 
 ## Versions- und Freigaberegeln
 - `main` enthält nur validierte Stände.
-- Größere Funktionsschritte über eigenen Zweig und Pull Request entwickeln.
-- PR zunächst als Entwurf führen, solange die Qualitätsprüfung noch nicht vollständig grün ist.
-- Merge bevorzugt als Squash und mit erwarteter Head-SHA absichern, sofern kein technischer Grund dagegen spricht.
-- Bei manuell aufgelösten Mergekonflikten muss der resultierende Merge-Commit erneut vollständig validiert werden.
-- Nach Merge den resultierenden `main`-Commit dokumentieren.
-- Version, Projektstatus, Tauri-Version, Offline-Cache und Dokumentation müssen denselben realen Entwicklungsstand beschreiben.
-- Eine Iteration gilt erst als abgeschlossen, wenn Repository-, PR-, CI- und Dokumentationsstand übereinstimmen.
-
-## Dokumentationspflicht
-`TODO.md`, `PROJEKTSTATUS.json`, README, CHANGELOG und PR-Beschreibung dürfen keinen bereits erledigten oder noch nicht umgesetzten Stand behaupten. Historische Entwicklungsdokumente müssen klar als historisch gekennzeichnet sein, wenn darin Aussagen enthalten sind, die heute überholt sind.
+- Größere Schritte laufen über einen eigenen Zweig und Pull Request.
+- PR bleibt Draft, solange die relevante Prüfung nicht vollständig grün ist.
+- Merge bevorzugt als Squash mit erwarteter Head-SHA.
+- Eine Iteration gilt erst als abgeschlossen, wenn Repository-, CI-, PR- und Dokumentationsstand übereinstimmen.
 
 ## Aktueller validierter Stand
-**0.5.1-B1 – Linux-Bundle, Release-Nachweis & deterministische DEB-Reproduzierbarkeit**
+**0.5.1-C – Diagnose, Logging & Evidence-Bindung**
 
-Bereits umgesetzt:
-- deterministisches Desktop-Frontend-Staging über `dist/`
-- reales Linux-DEB mit gebündeltem, startbarem whisper.cpp-Sidecar
-- SHA-256-, Laufzeitabhängigkeits- und Paketkontextprüfung
-- maschinenlesbarer und menschenlesbarer Release-Nachweis
-- deterministisches DEB-Repacking mit festem `SOURCE_DATE_EPOCH`
-- reproduzierbarer whisper.cpp-Runtimevertrag und geschützter Modellpfad
-- Repository-, Textintegritäts- und Entwicklerübergabeverträge
+Validiert auf Head `0388cda77c6696017c5b00cb795f5758af2d5e22`:
+- Qualitätsprüfung #268 erfolgreich
+- Linux-Bundle-Nachweis #14 erfolgreich
+- fail-safe Diagnosemodul
+- stabiler Fehlercode- und Ereignisvertrag
+- Privacy-Redaction
+- begrenzter Ringpuffer und Deduplizierung
+- JSON-/TXT-Export und Safe Actions
+- Release-Evidence-Bindung an Contract-SHA `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
 
 ## Nächster Entwicklungsblock
-**0.5.1-C – Diagnose, Debugging, Logging & Evidence-Bindung**
+**0.5.1-D – Windows-Bundle mit identischem Diagnosevertrag**
 
 Reihenfolge:
-1. stabilen Diagnose-/Fehlercodevertrag und Privacy-Regeln festlegen
-2. begrenztes, deduplizierendes Offline-Logging mit menschen- und maschinenlesbarem Export integrieren
-3. laienverständlichen Auswahldialog mit ausschließlich sicheren Aktionen ergänzen
-4. Native-Bridge- und Live-STT-Fehlerpfade instrumentieren
-5. Diagnosevertrag per SHA-256 an `RELEASE_EVIDENCE.json` binden
-6. Laufzeit- und statische Regressionstests vollständig grün abschließen
-7. erst danach README-/TODO-Fortschritt von 56 % auf 78 % anheben
+1. Windows-x86_64-Sidecar aus demselben gepinnten Upstream bauen
+2. Tauri-konformen `.exe`-Sidecar bundeln
+3. Paket/Sidecar per SHA-256 nachweisen
+4. Sidecar aus dem Paketkontext starten
+5. Windows Release Evidence erzeugen
+6. denselben Diagnose-Contract-SHA und dasselbe Ereignisschema nachweisen
+7. erst danach Hardware-/Mikrofonabnahme fortsetzen
