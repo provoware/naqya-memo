@@ -10,7 +10,7 @@ NAQYA verarbeitet Sprache lokal und ohne Cloudpflicht. Der Quellstand integriert
 
 Wichtig: Ein vollständiges Endanwender-Desktoppaket mit eingebettetem Sidecar ist **noch nicht als Release end-to-end abgenommen**. Aktuell validiert CI den Sidecar-Build, seine Integrität sowie Rust/Tauri per `cargo check`. Die vollständige Bundle-Abnahme ist der nächste Freigabeschritt.
 
-Beim Entwickleraudit wurde außerdem eine klar abgegrenzte Restinkonsistenz gefunden: `app.js` verwendet intern noch die Produktversionskonstante `0.2.0`, obwohl der kanonische Projektstand 0.5.0 ist. Diese Konstante beeinflusst UI- und Backup-Metadaten und ist als P1 in `TODO.md` aufgenommen. `DB_VERSION=2` ist davon unabhängig und korrekt das IndexedDB-Schema.
+Die PWA-Produktversionskonstante ist seit Entwicklungsstufe **0.5.1-A** mit `VERSION.json` synchronisiert. UI und Backup-Metadaten verwenden damit 0.5.0; `DB_VERSION=2` bleibt davon unabhängig das korrekte IndexedDB-Schema. Ein automatischer Konsistenztest verhindert erneute Drift.
 
 ## Schnellstart PWA
 
@@ -62,6 +62,7 @@ Die Entwicklerdokumentation beschreibt ausdrücklich, welche scheinbar „verein
 - professioneller Entwickler-Einstieg über `CONTRIBUTING.md` und `docs/ENTWICKLERDOKUMENTATION.md`
 - wenige gezielte `ENTWICKLERHINWEIS`-Kommentare sichern schwer erkennbare Invarianten direkt im Code
 - Entwickler-Übergabecheckliste macht offene und erledigte Übergabepunkte direkt abhakbar
+- PWA-Produktversion und Backup-Metadaten werden hart gegen `VERSION.json` geprüft
 
 ## Desktop-Spracherkennung
 
@@ -114,6 +115,7 @@ Der Kern benötigt keinen Account, keine Cloud und keine Telemetrie. Es gibt kei
 - Tauri-Sidecar-Konfiguration und Rust-Kompilierungsprüfung
 - statische Architektur-, Sicherheits-, Text- und Dokumentationsverträge
 - Entwicklerdokumentation und Übergabeverträge werden durch statische/Textintegritätsprüfungen mitgesichert
+- Gleichheit von PWA-/Backup-Produktversion und `VERSION.json`
 
 ## Noch nicht als Release abgenommen
 
@@ -132,6 +134,7 @@ GitHub Actions prüft derzeit:
 - JSON-Struktur und eindeutige JSON-Schlüssel
 - Textintegrität und Merge-Konfliktmarker
 - Konsistenz zentraler Dokumentationsaussagen
+- PWA-/Backup-Produktversion gegen `VERSION.json`
 - Vorhandensein und Kernverträge der Entwicklerdokumentation
 - JavaScript-Syntax
 - reproduzierbaren Linux-Sidecar-Build
@@ -163,11 +166,11 @@ Die Dokumente zu 0.2, 0.3 und 0.4 bleiben als **historische Entwicklungsverträg
 
 Reihenfolge:
 
-1. die kleine PWA-Produktversionsdrift korrigieren und per Konsistenztest absichern
-2. Frontend deterministisch in ein eigenes Desktop-`dist/` stagen und `frontendDist` vom Repository-Stamm lösen
-3. vollständiges Linux-Tauri-Bundle bauen und nachweisen, dass der Sidecar enthalten und startbar ist
-4. Sidecar-Laufzeitabhängigkeiten im Paketkontext prüfen, nicht nur Executable und SHA-256
-5. maschinenlesbaren Release-Nachweis mit Plattform, Upstream-Commit, Dateiname, Dateigröße, SHA-256 und Buildumgebung erzeugen
+1. Frontend deterministisch in ein eigenes Desktop-`dist/` stagen und `frontendDist` vom Repository-Stamm lösen
+2. vollständiges Linux-Tauri-Bundle bauen und nachweisen, dass der Sidecar enthalten und startbar ist
+3. Sidecar-Laufzeitabhängigkeiten im Paketkontext prüfen, nicht nur Executable und SHA-256
+4. maschinenlesbaren Release-Nachweis mit Plattform, Upstream-Commit, Dateiname, Dateigröße, SHA-256 und Buildumgebung erzeugen
+5. professionelles Debug-/Logging-Modul mit stabilen Ereignis- und Fehlercodes integrieren
 6. denselben Buildvertrag auf Windows x86_64 übertragen
 7. reale Linux-/Windows-Mikrofon- und Hardwareabnahme
 8. danach AudioWorklet und Langzeithärtung

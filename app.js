@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION='0.2.0';
+const VERSION='0.5.0';
 const DB_NAME='naqya-memo-2026';
 const DB_VERSION=2;
 const AUDIO_SLICE_MS=3000;

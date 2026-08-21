@@ -36,20 +36,6 @@ Abnahmekriterien:
 
 ## P1 – Hohe Priorität
 
-### [offen] PWA-Produktversionskonstante mit 0.5.0 synchronisieren
-Komponente: PWA / Backup-Metadaten / Diagnose
-
-Befund:
-- `VERSION.json`, `PROJEKTSTATUS.json` und Tauri stehen auf 0.5.0
-- `app.js` enthält derzeit noch `const VERSION='0.2.0'`
-- diese Konstante erscheint in der UI und im exportierten Backupfeld `version`
-
-Abnahmekriterien:
-- `app.js` verwendet die reale Produktversion 0.5.0
-- `DB_VERSION=2` bleibt unverändert, da dies ausschließlich das IndexedDB-Schema ist
-- automatischer Test verhindert künftige Drift zwischen `app.js` und `VERSION.json`
-- Backup-Kompatibilität bleibt unverändert; nur die Produktversionsmetadaten werden korrigiert
-
 ### [offen] Windows-x86_64-Sidecar reproduzierbar bauen und bundeln
 Komponente: whisper.cpp / Tauri / Windows
 
@@ -136,7 +122,7 @@ Abnahmekriterien:
 - [x] schwer erkennbare Invarianten an Native Bridge, Live-STT, Audio-Normalisierung, Rust-Runtime und Sidecar-Build sparsam direkt im Code markiert
 - [x] Dokumentations- und Kommentierregeln in `AGENTS.md` verbindlich festgelegt
 - [x] Entwicklerdokumentation in Text-/Statikverträge aufgenommen
-- [ ] bekannte PWA-Produktversionsdrift in `app.js` von 0.2.0 auf 0.5.0 korrigieren und automatisiert absichern
+- [x] PWA-Produktversionsdrift in `app.js` auf 0.5.0 korrigiert und gegen `VERSION.json` automatisiert abgesichert
 - [ ] deterministisches Desktop-Frontend-`dist/` für 0.5.1 erzeugen
 - [ ] vollständiges Linux-Endanwender-Bundle nachweisen
 - [ ] maschinenlesbaren Release-Nachweis erzeugen
@@ -153,6 +139,14 @@ Abnahmekriterien:
 - [ ] nach Merge resultierenden `main` erneut geprüft
 
 ## Erledigt
+
+### [erledigt] 0.5.1-A – PWA-Produktversion atomar synchronisieren
+Ergebnis:
+- `app.js` verwendet jetzt Produktversion 0.5.0
+- `tests/validate_text_integrity.py` verlangt harte Gleichheit mit `VERSION.json`
+- Backup-Metadaten verwenden weiterhin dieselbe `VERSION`-Konstante und werden im Vertrag geprüft
+- `DB_VERSION=2` blieb unverändert, weil Datenbankschema und Produktversion getrennte Verträge sind
+- versehentliche Nebenänderungen an `app.js` wurden per Commit-Diff erkannt und vor Freigabe vollständig zurückgenommen
 
 ### [erledigt] Professionelle Entwicklerübergabe 0.5.0 aufbauen
 Ergebnis:

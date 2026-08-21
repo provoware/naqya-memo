@@ -65,6 +65,7 @@ assert "0.5.1 – LINUX-BUNDLE-ABNAHME, RELEASE-NACHWEIS & WINDOWS-SIDECAR" in r
 assert "noch nicht als Release end-to-end abgenommen" in readme
 assert "CONTRIBUTING.md" in readme
 assert "docs/ENTWICKLERDOKUMENTATION.md" in readme
+assert "Produktversionskonstante `0.2.0`" not in readme
 
 todo = read("TODO.md")
 for heading in [
@@ -108,14 +109,25 @@ assert version["sidecar_bundle_configured"] is True
 assert version["sidecar_linux_ci_built"] is True
 assert version["sidecar_release_bundle_validated"] is False
 
-# Eine Laufzeit-Versionsdrift darf nie unbemerkt sein: entweder synchron oder explizit als Restarbeit dokumentiert.
+# Produktversion und Datenbankschema sind getrennt: UI/Backup müssen VERSION.json folgen, DB_VERSION bleibt migrationsgebunden.
 app = read("app.js")
 app_version_match = re.search(r"const VERSION='([^']+)'", app)
 assert app_version_match, "Produktversionskonstante in app.js fehlt"
 app_version = app_version_match.group(1)
-if app_version != version["version"]:
-    assert "PWA-Produktversionskonstante mit 0.5.0 synchronisieren" in todo
-    assert "app.js` verwendet intern noch die Produktversionskonstante `0.2.0`" in readme
+assert app_version == version["version"], (
+    f"Produktversionsdrift: app.js={app_version}, VERSION.json={version['version']}"
+)
+assert "const DB_VERSION=2;" in app, "IndexedDB-Schema wurde unbeabsichtigt verändert"
+assert "format:'NAQYA-OFFLINE-BACKUP'" in app, "Backup-Vertrag fehlt"
+assert "version:VERSION" in app, "Basis-Backup muss die kanonische Produktversionskonstante verwenden"
+
+# Der historische release-04-Kompatibilitätslayer darf UI und Backup nicht erneut auf eine Altversion zurücksetzen.
+release_04 = read("services/release-04.js")
+assert "window.NAQYA.release={version:VERSION" in release_04
+assert "version:VERSION" in release_04, "Runtime-Backupoverride muss VERSION verwenden"
+assert "version:'0.4.0'" not in release_04
+assert "Memo Tool 2026 0.4.0" not in release_04
+assert "ENTWICKLERHINWEIS" in release_04
 
 status = json.loads(read("PROJEKTSTATUS.json"), object_pairs_hook=reject_duplicate_keys)
 assert status["entwicklungsphase"] == version["phase"]
