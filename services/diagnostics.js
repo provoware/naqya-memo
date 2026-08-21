@@ -6,6 +6,7 @@
   const CONTRACT_URL='./diagnostics/DIAGNOSTICS_CONTRACT.json';
   const FALLBACK_MAX_EVENTS=200;
   const FALLBACK_DEDUPE_MS=5000;
+  const FALLBACK_CODE_PATTERN=/^NAQYA-(APP|DATA|AUDIO|STT|MODEL|RUNTIME|BUNDLE|RELEASE)-[0-9]{4}$/;
   const retryCallbacks=new Map();
   let contract=null;
   let contractBinding={status:'loading',schema_version:null,event_schema_version:1,sha256:null};
@@ -25,6 +26,7 @@
   function maxString(){return Number(contract?.privacy?.max_string_length)||240}
   function forbiddenKeys(){return new Set((contract?.privacy?.forbidden_keys||['audio','audioBase64','base64','blob','content','document','entryText','password','secret','text','token','transcript']).map(x=>String(x).toLowerCase()))}
   function codeMeta(code){return contract?.codes?.[code]||{severity:'error',category:'app',what:'Diagnoseereignis',options:['export-json','close']}}
+  function validCode(code){try{return new RegExp(contract?.code_pattern||FALLBACK_CODE_PATTERN.source).test(String(code))}catch{return FALLBACK_CODE_PATTERN.test(String(code))}}
   function now(){return new Date().toISOString()}
   function newId(){
     sequence+=1;
@@ -58,12 +60,24 @@
   }
   function bindingInfo(){return {...contractBinding}}
   function dedupeKey(code,where,result){return `${code}|${where||''}|${result||''}`}
+  function findRecentDuplicate(key){
+    const cutoff=Date.now()-dedupeMs();
+    for(let i=events.length-1;i>=0;i--){
+      const event=events[i],seen=Date.parse(event.last_seen_at||event.when||0);
+      if(seen<cutoff)break;
+      if(event.dedupe_key===key)return event;
+    }
+    return null;
+  }
   function record(code,input={}){
     try{
+      if(!validCode(code))return null;
       const meta=codeMeta(code),stamp=now(),where=sanitizeString(input.where||'unbekannt'),result=sanitizeString(input.result||'siehe Diagnose');
-      const key=dedupeKey(code,where,result),last=events.at(-1),lastMs=last?Date.parse(last.last_seen_at||last.when):0;
-      if(last&&last.dedupe_key===key&&Date.now()-lastMs<=dedupeMs()){
-        last.repeat_count=(last.repeat_count||1)+1;last.last_seen_at=stamp;persist();return {...last,deduplicated:true};
+      const key=dedupeKey(code,where,result),duplicate=findRecentDuplicate(key);
+      if(duplicate){
+        duplicate.repeat_count=(duplicate.repeat_count||1)+1;duplicate.last_seen_at=stamp;
+        if(typeof input.retry==='function'&&duplicate.options?.includes('retry-once'))retryCallbacks.set(duplicate.event_id,input.retry);
+        persist();return {...duplicate,deduplicated:true};
       }
       const eventId=newId(),event={
         schema_version:Number(contract?.event_schema_version)||1,
@@ -118,7 +132,7 @@
     dialog.addEventListener('click',async e=>{
       const button=e.target.closest?.('[data-diagnostic-action]');if(!button)return;
       const action=button.dataset.diagnosticAction,eventId=dialog.dataset.eventId||null;
-      await executeAction(action,eventId);if(action==='close'&&dialog.open)dialog.close();
+      await executeAction(action,eventId);if(['close','settings'].includes(action)&&dialog.open)dialog.close();
     });
     return dialog;
   }
@@ -140,6 +154,7 @@
     const event=record('NAQYA-APP-1101',{what:'Diagnose geöffnet',where:'diagnostics.showOverview',how:'Benutzeraktion',result:'Noch keine Fehlerereignisse gespeichert',options:['export-json','export-text','close']});if(event)showEvent(event.event_id);
   }
   async function executeAction(action,eventId){
+    const allowed=new Set(contract?.safe_actions?Object.keys(contract.safe_actions):['close','settings','export-json','export-text','retry-once']);if(!allowed.has(action))return;
     const parent=events.find(e=>e.event_id===eventId),correlation=parent?.correlation_id||eventId||null;
     record('NAQYA-APP-1101',{where:'diagnostics.executeAction',how:'Auswahldialog',result:`Aktion ${action} gewählt`,parent_event_id:eventId,correlation_id:correlation,context:{action}});
     if(action==='export-json'){exportJSON();return}
