@@ -44,11 +44,23 @@ Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dies
 - Dokumentations-, Versions- und Projektstatusangaben dürfen dem realen `main` nicht hinterherlaufen.
 - Aufräumarbeiten getrennt von größeren Funktionsänderungen halten, damit Review und Rückrollback eindeutig bleiben.
 
+## Code- und Entwicklerdokumentationsregeln
+- `CONTRIBUTING.md` ist der kurze GitHub-Einstieg; längere technische Erklärungen werden dort nicht dupliziert.
+- `docs/ENTWICKLERDOKUMENTATION.md` ist die kanonische technische Übergabe für fremde Entwickler und muss Architekturkarte, Vertrauensgrenzen, lokale Prüfungen und den nächsten konkreten Arbeitsblock enthalten.
+- Codekommentare bleiben sparsam. Kommentiert wird vor allem **warum** eine Sicherheitsgrenze, Reihenfolge, Migration oder Supply-Chain-Festlegung existiert; offensichtlicher Code wird nicht nacherzählt.
+- Für schwer erkennbare Invarianten wird bevorzugt der Marker `ENTWICKLERHINWEIS` direkt an der betroffenen Stelle verwendet.
+- Lange Begründungen gehören in die Entwickler- oder Fach­dokumentation und werden nicht mehrfach in Quellcode, README und AGENTS kopiert.
+- Bei neuen kritischen Modulen oder geänderten Architektur-/Build-/Releasepfaden werden Repository-Landkarte und Änderungsmatrix in der Entwicklerdokumentation geprüft.
+- Produktversion und Datenbankschema sind getrennte Verträge. `DB_VERSION` wird ausschließlich bei IndexedDB-Migrationen verändert; eine Produktversion darf nicht automatisch die Datenbankversion erhöhen.
+- Veraltete Versionskonstanten in Laufzeitcode, Backup-Metadaten oder UI gelten als Dokumentations-/Statusdrift und müssen behoben oder explizit im TODO geführt werden.
+
 ## Pflichtdateien bei Änderungen
 Bei jeder funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung sind mindestens folgende Dateien auf Aktualisierungsbedarf zu prüfen:
 - `AGENTS.md`
 - `TODO.md`
 - `README.md`
+- `CONTRIBUTING.md`
+- `docs/ENTWICKLERDOKUMENTATION.md`
 - `CHANGELOG.md`
 - `PROJEKTSTATUS.json`
 - `VERSION.json`
@@ -60,7 +72,7 @@ Bei jeder funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release
 Wenn keine inhaltliche Änderung nötig ist, bleibt die Datei unverändert; die Prüfung selbst ist trotzdem Pflicht.
 
 ## TODO-Vertrag
-`TODO.md` ist die operative Restarbeitenliste. Einträge enthalten nach Möglichkeit Priorität, Status, Komponente und klare Abnahmekriterien. Erledigte Punkte werden zunächst im Abschnitt `Erledigt` dokumentiert.
+`TODO.md` ist die operative Restarbeitenliste. Einträge enthalten nach Möglichkeit Priorität, Status, Komponente und klare Abnahmekriterien. Erledigte Punkte werden zunächst im Abschnitt `Erledigt` dokumentiert. Die Entwickler-Übergabecheckliste muss bei einer Übergabe oder einem größeren Meilenstein sichtbar abgearbeitet werden.
 
 ## Qualitätsgate
 Vor Freigabe oder Merge sind je nach Änderungsumfang mindestens zu prüfen:
@@ -111,13 +123,15 @@ Bereits umgesetzt:
 - diagnostizierbare Runtimequelle
 - geschützter Modellpfad und segmentiertes Offline-Live-STT
 - Repository- und Textintegritätsverträge
+- professioneller Entwickler-Einstieg und technische Übergabedokumentation
 
 ## Nächster Entwicklungsblock
 **0.5.1 – Linux-Bundle-Abnahme, Release-Nachweis & Windows-Sidecar**
 
 Reihenfolge:
-1. vollständiges Linux-Tauri-Bundle end-to-end bauen und Sidecar-Inhalt/Start nachweisen
-2. maschinenlesbaren Release-Nachweis erzeugen
-3. Windows-x86_64-Sidecar und Windows-Bundle reproduzierbar bauen
-4. reale Linux-/Windows-Hardware- und Mikrofonabnahme
-5. danach AudioWorklet- und Langzeithärtung
+1. deterministisches Desktop-Frontend-Staging einführen und `frontendDist` vom Repository-Stamm lösen
+2. vollständiges Linux-Tauri-Bundle end-to-end bauen und Sidecar-Inhalt/Start nachweisen
+3. maschinenlesbaren Release-Nachweis erzeugen
+4. Windows-x86_64-Sidecar und Windows-Bundle reproduzierbar bauen
+5. reale Linux-/Windows-Hardware- und Mikrofonabnahme
+6. danach AudioWorklet- und Langzeithärtung

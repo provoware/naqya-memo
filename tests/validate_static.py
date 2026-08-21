@@ -5,10 +5,10 @@ import re
 root = Path(__file__).resolve().parents[1]
 required = [
     '.gitignore','index.html','styles.css','styles-02.css','app.js','sw.js','manifest.webmanifest',
-    'VERSION.json','PROJEKTSTATUS.json','README.md','AGENTS.md','TODO.md','CHANGELOG.md','LAIENANLEITUNG.md',
+    'VERSION.json','PROJEKTSTATUS.json','README.md','CONTRIBUTING.md','AGENTS.md','TODO.md','CHANGELOG.md','LAIENANLEITUNG.md',
     'START_NAQYA.sh','START_NAQYA.bat','services/capabilities.js','services/native-bridge.js',
     'services/stt-core.js','services/audio-normalizer.js','services/live-stt.js','services/release-04.js',
-    'docs/ARCHITEKTUR.md','docs/AUDIO_OFFLINE_STT.md','docs/AUDIO_NORMALISIERUNG_LIVE_STT.md',
+    'docs/ARCHITEKTUR.md','docs/ENTWICKLERDOKUMENTATION.md','docs/AUDIO_OFFLINE_STT.md','docs/AUDIO_NORMALISIERUNG_LIVE_STT.md',
     'docs/NATIVE_WHISPER_DESKTOP.md','docs/DATENMODELL.md','docs/PLUGIN_VERTRAG.md','docs/WHISPER_SIDECAR.md',
     'src-tauri/Cargo.toml','src-tauri/build.rs','src-tauri/tauri.conf.json','src-tauri/src/main.rs',
     'src-tauri/sidecar/whisper-runtime.json','tests/validate_text_integrity.py'
@@ -57,13 +57,32 @@ agents = (root / 'AGENTS.md').read_text()
 for needle in [
     'TODO.md','Qualitätsgate','Sidecar- und Runtime-Regeln','Pflichtdateien bei Änderungen',
     'Repository- und Merge-Pflicht je Iteration','Merge-Konflikt- und Textintegritätsregeln',
+    'Code- und Entwicklerdokumentationsregeln','docs/ENTWICKLERDOKUMENTATION.md','ENTWICKLERHINWEIS',
     'Nach jedem Merge'
 ]:
     assert needle in agents, f'AGENTS-Vertrag unvollständig: {needle}'
 
 todo = (root / 'TODO.md').read_text()
-for needle in ['P0 – Freigabekritisch','P1 – Hohe Priorität','P2 – Qualitätsausbau','P3 – Wartbarkeit','Erledigt','Pflegevertrag']:
+for needle in [
+    'P0 – Freigabekritisch','P1 – Hohe Priorität','P2 – Qualitätsausbau','P3 – Wartbarkeit',
+    'Entwickler-Übergabecheckliste','Vor jeder künftigen Entwicklerübergabe','Erledigt','Pflegevertrag'
+]:
     assert needle in todo, f'TODO-Vertrag unvollständig: {needle}'
+
+readme = (root / 'README.md').read_text()
+for needle in ['CONTRIBUTING.md','docs/ENTWICKLERDOKUMENTATION.md','Entwickler-Einstieg','frontendDist']:
+    assert needle in readme, f'README-Entwicklereinstieg unvollständig: {needle}'
+
+contributing = (root / 'CONTRIBUTING.md').read_text()
+for needle in ['In 10 Minuten arbeitsfähig','Lokale Mindestprüfung','Definition „fertig“']:
+    assert needle in contributing, f'CONTRIBUTING unvollständig: {needle}'
+
+developer = (root / 'docs/ENTWICKLERDOKUMENTATION.md').read_text()
+for needle in [
+    'Schnellübernahme','Repository-Landkarte','Kritische Invarianten','Code-Kommentare',
+    'Lokale Qualitätsprüfung','Nächster Arbeitsblock 0.5.1','frontendDist','Definition of Done'
+]:
+    assert needle in developer, f'Entwicklerdokumentation unvollständig: {needle}'
 
 gitignore = (root / '.gitignore').read_text()
 for needle in ['.sidecar-build/','src-tauri/binaries/','src-tauri/target/','*.gguf','*.bin']:
@@ -85,15 +104,15 @@ for needle in [
     assert needle in js, f'Kernfunktion fehlt: {needle}'
 
 normalizer = (root / 'services/audio-normalizer.js').read_text()
-for needle in ['TARGET_RATE=16000','LIVE_SEGMENT_MS=4000','resampleLinear','wavBlob','LivePcmCapture','createScriptProcessor']:
+for needle in ['TARGET_RATE=16000','LIVE_SEGMENT_MS=4000','resampleLinear','wavBlob','LivePcmCapture','createScriptProcessor','ENTWICKLERHINWEIS']:
     assert needle in normalizer, f'Audio-Normalisierung unvollständig: {needle}'
 
 live = (root / 'services/live-stt.js').read_text()
-for needle in ['materializePreferredModel','transcribeLiveSegment','startNativeLiveDictation','stopNativeLiveDictation','nativeSttElapsedMs','Echtzeitfaktor']:
+for needle in ['materializePreferredModel','transcribeLiveSegment','startNativeLiveDictation','stopNativeLiveDictation','nativeSttElapsedMs','Echtzeitfaktor','ENTWICKLERHINWEIS']:
     assert needle in live, f'Live-STT unvollständig: {needle}'
 
 bridge = (root / 'services/native-bridge.js').read_text()
-for needle in ['__TAURI__','naqya_capabilities','naqya_model_begin','naqya_model_append','naqya_model_finish','naqya_model_abort','MODEL_CHUNK_BYTES','naqya_transcribe']:
+for needle in ['__TAURI__','naqya_capabilities','naqya_model_begin','naqya_model_append','naqya_model_finish','naqya_model_abort','MODEL_CHUNK_BYTES','naqya_transcribe','ENTWICKLERHINWEIS']:
     assert needle in bridge, f'Native Bridge unvollständig: {needle}'
 
 stt = (root / 'services/stt-core.js').read_text()
@@ -106,7 +125,8 @@ for needle in [
     'naqya_transcribe','NAQYA_WHISPER_CLI','whisper-cli','trusted_model_path','Sha256','WAVE',
     'stt_temp_root','app_cache_dir','write_private_temp_wav','create_new(true)','STT_TEMP_SEQUENCE',
     'tauri_plugin_shell::ShellExt','sidecar("naqya-whisper")','tauri_plugin_shell::init()',
-    'bundled_sidecar_available','bundled_sidecar_preferred','whisper.cpp-sidecar','whisper.cpp-fallback'
+    'bundled_sidecar_available','bundled_sidecar_preferred','whisper.cpp-sidecar','whisper.cpp-fallback',
+    'ENTWICKLERHINWEIS'
 ]:
     assert needle in rust, f'Rust Desktop-Runtime unvollständig: {needle}'
 assert rust.index('sidecar("naqya-whisper")') < rust.index('Command::new(&cli)'), 'Sidecar muss vor externem CLI-Fallback versucht werden'
@@ -117,6 +137,10 @@ cargo = (root / 'src-tauri/Cargo.toml').read_text()
 assert 'version = "0.5.0"' in cargo
 assert 'sha2 = "0.10"' in cargo
 assert 'tauri-plugin-shell = "2"' in cargo
+
+sidecar_build = (root / 'tools/build_whisper_sidecar.sh').read_text()
+for needle in ['UPSTREAM_TAG="v1.9.2"','306c88f4d1286aec1bf96e544632897886af5501','GGML_NATIVE=OFF','ENTWICKLERHINWEIS']:
+    assert needle in sidecar_build, f'Sidecar-Buildvertrag unvollständig: {needle}'
 
 sw = (root / 'sw.js').read_text()
 for needle in ['naqya-0.5.0','services/audio-normalizer.js','services/live-stt.js','services/release-04.js','services/native-bridge.js','services/stt-core.js']:

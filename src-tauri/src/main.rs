@@ -212,6 +212,7 @@ fn hash_file(path: &Path) -> Result<(String, u64), String> {
     Ok((format!("{:x}", hasher.finalize()), bytes))
 }
 
+// ENTWICKLERHINWEIS: Diese Kanonisierung ist eine Sicherheitsgrenze; nur Modelle im eigenen NAQYA-Root dürfen whisper.cpp erreichen.
 fn trusted_model_path(app: &tauri::AppHandle, requested: &str) -> Result<PathBuf, String> {
     let root = fs::canonicalize(model_root(app)?)
         .map_err(|e| format!("NAQYA-Modellpfad konnte nicht geprüft werden: {e}"))?;
@@ -404,6 +405,7 @@ async fn naqya_transcribe(
         Err(_) => None,
     };
 
+    // ENTWICKLERHINWEIS: Fail-closed – ein gestarteter Sidecar mit Laufzeitfehler darf nicht still auf den PATH-Fallback wechseln.
     let result = if let Some(output) = sidecar_result {
         if !output.status.success() {
             Err(format!(

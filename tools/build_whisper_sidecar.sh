@@ -8,6 +8,7 @@ SRC_DIR="$WORK_DIR/whisper.cpp"
 BUILD_DIR="$WORK_DIR/build"
 BIN_DIR="$ROOT_DIR/src-tauri/binaries"
 
+# ENTWICKLERHINWEIS: Tag und Commit bilden gemeinsam den Supply-Chain-Vertrag; Änderungen nur synchron mit Manifest, Tests und Doku.
 UPSTREAM_REPO="https://github.com/ggml-org/whisper.cpp.git"
 UPSTREAM_TAG="v1.9.2"
 UPSTREAM_COMMIT="306c88f4d1286aec1bf96e544632897886af5501"

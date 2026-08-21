@@ -3,6 +3,7 @@
 window.NAQYA=window.NAQYA||{};
 
 const LIVE_STT_SEGMENT_MS=4000;
+// ENTWICKLERHINWEIS: Die Promise-Kette serialisiert STT-Segmente absichtlich, damit Textreihenfolge und Messwerte stabil bleiben.
 const liveState={capture:null,queue:Promise.resolve(),stopping:false,segments:0,audioMs:0,sttMs:0,modelId:null,modelPath:'',transcript:''};
 
 async function materializePreferredModel(){
