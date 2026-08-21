@@ -27,6 +27,12 @@ Mindestens zu prüfen und im Status zu berücksichtigen:
 
 Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dieser Zustand bereinigt. Neue Funktionsarbeit beginnt erst danach.
 
+## Repository-Hygiene
+- Veraltete oder durch neuere Architekturpfade ersetzte PRs nicht offen liegen lassen; nachvollziehbar als überholt schließen.
+- Keine alten Parallelzweige in neue Arbeit hineinmergen, wenn ihre Inhalte bereits durch neuere, validierte Iterationen ersetzt wurden.
+- Dokumentations-, Versions- und Projektstatusangaben dürfen dem realen `main` nicht hinterherlaufen.
+- Aufräumarbeiten getrennt von größeren Funktionsänderungen halten, damit Review und Rückrollback eindeutig bleiben.
+
 ## Pflichtdateien bei Änderungen
 Bei jeder funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung sind mindestens folgende Dateien auf Aktualisierungsbedarf zu prüfen:
 
@@ -79,7 +85,7 @@ Ein fehlgeschlagenes Gate wird ursachenbezogen korrigiert. Keine kosmetischen od
 - `main` enthält nur validierte Stände.
 - Größere Funktionsschritte über eigenen Zweig und Pull Request entwickeln.
 - PR zunächst als Entwurf führen, solange die Qualitätsprüfung noch nicht vollständig grün ist.
-- Merge bevorzugt als Squash mit erwarteter Head-SHA absichern.
+- Merge bevorzugt mit erwarteter Head-SHA absichern.
 - Nach Merge den resultierenden `main`-Commit dokumentieren.
 - Eine Iteration gilt erst als abgeschlossen, wenn Repository-, PR-, CI- und Dokumentationsstand miteinander übereinstimmen.
 
@@ -87,13 +93,18 @@ Ein fehlgeschlagenes Gate wird ursachenbezogen korrigiert. Keine kosmetischen od
 Bei jeder relevanten Änderung müssen Status und Restarbeiten mit dem realen Codezustand übereinstimmen. Insbesondere dürfen `TODO.md`, `PROJEKTSTATUS.json`, README und PR-Beschreibung keinen bereits erledigten oder noch nicht umgesetzten Stand behaupten.
 
 ## Aktueller Schwerpunkt
-Aktueller Entwicklungsstrang: `0.5.0-B – Tauri-Sidecar-Integration`.
+Aktueller Entwicklungsstand: `0.5.0 – Desktop Sidecar Integration & Hardening`.
 
-Ziel dieses Strangs:
-- gebündelten whisper.cpp-Sidecar über Tauri `externalBin` integrieren,
-- Linux-x86_64 reproduzierbar bauen und per SHA-256 prüfen,
-- gebündelten Sidecar vor externem CLI-Fallback verwenden,
-- Runtimequelle diagnostizierbar machen,
-- Integration durch CI und statische Verträge absichern.
+Bereits erreicht:
+- reproduzierbarer whisper.cpp-Runtimevertrag,
+- gebündelter Tauri-Sidecar über `externalBin`,
+- Linux-x86_64-Build und SHA-256-Prüfung im CI,
+- Sidecar vor externem CLI-Fallback,
+- diagnostizierbare Runtimequelle,
+- geschützter Modellpfad und segmentiertes Offline-Live-STT.
 
-Nicht Teil dieser Iteration sind derzeit die vollständige Windows-Bundle-Abnahme und reale Mikrofon-/Hardwaretests.
+Nächster Schwerpunkt:
+- Windows-x86_64-Sidecar reproduzierbar bauen und bundeln,
+- Release-Manifest für konkrete Sidecar-Artefakte,
+- reale Linux-/Windows-Hardware- und Mikrofonabnahme,
+- danach AudioWorklet- und Langzeithärtung.
