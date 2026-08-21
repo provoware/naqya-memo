@@ -4,7 +4,7 @@ import json,re
 root=Path(__file__).resolve().parents[1]
 required=[
     'index.html','styles.css','styles-02.css','app.js','sw.js','manifest.webmanifest',
-    'VERSION.json','PROJEKTSTATUS.json','README.md','START_NAQYA.sh','START_NAQYA.bat',
+    'VERSION.json','PROJEKTSTATUS.json','README.md','AGENTS.md','TODO.md','START_NAQYA.sh','START_NAQYA.bat',
     'services/capabilities.js','services/native-bridge.js','services/stt-core.js',
     'services/audio-normalizer.js','services/live-stt.js','services/release-04.js',
     'docs/AUDIO_OFFLINE_STT.md','src-tauri/Cargo.toml','src-tauri/build.rs',
@@ -32,6 +32,14 @@ assert status['kernfunktionen']['sprachmodell_atomare_aktivierung'] is True
 assert status['kernfunktionen']['whisper_cpp_native_runtime_bundled'] is False
 assert manifest['start_url']=='./'
 assert tauri['bundle']['externalBin']==['binaries/naqya-whisper']
+
+agents=(root/'AGENTS.md').read_text()
+for needle in ['TODO.md','Qualitätsgate','Sidecar- und Runtime-Regeln','Pflichtdateien bei Änderungen']:
+    assert needle in agents, f'AGENTS-Vertrag unvollständig: {needle}'
+
+todo=(root/'TODO.md').read_text()
+for needle in ['P0 – Freigabekritisch','P1 – Hohe Priorität','P2 – Qualitätsausbau','Erledigt','Pflegevertrag']:
+    assert needle in todo, f'TODO-Vertrag unvollständig: {needle}'
 
 html=(root/'index.html').read_text()
 for needle in [
@@ -94,4 +102,4 @@ for f in [
     text=(root/f).read_text()
     assert not re.search(r'https?://(?!127\.0\.0\.1|localhost)',text), f'Externe Laufzeit-URL in {f}'
 
-print('NAQYA 0.4 static validation + 0.5 Sidecar-Integration: PASS')
+print('NAQYA 0.4 static validation + 0.5 Sidecar-Integration + Projektsteuerung: PASS')
