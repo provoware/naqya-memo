@@ -5,7 +5,7 @@
 - reproduzierbaren whisper.cpp-Runtimevertrag mit festem Upstream-Tag und Commit eingeführt
 - Linux-/Windows-Zielplattformen und Tauri-konforme Sidecar-Dateinamen definiert
 - `tauri-plugin-shell` und `bundle.externalBin` integriert
-- gebündelten `naqya-whisper`-Sidecar gegenüber externem `whisper-cli`-Fallback priorisiert
+- Tauri-Sidecar `naqya-whisper` gegenüber externem `whisper-cli`-Fallback priorisiert
 - Runtime-Diagnose für Sidecar/Fallback ergänzt
 - Linux-x86_64-Sidecar im CI real gebaut und per SHA-256 geprüft
 - ungeprüfte Laufzeit-Downloads für kritische Runtimeartefakte ausgeschlossen
@@ -15,11 +15,15 @@
 - veralteten, durch spätere Entwicklung ersetzten PR #3 geschlossen
 - `.gitignore` für Sidecar-Builds, Tauri-Targets, lokale Sprachmodelle und temporäre Dateien ergänzt
 - Versions-, Projektstatus-, Tauri- und Service-Worker-Metadaten auf 0.5.0 konsolidiert
-- statische Qualitätsverträge gegen Metadaten- und Repository-Regressionen erweitert
+- mergebedingte doppelte README-/TODO-Blöcke entfernt
+- doppelte bzw. widersprüchliche JSON-Schlüssel in `VERSION.json` und `PROJEKTSTATUS.json` beseitigt
+- veraltete Sidecar-/Native-STT-Dokumentation korrigiert und historische 0.2-/0.3-/0.4-Verträge gekennzeichnet
+- Textintegritätsprüfung gegen Merge-Konfliktmarker, doppelte JSON-Schlüssel und zentrale Dokumentationsdrift ergänzt
 
 Bekannte Grenzen:
-- reale Linux-Hardware-/Mikrofonabnahme steht noch aus
+- Tauri ist für den Sidecar konfiguriert und Linux x86_64 wird im CI gebaut; ein vollständiges Endanwender-Linux-Bundle ist noch nicht end-to-end abgenommen
 - Windows-x86_64-Sidecar benötigt noch vollständige Build-/Bundle-/Hardwareabnahme
+- reale Linux-Hardware-/Mikrofonabnahme steht noch aus
 - AudioWorklet-Umstellung und Langzeittests folgen
 
 ## 0.4.0 – AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT

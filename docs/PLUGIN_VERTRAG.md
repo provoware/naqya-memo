@@ -1,6 +1,8 @@
-# Plugin-Vertrag – Vorstufe
+# Plugin-Vertrag – Planungsstand
 
-Die Plugin-API wird in 0.1.0 nur als Architekturvertrag geführt. Aktiv ladbare Fremdplugins folgen nach Stabilisierung des Kerns.
+> **Dokumentenstatus:** Architekturidee, noch nicht als aktive Fremdplugin-Schnittstelle implementiert. Dieser Status gilt weiterhin für NAQYA 0.5.0.
+
+Die Plugin-API wird bislang nur als zukünftiger Architekturvertrag geführt. Aktiv ladbare Fremdplugins dürfen erst nach Stabilisierung des Kerns und eines belastbaren Berechtigungsmodells eingeführt werden.
 
 ## Geplantes Manifest
 
@@ -24,4 +26,4 @@ Die Plugin-API wird in 0.1.0 nur als Architekturvertrag geführt. Aktiv ladbare 
 - benachrichtigungen
 - netzwerk
 
-Standard: minimale Rechte, keine implizite Vollfreigabe.
+Grundregel: minimale Rechte, keine implizite Vollfreigabe und keine Plugin-Ausführung ohne expliziten Vertrauens- und Berechtigungsvertrag.

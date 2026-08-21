@@ -1,5 +1,7 @@
 # Datenmodell V2
 
+> **Dokumentenstatus:** Aktuell für den PWA-/IndexedDB-Datenkern in NAQYA 0.5.0. Native Persistenzadapter sind noch nicht separat eingeführt.
+
 ## Stores
 
 ### entries
@@ -98,7 +100,7 @@ Nach erfolgreicher Finalisierung werden temporäre Segmente entfernt und die Sit
 
 ## Backup
 
-Backup-Schema 2 serialisiert Nutzdateien mit Base64 und optionalem SHA-256. Sprachmodell-Binärdaten sind bewusst nicht Bestandteil des normalen Nutzbackups, da sie wiederbeschafft oder separat importiert werden können.
+Backup-Schema 2 serialisiert Nutzdateien mit Base64 und optionalem SHA-256. Sprachmodell-Binärdaten sind bewusst nicht Bestandteil des normalen Nutzbackups, da sie separat importiert und im nativen Modellpfad erneut geprüft werden.
 
 ## Grundregel
 

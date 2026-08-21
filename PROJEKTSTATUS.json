@@ -3,7 +3,6 @@
   "repo": "provoware/naqya-memo",
   "version": "0.5.0",
   "entwicklungsphase": "TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG",
-  "entwicklungsphase": "DESKTOP SIDECAR INTEGRATION & HARDENING",
   "status": "ENTWICKLUNG",
   "referenzplattform": "PWA + Tauri Desktop",
   "zielplattformen": ["Linux", "Windows", "Android", "iPhone/iPad", "PWA"],
@@ -26,7 +25,9 @@
     "native_bridge_javascript": true,
     "whisper_cpp_cli_detection": true,
     "whisper_cpp_native_command": true,
-    "whisper_cpp_native_runtime_bundled": true,
+    "whisper_cpp_sidecar_bundle_configured": true,
+    "whisper_cpp_sidecar_linux_ci_built": true,
+    "whisper_cpp_sidecar_release_bundle_validated": false,
     "whisper_cpp_sidecar_preferred": true,
     "whisper_cpp_fallback_diagnose": true,
     "whisper_cpp_runtime_manifest": true,
@@ -47,11 +48,12 @@
     "backup_sha256": true
   },
   "bekannte_grenzen": [
-    "Der Linux-x86_64-Sidecar wird reproduzierbar gebaut und als bevorzugte Tauri-Runtime integriert; die vollständige Windows-Bundle-Abnahme steht noch aus.",
-    "Die Live-PCM-Erfassung verwendet weiterhin Web Audio ScriptProcessor als breit kompatiblen Übergangsadapter; eine AudioWorklet-Umstellung ist für die Härtungsstufe vorgesehen.",
-    "Die segmentierte native Transkription benötigt weiterhin reale Linux-/Windows-Latenz-, CPU-, RAM-, Mikrofon- und Langzeittests mit echten Modellen.",
+    "Tauri ist für den whisper.cpp-Sidecar konfiguriert und der Linux-x86_64-Sidecar wird im CI reproduzierbar gebaut und per SHA-256 geprüft; ein vollständiges Endanwender-Linux-Bundle mit nachgewiesen enthaltenem und startbarem Sidecar ist noch nicht end-to-end abgenommen.",
+    "Der Windows-x86_64-Sidecar und das Windows-Bundle benötigen noch Build-, Integritäts- und Startabnahme.",
+    "Die Live-PCM-Erfassung verwendet weiterhin Web Audio ScriptProcessor als Übergangsadapter; eine AudioWorklet-Umstellung ist vorgesehen.",
+    "Die segmentierte native Transkription benötigt reale Linux-/Windows-Latenz-, CPU-, RAM-, Mikrofon- und Langzeittests mit echten Modellen.",
     "Das Vollbackup nutzt weiterhin JSON/Base64 und ist für sehr große Datenbestände speicherintensiver als ein streamingfähiger Container.",
     "Native Mobiladapter für Android und iPhone/iPad stehen weiterhin aus."
   ],
-  "naechster_meilenstein": "0.5.1 – WINDOWS SIDECAR, RELEASE-MANIFEST & REAL-HARDWARE-ABNAHME"
+  "naechster_meilenstein": "0.5.1 – LINUX-BUNDLE-ABNAHME, RELEASE-NACHWEIS & WINDOWS-SIDECAR"
 }

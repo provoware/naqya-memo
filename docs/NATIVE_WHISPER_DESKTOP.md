@@ -1,29 +1,31 @@
-# Native Whisper Desktop – 0.3.0
+# Native Whisper Desktop – historischer Entwicklungsvertrag 0.3.0
 
-## Ziel
+> **Dokumentenstatus:** Historische Entwicklungsstufe. Der aktuelle Runtime-Stand steht in `README.md`, `docs/ARCHITEKTUR.md` und `docs/WHISPER_SIDECAR.md`.
 
-Die Desktop-Ausgabe von NAQYA erhält eine lokale Tauri-Brücke zu whisper.cpp. Es gibt keinen Cloud-Fallback.
+## damaliges Ziel
 
-## Laufzeit
+Die Desktop-Ausgabe von NAQYA sollte eine lokale Tauri-Brücke zu whisper.cpp erhalten. Ein Cloud-Fallback war bereits ausgeschlossen.
 
-Die Rust-Seite erkennt `whisper-cli` beziehungsweise den über `NAQYA_WHISPER_CLI` gesetzten Pfad. `naqya_capabilities` meldet Plattform, CPU-Anzahl und Verfügbarkeit. `naqya_transcribe` nimmt Base64-WAV, Modellpfad, Sprache und optionale Threadzahl an.
+## damaliger Laufzeitvertrag
 
-## Sicherheitsregeln
+Die Rust-Seite erkannte `whisper-cli` beziehungsweise den über `NAQYA_WHISPER_CLI` gesetzten Pfad. `naqya_capabilities` meldete Plattform, CPU-Anzahl und Verfügbarkeit. `naqya_transcribe` nahm Base64-WAV, Modellpfad, Sprache und optionale Threadzahl an.
 
-- Modellpfad muss auf eine vorhandene Datei zeigen.
-- Einzeltranskriptionen sind auf 512 MiB Audiodaten begrenzt.
-- temporäre Audiodateien werden nach dem Prozess entfernt.
-- Netzwerkzugriff wird für STT nicht benötigt.
-- Browserbetrieb bleibt funktionsfähig, auch wenn keine native Brücke vorhanden ist.
+## damalige Sicherheitsregeln
 
-## Noch offen
+- Modellpfad musste auf eine vorhandene Datei zeigen.
+- Einzeltranskriptionen waren auf 512 MiB Audiodaten begrenzt.
+- temporäre Audiodateien wurden nach dem Prozess entfernt.
+- Netzwerkzugriff war für STT nicht erforderlich.
+- Browserbetrieb blieb funktionsfähig, auch wenn keine native Brücke vorhanden war.
 
-1. WebM/Opus aus MediaRecorder lokal zu WAV/PCM normalisieren.
-2. importierte IndexedDB-Modelle in kontrollierte Desktop-Modellpfade materialisieren.
-3. whisper.cpp als reproduzierbares Sidecar bündeln, statt eine externe Installation vorauszusetzen.
-4. segmentierte Live-Transkription mit Interim-/Final-Text verbinden.
-5. reale Latenz-, CPU-, RAM- und Langzeittests auf Linux und Windows durchführen.
+## damals noch offene Punkte und heutiger Status
 
-## Nächster Meilenstein
+1. WebM/Opus lokal zu WAV/PCM normalisieren → **in 0.4 umgesetzt**.
+2. importierte IndexedDB-Modelle in kontrollierte Desktop-Modellpfade materialisieren → **in 0.4 umgesetzt**.
+3. whisper.cpp als reproduzierbaren Sidecar anbinden → **Runtimevertrag und Tauri-Integration in 0.5 umgesetzt; vollständige Release-Bundle-Abnahme noch offen**.
+4. segmentierte Live-Transkription verbinden → **in 0.4 umgesetzt**.
+5. reale Latenz-, CPU-, RAM- und Langzeittests auf Linux und Windows → **weiterhin offen**.
 
-`0.4.0 – AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT`
+## Historischer Folgemeilenstein
+
+Der damalige Folgemeilenstein war `0.4.0 – AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT` und ist inzwischen umgesetzt.
