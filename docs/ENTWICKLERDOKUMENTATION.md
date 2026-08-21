@@ -1,25 +1,23 @@
 # Entwicklerdokumentation – NAQYA Memo Tool 2026
 
-> **Dokumentenstatus:** Kanonischer technischer Einstieg für den aktuell validierten 0.5.0-Stand. Vor jeder neuen Iteration zusätzlich den realen GitHub-`main`-, PR- und CI-Stand prüfen.
+> **Dokumentenstatus:** Kanonischer technischer Einstieg für den aktuellen 0.5.0-/0.5.1-Entwicklungsstand. Vor jeder Iteration realen `main`-, PR- und CI-Stand prüfen.
 
 ## Ziel dieser Dokumentation
 
-Ein Entwickler ohne vorherige Projektkenntnis soll nach kurzer Lektüre sicher Änderungen umsetzen können, ohne Offline-, Datenintegritäts-, Audio-, Modell- oder Sidecar-Verträge versehentlich zu brechen.
-
-Diese Datei erklärt den **Arbeitsweg und die Vertrauensgrenzen**. Die fachlichen Detailverträge bleiben in den spezialisierten Dateien unter `docs/`.
+Ein fremder Entwickler soll ohne Vorwissen sicher weiterarbeiten können, ohne Offline-, Datenintegritäts-, Audio-, Modell-, Sidecar- oder Releaseverträge zu brechen. Detailverträge bleiben in den spezialisierten Dateien unter `docs/`.
 
 ## Schnellübernahme
 
-Arbeitsreihenfolge für einen neuen Entwickler:
+In dieser Reihenfolge lesen:
 
-1. `README.md` – aktueller Produkt- und Freigabestand.
+1. `README.md` – Produkt- und Freigabestand.
 2. `AGENTS.md` – verbindliche Entwicklungs-, Merge- und Freigaberegeln.
-3. `TODO.md` – aktuelle Prioritäten und Abnahmekriterien.
-4. diese Datei – technische Orientierung und lokale Befehle.
+3. `TODO.md` – priorisierte Restarbeiten und Abnahmekriterien.
+4. diese Datei – technische Orientierung und lokale Prüfungen.
 5. `docs/ARCHITEKTUR.md` – Systemebenen und Datenflüsse.
-6. bei STT-/Sidecar-Arbeit zusätzlich `docs/WHISPER_SIDECAR.md`, `docs/DATENMODELL.md` und die historischen Audio-/STT-Verträge.
+6. bei Runtime-/STT-Arbeit zusätzlich `docs/WHISPER_SIDECAR.md` und `docs/DATENMODELL.md`.
 
-Vor der ersten Änderung:
+Vor Änderungen:
 
 ```bash
 git status
@@ -27,165 +25,117 @@ git branch --show-current
 git rev-parse HEAD
 ```
 
-Danach auf GitHub prüfen, ob der lokale Commit dem erwarteten `main` entspricht und ob offene Pull Requests oder fehlgeschlagene Prüfungen existieren.
+Danach auf GitHub offenen PR-, CI- und Mergezustand gegenprüfen.
 
 ## Aktueller technischer Stand
 
-Produktversion: **0.5.0**
+Produktversion: **0.5.0**. Validiert sind PWA/IndexedDB, Audio-Recovery, lokale 16-kHz-WAV-Normalisierung, segmentiertes Live-STT, geschützter Modelltransfer, Tauri-Bridge, gepinnter whisper.cpp-Sidecar-Build sowie Text-, JavaScript-, Rust-, Shell-, Sidecar- und Frontend-Staging-Verträge.
 
-Validiert sind derzeit:
+Für 0.5.1 ist das Desktop-Frontend-Staging umgesetzt: `tools/stage_desktop_frontend.py` erzeugt ein frisches `dist/` aus exakt 14 erlaubten Runtime-Dateien und schreibt `NAQYA_FRONTEND_MANIFEST.json` mit Größe und SHA-256 je Datei. Ein vollständiges Endanwender-Linux-Bundle ist damit **noch nicht** abgenommen.
 
-- statische Offline-PWA mit IndexedDB-Datenkern
-- 3-Sekunden-Audiosegmente mit Recovery
-- 16-kHz-Mono-PCM16/WAV-Normalisierung
-- 4-Sekunden-Live-STT-Segmente
-- blockweiser nativer Modelltransfer
-- SHA-256-Prüfung und atomare Modellaktivierung
-- Tauri-2-Desktop-Brücke
-- bevorzugter whisper.cpp-Sidecar `naqya-whisper`
-- reproduzierbarer Linux-x86_64-Sidecar-Build aus gepinntem whisper.cpp-Upstream
-- deterministisches Desktop-Frontend-Staging nach `dist/` mit expliziter Runtime-Allowlist
-- SHA-256-/Größenmanifest des gestagten Frontends
-- Text-, Merge-, Frontend-Staging-, Rust-, JavaScript-, Shell- und Sidecar-Verträge im CI
-
-Noch **nicht** als Release abgenommen sind ein vollständiges Linux-Endanwender-Bundle, das Windows-Bundle und reale Hardware-/Mikrofontests.
+Bekannte Restinkonsistenz: `app.js` führt noch Produktversion 0.2.0. Das ist getrennt von `DB_VERSION=2`, dem korrekten IndexedDB-Schema.
 
 ## Repository-Landkarte
 
-| Pfad | Verantwortung | Typische Änderungsfolgen |
-|---|---|---|
-| `index.html` | statische UI-Struktur und Modulreihenfolge | UI, CSP, Service-Worker-Cache, statische Tests |
-| `styles.css`, `styles-02.css` | Layout, Responsivität, Sichtbarkeit | UI-Abnahme |
-| `app.js` | zentraler PWA-Controller, IndexedDB, Audio-Recovery, Backup, Rendering | Datenmodell, Backup, UI, Tests |
-| `services/capabilities.js` | lokale Fähigkeitenerkennung | Diagnose, Providerwahl |
-| `services/native-bridge.js` | JavaScript↔Tauri-IPC und Modelltransfer | Rust-Commands, Speicherverbrauch, Modellintegrität |
-| `services/stt-core.js` | STT-Providervertrag und Modellprofile | Providerwahl, Modellvalidierung |
-| `services/audio-normalizer.js` | Mono-/16-kHz-/WAV-Vertrag | Live-STT, AudioWorklet-Migration |
-| `services/live-stt.js` | segmentierte native Live-Transkription | Reihenfolge, Persistenz, Echtzeitfaktor |
-| `sw.js` | Offline-Cache | bei neuen/umbenannten Frontenddateien aktualisieren |
-| `tools/stage_desktop_frontend.py` | explizite Desktop-Runtime-Allowlist und `dist/`-Manifest | bei neuen Runtime-Dateien zwingend anpassen |
-| `tests/validate_frontend_staging.py` | beweist exakten `dist/`-Dateisatz, Hashes und Tauri-Vertrag | Staging-/Bundle-Gate |
-| `src-tauri/src/main.rs` | native Sicherheitsgrenzen, Modellablage, Temp-WAV, Sidecar/Fallback | Rust-, Sicherheits- und Runtime-Tests |
-| `src-tauri/tauri.conf.json` | Tauri-App, `beforeBuildCommand`, `frontendDist` und Bundle-Konfiguration | Desktop-Build und Release |
-| `src-tauri/sidecar/whisper-runtime.json` | Supply-Chain-/Zielplattformvertrag | Buildscript, Tests, Release-Nachweis |
-| `tools/build_whisper_sidecar.sh` | reproduzierbarer whisper.cpp-Build | CI, Zielnamen, Hash-Nachweis |
-| `.github/workflows/validate.yml` | kanonisches Qualitätsgate | lokale Prüfmatrix synchron halten |
-| `tests/` | Architektur-, Text-, Staging-, Sidecar- und Sicherheitsverträge | bei Vertragsänderungen mitändern |
+| Pfad | Verantwortung |
+|---|---|
+| `index.html`, `styles*.css` | UI-Struktur, Lesbarkeit, Modulreihenfolge |
+| `app.js` | PWA-Controller, IndexedDB, Audio-Recovery, Backup, Rendering |
+| `services/capabilities.js` | lokale Fähigkeitenerkennung |
+| `services/native-bridge.js` | JavaScript↔Tauri-IPC und Modelltransfer |
+| `services/stt-core.js` | STT-Providervertrag und Modellprofile |
+| `services/audio-normalizer.js` | 16-kHz-Mono-/WAV-Vertrag |
+| `services/live-stt.js` | geordnete segmentierte Live-Transkription |
+| `sw.js` | Offline-Cache; bei Runtime-Dateiänderungen synchron halten |
+| `tools/stage_desktop_frontend.py` | Desktop-Runtime-Allowlist, `dist/`, Frontend-Manifest |
+| `tests/validate_frontend_staging.py` | Dateisatz-, Hash- und Tauri-Staging-Vertrag |
+| `src-tauri/src/main.rs` | native Vertrauensgrenzen, Modellpfad, Temp-WAV, Sidecar/Fallback |
+| `src-tauri/tauri.conf.json` | Tauri-Build und Bundle-Konfiguration |
+| `src-tauri/sidecar/whisper-runtime.json` | Sidecar-Supply-Chain-/Zielplattformvertrag |
+| `tools/build_whisper_sidecar.sh` | reproduzierbarer whisper.cpp-Build |
+| `.github/workflows/validate.yml` | kanonisches Qualitätsgate |
 
-## Laufzeitarchitektur
+## Laufzeit- und Buildpfade
 
-### PWA-Pfad
+PWA:
 
 ```text
-index.html
-  ↓
-app.js
-  ├─ IndexedDB: entries / projects / files / settings / audioSessions / audioSegments / models
-  ├─ MediaRecorder: Originalaudio + Recovery
-  └─ services/*: Fähigkeiten, STT, Normalisierung, Native Bridge
+index.html → app.js/services/* → IndexedDB / MediaRecorder / lokale STT
 ```
 
-Das Frontend besitzt **keinen npm-/Bundler-Zwang**. Es besteht aus statischen Dateien und wird für die PWA über einen lokalen HTTP-Server ausgeliefert.
+Desktop:
 
-### Desktop-Staging
-
-Vor dem Tauri-Build führt `beforeBuildCommand` aus:
-
-```bash
-python3 tools/stage_desktop_frontend.py
+```text
+Runtime-Allowlist
+  ↓ tools/stage_desktop_frontend.py
+ dist/ + NAQYA_FRONTEND_MANIFEST.json
+  ↓ Tauri beforeBuildCommand / frontendDist
+ Desktop-Paket
 ```
 
-Das Script erzeugt `dist/` ausschließlich aus der expliziten Runtime-Allowlist und schreibt `dist/NAQYA_FRONTEND_MANIFEST.json` mit Größe und SHA-256 jeder gestagten Datei. `src-tauri/tauri.conf.json` verwendet anschließend:
+Tauri verwendet bewusst:
 
 ```json
 "frontendDist": "../dist"
 ```
 
-`dist/` ist generiert, steht in `.gitignore` und darf nicht manuell gepflegt oder committed werden. Neue Frontend-Runtime-Dateien müssen bewusst in Staging-Allowlist, Service-Worker und Staging-Test aufgenommen werden.
+Der Repository-Stamm darf nicht wieder als Frontendquelle dienen. `dist/` ist generiert, steht in `.gitignore` und wird nie manuell gepflegt.
 
-### Native STT-Pfad
+Native STT:
 
 ```text
-LivePcmCapture
-  ↓ 16 kHz / Mono / PCM16-WAV
-Live-STT-Warteschlange
-  ↓
-native-bridge.js
-  ↓ Tauri invoke
-src-tauri/src/main.rs
-  ↓
-geschützter Modellpfad + private Temp-WAV
-  ↓
-Tauri-Sidecar naqya-whisper
-  ↓ nur wenn Sidecar nicht verfügbar
-kontrollierter externer whisper-cli-Fallback
+LivePcmCapture → 16 kHz Mono WAV → Live-STT-Warteschlange
+→ native-bridge.js → Tauri invoke → geschützter Modellpfad
+→ naqya-whisper Sidecar → nur bei Nichtverfügbarkeit kontrollierter whisper-cli-Fallback
 ```
 
 ## Kritische Invarianten
 
-Diese Punkte sind keine Implementierungsdetails, sondern Sicherheits-/Datenverträge:
-
-1. **Offline-first:** Keine automatische Online-STT, Cloudpflicht oder Telemetrie einführen.
-2. **Originalaudio und STT sind getrennt:** 3-Sekunden-Recoverysegmente und 4-Sekunden-STT-Segmente dürfen nicht zu einem gemeinsamen Lebenszyklus verschmolzen werden.
-3. **STT-Segmente bleiben geordnet:** `services/live-stt.js` serialisiert Transkriptionen absichtlich über eine Promise-Kette. Parallelisierung kann Textreihenfolge und Messwerte verfälschen.
-4. **Modelle werden nicht direkt aus beliebigen Benutzerpfaden ausgeführt:** Browser-Blob → 4-MiB-IPC-Blöcke → `.incoming` → SHA-256 → atomare Aktivierung → kanonisierter Pfad im NAQYA-Modellbereich.
-5. **Native Modellpfade sind eine Vertrauensgrenze:** `trusted_model_path()` muss Pfade kanonisieren und auf den eigenen Modell-Root begrenzen.
-6. **Sidecar vor PATH:** Der gebündelte Sidecar ist primär. Ein gestarteter Sidecar mit Laufzeitfehler darf nicht still durch einen externen CLI-Fallback ersetzt werden.
-7. **Temp-Audio bleibt privat:** Tauri-App-Cache, exklusive Dateierzeugung, `sync_all()` vor Prozessübergabe, anschließende Bereinigung.
-8. **Supply Chain ist gepinnt:** whisper.cpp-Tag **und** Commit müssen zum Runtimevertrag passen. Keine `latest`-Downloads.
-9. **Produktversion ≠ Datenbankschema:** Produktversion und `DB_VERSION` dürfen nicht gekoppelt hochgezählt werden. `DB_VERSION` ändert sich nur bei IndexedDB-Migrationen.
-10. **Desktop-Frontend ist eine Allowlist:** Der Repository-Stamm darf nicht wieder als `frontendDist` verwendet werden. Sonst können Tests, Dokumente oder Buildreste in das Paket geraten.
-11. **Releasebehauptungen brauchen Nachweis:** Erfolgreicher Sidecar-Build, Frontend-Staging oder `cargo check` ist noch kein getestetes Endanwender-Bundle.
+1. **Offline-first:** keine automatische Online-STT, Cloudpflicht oder Telemetrie.
+2. **Originalaudio ≠ STT-Segmente:** 3-Sekunden-Recovery und 4-Sekunden-STT getrennt halten.
+3. **STT-Reihenfolge:** Promise-Kette in `live-stt.js` nicht leichtfertig parallelisieren.
+4. **Modell-Vertrauensgrenze:** Blob → 4-MiB-Blöcke → `.incoming` → SHA-256 → atomare Aktivierung → kanonisierter NAQYA-Modellpfad.
+5. **Sidecar vor PATH:** gestarteten Sidecar mit Laufzeitfehler nicht still durch externen CLI ersetzen.
+6. **Temp-Audio privat:** Tauri-App-Cache, exklusive Erzeugung, `sync_all()`, danach Bereinigung.
+7. **Supply Chain gepinnt:** whisper.cpp-Tag und Commit müssen übereinstimmen; keine `latest`-Downloads.
+8. **Desktop-Frontend ist Allowlist:** neue Runtime-Dateien bewusst in Staging, Service Worker und Test aufnehmen.
+9. **Produktversion ≠ Datenbankschema:** `DB_VERSION` nur bei IndexedDB-Migrationen ändern.
+10. **Releasebehauptung nur mit Nachweis:** Sidecar-Build, Staging und `cargo check` sind noch kein getestetes Endanwender-Bundle.
 
 ## Code-Kommentare
 
-Kommentare werden bewusst sparsam eingesetzt. Ein Kommentar ist sinnvoll, wenn ein späterer Entwickler sonst eine scheinbar unnötige Einschränkung „optimieren“ könnte.
+Kommentare bleiben sparsam. Direkt im Code nur nicht offensichtliche Sicherheits-, Reihenfolge-, Migrations- oder Supply-Chain-Invarianten erklären. Bevorzugtes Muster:
 
-Regel:
+```text
+ENTWICKLERHINWEIS: <warum diese Einschränkung existiert>
+```
 
-- **kommentieren:** Sicherheitsgrenzen, Reihenfolgeabhängigkeiten, Migrationsregeln, ungewöhnliche Fallbackentscheidungen, Supply-Chain-Pins
-- **nicht kommentieren:** offensichtliche Zuweisungen, normale Schleifen, selbstsprechende Funktionsnamen
-- bevorzugtes Muster: `ENTWICKLERHINWEIS: <warum diese Invariante existiert>`
-
-Lange Erklärungen gehören in diese Datei oder einen spezialisierten Vertrag unter `docs/`, nicht mehrfach in den Quellcode.
+Normale Kontrollflüsse und selbsterklärende Zuweisungen nicht kommentieren; längere Begründungen gehören in `docs/`.
 
 ## Datenmodell und Migrationen
 
-Aktuell gilt IndexedDB-Schema **V2**. Details stehen in `docs/DATENMODELL.md`.
+Aktuell gilt IndexedDB-Schema **V2**. Bei Schemaänderungen `DB_VERSION` erhöhen, verlustfreie Migration implementieren, `docs/DATENMODELL.md` nachziehen und Backup/Import prüfen. Produktversionsänderungen allein sind kein Migrationsgrund.
 
-Bei einer Schemaänderung:
+## Lokale Entwicklung
 
-1. `DB_VERSION` erhöhen.
-2. Migration ausschließlich additiv oder explizit verlustfrei implementieren.
-3. bestehende Stores nicht still löschen.
-4. `docs/DATENMODELL.md` aktualisieren.
-5. Backup-/Importpfad auf Kompatibilität prüfen.
-6. statischen Vertrag ergänzen.
-
-Produktversionsänderungen allein sind **kein** Grund, `DB_VERSION` zu erhöhen.
-
-## Lokale PWA-Entwicklung
-
-Schnellstart:
+PWA:
 
 ```bash
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Dann `http://127.0.0.1:8765` öffnen.
-
-Alternativ:
+oder:
 
 ```bash
 chmod +x START_NAQYA.sh
 ./START_NAQYA.sh
 ```
 
-Für UI-/PWA-Arbeit sind keine npm-Abhängigkeiten erforderlich.
+Kein npm-/Bundler-Zwang für die statische PWA.
 
 ## Lokale Qualitätsprüfung
 
-### Schnelle Prüfung nach kleinen Frontendänderungen
+Kleine Frontend-/Dokumentationsänderung:
 
 ```bash
 python3 tests/validate_text_integrity.py
@@ -201,50 +151,32 @@ python3 tests/validate_frontend_staging.py
 python3 tests/validate_static.py
 ```
 
-### Desktop-Staging gezielt prüfen
+Desktop-Staging gezielt:
 
 ```bash
 python3 tools/stage_desktop_frontend.py
 python3 tests/validate_frontend_staging.py
 ```
 
-Das Ergebnis muss exakt 14 Runtime-Dateien plus `NAQYA_FRONTEND_MANIFEST.json` enthalten. `dist/` niemals als Quellverzeichnis bearbeiten.
+Erwartung: exakt 14 Runtime-Dateien plus `NAQYA_FRONTEND_MANIFEST.json`.
 
-### Rust/Tauri-Prüfung
+Rust/Tauri:
 
 ```bash
 cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
 cargo check --manifest-path src-tauri/Cargo.toml
 ```
 
-Unter Ubuntu/Kubuntu benötigt Tauri mindestens die im CI verwendeten Entwicklungsbibliotheken:
-
-```bash
-sudo apt-get update
-sudo apt-get install -y --no-install-recommends \
-  libwebkit2gtk-4.1-dev libxdo-dev libssl-dev \
-  libayatana-appindicator3-dev librsvg2-dev cmake build-essential
-```
-
-### Sidecar-Vertrag
-
-Der echte Build greift ausschließlich auf den fest gepinnten Upstream zu:
+Sidecar:
 
 ```bash
 bash tools/build_whisper_sidecar.sh
 python3 tests/validate_sidecar.py
-```
-
-Danach unter Linux zusätzlich sinnvoll:
-
-```bash
 sha256sum src-tauri/binaries/naqya-whisper-x86_64-unknown-linux-gnu
 ldd src-tauri/binaries/naqya-whisper-x86_64-unknown-linux-gnu
 ```
 
-`ldd` ist für den nächsten Bundle-Schritt wichtig: Das bisherige CI beweist Build und Hash des kopierten Executables, aber noch nicht die vollständige Laufzeitabhängigkeits-Schließung eines Endanwenderpakets.
-
-### Shell-Syntax
+Shell:
 
 ```bash
 bash -n START_NAQYA.sh
@@ -253,41 +185,30 @@ bash -n tools/build_whisper_sidecar.sh
 
 ## Entwicklungs- und Mergeablauf
 
-1. Realen `main`-, PR- und CI-Stand prüfen.
-2. Fachlich kleinen Zweig vom aktuellen `main` erstellen.
-3. Nur die für das Ziel notwendigen Dateien ändern.
-4. Relevante lokale Prüfungen ausführen.
-5. README, TODO, CHANGELOG, Entwicklerdokumentation und maschinenlesbare Statusdateien auf Aktualisierungsbedarf prüfen.
-6. Pull Request zunächst als Entwurf öffnen.
-7. Qualitätsgate für den **exakten Head-SHA** vollständig grün abwarten.
-8. Erst danach Review-/Mergebereitschaft setzen.
-9. Bevorzugt Squash-Merge mit erwarteter Head-SHA.
-10. Den resultierenden `main` erneut lesen und zentrale Text-/Statusdateien gegenprüfen.
+1. realen `main`-, PR- und CI-Stand prüfen.
+2. kleinen Fachzweig vom aktuellen `main` erstellen.
+3. nur notwendige Dateien ändern.
+4. relevante lokale Prüfungen ausführen.
+5. README, TODO, CHANGELOG, Entwicklerdoku und Statusdateien auf Drift prüfen.
+6. PR zunächst als Entwurf öffnen.
+7. Qualitätsgate für den exakten Head-SHA vollständig grün abwarten.
+8. Reviewbereitschaft erst danach setzen.
+9. bevorzugt Squash-Merge mit erwarteter Head-SHA.
+10. resultierenden `main` erneut validieren.
 
 ## Nächster Arbeitsblock 0.5.1
 
-**Ziel:** Linux-Desktop-Bundle end-to-end erzeugen und nachweisen; anschließend Release-Nachweis und Windows-Sidecar.
+**Ziel:** Linux-Desktop-Bundle end-to-end erzeugen und nachweisen; danach Release-Nachweis und Windows-Sidecar.
 
-### Aktueller Übergabepunkt
+Aktueller Übergabepunkt: Das deterministische `dist/`-Staging ist umgesetzt. Nächste Schritte:
 
-Das deterministische Desktop-Frontend-Staging ist umgesetzt und durch CI-Vertrag abgesichert:
+1. separate PWA-Produktversionsdrift `app.js` 0.2.0 → 0.5.0 schließen, `DB_VERSION=2` unverändert lassen.
+2. vollständiges Tauri-Linux-Bundle aus dem deterministischen `dist/` erzeugen.
+3. Paketinhalt auf Frontend-Manifest, `naqya-whisper` und Laufzeitbibliotheken prüfen.
+4. Sidecar aus dem Paketkontext tatsächlich starten.
+5. maschinenlesbaren Release-Nachweis mit Plattform, Architektur, whisper.cpp-Tag/Commit, Dateinamen, Größen, SHA-256 sowie Toolchain-/CI-Zuordnung erzeugen.
+6. erst nach End-to-End-Nachweis `sidecar_release_bundle_validated` auf wahr setzen.
 
-```text
-Repository-Runtime-Allowlist
-  ↓ tools/stage_desktop_frontend.py
- dist/ + NAQYA_FRONTEND_MANIFEST.json
-  ↓ frontendDist ../dist
- Tauri-Build
-```
+## Definition of Done
 
-Damit ist die zuvor zu breite `frontendDist: ".."`-Konfiguration beseitigt.
-
-### Empfohlene minimale Umsetzung
-
-1. die separate PWA-Produktversionsdrift `app.js` 0.2.0 → 0.5.0 mit Konsistenztest schließen, ohne `DB_VERSION=2` zu ändern.
-2. Linux-Sidecar wie bisher aus dem gepinnten Upstream bauen.
-3. vollständiges Tauri-Linux-Bundle mit dem deterministischen `dist/` erzeugen.
-4. Paketinhalt auf `naqya-whisper`, Frontend-Manifest und notwendige Laufzeitbibliotheken prüfen.
-5. den Sidecar **aus dem erzeugten Paketkontext** starten.
-6. maschinenlesbaren Release-Nachweis erzeugen: NAQYA-Version, Plattform, Architektur, whisper.cpp-Tag/Commit, Dateinamen, Größen, SHA-256, Compiler-/Rust-/Tauri-/CMake-Versionen und CI-Run.
-7. erst nach erfolgreicher Prüfung `sidecar_release_bundle_validated` auf wahr setzen.
+Eine Änderung ist erst fertig, wenn Code und Dokumentation denselben realen Stand beschreiben, die betroffenen lokalen Prüfungen bestanden sind, das GitHub-Qualitätsgate für den **exakten PR-Head** vollständig grün ist und nach einem Merge der resultierende `main` erneut geprüft wurde. Build-, Bundle- oder Releasefähigkeit darf nur behauptet werden, wenn genau diese Stufe praktisch nachgewiesen wurde.
