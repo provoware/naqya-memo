@@ -3,27 +3,27 @@
   "repo": "provoware/naqya-memo",
   "version": "0.5.0",
   "entwicklungsphase": "TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG",
-  "aktueller_arbeitsstand": "0.5.1-B – LINUX-BUNDLE & RELEASE-NACHWEIS",
-  "status": "ENTWICKLUNG – LINUX-BUNDLE CI-VALIDIERT",
+  "aktueller_arbeitsstand": "0.5.1-C – DIAGNOSE, LOGGING & EVIDENCE-BINDUNG",
+  "status": "ENTWICKLUNG – DIAGNOSEVERTRAG UND LINUX-BUNDLE CI-VALIDIERT",
   "referenzplattform": "PWA + Tauri Desktop",
   "zielplattformen": ["Linux", "Windows", "Android", "iPhone/iPad", "PWA"],
   "hauptdatei": "index.html",
   "fortschritt": {
     "bezug": "Entwicklungsblock 0.5.1",
-    "prozent": 56,
-    "erledigt": 5,
+    "prozent": 78,
+    "erledigt": 7,
     "gesamt": 9,
-    "berechnung": "5 abgeschlossene Hauptpunkte / 9 definierte Hauptpunkte, kaufmännisch gerundet",
+    "berechnung": "7 abgeschlossene Hauptpunkte / 9 definierte Hauptpunkte, kaufmännisch gerundet",
     "erledigte_punkte": [
       "Produktversion und Backup-Metadaten konsistent absichern",
       "Desktop-Frontend deterministisch in dist/ stagen",
       "Linux-Tauri-DEB mit gebündeltem Sidecar erzeugen",
       "Sidecar im Paketkontext starten und Laufzeitabhängigkeiten prüfen",
-      "maschinen- und menschenlesbaren Release-Nachweis erzeugen"
+      "maschinen- und menschenlesbaren Release-Nachweis erzeugen",
+      "professionelles Diagnose-, Debugging- und Logging-Modul mit stabilen Fehlercodes integrieren",
+      "Diagnoseereignisse und Release-Evidence über denselben versionierten Diagnosevertrag verbinden"
     ],
     "offene_punkte": [
-      "professionelles Diagnose-, Debugging- und Logging-Modul mit stabilen Fehlercodes",
-      "gemeinsamen Diagnose-/Release-Evidence-Vertrag und Ereignisreferenzen integrieren",
       "Windows-x86_64-Sidecar und Windows-Bundle vollständig nachweisen",
       "reale Linux-/Windows-Hardwareabnahme sowie AudioWorklet- und Langzeithärtung abschließen"
     ]
@@ -31,20 +31,18 @@
   "release_nachweis": {
     "linux_bundle_validiert": true,
     "workflow": "NAQYA Linux-Bundle-Nachweis",
-    "workflow_run_id": 32477864231,
-    "workflow_run_number": 1,
-    "qualitaetspruefung_run_id": 32477864261,
-    "qualitaetspruefung_run_number": 216,
-    "source_commit": "602d0dd974abc1fe17490492c7a453bce88089fe",
-    "artifact_id": 9445169821,
-    "artifact_name": "naqya-linux-bundle-nachweis-1",
-    "artifact_sha256": "6831027b0ed6f5dd1ee1137d2cb814d5e6868f4a2ef041169318b4a54be2661d",
-    "desktop_package": "NAQYA-0.5.0-linux-x86_64.deb",
-    "desktop_package_bytes": 5148416,
-    "desktop_package_sha256": "1721b92de3a23da0ece8e9833d6949bf9b9987d7cc3de69e76d1cd50fc83f2e4",
-    "sidecar_bytes": 2828584,
-    "sidecar_sha256": "6c4805c72c855ea5b627b10450bb3feec56ea31b8038aed052ce9260bc11529b",
-    "frontend_manifest_sha256": "5290ff2a7e20c5b8c28e4e32ed727c08054ea38c0f4aabea924694f3ade97351",
+    "workflow_run_id": 32482553418,
+    "workflow_run_number": 14,
+    "qualitaetspruefung_run_id": 32482553363,
+    "qualitaetspruefung_run_number": 268,
+    "source_commit": "0388cda77c6696017c5b00cb795f5758af2d5e22",
+    "artifact_id": 9446843382,
+    "artifact_name": "naqya-linux-bundle-nachweis-14",
+    "artifact_sha256": "8e2efd73b581bd420f348b129e554363aaf4cdbbcb4ca65ffa7b9ba3290074f1",
+    "diagnostics_contract_file": "diagnostics/DIAGNOSTICS_CONTRACT.json",
+    "diagnostics_contract_sha256": "fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425",
+    "diagnostics_schema_version": 1,
+    "diagnostics_event_schema_version": 1,
     "release_evidence_schema": 1
   },
   "kernfunktionen": {
@@ -77,6 +75,12 @@
     "release_evidence_linux_ci_generated": true,
     "release_evidence_machine_readable": true,
     "release_evidence_human_readable": true,
+    "diagnostics_contract_versioned": true,
+    "diagnostics_contract_release_bound": true,
+    "diagnostics_runtime_fail_safe": true,
+    "diagnostics_privacy_redaction": true,
+    "diagnostics_json_text_export": true,
+    "diagnostics_retry_once": true,
     "sprachmodell_manager": true,
     "sprachmodell_native_materialisierung": true,
     "sprachmodell_transfer_chunk_bytes": 4194304,
@@ -92,12 +96,12 @@
     "backup_sha256": true
   },
   "bekannte_grenzen": [
-    "Das Linux-DEB, der enthaltene Sidecar, dessen Bytegleichheit und Laufzeitabhängigkeiten sind im CI paketbezogen validiert; eine reale Endgeräte-, Mikrofon- und Langzeithardwareabnahme steht weiterhin aus.",
+    "Das Linux-DEB und der enthaltene Sidecar sind im CI paketbezogen validiert; reale Endgeräte-, Mikrofon- und Langzeithardwareabnahme steht weiterhin aus.",
     "Der Windows-x86_64-Sidecar und das Windows-Bundle benötigen noch Build-, Integritäts- und Startabnahme.",
-    "Ein einheitliches professionelles Diagnose-/Debugging-/Logging-Modul mit stabilen Ereignis- und Fehlercodes wird als 0.5.1-C umgesetzt.",
+    "Der Diagnosevertrag ist unter Linux validiert. Windows muss exakt denselben Contract-SHA fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425 und dasselbe Ereignisschema verwenden; plattformspezifische Umdeutung vorhandener Fehlercodes ist verboten.",
     "Die Live-PCM-Erfassung verwendet weiterhin Web Audio ScriptProcessor als Übergangsadapter; eine AudioWorklet-Umstellung ist vorgesehen.",
     "Das Vollbackup nutzt weiterhin JSON/Base64 und ist für sehr große Datenbestände speicherintensiver als ein streamingfähiger Container.",
     "Native Mobiladapter für Android und iPhone/iPad stehen weiterhin aus."
   ],
-  "naechster_meilenstein": "0.5.1-C – DIAGNOSE, DEBUGGING, LOGGING & EVIDENCE-BINDUNG"
+  "naechster_meilenstein": "0.5.1-D – WINDOWS-BUNDLE MIT IDENTISCHEM DIAGNOSEVERTRAG"
 }
