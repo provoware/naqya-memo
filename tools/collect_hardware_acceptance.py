@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 STATUS_FILE = ROOT / "PROJEKTSTATUS.json"
 DIAGNOSTICS_FILE = ROOT / "diagnostics/DIAGNOSTICS_CONTRACT.json"
 RESOURCE_SCHEMA_VERSION = 1
+RUNTIME_SCHEMA_VERSION = 1
 
 
 def sha256_file(path: Path) -> str:
@@ -114,17 +115,60 @@ def load_resource_metrics(path: Path) -> dict:
     return record
 
 
+def load_runtime_metrics(path: Path) -> dict:
+    if not path.is_file():
+        raise SystemExit(f"FEHLER: Runtime-Messung fehlt oder ist keine Datei: {path}")
+    try:
+        record = load_json(path)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"FEHLER: Runtime-Messung ist kein gültiges JSON: {exc}") from exc
+    if record.get("format") == "NAQYA-LIVE-STT-RUNTIME":
+        if record.get("schemaVersion") != RUNTIME_SCHEMA_VERSION or not isinstance(record.get("metrics"), dict):
+            raise SystemExit("FEHLER: Runtime-Messung enthält einen ungültigen NAQYA-Envelope")
+        metrics = record["metrics"]
+    else:
+        metrics = record
+    required = {
+        "schemaVersion", "targetSegmentMs", "segmentsTotal", "segmentsSucceeded", "segmentsLost",
+        "capturedAudioMs", "transcribedAudioMs", "sttElapsedMs", "realtimeFactorAvg", "realtimeFactorMax",
+    }
+    missing = sorted(required - set(metrics))
+    if missing:
+        raise SystemExit("FEHLER: Runtime-Messung unvollständig: " + ", ".join(missing))
+    if metrics["schemaVersion"] != RUNTIME_SCHEMA_VERSION:
+        raise SystemExit(f"FEHLER: Unbekannte Runtime-Schemaversion: {metrics['schemaVersion']}")
+    total = int(metrics["segmentsTotal"])
+    succeeded = int(metrics["segmentsSucceeded"])
+    lost = int(metrics["segmentsLost"])
+    captured_ms = float(metrics["capturedAudioMs"])
+    transcribed_ms = float(metrics["transcribedAudioMs"])
+    elapsed_ms = float(metrics["sttElapsedMs"])
+    rtf_avg = float(metrics["realtimeFactorAvg"])
+    rtf_max = float(metrics["realtimeFactorMax"])
+    if int(metrics["targetSegmentMs"]) <= 0 or total < 1 or succeeded < 0 or lost < 0 or succeeded + lost != total:
+        raise SystemExit("FEHLER: Runtime-Messung enthält inkonsistente Segmentwerte")
+    if captured_ms <= 0 or transcribed_ms <= 0 or transcribed_ms > captured_ms or elapsed_ms <= 0:
+        raise SystemExit("FEHLER: Runtime-Messung enthält inkonsistente Audio-/STT-Zeiten")
+    if rtf_avg <= 0 or rtf_max < rtf_avg:
+        raise SystemExit("FEHLER: Runtime-Messung enthält inkonsistente RTF-Werte")
+    calculated_avg = elapsed_ms / transcribed_ms
+    if abs(calculated_avg - rtf_avg) > max(0.00001, calculated_avg * 0.00002):
+        raise SystemExit("FEHLER: Runtime-Messung enthält einen nicht reproduzierbaren RTF-Durchschnitt")
+    return metrics
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Erzeugt einen Hardware-Abnahmenachweis aus real gemessenen Werten.")
     parser.add_argument("--package", required=True, type=Path, help="Tatsächlich getestetes Installationspaket")
     parser.add_argument("--model", required=True, type=Path, help="Tatsächlich verwendete whisper.cpp-Modelldatei")
     parser.add_argument("--microphone", required=True, help="Bezeichnung des real getesteten Mikrofons")
     parser.add_argument("--profile", choices=("smoke", "long30", "long60"), required=True)
-    parser.add_argument("--duration-seconds", type=int, required=True)
-    parser.add_argument("--segments-total", type=int, required=True)
-    parser.add_argument("--segments-lost", type=int, required=True)
-    parser.add_argument("--realtime-factor-avg", type=float, required=True)
-    parser.add_argument("--realtime-factor-max", type=float, required=True)
+    parser.add_argument("--runtime-metrics", type=Path, help="E3 nativeSttRuntimeMetrics als JSON; ersetzt manuelle Segment-/RTF-Werte")
+    parser.add_argument("--duration-seconds", type=int)
+    parser.add_argument("--segments-total", type=int)
+    parser.add_argument("--segments-lost", type=int)
+    parser.add_argument("--realtime-factor-avg", type=float)
+    parser.add_argument("--realtime-factor-max", type=float)
     resources = parser.add_mutually_exclusive_group(required=True)
     resources.add_argument("--peak-ram-mb", type=float, help="Manuell übernommener Peak-RAM-Wert (Legacy/Fallback)")
     resources.add_argument("--resource-metrics", type=Path, help="RESOURCE_METRICS.json aus measure_process_resources.py")
@@ -141,18 +185,55 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def validate_inputs(args: argparse.Namespace, peak_ram_mb: float) -> None:
+def resolve_runtime_values(args: argparse.Namespace) -> tuple[dict | None, int, int, int, float, float]:
+    manual_names = ("duration_seconds", "segments_total", "segments_lost", "realtime_factor_avg", "realtime_factor_max")
+    if args.runtime_metrics:
+        supplied = [name for name in manual_names if getattr(args, name) is not None]
+        if supplied:
+            raise SystemExit("FEHLER: --runtime-metrics darf nicht mit manuellen Segment-/RTF-Werten kombiniert werden")
+        runtime = load_runtime_metrics(args.runtime_metrics)
+        duration_seconds = int(float(runtime["capturedAudioMs"]) // 1000)
+        return (
+            runtime,
+            duration_seconds,
+            int(runtime["segmentsTotal"]),
+            int(runtime["segmentsLost"]),
+            float(runtime["realtimeFactorAvg"]),
+            float(runtime["realtimeFactorMax"]),
+        )
+    missing = ["--" + name.replace("_", "-") for name in manual_names if getattr(args, name) is None]
+    if missing:
+        raise SystemExit("FEHLER: Ohne --runtime-metrics fehlen manuelle Messwerte: " + ", ".join(missing))
+    return (
+        None,
+        int(args.duration_seconds),
+        int(args.segments_total),
+        int(args.segments_lost),
+        float(args.realtime_factor_avg),
+        float(args.realtime_factor_max),
+    )
+
+
+def validate_inputs(
+    args: argparse.Namespace,
+    peak_ram_mb: float,
+    duration_seconds: int,
+    segments_total: int,
+    segments_lost: int,
+    realtime_factor_avg: float,
+    realtime_factor_max: float,
+) -> None:
     for label, path in (("Paket", args.package), ("Modell", args.model)):
         if not path.is_file():
             raise SystemExit(f"FEHLER: {label} fehlt oder ist keine Datei: {path}")
     if not args.microphone.strip():
         raise SystemExit("FEHLER: Mikrofonbezeichnung darf nicht leer sein")
     minimum = {"smoke": 1, "long30": 1800, "long60": 3600}[args.profile]
-    if args.duration_seconds < minimum:
+    if duration_seconds < minimum:
         raise SystemExit(f"FEHLER: Profil {args.profile} benötigt mindestens {minimum} Sekunden")
-    if args.segments_total < 1 or not 0 <= args.segments_lost <= args.segments_total:
+    if segments_total < 1 or not 0 <= segments_lost <= segments_total:
         raise SystemExit("FEHLER: Segmentwerte sind inkonsistent")
-    if min(args.realtime_factor_avg, args.realtime_factor_max, peak_ram_mb) <= 0:
+    if min(realtime_factor_avg, realtime_factor_max, peak_ram_mb) <= 0:
         raise SystemExit("FEHLER: RTF- und RAM-Messwerte müssen größer als 0 sein")
 
     if args.result == "PASS":
@@ -167,15 +248,16 @@ def validate_inputs(args: argparse.Namespace, peak_ram_mb: float) -> None:
         missing = [flag for flag, enabled in confirmations.items() if not enabled]
         if missing:
             raise SystemExit("FEHLER: PASS erfordert reale Bestätigung: " + ", ".join(missing))
-        if args.segments_lost != 0:
+        if segments_lost != 0:
             raise SystemExit("FEHLER: PASS ist bei Segmentverlust unzulässig")
 
 
 def main() -> None:
     args = parse_args()
+    runtime_metrics, duration_seconds, segments_total, segments_lost, rtf_avg, rtf_max = resolve_runtime_values(args)
     resource_metrics = load_resource_metrics(args.resource_metrics) if args.resource_metrics else None
     peak_ram_mb = float(resource_metrics["peak_ram_mb"]) if resource_metrics else float(args.peak_ram_mb)
-    validate_inputs(args, peak_ram_mb)
+    validate_inputs(args, peak_ram_mb, duration_seconds, segments_total, segments_lost, rtf_avg, rtf_max)
 
     status = load_json(STATUS_FILE)
     diagnostics_contract = load_json(DIAGNOSTICS_FILE)
@@ -191,13 +273,22 @@ def main() -> None:
         raise SystemExit("FEHLER: Unbekannte Diagnosecodes: " + ", ".join(unknown))
 
     measurements = {
-        "duration_seconds": args.duration_seconds,
-        "segments_total": args.segments_total,
-        "segments_lost": args.segments_lost,
-        "realtime_factor_avg": args.realtime_factor_avg,
-        "realtime_factor_max": args.realtime_factor_max,
+        "duration_seconds": duration_seconds,
+        "segments_total": segments_total,
+        "segments_lost": segments_lost,
+        "realtime_factor_avg": rtf_avg,
+        "realtime_factor_max": rtf_max,
         "peak_ram_mb": peak_ram_mb,
     }
+    if runtime_metrics:
+        measurements.update({
+            "runtime_metrics_sha256": sha256_file(args.runtime_metrics),
+            "segments_succeeded": int(runtime_metrics["segmentsSucceeded"]),
+            "runtime_target_segment_ms": int(runtime_metrics["targetSegmentMs"]),
+            "runtime_captured_audio_ms": float(runtime_metrics["capturedAudioMs"]),
+            "runtime_transcribed_audio_ms": float(runtime_metrics["transcribedAudioMs"]),
+            "runtime_stt_elapsed_ms": float(runtime_metrics["sttElapsedMs"]),
+        })
     if resource_metrics:
         measurements.update({
             "resource_metrics_sha256": sha256_file(args.resource_metrics),
@@ -229,8 +320,9 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Hardware-Nachweis geschrieben: {args.output}")
-    source = "RESOURCE_METRICS.json" if resource_metrics else "manuell"
-    print(f"Ergebnis: {args.result} | Profil: {args.profile} | Peak-RAM: {peak_ram_mb:.3f} MB ({source}) | Segmente verloren: {args.segments_lost}")
+    resource_source = "RESOURCE_METRICS.json" if resource_metrics else "manuell"
+    runtime_source = "nativeSttRuntimeMetrics" if runtime_metrics else "manuell"
+    print(f"Ergebnis: {args.result} | Profil: {args.profile} | Peak-RAM: {peak_ram_mb:.3f} MB ({resource_source}) | Runtime: {runtime_source} | Segmente verloren: {segments_lost}")
 
 
 if __name__ == "__main__":
