@@ -60,6 +60,7 @@ def main() -> None:
     parser.add_argument("--text-output", default="release/RELEASE_EVIDENCE.txt")
     parser.add_argument("--sidecar-started", action="store_true")
     parser.add_argument("--dependencies-resolved", action="store_true")
+    parser.add_argument("--package-repack-deterministic", action="store_true")
     args = parser.parse_args()
 
     package = Path(args.package).resolve()
@@ -77,8 +78,10 @@ def main() -> None:
         if not path.is_file():
             raise SystemExit(f"FEHLER: {label} fehlt: {path}")
 
-    if not args.sidecar_started or not args.dependencies_resolved:
-        raise SystemExit("FEHLER: Release-Nachweis darf erst nach Start- und Laufzeitabhängigkeitsprüfung erzeugt werden.")
+    if not args.sidecar_started or not args.dependencies_resolved or not args.package_repack_deterministic:
+        raise SystemExit(
+            "FEHLER: Release-Nachweis darf erst nach Sidecar-Start, Abhängigkeitsprüfung und deterministischem DEB-Repacking erzeugt werden."
+        )
 
     version = json.loads((ROOT / "VERSION.json").read_text(encoding="utf-8"))
     whisper = json.loads((ROOT / "src-tauri/sidecar/whisper-runtime.json").read_text(encoding="utf-8"))
@@ -125,6 +128,8 @@ def main() -> None:
             "file": package.name,
             "bytes": package.stat().st_size,
             "sha256": sha256_file(package),
+            "reproducibility_profile": "dpkg-deb-normalized-v1",
+            "source_date_epoch": int(os.environ.get("SOURCE_DATE_EPOCH", "946684800")),
         },
         "runtime_dependencies": {
             "report_file": deps.name,
@@ -137,6 +142,7 @@ def main() -> None:
             "cmake": command_version("cmake", "--version"),
             "tauri_cli": command_version("cargo", "tauri", "--version"),
             "cc": command_version("cc", "--version"),
+            "dpkg_deb": command_version("dpkg-deb", "--version"),
         },
         "ci": {
             "provider": "github-actions" if os.environ.get("GITHUB_ACTIONS") == "true" else "lokal",
@@ -149,6 +155,7 @@ def main() -> None:
             "source_sidecar_sha_matches_packaged": True,
             "packaged_sidecar_started": True,
             "runtime_dependencies_resolved": True,
+            "package_repack_deterministic": True,
         },
     }
 
@@ -162,9 +169,10 @@ def main() -> None:
         f"Was: Linux-Desktop-Paket {package.name}\n"
         f"Wann: {generated_at}\n"
         f"Wo: Git-Commit {commit}, Ziel {evidence['target']['rust_target']}\n"
-        f"Wie: deterministisches Frontend-Staging, statischer whisper.cpp-Sidecar, Tauri-Bundle, Paketstart- und Abhängigkeitsprüfung\n"
+        "Wie: deterministisches Frontend-Staging, statischer whisper.cpp-Sidecar, Tauri-Bundle, deterministisches DEB-Repacking, Paketstart- und Abhängigkeitsprüfung\n"
         f"Sidecar: {packaged_hash} ({sidecar.stat().st_size} Bytes)\n"
         f"Paket: {evidence['desktop_package']['sha256']} ({package.stat().st_size} Bytes)\n"
+        "DEB-Reproduzierbarkeit: dpkg-deb-normalized-v1\n"
         "Ergebnis: BUNDLE-VALIDIERT\n",
         encoding="utf-8",
     )
