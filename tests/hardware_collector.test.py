@@ -35,10 +35,23 @@ def main() -> None:
         package = temp / "naqya-test.pkg"
         model = temp / "ggml-test.bin"
         output = temp / "HARDWARE_ACCEPTANCE.json"
+        resources = temp / "RESOURCE_METRICS.json"
         package_bytes = b"naqya-package-test\n"
         model_bytes = b"naqya-model-test\n"
         package.write_bytes(package_bytes)
         model.write_bytes(model_bytes)
+        resource_record = {
+            "schema_version": 1,
+            "root_pid": 4242,
+            "duration_seconds": 12.5,
+            "sample_interval_ms": 250,
+            "peak_processes": 2,
+            "peak_ram_mb": 512.25,
+            "cpu_avg_pct": 18.5,
+            "cpu_max_pct": 41.75,
+            "command_exit_code": 0,
+        }
+        resources.write_text(json.dumps(resource_record) + "\n", encoding="utf-8")
 
         base = (
             "--package", str(package),
@@ -50,7 +63,7 @@ def main() -> None:
             "--segments-lost", "1",
             "--realtime-factor-avg", "0.42",
             "--realtime-factor-max", "0.61",
-            "--peak-ram-mb", "384.5",
+            "--resource-metrics", str(resources),
             "--output", str(output),
         )
 
@@ -62,6 +75,10 @@ def main() -> None:
         assert record["package"]["sha256"] == sha256(package_bytes)
         assert record["model"]["sha256"] == sha256(model_bytes)
         assert record["measurements"]["segments_lost"] == 1
+        assert record["measurements"]["peak_ram_mb"] == 512.25
+        assert record["measurements"]["cpu_avg_pct"] == 18.5
+        assert record["measurements"]["cpu_max_pct"] == 41.75
+        assert record["measurements"]["resource_metrics_sha256"] == hashlib.sha256(resources.read_bytes()).hexdigest()
         assert record["package"]["installed"] is False
         assert record["audio"]["live_dictation_ok"] is False
 
@@ -79,17 +96,29 @@ def main() -> None:
         assert unsafe_pass.returncode != 0
         assert "PASS erfordert reale Bestätigung" in unsafe_pass.stdout
 
+        bad_resources = temp / "RESOURCE_METRICS_BAD.json"
+        broken = dict(resource_record)
+        broken["command_exit_code"] = 7
+        bad_resources.write_text(json.dumps(broken) + "\n", encoding="utf-8")
+        rejected = run(*base[:-4], "--resource-metrics", str(bad_resources), "--output", str(output))
+        assert rejected.returncode != 0
+        assert "fehlgeschlagenen Testprozess" in rejected.stdout
+
+        legacy = run(
+            "--package", str(package), "--model", str(model), "--microphone", "Legacy",
+            "--profile", "smoke", "--duration-seconds", "2", "--segments-total", "1", "--segments-lost", "0",
+            "--realtime-factor-avg", "1", "--realtime-factor-max", "1", "--peak-ram-mb", "384.5",
+            "--output", str(output),
+        )
+        assert legacy.returncode == 0, legacy.stdout
+        legacy_record = json.loads(output.read_text(encoding="utf-8"))
+        assert legacy_record["measurements"]["peak_ram_mb"] == 384.5
+        assert "resource_metrics_sha256" not in legacy_record["measurements"]
+
         long30_too_short = run(
-            "--package", str(package),
-            "--model", str(model),
-            "--microphone", "Test",
-            "--profile", "long30",
-            "--duration-seconds", "1799",
-            "--segments-total", "1",
-            "--segments-lost", "0",
-            "--realtime-factor-avg", "1",
-            "--realtime-factor-max", "1",
-            "--peak-ram-mb", "1",
+            "--package", str(package), "--model", str(model), "--microphone", "Test",
+            "--profile", "long30", "--duration-seconds", "1799", "--segments-total", "1", "--segments-lost", "0",
+            "--realtime-factor-avg", "1", "--realtime-factor-max", "1", "--peak-ram-mb", "1",
             "--output", str(output),
         )
         assert long30_too_short.returncode != 0
