@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#5b5ce2">
-  <meta name="description" content="PROVOWARE – NAQYA Memo Tool 2026, offline-first Organizer">
+  <meta name="description" content="PROVOWARE – NAQYA Memo Tool 2026, offline-first Organizer mit lokalem Audio und Offline-Diktat">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-02.css">
   <title>NAQYA Memo Tool 2026</title>
 </head>
 <body>
@@ -84,7 +85,9 @@
   </form>
 </dialog>
 
-<dialog id="helpDialog"><div class="dialog-head"><h2>NAQYA Soforthilfe</h2><button class="icon-button" onclick="this.closest('dialog').close()" aria-label="Schließen">✕</button></div><div class="help-content"><h3>1. Schnell speichern</h3><p>Nutze „＋ Neu“, Audio oder Diktat. Nur ein Titel ist sinnvoll, aber nicht zwingend.</p><h3>2. Später organisieren</h3><p>Projekt, Kategorie und Tags können jederzeit ergänzt werden.</p><h3>3. Offline</h3><p>Daten, Dokumente und Audio bleiben lokal. Die App verwendet keinen Cloud-Fallback für Diktat.</p><h3>4. Backup</h3><p>Unter Einstellungen kannst du alle Metadaten als JSON exportieren und wieder einlesen.</p></div></dialog>
+<dialog id="helpDialog"><div class="dialog-head"><h2>NAQYA Soforthilfe</h2><button class="icon-button" onclick="this.closest('dialog').close()" aria-label="Schließen">✕</button></div><div class="help-content"><h3>1. Schnell speichern</h3><p>Nutze „＋ Neu“, Audio oder Diktat. Ein Titel ist hilfreich, aber nicht zwingend.</p><h3>2. Audio bleibt lokal</h3><p>Aufnahmen werden in kurzen Segmenten lokal gesichert. Wird die App unerwartet beendet, versucht NAQYA vorhandene Segmente beim nächsten Start wiederherzustellen.</p><h3>3. Offline-Diktat</h3><p>NAQYA verwendet nur lokale Spracherkennung. Ist keine lokale Engine verfügbar, wird kein Cloud-Fallback gestartet. Die native whisper.cpp-Brücke ist als Provider vorbereitet.</p><h3>4. Später organisieren</h3><p>Projekt, Kategorie und Tags können jederzeit ergänzt werden.</p><h3>5. Backup</h3><p>Das 0.2-Backup kann Metadaten und Binärdateien in einem lokalen NAQYA-Paket sichern und beim Import mit Prüfsummen validieren.</p></div></dialog>
+<script src="services/capabilities.js" defer></script>
+<script src="services/stt-core.js" defer></script>
 <script src="app.js" defer></script>
 </body>
 </html>
