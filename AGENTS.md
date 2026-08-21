@@ -33,7 +33,20 @@ Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dies
 - `docs/ENTWICKLERDOKUMENTATION.md` ist die kanonische technische Übergabe.
 - Codekommentare erklären nur schwer erkennbare Gründe und Invarianten; bevorzugter Marker: `ENTWICKLERHINWEIS`.
 - Produktversion und `DB_VERSION` bleiben getrennte Verträge.
-- README, TODO, CHANGELOG, `PROJEKTSTATUS.json`, Entwicklerdokumentation und relevante Tests werden bei jeder Iteration auf Aktualisierungsbedarf geprüft.
+
+## Pflichtdateien bei Änderungen
+Bei jeder funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung werden mindestens diese Dateien auf Aktualisierungsbedarf geprüft:
+- `README.md`
+- `TODO.md`
+- `AGENTS.md`
+- `CHANGELOG.md`
+- `PROJEKTSTATUS.json`
+- `VERSION.json`
+- `CONTRIBUTING.md`
+- `docs/ENTWICKLERDOKUMENTATION.md`
+- relevante Fachdokumentation und Tests
+
+Unveränderte Pflichtdateien bleiben unverändert, wenn kein sachlicher Aktualisierungsbedarf besteht; die Prüfung selbst ist dennoch verbindlich.
 
 ## Diagnose-, Logging- und Evidence-Regeln
 - `diagnostics/DIAGNOSTICS_CONTRACT.json` ist der kanonische Maschinenvertrag.
