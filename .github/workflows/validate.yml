@@ -29,7 +29,13 @@ jobs:
       - name: Tauri Linux-Prüfabhängigkeiten
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev cmake build-essential
+      - name: Reproduzierbaren Linux-Sidecar bauen
+        run: tools/build_whisper_sidecar.sh
+      - name: Sidecar-Artefakt prüfen
+        run: |
+          test -x src-tauri/binaries/naqya-whisper-x86_64-unknown-linux-gnu
+          sha256sum -c src-tauri/binaries/naqya-whisper-x86_64-unknown-linux-gnu.sha256
       - name: Rust formatieren
         run: cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
       - name: Rust kompilieren prüfen
