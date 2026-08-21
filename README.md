@@ -41,6 +41,7 @@ Technischer Kern:
 - **Modellsicherheit:** 4-MiB-Transferblöcke, SHA-256, geschützter App-Modellpfad, atomare Aktivierung
 - **Desktop-Build:** deterministisches `dist/`; Tauri `frontendDist` zeigt auf `../dist`
 - **Release-Nachweis:** Paket, Sidecar, Toolchain, Zielplattform, CI-Lauf, Diagnosevertrag und gemeinsamer Evidence-Fingerprint werden maschinenlesbar gebunden
+- **Hardware-Abnahmevertrag:** `hardware/HARDWARE_ACCEPTANCE.schema.json` bindet reale Linux-/Windows-Messungen an denselben Evidence-Fingerprint; ohne reale Messdaten entsteht keine Hardwarefreigabe
 
 ## Diagnose-, Logging- und Evidence-Vertrag
 
@@ -62,9 +63,18 @@ Git-Commit
   → gepackter Sidecar
   → Diagnosevertrag
   → Evidence-Fingerprint
+  → reale Hardware-Abnahme
   → Runtime-Ereignis / Fehlercode
   → sichere Benutzeraktion
 ```
+
+## Hardware-Abnahmevertrag 0.5.1-E1
+
+Der E1-Vertrag ist bewusst von der eigentlichen Gerätefreigabe getrennt. `hardware/HARDWARE_ACCEPTANCE.schema.json` beschreibt die Messdaten; `tests/validate_hardware_acceptance.py` prüft sie gegen den aktuell validierten Evidence-Fingerprint und Diagnosevertrag.
+
+Ein Hardware-`PASS` verlangt mindestens: installierte und gestartete App, tatsächlich verwendeten gebündelten Sidecar, Modell aus dem geschützten Pfad, funktionierende Mikrofonaufnahme und Live-Diktat, erfolgreiche Temp-WAV-Bereinigung sowie **0 verlorene Segmente**. Die Profile `long30` und `long60` erzwingen mindestens 1800 beziehungsweise 3600 Sekunden reale Testdauer.
+
+Der Vertrag selbst ist automatisiert prüfbar; **reale Linux-/Windows-Hardwaremessungen stehen weiterhin aus** und werden nicht aus CI-Paketdaten abgeleitet.
 
 ## Aktueller Plattform-Nachweis
 
@@ -109,9 +119,10 @@ Danach `http://127.0.0.1:8765` öffnen.
 1. `CONTRIBUTING.md` – kurzer GitHub-Einstieg und Mindestprüfungen
 2. `docs/ENTWICKLERDOKUMENTATION.md` – Architekturkarte, Vertrauensgrenzen und lokale Prüfungen
 3. `docs/DIAGNOSE_LOGGING.md` – Diagnose-, Privacy- und Evidence-Vertrag
-4. `AGENTS.md` – verbindlicher Entwicklungs-, Merge- und Freigabevertrag
-5. `TODO.md` – Prioritäten und Abnahmekriterien
-6. `PROJEKTSTATUS.json` – maschinenlesbarer aktueller Stand und Release-Nachweis
+4. `docs/HARDWARE_ACCEPTANCE.md` – realer Hardware-Abnahmevertrag und Prüfprofile
+5. `AGENTS.md` – verbindlicher Entwicklungs-, Merge- und Freigabevertrag
+6. `TODO.md` – Prioritäten und Abnahmekriterien
+7. `PROJEKTSTATUS.json` – maschinenlesbarer aktueller Stand und Release-Nachweis
 
 ## Was aktuell validiert ist
 
@@ -127,6 +138,7 @@ Danach `http://127.0.0.1:8765` öffnen.
 - SHA-256-Bindung von Diagnosevertrag und Release Evidence
 - plattformübergreifender Evidence-Fingerprint
 - automatisierter Linux/Windows-Evidence-Paarvergleich
+- maschinenlesbares Hardware-Abnahmeschema und Validator
 
 ## Noch offen bzw. nicht als Hardware-Release abgenommen
 
@@ -141,8 +153,7 @@ Danach `http://127.0.0.1:8765` öffnen.
 
 Priorität:
 
-1. maschinenlesbaren Hardware-Abnahmevertrag definieren und an den Evidence-Fingerprint binden
-2. reale Linux- und Windows-Mikrofon-/Sidecar-Abnahme durchführen
-3. 30-/60-Minuten-Langzeitmessungen für CPU, RAM, Latenz, Echtzeitfaktor und Segmentverlust erfassen
-4. `ScriptProcessor` kontrolliert durch `AudioWorklet` ersetzen
-5. identische Diagnose-/Evidence-Invarianten während der Runtime-Abnahme erzwingen
+1. reale Linux- und Windows-Mikrofon-/Sidecar-Abnahme mit `HARDWARE_ACCEPTANCE.json` durchführen
+2. 30-/60-Minuten-Langzeitmessungen für CPU, RAM, Latenz, Echtzeitfaktor und Segmentverlust erfassen
+3. `ScriptProcessor` kontrolliert durch `AudioWorklet` ersetzen
+4. identische Diagnose-/Evidence-Invarianten während der Runtime-Abnahme erzwingen
