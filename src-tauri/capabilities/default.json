@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "naqya-main",
+  "description": "Minimale Desktop-Fähigkeiten für den lokalen NAQYA-Kern.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
