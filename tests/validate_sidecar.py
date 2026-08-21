@@ -4,13 +4,15 @@ import re
 
 root = Path(__file__).resolve().parents[1]
 manifest_path = root / "src-tauri/sidecar/whisper-runtime.json"
-build_script = root / "tools/build_whisper_sidecar.sh"
+linux_build_script = root / "tools/build_whisper_sidecar.sh"
+windows_build_script = root / "tools/build_whisper_sidecar_windows.ps1"
 tauri_path = root / "src-tauri/tauri.conf.json"
 cargo_path = root / "src-tauri/Cargo.toml"
 rust_path = root / "src-tauri/src/main.rs"
 
 assert manifest_path.is_file(), "Whisper-Sidecar-Manifest fehlt"
-assert build_script.is_file(), "Whisper-Sidecar-Buildskript fehlt"
+assert linux_build_script.is_file(), "Linux-Whisper-Sidecar-Buildskript fehlt"
+assert windows_build_script.is_file(), "Windows-Whisper-Sidecar-Buildskript fehlt"
 
 manifest = json.loads(manifest_path.read_text())
 tauri = json.loads(tauri_path.read_text())
@@ -56,7 +58,7 @@ for needle in [
 ]:
     assert needle in rust, f"Tauri-Sidecar-Integration fehlt: {needle}"
 
-script = build_script.read_text()
+linux_script = linux_build_script.read_text()
 for needle in [
     "set -euo pipefail",
     "v1.9.2",
@@ -69,10 +71,29 @@ for needle in [
     "sha256sum",
     "naqya-whisper-$TARGET_TRIPLE",
 ]:
-    assert needle in script, f"Sidecar-Buildvertrag unvollständig: {needle}"
+    assert needle in linux_script, f"Linux-Sidecar-Buildvertrag unvollständig: {needle}"
 
-assert "curl " not in script
-assert "wget " not in script
-assert "latest" not in script.lower()
+windows_script = windows_build_script.read_text()
+for needle in [
+    '$ErrorActionPreference = "Stop"',
+    '$UpstreamTag = "v1.9.2"',
+    '$UpstreamCommit = "306c88f4d1286aec1bf96e544632897886af5501"',
+    '$TargetTriple = "x86_64-pc-windows-msvc"',
+    "git clone --filter=blob:none --no-checkout",
+    "checkout --detach",
+    "-DGGML_NATIVE=OFF",
+    "-DBUILD_SHARED_LIBS=OFF",
+    "--target whisper-cli",
+    "Get-FileHash -Algorithm SHA256",
+    "naqya-whisper-$TargetTriple.exe",
+]:
+    assert needle in windows_script, f"Windows-Sidecar-Buildvertrag unvollständig: {needle}"
 
-print("NAQYA 0.5 Sidecar-Vertrag + Tauri-Integration: PASS")
+for script in (linux_script, windows_script):
+    lowered = script.lower()
+    assert "curl " not in lowered
+    assert "wget " not in lowered
+    assert "invoke-webrequest" not in lowered
+    assert "latest" not in lowered
+
+print("NAQYA 0.5 Sidecar-Vertrag + Linux/Windows-Tauri-Integration: PASS")
