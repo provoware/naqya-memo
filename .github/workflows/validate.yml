@@ -14,13 +14,39 @@ jobs:
           python3 -m json.tool VERSION.json >/dev/null
           python3 -m json.tool PROJEKTSTATUS.json >/dev/null
           python3 -m json.tool manifest.webmanifest >/dev/null
+          python3 -m json.tool src-tauri/tauri.conf.json >/dev/null
+          python3 -m json.tool src-tauri/capabilities/default.json >/dev/null
       - name: JavaScript-Syntax prüfen
         run: |
           node --check app.js
+          node --check app-03.js
           node --check sw.js
+          node --check services/native-bridge.js
           node --check services/capabilities.js
           node --check services/stt-core.js
+          node --check services/pcm-worklet.js
       - name: Statische Verträge prüfen
         run: python3 tests/validate_static.py
       - name: Shell-Syntax prüfen
         run: bash -n START_NAQYA.sh
+
+  native-linux-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Native Build-Abhängigkeiten installieren
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf \
+            libssl-dev pkg-config clang cmake build-essential
+      - name: Rust stable aktivieren
+        run: |
+          rustup update stable
+          rustup default stable
+          rustc --version
+          cargo --version
+      - name: Tauri + whisper.cpp Runtime kompilierend prüfen
+        env:
+          WHISPER_DONT_GENERATE_BINDINGS: "1"
+        run: cargo check --manifest-path src-tauri/Cargo.toml
