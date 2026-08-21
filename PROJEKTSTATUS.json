@@ -1,10 +1,10 @@
 {
   "kanonischer_name": "PROVOWARE – NAQYA Memo Tool 2026",
   "repo": "provoware/naqya-memo",
-  "version": "0.2.0",
-  "entwicklungsphase": "AUDIO & OFFLINE-STT CORE",
+  "version": "0.3.0",
+  "entwicklungsphase": "NATIVE WHISPER RUNTIME & DESKTOP BRIDGE",
   "status": "ENTWICKLUNG",
-  "referenzplattform": "PWA",
+  "referenzplattform": "PWA + Tauri Desktop",
   "zielplattformen": ["Linux", "Windows", "Android", "iPhone/iPad", "PWA"],
   "hauptdatei": "index.html",
   "kernfunktionen": {
@@ -15,8 +15,11 @@
     "audio_segment_ms": 3000,
     "live_diktat_on_device_browser": "feature-detect",
     "stt_provider_contract": true,
-    "whisper_cpp_native_bridge_contract": true,
-    "whisper_cpp_native_runtime": false,
+    "tauri_desktop_scaffold": true,
+    "native_bridge_javascript": true,
+    "whisper_cpp_cli_detection": true,
+    "whisper_cpp_native_command": true,
+    "whisper_cpp_native_runtime_bundled": false,
     "sprachmodell_manager": true,
     "faehigkeiten_diagnose": true,
     "dokumente": true,
@@ -28,9 +31,10 @@
     "backup_sha256": true
   },
   "bekannte_grenzen": [
-    "Die PWA enthält noch keine native whisper.cpp-Laufzeit; der Providervertrag und Modellmanager sind vorbereitet.",
-    "Das Vollbackup nutzt derzeit ein selbstenthaltendes JSON/Base64-Paket und ist bei sehr großen Datenbeständen speicherintensiv.",
-    "Reale Plattformabnahmen für iPhone, Android, Linux und Windows stehen noch aus."
+    "whisper.cpp wird noch nicht als Binärdatei mit dem Repository ausgeliefert; die Desktop-Laufzeit erkennt whisper-cli über PATH oder NAQYA_WHISPER_CLI.",
+    "Der native Transkriptionsbefehl erwartet derzeit WAV-Audiodaten. Die PWA-Aufnahme erzeugt je nach Browser WebM/Opus; ein lokaler Konvertierungsadapter ist der nächste notwendige Schritt.",
+    "Importierte Browser-Sprachmodelle liegen als IndexedDB-Blob vor und müssen für die native Desktop-Laufzeit noch in einen kontrollierten lokalen Modellpfad materialisiert werden.",
+    "Reale Linux-/Windows-Geräteabnahmen und Laufzeitmessungen stehen noch aus."
   ],
-  "naechster_meilenstein": "0.3.0 – NATIVE WHISPER RUNTIME & DESKTOP BRIDGE"
+  "naechster_meilenstein": "0.4.0 – AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT"
 }
