@@ -1,55 +1,7 @@
 name: NAQYA Linux-Bundle-Nachweis
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/bundle-linux.yml'
-      - 'VERSION.json'
-      - 'index.html'
-      - 'styles.css'
-      - 'styles-02.css'
-      - 'app.js'
-      - 'sw.js'
-      - 'manifest.webmanifest'
-      - 'icons/**'
-      - 'diagnostics/**'
-      - 'services/**'
-      - 'src-tauri/**'
-      - 'tools/build_whisper_sidecar.sh'
-      - 'tools/stage_desktop_frontend.py'
-      - 'tools/repack_deb_deterministic.sh'
-      - 'tools/generate_release_evidence.py'
-      - 'tests/validate_dist.py'
-      - 'tests/validate_diagnostics.py'
-      - 'tests/validate_platform_diagnostics.py'
-      - 'tests/diagnostics_runtime.test.js'
-      - 'tests/validate_release_evidence.py'
-      - 'release/RELEASE_EVIDENCE.schema.json'
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/bundle-linux.yml'
-      - 'VERSION.json'
-      - 'index.html'
-      - 'styles.css'
-      - 'styles-02.css'
-      - 'app.js'
-      - 'sw.js'
-      - 'manifest.webmanifest'
-      - 'icons/**'
-      - 'diagnostics/**'
-      - 'services/**'
-      - 'src-tauri/**'
-      - 'tools/build_whisper_sidecar.sh'
-      - 'tools/stage_desktop_frontend.py'
-      - 'tools/repack_deb_deterministic.sh'
-      - 'tools/generate_release_evidence.py'
-      - 'tests/validate_dist.py'
-      - 'tests/validate_diagnostics.py'
-      - 'tests/validate_platform_diagnostics.py'
-      - 'tests/diagnostics_runtime.test.js'
-      - 'tests/validate_release_evidence.py'
-      - 'release/RELEASE_EVIDENCE.schema.json'
+  workflow_call:
   workflow_dispatch:
 
 permissions:
