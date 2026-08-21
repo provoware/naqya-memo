@@ -39,11 +39,12 @@ jobs:
           python3 tests/validate_platform_diagnostics.py
       - name: Windows-, Plattform-, Fingerprint- und Hardwarevertrag statisch prüfen
         run: |
-          python3 -m py_compile tools/generate_release_evidence.py tools/collect_hardware_acceptance.py tests/validate_release_evidence.py tests/compare_release_evidence.py tests/validate_platform_diagnostics.py tests/validate_windows_release_contract.py tests/validate_evidence_fingerprint.py tests/validate_hardware_acceptance.py tests/hardware_collector.test.py
+          python3 -m py_compile tools/generate_release_evidence.py tools/collect_hardware_acceptance.py tools/measure_process_resources.py tests/validate_release_evidence.py tests/compare_release_evidence.py tests/validate_platform_diagnostics.py tests/validate_windows_release_contract.py tests/validate_evidence_fingerprint.py tests/validate_hardware_acceptance.py tests/hardware_collector.test.py tests/resource_metrics.test.py
           python3 tests/validate_windows_release_contract.py
           python3 tests/validate_evidence_fingerprint.py
           python3 tests/validate_hardware_acceptance.py --schema-only
           python3 tests/hardware_collector.test.py
+          python3 tests/resource_metrics.test.py
       - name: Desktop-Frontend stagen und prüfen
         run: |
           python3 tools/stage_desktop_frontend.py

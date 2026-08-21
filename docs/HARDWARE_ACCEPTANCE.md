@@ -31,6 +31,28 @@ Die native Live-STT-Sitzung führt jetzt zusätzlich zu den bisherigen Summen ei
 
 Damit stammen Segmentverlust und RTF-Maximum nicht mehr aus manueller Schätzung. Ein fehlgeschlagenes STT-Segment wird sofort als verloren gezählt und zusammen mit dem Sitzungsstand persistiert. Die Metriken sind weiterhin nur Messdaten; sie erzeugen selbst kein `PASS`.
 
+## Prozess-Ressourcenmessung 0.5.1-E4
+
+`tools/measure_process_resources.py` misst Peak-RAM sowie CPU-Durchschnitt/-Maximum ohne zusätzliche Python-Pakete. Gemessen wird nicht nur ein einzelner Prozess, sondern die gesamte Prozessfamilie des Zielprozesses; dadurch kann der von NAQYA gestartete whisper.cpp-Sidecar in die Messung einfließen.
+
+Eine bereits laufende Anwendung kann über ihre PID beobachtet werden:
+
+```bash
+python3 tools/measure_process_resources.py \
+  --pid 12345 \
+  --output RESOURCE_METRICS.json
+```
+
+Alternativ kann der Messer den Testprozess selbst starten:
+
+```bash
+python3 tools/measure_process_resources.py \
+  --output RESOURCE_METRICS.json \
+  --command /pfad/zu/naqya
+```
+
+Der Nachweis enthält `peak_ram_mb`, `cpu_avg_pct`, `cpu_max_pct`, Messdauer, Intervall und die höchste gleichzeitig beobachtete Prozesszahl. Die Datei enthält keine Audio- oder Transkriptinhalte und erzeugt selbst keine Hardwarefreigabe. Für `HARDWARE_ACCEPTANCE.json` bleibt ausschließlich der reale Peak-RAM des tatsächlich getesteten NAQYA-Laufs maßgeblich.
+
 ## Evidence-Collector
 
 `tools/collect_hardware_acceptance.py` erzeugt den Nachweis aus real gemessenen Werten. Er arbeitet ohne zusätzliche Python-Abhängigkeiten und ermittelt Betriebssystem, x86_64-Architektur, CPU, Gesamtspeicher sowie SHA-256 von Paket und Modell selbst. Evidence-Fingerprint und Diagnosevertrag werden direkt gegen den aktuellen Repository-Stand gebunden.
@@ -62,7 +84,7 @@ python3 tools/collect_hardware_acceptance.py \
   --output HARDWARE_ACCEPTANCE.json
 ```
 
-Die Messwerte `duration-seconds`, `segments-*`, `realtime-factor-*` und `peak-ram-mb` müssen aus dem realen Test stammen. Seit E3 können Segmentzahl, Segmentverlust und RTF-Werte direkt aus `nativeSttRuntimeMetrics` der realen Sitzung übernommen werden. Peak-RAM bleibt weiterhin eine externe reale Prozessmessung.
+Die Messwerte `duration-seconds`, `segments-*`, `realtime-factor-*` und `peak-ram-mb` müssen aus dem realen Test stammen. Seit E3 können Segmentzahl, Segmentverlust und RTF-Werte direkt aus `nativeSttRuntimeMetrics` der realen Sitzung übernommen werden. Seit E4 kann Peak-RAM mit `measure_process_resources.py` aus der realen NAQYA-Prozessfamilie erfasst werden.
 
 ## Prüfung
 
@@ -76,6 +98,12 @@ Collector-Regression:
 
 ```bash
 python3 tests/hardware_collector.test.py
+```
+
+Ressourcenmesser-Regression:
+
+```bash
+python3 tests/resource_metrics.test.py
 ```
 
 Realen Nachweis prüfen:
