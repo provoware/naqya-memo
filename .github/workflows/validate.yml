@@ -22,8 +22,17 @@ jobs:
           node --check services/capabilities.js
           node --check services/native-bridge.js
           node --check services/stt-core.js
-      - name: Rust formatieren/prüfen
+          node --check services/audio-normalizer.js
+          node --check services/live-stt.js
+          node --check services/release-04.js
+      - name: Tauri Linux-Prüfabhängigkeiten
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+      - name: Rust formatieren
         run: cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
+      - name: Rust kompilieren prüfen
+        run: cargo check --manifest-path src-tauri/Cargo.toml
       - name: Statische Verträge prüfen
         run: python3 tests/validate_static.py
       - name: Shell-Syntax prüfen
