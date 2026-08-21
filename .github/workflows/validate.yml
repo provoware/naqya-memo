@@ -28,6 +28,8 @@ jobs:
           node --check services/audio-normalizer.js
           node --check services/live-stt.js
           node --check services/release-04.js
+      - name: Desktop-Frontend deterministisch stagen und prüfen
+        run: python3 tests/validate_frontend_staging.py
       - name: Tauri Linux-Prüfabhängigkeiten
         run: |
           sudo apt-get update
