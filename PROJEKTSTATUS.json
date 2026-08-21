@@ -1,1 +1,36 @@
-{"kanonischer_name":"PROVOWARE – NAQYA Memo Tool 2026","repo":"provoware/naqya-memo","version":"0.1.0","entwicklungsphase":"OFFLINE FUNDAMENT PRO","status":"ENTWICKLUNG","referenzplattform":"PWA","zielplattformen":["Linux","Windows","Android","iPhone/iPad","PWA"],"hauptdatei":"index.html","kernfunktionen":{"indexeddb":true,"pwa_offline":true,"audio_offline":true,"live_diktat_on_device_browser":"feature-detect","whisper_cpp_native":false,"dokumente":true,"projekte":true,"tags":true,"kalender_monat":true,"chronologie":true,"backup_metadaten":true},"naechster_meilenstein":"0.2.0 – AUDIO & WHISPER OFFLINE CORE"}
+{
+  "kanonischer_name": "PROVOWARE – NAQYA Memo Tool 2026",
+  "repo": "provoware/naqya-memo",
+  "version": "0.2.0",
+  "entwicklungsphase": "AUDIO & OFFLINE-STT CORE",
+  "status": "ENTWICKLUNG",
+  "referenzplattform": "PWA",
+  "zielplattformen": ["Linux", "Windows", "Android", "iPhone/iPad", "PWA"],
+  "hauptdatei": "index.html",
+  "kernfunktionen": {
+    "indexeddb": true,
+    "pwa_offline": true,
+    "audio_offline": true,
+    "audio_segment_recovery": true,
+    "audio_segment_ms": 3000,
+    "live_diktat_on_device_browser": "feature-detect",
+    "stt_provider_contract": true,
+    "whisper_cpp_native_bridge_contract": true,
+    "whisper_cpp_native_runtime": false,
+    "sprachmodell_manager": true,
+    "faehigkeiten_diagnose": true,
+    "dokumente": true,
+    "projekte": true,
+    "tags": true,
+    "kalender_monat": true,
+    "chronologie": true,
+    "backup_vollstaendig_binaer": true,
+    "backup_sha256": true
+  },
+  "bekannte_grenzen": [
+    "Die PWA enthält noch keine native whisper.cpp-Laufzeit; der Providervertrag und Modellmanager sind vorbereitet.",
+    "Das Vollbackup nutzt derzeit ein selbstenthaltendes JSON/Base64-Paket und ist bei sehr großen Datenbeständen speicherintensiv.",
+    "Reale Plattformabnahmen für iPhone, Android, Linux und Windows stehen noch aus."
+  ],
+  "naechster_meilenstein": "0.3.0 – NATIVE WHISPER RUNTIME & DESKTOP BRIDGE"
+}
