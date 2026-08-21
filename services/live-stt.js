@@ -135,6 +135,33 @@ async function stopNativeLiveDictation(){
   }finally{liveState.capture=null;liveState.stopping=false;liveState.modelPath='';liveState.modelId=null;liveState.transcript=''}
 }
 
+function runtimeMetricsEnvelope(){
+  const metrics=runtimeMetricsSnapshot();
+  if(metrics.segmentsTotal<1)throw new Error('Noch keine native Live-STT-Messung vorhanden.');
+  return {format:'NAQYA-LIVE-STT-RUNTIME',schemaVersion:1,exportedAt:new Date().toISOString(),metrics};
+}
+
+function exportRuntimeMetricsFile(){
+  if(typeof downloadJson!=='function')throw new Error('Lokaler JSON-Export ist nicht verfügbar.');
+  const payload=runtimeMetricsEnvelope();
+  const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+  downloadJson(payload,`NAQYA_RUNTIME_METRICS_${stamp}.json`);
+  return payload;
+}
+
+function wireRuntimeMetricsExport(){
+  const status=$('#dictationStatus');
+  if(!status||$('#exportRuntimeMetrics'))return;
+  const host=status.closest('.audio-box');if(!host)return;
+  const button=document.createElement('button');
+  button.id='exportRuntimeMetrics';button.className='secondary';button.type='button';
+  button.textContent='⬇ Laufzeit-Messwerte exportieren';
+  button.disabled=runtimeMetricsSnapshot().segmentsTotal<1;
+  button.title=button.disabled?'Nach einem nativen Offline-Diktat verfügbar':'E3-Messwerte als JSON für Hardware-Abnahme speichern';
+  button.addEventListener('click',()=>{try{exportRuntimeMetricsFile()}catch(err){alert(`Messwert-Export fehlgeschlagen: ${err.message||err}`)}});
+  host.appendChild(button);
+}
+
 const previousToggleDictation=toggleDictation;
 toggleDictation=async function(){
   if(state.activeRecorder?.kind==='dictation'&&liveState.capture){await stopNativeLiveDictation();return}
@@ -150,4 +177,7 @@ toggleDictation=async function(){
   await previousToggleDictation();
 };
 
-window.NAQYA.liveSTT={LIVE_STT_SEGMENT_MS,materializePreferredModel,startNativeLiveDictation,stopNativeLiveDictation,runtimeMetricsSnapshot,state:liveState};
+const previousWireDynamic=wireDynamic;
+wireDynamic=function(){previousWireDynamic();wireRuntimeMetricsExport()};
+
+window.NAQYA.liveSTT={LIVE_STT_SEGMENT_MS,materializePreferredModel,startNativeLiveDictation,stopNativeLiveDictation,runtimeMetricsSnapshot,runtimeMetricsEnvelope,exportRuntimeMetricsFile,state:liveState};
