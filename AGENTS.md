@@ -12,6 +12,21 @@ Diese Datei ist die verbindliche Arbeitsanweisung für alle künftigen Entwicklu
 - Keine ungeprüften Laufzeit-Downloads für kritische Binärartefakte oder Sprachmodelle.
 - Reproduzierbarkeit, SHA-256-Nachweis und Plattformbindung haben Vorrang vor Komfort-Abkürzungen.
 
+## Repository- und Merge-Pflicht je Iteration
+Vor Beginn **und** nach Abschluss jeder Entwicklungsiteration muss der reale GitHub-Stand geprüft werden. Diese Prüfung ist verpflichtend und darf nicht durch Annahmen aus vorherigen Chatnachrichten ersetzt werden.
+
+Mindestens zu prüfen und im Status zu berücksichtigen:
+- aktueller `main`-Commit
+- aktueller Arbeitszweig und dessen Head-SHA
+- zugehöriger Pull Request: offen/geschlossen, Entwurf/Review, mergefähig/nicht mergefähig
+- ob der letzte freigegebene Stand tatsächlich nach `main` gemergt wurde
+- ob der Arbeitszweig auf dem aktuellen `main` basiert oder hinter `main` zurückliegt
+- CI-/Qualitätsgate für den **exakten aktuellen Head-SHA**
+- offene Review-Threads oder blockierende Prüfungen
+- nach einem Merge: resultierenden `main`-Commit erneut prüfen und dokumentieren
+
+Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dieser Zustand bereinigt. Neue Funktionsarbeit beginnt erst danach.
+
 ## Pflichtdateien bei Änderungen
 Bei jeder funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung sind mindestens folgende Dateien auf Aktualisierungsbedarf zu prüfen:
 
@@ -66,6 +81,7 @@ Ein fehlgeschlagenes Gate wird ursachenbezogen korrigiert. Keine kosmetischen od
 - PR zunächst als Entwurf führen, solange die Qualitätsprüfung noch nicht vollständig grün ist.
 - Merge bevorzugt als Squash mit erwarteter Head-SHA absichern.
 - Nach Merge den resultierenden `main`-Commit dokumentieren.
+- Eine Iteration gilt erst als abgeschlossen, wenn Repository-, PR-, CI- und Dokumentationsstand miteinander übereinstimmen.
 
 ## Dokumentationspflicht
 Bei jeder relevanten Änderung müssen Status und Restarbeiten mit dem realen Codezustand übereinstimmen. Insbesondere dürfen `TODO.md`, `PROJEKTSTATUS.json`, README und PR-Beschreibung keinen bereits erledigten oder noch nicht umgesetzten Stand behaupten.
