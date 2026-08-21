@@ -57,7 +57,8 @@ for marker in [
 windows_script = (ROOT / "tools/build_whisper_sidecar_windows.ps1").read_text(encoding="utf-8")
 for marker in [
     '$ErrorActionPreference = "Stop"', '$UpstreamTag = "v1.9.2"', WHISPER_COMMIT,
-    '$TargetTriple = "x86_64-pc-windows-msvc"', "-DGGML_NATIVE=OFF", "-DBUILD_SHARED_LIBS=OFF",
+    '$TargetTriple = "x86_64-pc-windows-msvc"', 'refs/tags/${UpstreamTag}:refs/tags/${UpstreamTag}',
+    "-DGGML_NATIVE=OFF", "-DBUILD_SHARED_LIBS=OFF",
     "Get-FileHash -Algorithm SHA256", "--target whisper-cli", "--help",
 ]:
     assert marker in windows_script, f"Windows-Sidecar-Vertrag unvollständig: {marker}"
