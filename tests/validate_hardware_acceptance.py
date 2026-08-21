@@ -25,6 +25,9 @@ def validate_schema_contract() -> None:
     for key in ("evidence_fingerprint", "platform", "device", "package", "model", "audio", "measurements", "diagnostics", "result"):
         assert key in schema["required"], f"Schema-Pflichtfeld fehlt: {key}"
     assert schema["properties"]["result"]["enum"] == ["PASS", "FAIL"]
+    measurement_properties = schema["properties"]["measurements"]["properties"]
+    for key in ("resource_metrics_sha256", "resource_duration_seconds", "cpu_avg_pct", "cpu_max_pct"):
+        assert key in measurement_properties, f"Ressourcen-Messfeld fehlt im Schema: {key}"
 
 
 def require_sha(value: str, label: str) -> None:
@@ -76,6 +79,15 @@ def main() -> None:
     assert measurements["realtime_factor_avg"] > 0
     assert measurements["realtime_factor_max"] > 0
     assert measurements["peak_ram_mb"] > 0
+
+    resource_fields = ("resource_metrics_sha256", "resource_duration_seconds", "cpu_avg_pct", "cpu_max_pct")
+    present_resource_fields = [key for key in resource_fields if key in measurements]
+    assert len(present_resource_fields) in (0, len(resource_fields)), "Ressourcenherkunft muss vollständig oder gar nicht vorhanden sein"
+    if present_resource_fields:
+        require_sha(measurements["resource_metrics_sha256"], "measurements.resource_metrics_sha256")
+        assert measurements["resource_duration_seconds"] > 0
+        assert measurements["cpu_avg_pct"] >= 0
+        assert measurements["cpu_max_pct"] >= measurements["cpu_avg_pct"]
 
     profile = record["test_profile"]
     minimum_duration = {"smoke": 1, "long30": 1800, "long60": 3600}[profile]
