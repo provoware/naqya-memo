@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -10,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "release/RELEASE_EVIDENCE.schema.json"
+DIAGNOSTICS_CONTRACT = ROOT / "diagnostics/DIAGNOSTICS_CONTRACT.json"
 
 
 def validate_schema_contract() -> None:
@@ -18,6 +20,7 @@ def validate_schema_contract() -> None:
     assert schema["title"] == "NAQYA Release Evidence"
     assert "desktop_package" in schema["required"]
     assert "whisper" in schema["required"]
+    assert "diagnostics_contract" in schema["required"]
     assert "validations" in schema["required"]
 
 
@@ -60,6 +63,16 @@ def main() -> None:
     assert package["reproducibility_profile"] == "dpkg-deb-normalized-v1"
     assert package["source_date_epoch"] == 946684800
 
+    diagnostics = evidence["diagnostics_contract"]
+    contract = json.loads(DIAGNOSTICS_CONTRACT.read_text(encoding="utf-8"))
+    expected_contract_sha = hashlib.sha256(DIAGNOSTICS_CONTRACT.read_bytes()).hexdigest()
+    assert diagnostics["file"] == "diagnostics/DIAGNOSTICS_CONTRACT.json"
+    assert diagnostics["schema_version"] == contract["schema_version"] == 1
+    assert diagnostics["event_schema_version"] == contract["event_schema_version"] == 1
+    assert diagnostics["format"] == contract["format"] == "NAQYA-DIAGNOSTICS"
+    assert diagnostics["sha256"] == expected_contract_sha
+    assert re.fullmatch(r"[0-9a-f]{64}", diagnostics["sha256"])
+
     validations = evidence["validations"]
     for key in (
         "frontend_manifest_verified",
@@ -67,6 +80,7 @@ def main() -> None:
         "packaged_sidecar_started",
         "runtime_dependencies_resolved",
         "package_repack_deterministic",
+        "diagnostics_contract_bound",
     ):
         assert validations[key] is True, f"Release-Gate nicht erfüllt: {key}"
 
@@ -77,7 +91,7 @@ def main() -> None:
         assert str(evidence["ci"]["run_id"] or "").isdigit()
         assert str(evidence["ci"]["run_number"] or "").isdigit()
 
-    print("NAQYA Release-Nachweis inklusive DEB-Reproduzierbarkeit: PASS")
+    print("NAQYA Release-Nachweis inklusive DEB- und Diagnosebindung: PASS")
 
 
 if __name__ == "__main__":
