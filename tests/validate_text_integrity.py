@@ -44,22 +44,60 @@ for rel in [
     json.loads(read(rel), object_pairs_hook=reject_duplicate_keys)
 
 # 3. Zentrale Dokumente dürfen nicht durch Merge-Verklebung doppelte Hauptabschnitte enthalten.
-for rel in ["README.md", "TODO.md", "AGENTS.md", "docs/ARCHITEKTUR.md", "docs/WHISPER_SIDECAR.md"]:
+for rel in [
+    "README.md",
+    "CONTRIBUTING.md",
+    "TODO.md",
+    "AGENTS.md",
+    "docs/ARCHITEKTUR.md",
+    "docs/ENTWICKLERDOKUMENTATION.md",
+    "docs/WHISPER_SIDECAR.md",
+]:
     headings = re.findall(r"^## .+$", read(rel), flags=re.MULTILINE)
     duplicates = sorted({heading for heading in headings if headings.count(heading) > 1})
     assert not duplicates, f"Doppelte H2-Abschnitte in {rel}: {duplicates}"
 
 readme = read("README.md")
 assert readme.count("## Neu in 0.5.0") == 1
+assert readme.count("## Entwickler-Einstieg") == 1
 assert readme.count("## Nächster Entwicklungsblock") == 1
 assert "0.5.1 – LINUX-BUNDLE-ABNAHME, RELEASE-NACHWEIS & WINDOWS-SIDECAR" in readme
 assert "noch nicht als Release end-to-end abgenommen" in readme
+assert "CONTRIBUTING.md" in readme
+assert "docs/ENTWICKLERDOKUMENTATION.md" in readme
 
 todo = read("TODO.md")
-for heading in ["## P0 – Freigabekritisch", "## P1 – Hohe Priorität", "## P2 – Qualitätsausbau", "## P3 – Wartbarkeit", "## Erledigt"]:
+for heading in [
+    "## P0 – Freigabekritisch",
+    "## P1 – Hohe Priorität",
+    "## P2 – Qualitätsausbau",
+    "## P3 – Wartbarkeit",
+    "## Entwickler-Übergabecheckliste",
+    "## Erledigt",
+]:
     assert todo.count(heading) == 1, f"TODO-Abschnitt fehlt oder ist doppelt: {heading}"
 assert "Aktueller PR: wird" not in todo
 assert "pflege/0.5.0-status-konsistenz" not in todo
+assert "Vor jeder künftigen Entwicklerübergabe" in todo
+
+contributing = read("CONTRIBUTING.md")
+assert "docs/ENTWICKLERDOKUMENTATION.md" in contributing
+assert "AGENTS.md" in contributing
+assert "TODO.md" in contributing
+
+developer = read("docs/ENTWICKLERDOKUMENTATION.md")
+for marker in [
+    "## Schnellübernahme",
+    "## Repository-Landkarte",
+    "## Kritische Invarianten",
+    "## Code-Kommentare",
+    "## Lokale Qualitätsprüfung",
+    "## Nächster Arbeitsblock 0.5.1",
+    "## Definition of Done",
+]:
+    assert developer.count(marker) == 1, f"Entwicklerdokumentation unvollständig: {marker}"
+assert '"frontendDist": ".."' in developer
+assert "Produktversion ≠ Datenbankschema" in developer
 
 version = json.loads(read("VERSION.json"), object_pairs_hook=reject_duplicate_keys)
 assert version["version"] == "0.5.0"
@@ -69,6 +107,15 @@ assert version["native_stt_fallback"] == "whisper-cli"
 assert version["sidecar_bundle_configured"] is True
 assert version["sidecar_linux_ci_built"] is True
 assert version["sidecar_release_bundle_validated"] is False
+
+# Eine Laufzeit-Versionsdrift darf nie unbemerkt sein: entweder synchron oder explizit als Restarbeit dokumentiert.
+app = read("app.js")
+app_version_match = re.search(r"const VERSION='([^']+)'", app)
+assert app_version_match, "Produktversionskonstante in app.js fehlt"
+app_version = app_version_match.group(1)
+if app_version != version["version"]:
+    assert "PWA-Produktversionskonstante mit 0.5.0 synchronisieren" in todo
+    assert "app.js` verwendet intern noch die Produktversionskonstante `0.2.0`" in readme
 
 status = json.loads(read("PROJEKTSTATUS.json"), object_pairs_hook=reject_duplicate_keys)
 assert status["entwicklungsphase"] == version["phase"]

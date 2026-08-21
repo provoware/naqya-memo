@@ -2,6 +2,7 @@
 
 window.NAQYA=window.NAQYA||{};
 
+// ENTWICKLERHINWEIS: 4-MiB-Blöcke begrenzen Base64-/IPC-Spitzen bei großen Modellen; nicht zu einem Gesamtpayload zusammenfassen.
 const MODEL_CHUNK_BYTES=4*1024*1024;
 
 function tauriInvoke(){

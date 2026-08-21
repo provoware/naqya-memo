@@ -11,9 +11,11 @@ Komponente: Tauri / Linux / Sidecar
 
 Abnahmekriterien:
 - reproduzierbaren Linux-x86_64-Sidecar aus dem fest gepinnten whisper.cpp-Commit bauen
-- Tauri-Frontend für das Bundle deterministisch bereitstellen
+- Tauri-Frontend deterministisch in einem eigenen Desktop-`dist/` bereitstellen
+- `src-tauri/tauri.conf.json` nicht mehr auf den gesamten Repository-Stamm als `frontendDist` zeigen lassen
 - vollständiges Linux-Desktop-Bundle erzeugen
 - nachweisen, dass `naqya-whisper` im Bundle enthalten ist
+- notwendige Sidecar-Laufzeitbibliotheken im Paketkontext prüfen
 - gebündelten Sidecar aus dem erzeugten Paket tatsächlich starten
 - Runtime-Diagnose meldet den Sidecar als bevorzugte Quelle
 - kein stiller Rückfall auf PATH bei erfolgreichem Sidecar
@@ -33,6 +35,20 @@ Abnahmekriterien:
 - maschinenlesbares Nachweisformat
 
 ## P1 – Hohe Priorität
+
+### [offen] PWA-Produktversionskonstante mit 0.5.0 synchronisieren
+Komponente: PWA / Backup-Metadaten / Diagnose
+
+Befund:
+- `VERSION.json`, `PROJEKTSTATUS.json` und Tauri stehen auf 0.5.0
+- `app.js` enthält derzeit noch `const VERSION='0.2.0'`
+- diese Konstante erscheint in der UI und im exportierten Backupfeld `version`
+
+Abnahmekriterien:
+- `app.js` verwendet die reale Produktversion 0.5.0
+- `DB_VERSION=2` bleibt unverändert, da dies ausschließlich das IndexedDB-Schema ist
+- automatischer Test verhindert künftige Drift zwischen `app.js` und `VERSION.json`
+- Backup-Kompatibilität bleibt unverändert; nur die Produktversionsmetadaten werden korrigiert
 
 ### [offen] Windows-x86_64-Sidecar reproduzierbar bauen und bundeln
 Komponente: whisper.cpp / Tauri / Windows
@@ -109,7 +125,42 @@ Abnahmekriterien:
 - keine reine Umbenennung ohne Nutzen
 - bei Änderung HTML-, Service-Worker-, Test- und Modulreferenzen atomar anpassen
 
+## Entwickler-Übergabecheckliste
+
+### Aktuelle Übergabebereitschaft 0.5.0
+
+- [x] `CONTRIBUTING.md` als kurzer GitHub-Einstieg angelegt
+- [x] `docs/ENTWICKLERDOKUMENTATION.md` mit Schnellübernahme, Repository-Landkarte und exakten lokalen Prüfungen angelegt
+- [x] aktuelle Architektur-, Daten-, STT- und Sidecar-Verträge verlinkt und voneinander abgegrenzt
+- [x] nächster Arbeitsblock 0.5.1 mit konkreten Touchpoints und Nicht-Zielen dokumentiert
+- [x] schwer erkennbare Invarianten an Native Bridge, Live-STT, Audio-Normalisierung, Rust-Runtime und Sidecar-Build sparsam direkt im Code markiert
+- [x] Dokumentations- und Kommentierregeln in `AGENTS.md` verbindlich festgelegt
+- [x] Entwicklerdokumentation in Text-/Statikverträge aufgenommen
+- [ ] bekannte PWA-Produktversionsdrift in `app.js` von 0.2.0 auf 0.5.0 korrigieren und automatisiert absichern
+- [ ] deterministisches Desktop-Frontend-`dist/` für 0.5.1 erzeugen
+- [ ] vollständiges Linux-Endanwender-Bundle nachweisen
+- [ ] maschinenlesbaren Release-Nachweis erzeugen
+- [ ] Windows-x86_64-Bundle nachweisen
+- [ ] reale Linux-/Windows-Hardwareabnahme abschließen
+
+### Vor jeder künftigen Entwicklerübergabe
+
+- [ ] realen `main`-Commit, offene PRs und CI-Stand geprüft
+- [ ] README, TODO, CHANGELOG, Entwicklerdokumentation und maschinenlesbare Statusdateien gegen den Code geprüft
+- [ ] neue oder veränderte Vertrauensgrenzen direkt am Code knapp und in der Fach­dokumentation ausführlich erklärt
+- [ ] Repository-Landkarte und lokale Befehle noch korrekt
+- [ ] Qualitätsgate für den exakten Übergabe-Head vollständig grün
+- [ ] nach Merge resultierenden `main` erneut geprüft
+
 ## Erledigt
+
+### [erledigt] Professionelle Entwicklerübergabe 0.5.0 aufbauen
+Ergebnis:
+- GitHub-Einstieg über `CONTRIBUTING.md`
+- kanonische technische Übergabe unter `docs/ENTWICKLERDOKUMENTATION.md`
+- Repository-Landkarte, Vertrauensgrenzen, lokale Prüfmatrix und 0.5.1-Übergabepunkt dokumentiert
+- Codekommentare auf wenige nicht offensichtliche Architektur-/Sicherheitsinvarianten beschränkt
+- Übergabecheckliste und verbindliche Pflegeverträge ergänzt
 
 ### [erledigt] Mergebedingte Text- und Metadatenfehler nach Repository-Konsolidierung reparieren
 Ergebnis:

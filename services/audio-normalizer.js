@@ -46,6 +46,7 @@ async function normalizeBlobToWav(blob){
   }finally{await ctx.close().catch(()=>{})}
 }
 
+// ENTWICKLERHINWEIS: ScriptProcessor ist hier bewusst gekapselt; ein AudioWorklet muss denselben 16-kHz-Mono-WAV-Vertrag erhalten.
 class LivePcmCapture{
   constructor(stream,{segmentMs=LIVE_SEGMENT_MS,onSegment=()=>{},onError=()=>{}}={}){
     this.stream=stream;this.segmentMs=segmentMs;this.onSegment=onSegment;this.onError=onError;this.ctx=null;this.source=null;this.processor=null;this.sink=null;this.parts=[];this.samples=0;this.seq=0;this.running=false;
