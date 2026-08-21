@@ -2,40 +2,23 @@
 
 Stand: 2026-08-21
 Validierter Basisstand: **0.5.0 – Tauri-Sidecar-Integration & Repository-Konsolidierung**
-Aktueller Arbeitsstand: **0.5.1-B – Linux-Bundle & Release-Nachweis**
-Fortschritt 0.5.1: **56 % – 5 von 9 Hauptpunkten erledigt**
-Nächster Entwicklungsblock: **0.5.1-C – Diagnose, Debugging, Logging & Evidence-Bindung**
+Aktueller Arbeitsstand: **0.5.1-C – Diagnose, Logging & Evidence-Bindung**
+Fortschritt 0.5.1: **78 % – 7 von 9 Hauptpunkten erledigt**
+Nächster Entwicklungsblock: **0.5.1-D – Windows-x86_64-Bundle & plattformübergreifender Evidence-Nachweis**
 
 ## P0 – Freigabekritisch
 
-### [offen] Professionelles Diagnose-/Debugging-/Logging-Modul integrieren
-Komponente: Diagnose / UX / Wartbarkeit / Regression
+### [offen] Diagnosevertrag auf Windows unverändert erzwingen
+Komponente: Diagnose / Release / Plattformvertrag
 
 Abnahmekriterien:
-- zentrale Ereignisstruktur mit stabilen Codefamilien
-- jedes relevante Ereignis beschreibt mindestens: Was, Wann, Wo, Wie, Ergebnis
-- menschenlesbare Kurzbeschreibung und maschinenlesbare JSON-Struktur aus derselben Quelle
-- begrenzter Ringpuffer statt unbegrenztem Logwachstum
-- wiederholte identische Fehler werden kontrolliert dedupliziert bzw. gezählt
-- Loggingfehler dürfen den eigentlichen Produktablauf nicht zum Absturz bringen
-- keine Audio-, Transkript-, Dokumentinhalte oder unnötigen vollständigen Dateipfade im Standardlog
-- Export als Diagnose-JSON und menschenlesbarer Textbericht
-- laienverständlicher Fehlerdialog mit sichtbarem Fehlercode
-- nur vorab registrierte sichere Benutzeraktionen wie „Erneut versuchen“, „Diagnose anzeigen“, „Einstellungen öffnen“, „Schließen“
-- kein automatischer unendlicher Retry
-- Regressionstests für Fehlercode-Eindeutigkeit, Deduplizierung, Puffergrenze und Offline-Verhalten
-
-### [offen] Diagnose-/Release-Evidence-Vertrag verbinden
-Komponente: Release / Diagnose / Nachweisbarkeit
-
-Abnahmekriterien:
-- Ereignis- und Fehlercode-Schema versionieren
-- `RELEASE_EVIDENCE.json` referenziert die verwendete Diagnose-Schema-Version
-- Laufzeitdiagnosen enthalten Release-/Build-Identität ohne sensible Nutzdaten
-- Beziehung Build → Paket → Sidecar → Runtime → Ereigniscode → sichere Benutzeraktion maschinenlesbar abbildbar
-- Evidence- und Diagnose-IDs dürfen nicht zufällig kollidieren
-- Export muss vollständig offline funktionieren
-- statische und Laufzeittests verhindern stille Schema-Drift
+- Windows verwendet `diagnostics/DIAGNOSTICS_CONTRACT.json` unverändert
+- erwarteter SHA-256: `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
+- Schema-Version 1 und Ereignisschema 1 bleiben identisch
+- `NAQYA-STT-4002` und alle bestehenden Codes behalten plattformübergreifend dieselbe Bedeutung
+- Windows-Release-Evidence enthält denselben Contract-SHA
+- CI bricht bei stiller Contract-Abweichung hart ab
+- ein notwendiger Vertragswechsel erfolgt nur als eigener versionierter Diagnosevertrag, niemals implizit im Windows-Build
 
 ## P1 – Hohe Priorität
 
@@ -43,13 +26,14 @@ Abnahmekriterien:
 Komponente: whisper.cpp / Tauri / Windows
 
 Abnahmekriterien:
-- Build aus demselben fest gepinnten Upstream-Commit
-- Tauri-konformer Binärname
-- SHA-256-Nachweis
-- vollständiges Windows-Bundle erzeugen
-- `.exe`-Sidecar aus dem Bundle tatsächlich starten
+- Build aus `ggml-org/whisper.cpp` `v1.9.2`, Commit `306c88f4d1286aec1bf96e544632897886af5501`
+- Ziel `x86_64-pc-windows-msvc`
+- Tauri-konformer Binärname `naqya-whisper-...exe`
+- Sidecar-SHA-256 erzeugen und prüfen
+- vollständiges Windows-Tauri-Bundle erzeugen
+- `.exe`-Sidecar aus dem Paketkontext tatsächlich starten
 - Runtime-Diagnose zeigt den Sidecar als bevorzugte Quelle
-- Windows-Paket und Sidecar in den Release-Nachweis aufnehmen
+- Windows-Paket, Sidecar, Toolchain und Diagnosevertrag in Release Evidence aufnehmen
 
 ### [offen] Reale Linux-Desktop-Abnahme durchführen
 Komponente: Linux / Mikrofon / STT
@@ -62,12 +46,12 @@ Abnahmekriterien:
 - temporäre WAV-Dateien werden zuverlässig bereinigt
 - Providerdiagnose zeigt `whisper.cpp-sidecar`
 - kurze sowie mindestens 30-minütige Sitzung ohne Datenverlust
-- Diagnose-/Fehlercodes bei absichtlich provozierten Fehlerfällen verifizieren
+- absichtlich provozierte Diagnose-/Fehlercodes entsprechen dem Vertrag
 
 ### [offen] Reale Windows-Desktop-Abnahme durchführen
 Komponente: Windows / Mikrofon / STT
 
-Abnahmekriterien analog zur Linux-Abnahme, zusätzlich Prüfung des Windows-Pakets und des `.exe`-Sidecars.
+Abnahmekriterien analog zur Linux-Abnahme, zusätzlich Prüfung des Windows-Pakets, `.exe`-Sidecars und des identischen Diagnosevertrags.
 
 ## P2 – Qualitätsausbau
 
@@ -79,7 +63,7 @@ Abnahmekriterien:
 - stabile Segmentbildung
 - keine Regression bei Live-Diktat und Recovery
 - Firefox- und Chrome-Kompatibilität geprüft
-- Diagnosemetriken bleiben erhalten
+- Diagnosemetriken und Fehlercodes bleiben erhalten
 
 ### [offen] Langzeit- und Lasttests für Live-STT durchführen
 Komponente: Performance / Stabilität
@@ -93,11 +77,12 @@ Abnahmekriterien:
 
 ## P3 – Wartbarkeit
 
-### [offen] Alte bereits erledigte Entwicklungszweige auf GitHub entfernen
+### [offen] Alte bereits erledigte Entwicklungszweige und überholte PRs bereinigen
 Komponente: Repository-Hygiene
 
 Abnahmekriterien:
 - nur Zweige löschen, deren Inhalt nachweislich in `main` enthalten oder bewusst verworfen ist
+- überholte Parallel-PRs nachvollziehbar schließen
 - keine aktive oder ungeprüfte Arbeit entfernen
 - nach Bereinigung offene PRs und Branchliste erneut prüfen
 
@@ -111,22 +96,20 @@ Abnahmekriterien:
 
 ## Entwickler-Übergabecheckliste
 
-### Aktuelle Übergabebereitschaft 0.5.1-B
+### Aktuelle Übergabebereitschaft 0.5.1-C
 
-- [x] `CONTRIBUTING.md` als kurzer GitHub-Einstieg angelegt
-- [x] `docs/ENTWICKLERDOKUMENTATION.md` mit Schnellübernahme, Repository-Landkarte und exakten lokalen Prüfungen angelegt
-- [x] aktuelle Architektur-, Daten-, STT- und Sidecar-Verträge verlinkt und voneinander abgegrenzt
-- [x] schwer erkennbare Invarianten an Native Bridge, Live-STT, Audio-Normalisierung, Rust-Runtime und Sidecar-Build sparsam direkt im Code markiert
-- [x] Dokumentations- und Kommentierregeln in `AGENTS.md` verbindlich festgelegt
-- [x] Entwicklerdokumentation in Text-/Statikverträge aufgenommen
-- [x] PWA-Produktversionsdrift in `app.js` auf 0.5.0 korrigiert und gegen `VERSION.json` automatisiert abgesichert
-- [x] deterministisches Desktop-Frontend-`dist/` erzeugt und geprüft
+- [x] professioneller Entwickler-Einstieg und technische Übergabedokumentation
+- [x] PWA-/Backup-Produktversion gegen `VERSION.json` abgesichert
+- [x] deterministisches Desktop-Frontend-`dist/`
 - [x] Linux-DEB mit enthaltenem und startbarem Sidecar im CI nachgewiesen
-- [x] Sidecar-Laufzeitabhängigkeiten im Paketkontext ohne fehlende Bibliotheken geprüft
-- [x] maschinen- und menschenlesbaren Release-Nachweis erzeugt
-- [ ] professionelles Diagnose-/Debugging-/Logging-Modul vollständig integrieren
-- [ ] Diagnose-/Release-Evidence-Vertrag verbinden
-- [ ] Windows-x86_64-Bundle nachweisen
+- [x] Sidecar-Laufzeitabhängigkeiten und Bytegleichheit geprüft
+- [x] deterministisches DEB-Repacking nachgewiesen
+- [x] maschinen- und menschenlesbarer Release-Nachweis erzeugt
+- [x] professionelles Diagnose-/Debugging-/Logging-Modul integriert
+- [x] Ringpuffer, Deduplizierung, Privacy-Redaktion und `retry-once` real regressionsgetestet
+- [x] Diagnosevertrag über SHA-256 mit Release Evidence verbunden
+- [x] aktueller Contract-SHA: `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
+- [ ] Windows-x86_64-Bundle mit identischem Diagnosevertrag nachweisen
 - [ ] reale Linux-/Windows-Hardwareabnahme abschließen
 
 ### Vor jeder künftigen Entwicklerübergabe
@@ -137,81 +120,62 @@ Abnahmekriterien:
 - [ ] Repository-Landkarte und lokale Befehle noch korrekt
 - [ ] Qualitätsgate für den exakten Übergabe-Head vollständig grün
 - [ ] paketbezogene Evidence bei Release-relevanten Änderungen geprüft
+- [ ] Diagnose-Contract-SHA zwischen Plattformen geprüft
 - [ ] nach Merge resultierenden `main` erneut geprüft
 
 ## Erledigt
 
-### [erledigt] 0.5.1-B – Deterministisches Desktop-Frontend stagen
+### [erledigt] 0.5.1-C – Professionelles Diagnose-/Debugging-/Logging-Modul
 Ergebnis:
-- Tauri `frontendDist` von Repository-Stamm auf `../dist` umgestellt
-- explizite Runtime-Allowlist eingeführt
-- Symlinks im Staging verboten
-- `BUILD_MANIFEST.json` mit Dateigröße und SHA-256 erzeugt
-- Tests verhindern zusätzliche oder fehlende Runtime-Dateien im `dist/`
+- `diagnostics/DIAGNOSTICS_CONTRACT.json` als kanonischer versionierter Vertrag
+- stabile NAQYA-Codefamilien für App, Daten, Audio, STT, Modell, Runtime, Bundle und Release
+- `services/diagnostics.js` mit hart begrenztem Ringpuffer
+- 5-Sekunden-Deduplizierung mit `repeat_count`
+- Ereignis-ID, Korrelation und Parent-Beziehungen
+- Privacy-Redaktion für Audio/Base64, Transkripte, Dokumentinhalte, Secrets/Tokens und Benutzerpfade
+- menschenlesbarer Dialog mit sichtbarem Fehlercode und vorab registrierten Safe Actions
+- JSON- und TXT-Diagnoseexport vollständig offline
+- `retry-once` maximal einmal; keine automatische Retry-Endlosschleife
+- Native-Bridge- und Live-STT-Fehlerpfade instrumentiert
+- echter Node-Laufzeittest und statischer Diagnosevertrag grün
 
-### [erledigt] 0.5.1-B – Linux-Tauri-Bundle und Sidecar paketbezogen validieren
+### [erledigt] 0.5.1-C – Diagnose-/Release-Evidence-Vertrag verbinden
 Ergebnis:
-- reales DEB im GitHub-Actions-Workflow gebaut
-- whisper.cpp-Sidecar mit `BUILD_SHARED_LIBS=OFF` paketierbar gehärtet
-- DEB extrahiert und genau einen `naqya-whisper` nachgewiesen
-- Sidecar aus dem Paketkontext erfolgreich gestartet
-- Laufzeitabhängigkeiten mit `ldd` geprüft; keine `not found`-Abhängigkeit
-- Build- und Paket-Sidecar per SHA-256 bytegenau abgeglichen
+- Release Evidence enthält Diagnoseformat, Schema, Ereignisschema und Contract-SHA
+- Runtime-Diagnoseexporte führen denselben Contract-SHA mit
+- Linux-Bundle-Nachweis Run #14 bindet Contract-SHA `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
+- Qualitätsprüfung #268 und Bundle-Nachweis #14 für Quellcommit `0388cda77c6696017c5b00cb795f5758af2d5e22` erfolgreich
+- Kette Build → Paket → Sidecar → Diagnosevertrag → Ereigniscode → sichere Benutzeraktion maschinenlesbar nachvollziehbar
 
-### [erledigt] 0.5.1-B – Release-Nachweis erzeugen
+### [erledigt] 0.5.1-B1 – Deterministische DEB-Reproduzierbarkeit
 Ergebnis:
-- `RELEASE_EVIDENCE.schema.json` versioniert
-- `RELEASE_EVIDENCE.json` im realen Bundle-Workflow erzeugt und validiert
-- menschenlesbaren `RELEASE_EVIDENCE.txt` erzeugt
-- Paket-, Sidecar-, Frontend-Manifest-, Toolchain-, Zielplattform- und CI-Identität dokumentiert
-- erstes erfolgreiches Nachweisartefakt: `naqya-linux-bundle-nachweis-1`, Run-ID `32477864231`
+- DEB-Zeit-/Archivmetadaten normalisiert
+- festes `SOURCE_DATE_EPOCH`
+- deterministisches `dpkg-deb`-Profil
+- Regressionstest verlangt Bytegleichheit normalisierter Pakete
+
+### [erledigt] 0.5.1-B – Deterministisches Desktop-Frontend, Linux-Bundle & Release-Nachweis
+Ergebnis:
+- Tauri `frontendDist` auf `../dist`
+- explizite Runtime-Allowlist
+- `BUILD_MANIFEST.json` mit Dateigröße und SHA-256
+- reales Linux-DEB mit startbarem Sidecar
+- Laufzeitabhängigkeiten und Bytegleichheit geprüft
+- `RELEASE_EVIDENCE.json` und `RELEASE_EVIDENCE.txt`
 
 ### [erledigt] 0.5.1-A – PWA-Produktversion atomar synchronisieren
 Ergebnis:
 - `app.js` verwendet Produktversion 0.5.0
-- `tests/validate_text_integrity.py` verlangt harte Gleichheit mit `VERSION.json`
-- Backup-Metadaten verwenden dieselbe `VERSION`-Konstante und werden im Vertrag geprüft
-- historischer `release-04.js`-Override kann UI und Backup nicht mehr still auf 0.4.0 zurücksetzen
-- `DB_VERSION=2` blieb unverändert, weil Datenbankschema und Produktversion getrennte Verträge sind
+- PWA-/Backup-Version gegen `VERSION.json` automatisiert abgesichert
+- historischer `release-04.js`-Override an kanonische `VERSION` gebunden
+- `DB_VERSION=2` als separates IndexedDB-Schema unverändert
 
-### [erledigt] Professionelle Entwicklerübergabe 0.5.0 aufbauen
+### [erledigt] Repository-Konsolidierung und Entwicklerübergabe 0.5.0
 Ergebnis:
-- GitHub-Einstieg über `CONTRIBUTING.md`
-- kanonische technische Übergabe unter `docs/ENTWICKLERDOKUMENTATION.md`
-- Repository-Landkarte, Vertrauensgrenzen, lokale Prüfmatrix und Übergabepunkt dokumentiert
-- Codekommentare auf wenige nicht offensichtliche Architektur-/Sicherheitsinvarianten beschränkt
-- Übergabecheckliste und verbindliche Pflegeverträge ergänzt
-
-### [erledigt] Mergebedingte Text- und Metadatenfehler nach Repository-Konsolidierung reparieren
-Ergebnis:
-- doppelte README-Abschnitte entfernt
-- doppelte bzw. widersprüchliche TODO-Blöcke konsolidiert
-- doppelte JSON-Schlüssel aus `VERSION.json` und `PROJEKTSTATUS.json` entfernt
-- veraltete Sidecar-Dokumentation korrigiert
-- historische 0.2-/0.3-/0.4-Dokumente klar als historische Verträge gekennzeichnet
-- automatischer Textintegritäts- und Duplicate-Key-Test ergänzt
-
-### [erledigt] Repository-Konsolidierung 0.5.0
-Ergebnis:
-- Tauri-Sidecar-Integration in `main`
-- veraltete Parallelentwicklung geschlossen
-- `.gitignore` für Build-, Runtime- und Modellartefakte ergänzt
-- Versions- und Tauri-Metadaten auf 0.5.0 angehoben
-
-### [erledigt] Reproduzierbaren whisper.cpp-Runtimevertrag festlegen
-Ergebnis:
-- Upstream `ggml-org/whisper.cpp` auf Version `v1.9.2` und Commit `306c88f4d1286aec1bf96e544632897886af5501` fest gepinnt
-- CPU-Releaseprofil mit `GGML_NATIVE=OFF`
-- Linux-/Windows-Zielnamen definiert
-- Laufzeit-Downloads und ungeprüfte Aktivierung ausgeschlossen
-
-### [erledigt] Native Runtime-Sicherheit härten
-Ergebnis:
-- generische `main`-PATH-Erkennung entfernt
-- `NAQYA_WHISPER_CLI` kanonisiert
-- private STT-Tempdateien im Tauri-App-Cache
-- kollisionsgeschützte Dateierzeugung
-- `sync_all()` vor Übergabe an whisper.cpp
+- Tauri-Sidecar-Integration, Dokumentations- und Mergeverträge
+- `AGENTS.md`, `TODO.md`, `CONTRIBUTING.md` und Entwicklerdokumentation
+- Text-/Duplicate-Key-/Merge-Integritätsprüfungen
+- reproduzierbarer whisper.cpp-Runtimevertrag und native Runtime-Härtung
 
 ## Pflegevertrag
 
