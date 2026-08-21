@@ -6,11 +6,13 @@ use std::{
     io::{Read, Write},
     path::{Path, PathBuf},
     process::Command,
+    sync::atomic::{AtomicU64, Ordering},
     time::{SystemTime, UNIX_EPOCH},
 };
 use tauri::Manager;
 
 const MAX_AUDIO_BYTES: usize = 512 * 1024 * 1024;
+static STT_TEMP_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -86,14 +88,12 @@ fn whisper_cli_path() -> Option<PathBuf> {
     if let Ok(path) = std::env::var("NAQYA_WHISPER_CLI") {
         let p = PathBuf::from(path);
         if p.is_file() {
-            return Some(p);
+            return fs::canonicalize(&p).ok().or(Some(p));
         }
     }
-    for candidate in ["whisper-cli", "main"] {
-        if let Ok(output) = Command::new(candidate).arg("--help").output() {
-            if output.status.success() {
-                return Some(PathBuf::from(candidate));
-            }
+    if let Ok(output) = Command::new("whisper-cli").arg("--help").output() {
+        if output.status.success() {
+            return Some(PathBuf::from("whisper-cli"));
         }
     }
     None
@@ -108,6 +108,45 @@ fn model_root(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     fs::create_dir_all(root.join(".incoming"))
         .map_err(|e| format!("Modellverzeichnis konnte nicht angelegt werden: {e}"))?;
     Ok(root)
+}
+
+fn stt_temp_root(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+    let root = app
+        .path()
+        .app_cache_dir()
+        .map_err(|e| format!("Lokaler NAQYA-Cachepfad ist nicht verfügbar: {e}"))?
+        .join("stt-temp");
+    fs::create_dir_all(&root)
+        .map_err(|e| format!("Temporärer STT-Pfad konnte nicht angelegt werden: {e}"))?;
+    Ok(root)
+}
+
+fn write_private_temp_wav(app: &tauri::AppHandle, bytes: &[u8]) -> Result<PathBuf, String> {
+    let root = stt_temp_root(app)?;
+    let stamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|e| e.to_string())?
+        .as_millis();
+    for _ in 0..32 {
+        let seq = STT_TEMP_SEQUENCE.fetch_add(1, Ordering::Relaxed);
+        let path = root.join(format!("naqya-stt-{stamp}-{}-{seq}.wav", std::process::id()));
+        match OpenOptions::new().write(true).create_new(true).open(&path) {
+            Ok(mut file) => {
+                file.write_all(bytes)
+                    .map_err(|e| format!("Temporäre Audiodatei konnte nicht geschrieben werden: {e}"))?;
+                file.sync_all()
+                    .map_err(|e| format!("Temporäre Audiodatei konnte nicht finalisiert werden: {e}"))?;
+                return Ok(path);
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(error) => {
+                return Err(format!(
+                    "Temporäre Audiodatei konnte nicht exklusiv angelegt werden: {error}"
+                ));
+            }
+        }
+    }
+    Err("Temporäre Audiodatei konnte nach mehreren Versuchen nicht sicher angelegt werden.".into())
 }
 
 fn safe_model_name(name: &str) -> Result<String, String> {
@@ -315,14 +354,7 @@ fn naqya_transcribe(
     if bytes.len() < 44 || &bytes[0..4] != b"RIFF" || &bytes[8..12] != b"WAVE" {
         return Err("Native Transkription erwartet normalisierte WAV-Audiodaten.".into());
     }
-    let stamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map_err(|e| e.to_string())?
-        .as_millis();
-    let mut wav = std::env::temp_dir();
-    wav.push(format!("naqya-stt-{stamp}.wav"));
-    fs::write(&wav, bytes)
-        .map_err(|e| format!("Temporäre Audiodatei konnte nicht geschrieben werden: {e}"))?;
+    let wav = write_private_temp_wav(&app, &bytes)?;
     let threads = request
         .threads
         .unwrap_or_else(|| num_cpus::get().clamp(1, 8));
