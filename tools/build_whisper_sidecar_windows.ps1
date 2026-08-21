@@ -36,7 +36,7 @@ New-Item -ItemType Directory -Force -Path $WorkDir, $BinaryDir | Out-Null
 & git clone --filter=blob:none --no-checkout $Repository $SourceDir
 if ($LASTEXITCODE -ne 0) { throw "FEHLER: whisper.cpp konnte nicht geklont werden." }
 
-& git -C $SourceDir fetch --depth 1 origin "refs/tags/$UpstreamTag:refs/tags/$UpstreamTag"
+& git -C $SourceDir fetch --depth 1 origin "refs/tags/${UpstreamTag}:refs/tags/${UpstreamTag}"
 if ($LASTEXITCODE -ne 0) { throw "FEHLER: Gepinnter whisper.cpp-Tag konnte nicht geladen werden." }
 
 & git -C $SourceDir checkout --detach $UpstreamCommit
