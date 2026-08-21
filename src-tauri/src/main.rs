@@ -138,9 +138,7 @@ fn safe_model_name(name: &str) -> Result<String, String> {
 fn validate_token(token: &str) -> Result<(), String> {
     if token.len() < 8
         || token.len() > 96
-        || !token
-            .chars()
-            .all(|c| c.is_ascii_alphanumeric() || c == '-')
+        || !token.chars().all(|c| c.is_ascii_alphanumeric() || c == '-')
     {
         return Err("Ungültige Modell-Transferkennung.".into());
     }
@@ -148,7 +146,8 @@ fn validate_token(token: &str) -> Result<(), String> {
 }
 
 fn hash_file(path: &Path) -> Result<(String, u64), String> {
-    let mut file = fs::File::open(path).map_err(|e| format!("Modell konnte nicht gelesen werden: {e}"))?;
+    let mut file =
+        fs::File::open(path).map_err(|e| format!("Modell konnte nicht gelesen werden: {e}"))?;
     let mut hasher = Sha256::new();
     let mut buffer = vec![0_u8; 1024 * 1024];
     let mut bytes = 0_u64;
@@ -208,15 +207,13 @@ fn naqya_model_begin(
         .as_millis();
     let token = format!("{stamp}-{}", std::process::id());
     let part = root.join(".incoming").join(format!("{token}.part"));
-    fs::File::create(part).map_err(|e| format!("Modelltransfer konnte nicht gestartet werden: {e}"))?;
+    fs::File::create(part)
+        .map_err(|e| format!("Modelltransfer konnte nicht gestartet werden: {e}"))?;
     Ok(ModelBeginResult { token })
 }
 
 #[tauri::command]
-fn naqya_model_append(
-    app: tauri::AppHandle,
-    request: ModelAppendRequest,
-) -> Result<(), String> {
+fn naqya_model_append(app: tauri::AppHandle, request: ModelAppendRequest) -> Result<(), String> {
     validate_token(&request.token)?;
     let root = model_root(&app)?;
     let part = root
@@ -293,7 +290,8 @@ fn naqya_model_abort(app: tauri::AppHandle, request: ModelAbortRequest) -> Resul
         .join(".incoming")
         .join(format!("{}.part", request.token));
     if path.exists() {
-        fs::remove_file(path).map_err(|e| format!("Modelltransfer konnte nicht bereinigt werden: {e}"))?;
+        fs::remove_file(path)
+            .map_err(|e| format!("Modelltransfer konnte nicht bereinigt werden: {e}"))?;
     }
     Ok(())
 }
