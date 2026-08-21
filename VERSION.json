@@ -19,6 +19,9 @@
   "sidecar_commit": "306c88f4d1286aec1bf96e544632897886af5501",
   "sidecar_bundle_configured": true,
   "sidecar_linux_ci_built": true,
-  "sidecar_release_bundle_validated": false,
+  "sidecar_release_bundle_validated": true,
+  "desktop_frontend_dist_deterministic": true,
+  "release_evidence_schema": 1,
+  "release_evidence_linux_ci_generated": true,
   "model_transfer_chunk_bytes": 4194304
 }
