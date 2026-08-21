@@ -1,66 +1,72 @@
 # PROVOWARE – NAQYA Memo Tool 2026
 
-> **Aktueller Entwicklungsstand:** 0.5.1-B – Linux-Bundle & Release-Nachweis  
+> **Aktueller Entwicklungsstand:** 0.5.1-C – Diagnose, Logging & Evidence-Bindung  
 > **Produktversion:** 0.5.0  
-> **Status:** Entwicklung – Linux-Bundle CI-validiert  
-> **Fortschritt 0.5.1:** **56 %** – **5 von 9 Hauptpunkten erledigt**  
-> **Nächster Schritt:** 0.5.1-C – Diagnose, Debugging, Logging & Evidence-Bindung
+> **Status:** Entwicklung – Diagnosevertrag und Linux-Bundle CI-validiert  
+> **Fortschritt 0.5.1:** **78 %** – **7 von 9 Hauptpunkten erledigt**  
+> **Nächster Schritt:** 0.5.1-D – Windows-Bundle mit identischem Diagnosevertrag
 
 ## Fortschritt auf einen Blick
 
-Die Prozentangabe ist kein geschätzter Marketingwert, sondern wird aus **9 klar definierten Hauptpunkten des Entwicklungsblocks 0.5.1** berechnet. Aktuell sind 5 abgeschlossen: `5 / 9 = 55,6 %`, gerundet **56 %**. Dieselben Werte stehen maschinenlesbar in `PROJEKTSTATUS.json` und werden durch Tests gegen Dokumentationsdrift abgesichert.
+Der Entwicklungsblock 0.5.1 besteht aus 9 definierten Hauptpunkten. **7 / 9 = 77,8 %**, gerundet **78 %**. Derselbe Stand wird in `PROJEKTSTATUS.json` maschinenlesbar geführt und durch CI-Verträge gegen Dokumentationsdrift abgesichert.
 
-### Erledigt – 5 von 9
+### Erledigt – 7 von 9
 
-- [x] Produktversion und Backup-Metadaten auf 0.5.0 konsistent und regressionssicher synchronisiert
-- [x] Desktop-Frontend deterministisch in ein eigenes `dist/` mit Allowlist und SHA-256-Manifest gestagt
-- [x] echtes Linux-Tauri-DEB im CI erzeugt
-- [x] gebündelten `naqya-whisper` im extrahierten Paket gestartet, Laufzeitabhängigkeiten geprüft und Bytegleichheit zum Build-Sidecar bestätigt
-- [x] maschinenlesbaren `RELEASE_EVIDENCE.json` sowie menschenlesbaren Release-Nachweis erzeugt
+- [x] Produktversion und Backup-Metadaten konsistent absichern
+- [x] Desktop-Frontend deterministisch in `dist/` stagen
+- [x] Linux-Tauri-DEB mit gebündeltem Sidecar erzeugen
+- [x] Sidecar im Paketkontext starten und Laufzeitabhängigkeiten prüfen
+- [x] maschinen- und menschenlesbaren Release-Nachweis erzeugen
+- [x] professionelles Diagnose-/Debugging-/Logging-Modul mit stabilen Fehlercodes integrieren
+- [x] Diagnoseereignisse und Release Evidence über denselben versionierten Diagnosevertrag verbinden
 
-### Offen – 4 von 9
+### Offen – 2 von 9
 
-- [ ] professionelles Diagnose-/Debugging-/Logging-Modul mit stabilen Ereignis- und Fehlercodes
-- [ ] Diagnoseereignisse und sichere Benutzeraktionen mit `RELEASE_EVIDENCE.json` zu einer durchgehenden Evidence-Kette verbinden
 - [ ] Windows-x86_64-Sidecar und Windows-Tauri-Bundle reproduzierbar bauen und nachweisen
-- [ ] reale Linux-/Windows-Hardware- und Mikrofonabnahme sowie AudioWorklet-/Langzeithärtung abschließen
+- [ ] reale Linux-/Windows-Hardwareabnahme sowie AudioWorklet- und Langzeithärtung abschließen
 
 ## Was NAQYA ist
 
-NAQYA ist ein **offline-first persönliches Memo-, Dokument-, Audio- und Diktatwerkzeug**. Es kombiniert eine installierbare PWA mit einer Tauri-Desktop-App und speichert Inhalte lokal. Kernbereiche sind Notizen, Termine, Fristen, Aufgaben, Dokumente, Projekte, Kategorien, Tags, Chronologie, Audio-Memos, Live-Diktat und vollständige lokale Backups.
+NAQYA ist ein offline-first Memo-, Dokument-, Audio- und Diktatwerkzeug als PWA und Tauri-Desktop-App. Daten, Audio, Sprachmodelle und Diagnosen bleiben standardmäßig lokal; es gibt keinen automatischen Cloud-STT-Fallback und keine Telemetriepflicht.
 
 Technischer Kern:
 
-- **Offline-first:** kein Account, keine Cloudpflicht, keine Telemetrie und kein automatischer Cloud-STT-Fallback
-- **Lokale Datenhaltung:** IndexedDB für Einträge, Projekte, Einstellungen, Audiosegmente, Dateien und Modellmetadaten
-- **Audio-Recovery:** Originalaufnahme wird in 3-Sekunden-Segmenten lokal gesichert und kann nach Unterbrechungen rekonstruiert werden
-- **Lokale STT-Normalisierung:** 16 kHz, Mono, PCM16/WAV
-- **Live-STT:** 4-Sekunden-Segmente mit geordneter lokaler Transkriptionswarteschlange
-- **Native Desktop-STT:** bevorzugter Tauri-Sidecar `naqya-whisper`, kontrollierter lokaler `whisper-cli` nur als Fallback
-- **whisper.cpp:** fest gepinnt auf `v1.9.2`, Commit `306c88f4d1286aec1bf96e544632897886af5501`
-- **Modellsicherheit:** 4-MiB-Transferblöcke, SHA-256, geschützter App-Modellpfad und atomare Aktivierung
-- **Backup:** lokales Vollbackup einschließlich Binärdateien und Prüfsummen
-- **Desktop-Build:** deterministisches Runtime-Staging statt Repository-Stamm als `frontendDist`
-- **Release-Nachweis:** Paket, Sidecar, SHA-256, Toolchain, Zielplattform und CI-Lauf werden maschinenlesbar dokumentiert
+- IndexedDB-Datenhaltung und lokales Vollbackup
+- 3-Sekunden-Audio-Recovery
+- 16 kHz / Mono / PCM16-WAV-Normalisierung
+- 4-Sekunden-Live-STT-Segmente mit geordneter Warteschlange
+- Tauri-Sidecar `naqya-whisper`, kontrollierter lokaler `whisper-cli` nur als Fallback
+- whisper.cpp `v1.9.2`, Commit `306c88f4d1286aec1bf96e544632897886af5501`
+- geschützter Modellpfad, SHA-256 und atomare Modellaktivierung
+- deterministisches Desktop-Staging und reproduzierbares Linux-DEB
+- versionierter Diagnosevertrag mit begrenztem Ringpuffer, Privacy-Redaction, Safe Actions und JSON-/TXT-Export
 
-## Aktueller Linux-Release-Nachweis
+## Diagnosevertrag 0.5.1-C
 
-Der erste vollständig erfolgreiche 0.5.1-B-Paketnachweis wurde für Quellcommit `602d0dd974abc1fe17490492c7a453bce88089fe` erzeugt.
+Kanonische Datei: `diagnostics/DIAGNOSTICS_CONTRACT.json`
 
-- Qualitätsprüfung: Run **#216**, Run-ID `32477864261` – erfolgreich
-- Linux-Bundle-Nachweis: Run **#1**, Run-ID `32477864231` – erfolgreich
-- CI-Artefakt: `naqya-linux-bundle-nachweis-1`, Artefakt-ID `9445169821`
-- Artefakt-SHA-256: `6831027b0ed6f5dd1ee1137d2cb814d5e6868f4a2ef041169318b4a54be2661d`
-- Linux-Paket: `NAQYA-0.5.0-linux-x86_64.deb`, **5.148.416 Bytes**
-- Paket-SHA-256: `1721b92de3a23da0ece8e9833d6949bf9b9987d7cc3de69e76d1cd50fc83f2e4`
-- gebündelter Sidecar: **2.828.584 Bytes**
-- Sidecar-SHA-256: `6c4805c72c855ea5b627b10450bb3feec56ea31b8038aed052ce9260bc11529b`
-- Frontend-Buildmanifest-SHA-256: `5290ff2a7e20c5b8c28e4e32ed727c08054ea38c0f4aabea924694f3ade97351`
-- Toolchain des Nachweises: Rust/Cargo 1.97.1, CMake 3.31.6, Tauri CLI 2.11.4, GCC/CC 13.3.0
+- Format: `NAQYA-DIAGNOSTICS`
+- Schema-Version: `1`
+- Ereignisschema-Version: `1`
+- Contract-SHA-256: `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
+- Ringpuffer: maximal 200 bereinigte Ereignisse
+- Deduplizierungsfenster: 5 Sekunden
+- sensible Audio-, Transkript-, Dokument-, Token- und vollständige Benutzerpfaddaten sind im Standardlog ausgeschlossen
+- Retry ist nur über die registrierte Safe Action `retry-once` und maximal einmal zulässig
 
-Der Sidecar wurde **aus dem extrahierten Paketkontext** gestartet. Die Laufzeitabhängigkeiten wurden mit `ldd` geprüft; es gab keine `not found`-Abhängigkeit. Zusätzlich wurde bestätigt, dass der im Paket enthaltene Sidecar bytegenau denselben SHA-256 wie der vorher validierte Build-Sidecar besitzt.
+**Plattforminvariante:** Linux und Windows müssen exakt denselben Diagnosevertrag und dieselbe Contract-SHA verwenden. Vorhandene Fehlercodes dürfen plattformspezifisch weder umgedeutet noch wiederverwendet werden. Damit bedeutet beispielsweise `NAQYA-STT-4002` auf Linux und Windows garantiert dasselbe Fehlerereignis.
 
-**Wichtig:** Das ist eine belastbare CI-Paketabnahme, aber noch keine reale Endgeräte-/Mikrofon-/Langzeitabnahme. Diese bleibt als separater Schritt offen.
+## Aktueller validierter Nachweis
+
+Für den exakten 0.5.1-C-Head `0388cda77c6696017c5b00cb795f5758af2d5e22` waren beide relevanten Prüfketten erfolgreich:
+
+- Qualitätsprüfung: Run **#268**, Run-ID `32482553363`
+- Linux-Bundle-Nachweis: Run **#14**, Run-ID `32482553418`
+- CI-Artefakt: `naqya-linux-bundle-nachweis-14`, Artefakt-ID `9446843382`
+- Artefakt-SHA-256: `8e2efd73b581bd420f348b129e554363aaf4cdbbcb4ca65ffa7b9ba3290074f1`
+- Diagnosevertrag-SHA-256 im Release Evidence: `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
+
+Der Linux-Sidecar wurde im Paketkontext gestartet und seine Laufzeitabhängigkeiten geprüft. Das bleibt eine belastbare CI-Paketabnahme, **noch keine reale Endgeräte-/Mikrofon-/Langzeitabnahme**.
 
 ## Schnellstart PWA
 
@@ -81,144 +87,55 @@ Doppelklick auf `START_NAQYA.bat`.
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Danach `http://127.0.0.1:8765` öffnen.
-
 ## Entwickler-Einstieg
 
-Für eine sofortige technische Übernahme in dieser Reihenfolge lesen:
-
-1. `CONTRIBUTING.md` – kurzer GitHub-Einstieg und Mindestprüfungen
-2. `docs/ENTWICKLERDOKUMENTATION.md` – Architekturkarte, Vertrauensgrenzen und lokale Prüfungen
-3. `AGENTS.md` – verbindlicher Entwicklungs-, Merge- und Freigabevertrag
-4. `TODO.md` – Prioritäten, Abnahmekriterien und Entwickler-Übergabecheckliste
-5. `PROJEKTSTATUS.json` – maschinenlesbarer aktueller Stand, Fortschritt und Release-Nachweis
-
-## Neu in 0.5.1-A/B
-
-- PWA-/Backup-Produktversion hart an `VERSION.json` gebunden
-- historischen 0.4.0-Runtimeoverride gegen erneute Versionsdrift gehärtet
-- deterministisches Desktop-`dist/` mit expliziter Runtime-Allowlist
-- `BUILD_MANIFEST.json` mit Größe und SHA-256 jeder gestagten Runtime-Datei
-- Tauri `frontendDist` vom Repository-Stamm auf `../dist` umgestellt
-- whisper.cpp-Linux-Build mit `BUILD_SHARED_LIBS=OFF` paketierbar gehärtet
-- separater Linux-Bundle-Workflow mit pfadbasierten Triggern
-- Tauri CLI im Bundle-Nachweis auf 2.11.4 gepinnt
-- echtes `.deb` im CI gebaut und extrahiert
-- enthaltenen Sidecar gestartet, Abhängigkeiten geprüft und bytegenau gegen den Build-Sidecar verglichen
-- `RELEASE_EVIDENCE.schema.json`, Generator und Validator eingeführt
-- menschen- und maschinenlesbarer Release-Nachweis als CI-Artefakt
-
-## Desktop-Spracherkennung
-
-Die native Runtime-Priorität lautet:
-
-1. Tauri-Sidecar `naqya-whisper`
-2. explizit verfügbarer lokaler `whisper-cli`-Fallback (`NAQYA_WHISPER_CLI` beziehungsweise kontrollierte `whisper-cli`-PATH-Erkennung)
-3. keine native Transkription
-
-Der Fallback darf den Sidecar nicht still überstimmen. Ein Sidecar, der gestartet wurde und einen Laufzeitfehler meldet, wird nicht still durch einen PATH-Fallback ersetzt.
-
-Ein importiertes Modell wird nicht aus einem beliebigen Dateipfad direkt an whisper.cpp übergeben. NAQYA überträgt es in den eigenen App-Datenbereich, prüft SHA-256 und aktiviert es erst danach atomar.
-
-```text
-Mikrofon
-  ↓
-Originalaufnahme + 3-s-Recovery
-  ↓
-Web Audio PCM
-  ↓
-16 kHz / Mono / PCM16-WAV
-  ↓
-4-s-Live-Segment
-  ↓
-Tauri-Sidecar, sonst expliziter lokaler CLI-Fallback
-  ↓
-Transkriptsegment
-  ↓
-persistenter Diktattext
-```
-
-## Datenschutz und Offline-Prinzip
-
-Der Kern benötigt keinen Account, keine Cloud und keine Telemetrie. Es gibt keinen automatischen Online-STT-Fallback. Kritische Runtime- oder Modellartefakte werden nicht ungeprüft zur Laufzeit heruntergeladen.
+1. `CONTRIBUTING.md`
+2. `docs/ENTWICKLERDOKUMENTATION.md`
+3. `AGENTS.md`
+4. `TODO.md`
+5. `PROJEKTSTATUS.json`
+6. `docs/DIAGNOSE_LOGGING.md`
 
 ## Was aktuell validiert ist
 
-- PWA-Grundfunktionen und lokaler Datenpfad
-- 3-Sekunden-Audio-Recovery
-- 16-kHz-Mono-WAV-Normalisierung
-- 4-Sekunden-Live-STT-Segmentierung
+- PWA-Grundfunktionen und lokale Datenhaltung
+- Audio-Recovery und PCM-Normalisierung
+- segmentiertes Live-STT
 - geschützter nativer Modellpfad
-- blockweiser Modelltransfer mit SHA-256 und atomarer Aktivierung
-- native Runtime-Härtung und privater STT-Tempbereich
-- fest gepinnter whisper.cpp-Upstream
-- reproduzierbarer Linux-x86_64-Sidecar-Build
-- deterministisches Desktop-Frontend-Staging
-- vollständiger Linux-DEB-Build im CI
-- Sidecar im Paket vorhanden und startbar
-- Sidecar-Laufzeitabhängigkeiten ohne fehlende Bibliotheken im CI-Prüfkontext
-- Bytegleichheit von Build- und Paket-Sidecar
-- maschinen- und menschenlesbarer Release-Nachweis
-- Tauri-/Rust-Kompilierungsprüfung
-- statische Architektur-, Sicherheits-, Text- und Dokumentationsverträge
-- Gleichheit von PWA-/Backup-Produktversion und `VERSION.json`
+- Linux-Sidecar-Build und Linux-DEB
+- deterministisches Desktop-Staging und DEB-Repacking
+- Release Evidence mit Paket-, Sidecar- und Diagnosevertragsbindung
+- fail-safe Diagnosemodul, Ringpuffer, Deduplizierung, Privacy-Regeln und Retry-once
+- JSON-/TXT-Diagnoseexport
+- statische und Laufzeit-Regressionsprüfungen
 
 ## Noch offen bzw. nicht als Hardware-Release abgenommen
 
-- professionelles Diagnose-/Debugging-/Logging-Modul mit stabilen Ereignis- und Fehlercodes
-- gemeinsamer Diagnose-/Release-Evidence-Vertrag
 - reproduzierbarer Windows-x86_64-Sidecar und Windows-Bundle
 - reale Mikrofon-/Hardwareabnahme unter Linux und Windows
-- 30-/60-Minuten-Langzeitmessungen für CPU, RAM, Latenz und Echtzeitfaktor
-- `AudioWorklet` als Ersatz für den derzeitigen `ScriptProcessor`
+- 30-/60-Minuten-Langzeittests
+- `AudioWorklet` als Ersatz für `ScriptProcessor`
 - native Android-/iPhone-/iPad-Adapter
 
 ## Qualitätsprüfung
 
-GitHub Actions prüft derzeit unter anderem:
-
-- JSON-Struktur und eindeutige JSON-Schlüssel
-- Textintegrität und Merge-Konfliktmarker
-- Produktversion gegen `VERSION.json`
-- JavaScript-Syntax
-- deterministisches Desktop-Staging und dessen SHA-256-Manifest
-- reproduzierbaren statischen Linux-Sidecar-Build
-- SHA-256 des Sidecars
-- Rust-Formatierung und Rust/Tauri-Kompilierung
-- statische Architektur- und Sicherheitsverträge
-- echtes Linux-DEB
-- Paketinhalt und Sidecar-Start
-- Laufzeitabhängigkeiten
-- Release-Evidence-Schema und erzeugten Nachweis
-- Shell-Syntax
+GitHub Actions prüft unter anderem JSON-Struktur, Duplicate Keys, Text-/Merge-Integrität, JavaScript-Syntax, Diagnose-Laufzeitregression, Diagnose-/Evidence-Vertrag, deterministisches Desktop-Staging, DEB-Reproduzierbarkeit, Sidecar-Build und SHA-256, Rust/Tauri-Kompilierung, statische Verträge und Shell-Syntax.
 
 ## Dokumentationsstatus
 
-Aktuelle Referenzen:
-
-- `README.md` – kanonischer sichtbarer Gesamtstand mit Fortschritt
-- `PROJEKTSTATUS.json` – maschinenlesbarer Fortschritt und validierter Paketnachweis
-- `VERSION.json` – Produkt-/Runtime-Vertrag
-- `CONTRIBUTING.md` – kurzer Einstieg für neue Mitentwickler
-- `docs/ENTWICKLERDOKUMENTATION.md` – technische Übergabe und lokale Prüfungen
-- `AGENTS.md` – verbindlicher Entwicklungs-, Merge- und Freigabevertrag
-- `TODO.md` – priorisierte Restarbeiten und Abnahmekriterien
-- `CHANGELOG.md` – tatsächlich umgesetzte Änderungen
-- `docs/ARCHITEKTUR.md` – technische Architektur
-- `docs/WHISPER_SIDECAR.md` – Sidecar-/Supply-Chain-Vertrag
-- `release/RELEASE_EVIDENCE.schema.json` – maschinenlesbarer Nachweisvertrag
+Kanonische Referenzen sind `README.md`, `PROJEKTSTATUS.json`, `VERSION.json`, `AGENTS.md`, `TODO.md`, `CHANGELOG.md`, `docs/ENTWICKLERDOKUMENTATION.md`, `docs/DIAGNOSE_LOGGING.md`, `docs/ARCHITEKTUR.md`, `docs/WHISPER_SIDECAR.md` und `release/RELEASE_EVIDENCE.schema.json`.
 
 ## Nächster Entwicklungsblock
 
-**0.5.1-C – DIAGNOSE, DEBUGGING, LOGGING & EVIDENCE-BINDUNG**
+**0.5.1-D – WINDOWS-BUNDLE MIT IDENTISCHEM DIAGNOSEVERTRAG**
 
-Geplante Reihenfolge:
+Reihenfolge:
 
-1. zentrale Ereignisstruktur mit stabilen Codefamilien definieren
-2. menschenlesbaren und JSON-fähigen Logger mit begrenztem Ringpuffer integrieren
-3. Fehlerdialog mit „Was / Wann / Wo / Wie / Ergebnis / Optionen“ und ausschließlich registrierten sicheren Aktionen ergänzen
-4. Wiederholungs-, Deduplizierungs- und Regressionsverhalten testen
-5. sensible Nutzdaten standardmäßig aus Diagnosen ausschließen
-6. Diagnoseexport als JSON und Text bereitstellen
-7. Ereignis-/Fehlercodes bis in den Release-Evidence-Vertrag referenzierbar machen
-8. danach Windows-Bundle und reale Hardwareabnahme fortsetzen
+1. Windows-x86_64-Sidecar aus demselben gepinnten whisper.cpp-Upstream bauen
+2. Tauri-konformen `.exe`-Sidecar in das Windows-Bundle aufnehmen
+3. Paket und Sidecar per SHA-256 nachweisen
+4. Sidecar aus dem erzeugten Paketkontext tatsächlich starten
+5. Release Evidence für Windows erzeugen
+6. **vor Freigabe bytegenau prüfen, dass `diagnostics/DIAGNOSTICS_CONTRACT.json` weiterhin SHA-256 `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425` besitzt**
+7. Windows-Diagnosen gegen dasselbe Ereignisschema und dieselben Fehlercodes regressionsprüfen
+8. erst danach reale Linux-/Windows-Hardwareabnahme fortsetzen
