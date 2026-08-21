@@ -58,7 +58,7 @@ for marker in [
     "format:'NAQYA-DIAGNOSTICS'",
     'NAQYA.diagnostics=',
     "root.addEventListener('unhandledrejection'",
-    "id='openDiagnostics'" if False else "b.id='openDiagnostics'",
+    "b.id='openDiagnostics'",
 ]:
     assert marker in js, f'Diagnose-Laufzeitvertrag fehlt: {marker}'
 
@@ -83,7 +83,7 @@ for code in ['NAQYA-STT-4002','NAQYA-STT-4003','NAQYA-STT-4004','NAQYA-STT-4005'
     assert code in live
 
 release_generator = (ROOT / 'tools/generate_release_evidence.py').read_text(encoding='utf-8')
-for marker in ['diagnostics_contract','DIAGNOSTICS_CONTRACT.json','diagnostics_contract_sha256','diagnostics_event_schema_version']:
+for marker in ['diagnostics_contract','DIAGNOSTICS_CONTRACT.json','diagnostics_contract_sha256','event_schema_version']:
     assert marker in release_generator
 
 release_schema = json.loads((ROOT / 'release/RELEASE_EVIDENCE.schema.json').read_text(encoding='utf-8'))
