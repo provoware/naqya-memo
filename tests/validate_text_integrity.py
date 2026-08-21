@@ -7,7 +7,7 @@ TEXT_SUFFIXES = {
     ".md", ".txt", ".json", ".webmanifest", ".yml", ".yaml", ".toml",
     ".js", ".html", ".css", ".sh", ".bat", ".rs"
 }
-SKIP_PARTS = {".git", ".sidecar-build", "target", "binaries", "node_modules"}
+SKIP_PARTS = {".git", ".sidecar-build", "target", "binaries", "node_modules", "dist", ".bundle-extract"}
 MERGE_MARKER = re.compile(r"^(<<<<<<<(?: .*)?|=======$|>>>>>>>(?: .*)?)$", re.MULTILINE)
 
 
@@ -33,13 +33,14 @@ for path in ROOT.rglob("*"):
     text = path.read_text(encoding="utf-8")
     assert not MERGE_MARKER.search(text), f"Merge-Konfliktmarker in {path.relative_to(ROOT)}"
 
-# 2. JSON muss nicht nur syntaktisch gültig, sondern auch schlüssig eindeutig sein.
+# 2. JSON muss syntaktisch gültig und schlüssig eindeutig sein.
 for rel in [
     "VERSION.json",
     "PROJEKTSTATUS.json",
     "manifest.webmanifest",
     "src-tauri/tauri.conf.json",
     "src-tauri/sidecar/whisper-runtime.json",
+    "release/RELEASE_EVIDENCE.schema.json",
 ]:
     json.loads(read(rel), object_pairs_hook=reject_duplicate_keys)
 
@@ -57,17 +58,42 @@ for rel in [
     duplicates = sorted({heading for heading in headings if headings.count(heading) > 1})
     assert not duplicates, f"Doppelte H2-Abschnitte in {rel}: {duplicates}"
 
+version = json.loads(read("VERSION.json"), object_pairs_hook=reject_duplicate_keys)
+status = json.loads(read("PROJEKTSTATUS.json"), object_pairs_hook=reject_duplicate_keys)
 readme = read("README.md")
-assert readme.count("## Neu in 0.5.0") == 1
-assert readme.count("## Entwickler-Einstieg") == 1
-assert readme.count("## Nächster Entwicklungsblock") == 1
-assert "0.5.1 – LINUX-BUNDLE-ABNAHME, RELEASE-NACHWEIS & WINDOWS-SIDECAR" in readme
-assert "noch nicht als Release end-to-end abgenommen" in readme
-assert "CONTRIBUTING.md" in readme
-assert "docs/ENTWICKLERDOKUMENTATION.md" in readme
-assert "Produktversionskonstante `0.2.0`" not in readme
-
 todo = read("TODO.md")
+
+assert version["version"] == "0.5.0"
+assert version["phase"] == "TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG"
+assert version["native_stt_provider"] == "whisper.cpp-sidecar"
+assert version["native_stt_fallback"] == "whisper-cli"
+assert version["sidecar_bundle_configured"] is True
+assert version["sidecar_linux_ci_built"] is True
+assert version["sidecar_release_bundle_validated"] is True
+assert version["desktop_frontend_dist_deterministic"] is True
+assert version["release_evidence_schema"] == 1
+assert version["release_evidence_linux_ci_generated"] is True
+
+# README und maschinenlesbarer Projektstatus müssen denselben Fortschrittsstand zeigen.
+progress = status["fortschritt"]
+assert progress["prozent"] == 56
+assert progress["erledigt"] == 5
+assert progress["gesamt"] == 9
+assert "**Fortschritt 0.5.1:** **56 %** – **5 von 9 Hauptpunkten erledigt**" in readme
+assert "### Erledigt – 5 von 9" in readme
+assert "### Offen – 4 von 9" in readme
+assert "0.5.1-C – DIAGNOSE, DEBUGGING, LOGGING & EVIDENCE-BINDUNG" in readme
+assert status["naechster_meilenstein"] == "0.5.1-C – DIAGNOSE, DEBUGGING, LOGGING & EVIDENCE-BINDUNG"
+
+# Der sichtbare Status darf die CI-Paketabnahme nicht mit Hardwareabnahme verwechseln.
+assert "Linux-Bundle CI-validiert" in readme
+assert "noch keine reale Endgeräte-/Mikrofon-/Langzeitabnahme" in readme
+assert "Paket-SHA-256" in readme
+assert "Sidecar-SHA-256" in readme
+assert str(status["release_nachweis"]["workflow_run_id"]) in readme
+assert status["release_nachweis"]["desktop_package_sha256"] in readme
+assert status["release_nachweis"]["sidecar_sha256"] in readme
+
 for heading in [
     "## P0 – Freigabekritisch",
     "## P1 – Hohe Priorität",
@@ -80,6 +106,9 @@ for heading in [
 assert "Aktueller PR: wird" not in todo
 assert "pflege/0.5.0-status-konsistenz" not in todo
 assert "Vor jeder künftigen Entwicklerübergabe" in todo
+assert "Professionelles Diagnose-/Debugging-/Logging-Modul integrieren" in todo
+assert "Diagnose-/Release-Evidence-Vertrag verbinden" in todo
+assert "0.5.1-B – Release-Nachweis erzeugen" in todo
 
 contributing = read("CONTRIBUTING.md")
 assert "docs/ENTWICKLERDOKUMENTATION.md" in contributing
@@ -97,17 +126,8 @@ for marker in [
     "## Definition of Done",
 ]:
     assert developer.count(marker) == 1, f"Entwicklerdokumentation unvollständig: {marker}"
-assert '"frontendDist": ".."' in developer
+assert "frontendDist" in developer
 assert "Produktversion ≠ Datenbankschema" in developer
-
-version = json.loads(read("VERSION.json"), object_pairs_hook=reject_duplicate_keys)
-assert version["version"] == "0.5.0"
-assert version["phase"] == "TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG"
-assert version["native_stt_provider"] == "whisper.cpp-sidecar"
-assert version["native_stt_fallback"] == "whisper-cli"
-assert version["sidecar_bundle_configured"] is True
-assert version["sidecar_linux_ci_built"] is True
-assert version["sidecar_release_bundle_validated"] is False
 
 # Produktversion und Datenbankschema sind getrennt: UI/Backup müssen VERSION.json folgen, DB_VERSION bleibt migrationsgebunden.
 app = read("app.js")
@@ -129,17 +149,17 @@ assert "version:'0.4.0'" not in release_04
 assert "Memo Tool 2026 0.4.0" not in release_04
 assert "ENTWICKLERHINWEIS" in release_04
 
-status = json.loads(read("PROJEKTSTATUS.json"), object_pairs_hook=reject_duplicate_keys)
 assert status["entwicklungsphase"] == version["phase"]
 kern = status["kernfunktionen"]
 assert kern["whisper_cpp_sidecar_bundle_configured"] is True
 assert kern["whisper_cpp_sidecar_linux_ci_built"] is True
-assert kern["whisper_cpp_sidecar_release_bundle_validated"] is False
+assert kern["whisper_cpp_sidecar_release_bundle_validated"] is True
+assert kern["desktop_frontend_dist_deterministic"] is True
+assert kern["release_evidence_linux_ci_generated"] is True
 assert "whisper_cpp_native_runtime_bundled" not in kern, "Mehrdeutiges altes Bundle-Feld darf nicht zurückkehren"
 
 whisper_doc = read("docs/WHISPER_SIDECAR.md")
 assert "bundle.externalBin" in whisper_doc
-assert "Noch nicht abgeschlossen ist die vollständige Endanwender-Bundle-Abnahme" in whisper_doc
 assert "Diese Stufe bündelt noch keine Binärdateien" not in whisper_doc
 
 laien = read("LAIENANLEITUNG.md")
@@ -153,4 +173,4 @@ for historical in [
 ]:
     assert "Dokumentenstatus" in read(historical), f"Historischer Status fehlt in {historical}"
 
-print("NAQYA Text-/Merge-Integrität: PASS")
+print("NAQYA 0.5.1-B Text-/Merge-/Statusintegrität: PASS")

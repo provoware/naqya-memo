@@ -11,7 +11,9 @@ required = [
     'docs/ARCHITEKTUR.md','docs/ENTWICKLERDOKUMENTATION.md','docs/AUDIO_OFFLINE_STT.md','docs/AUDIO_NORMALISIERUNG_LIVE_STT.md',
     'docs/NATIVE_WHISPER_DESKTOP.md','docs/DATENMODELL.md','docs/PLUGIN_VERTRAG.md','docs/WHISPER_SIDECAR.md',
     'src-tauri/Cargo.toml','src-tauri/build.rs','src-tauri/tauri.conf.json','src-tauri/src/main.rs',
-    'src-tauri/sidecar/whisper-runtime.json','tests/validate_text_integrity.py'
+    'src-tauri/sidecar/whisper-runtime.json','tests/validate_text_integrity.py','tests/validate_dist.py',
+    'tests/validate_release_evidence.py','tools/stage_desktop_frontend.py','tools/generate_release_evidence.py',
+    'release/RELEASE_EVIDENCE.schema.json','.github/workflows/bundle-linux.yml'
 ]
 missing = [p for p in required if not (root / p).exists()]
 assert not missing, f'Fehlende Dateien: {missing}'
@@ -31,7 +33,38 @@ assert version['native_stt_provider'] == 'whisper.cpp-sidecar'
 assert version['native_stt_fallback'] == 'whisper-cli'
 assert version['sidecar_bundle_configured'] is True
 assert version['sidecar_linux_ci_built'] is True
-assert version['sidecar_release_bundle_validated'] is False
+assert version['sidecar_release_bundle_validated'] is True
+assert version['desktop_frontend_dist_deterministic'] is True
+assert version['release_evidence_schema'] == 1
+assert version['release_evidence_linux_ci_generated'] is True
+
+progress = status['fortschritt']
+assert progress['bezug'] == 'Entwicklungsblock 0.5.1'
+assert progress['prozent'] == 56
+assert progress['erledigt'] == 5
+assert progress['gesamt'] == 9
+assert len(progress['erledigte_punkte']) == 5
+assert len(progress['offene_punkte']) == 4
+assert status['aktueller_arbeitsstand'] == '0.5.1-B – LINUX-BUNDLE & RELEASE-NACHWEIS'
+assert status['naechster_meilenstein'] == '0.5.1-C – DIAGNOSE, DEBUGGING, LOGGING & EVIDENCE-BINDUNG'
+
+release = status['release_nachweis']
+assert release['linux_bundle_validiert'] is True
+assert release['workflow'] == 'NAQYA Linux-Bundle-Nachweis'
+assert release['workflow_run_id'] == 32477864231
+assert release['workflow_run_number'] == 1
+assert release['qualitaetspruefung_run_id'] == 32477864261
+assert release['qualitaetspruefung_run_number'] == 216
+assert release['source_commit'] == '602d0dd974abc1fe17490492c7a453bce88089fe'
+assert release['artifact_id'] == 9445169821
+assert release['artifact_name'] == 'naqya-linux-bundle-nachweis-1'
+assert re.fullmatch(r'[0-9a-f]{64}', release['artifact_sha256'])
+assert re.fullmatch(r'[0-9a-f]{64}', release['desktop_package_sha256'])
+assert re.fullmatch(r'[0-9a-f]{64}', release['sidecar_sha256'])
+assert re.fullmatch(r'[0-9a-f]{64}', release['frontend_manifest_sha256'])
+assert release['desktop_package_bytes'] > 0
+assert release['sidecar_bytes'] > 0
+assert release['release_evidence_schema'] == 1
 
 kern = status['kernfunktionen']
 assert kern['audio_segment_recovery'] is True
@@ -41,16 +74,21 @@ assert kern['native_live_stt_segment_ms'] == 4000
 assert kern['sprachmodell_native_materialisierung'] is True
 assert kern['sprachmodell_sha256_native'] is True
 assert kern['sprachmodell_atomare_aktivierung'] is True
+assert kern['desktop_frontend_dist_deterministic'] is True
 assert kern['whisper_cpp_sidecar_bundle_configured'] is True
 assert kern['whisper_cpp_sidecar_linux_ci_built'] is True
-assert kern['whisper_cpp_sidecar_release_bundle_validated'] is False
+assert kern['whisper_cpp_sidecar_release_bundle_validated'] is True
 assert kern['whisper_cpp_sidecar_preferred'] is True
 assert kern['whisper_cpp_runtime_manifest'] is True
 assert kern['whisper_cpp_external_cli_fallback'] is True
 assert kern['whisper_cpp_runtime_source_diagnostic'] is True
+assert kern['release_evidence_linux_ci_generated'] is True
+assert kern['release_evidence_machine_readable'] is True
+assert kern['release_evidence_human_readable'] is True
 assert 'whisper_cpp_native_runtime_bundled' not in kern
 
 assert manifest['start_url'] == './'
+assert tauri['build']['frontendDist'] == '../dist'
 assert tauri['bundle']['externalBin'] == ['binaries/naqya-whisper']
 
 agents = (root / 'AGENTS.md').read_text()
@@ -65,13 +103,19 @@ for needle in [
 todo = (root / 'TODO.md').read_text()
 for needle in [
     'P0 – Freigabekritisch','P1 – Hohe Priorität','P2 – Qualitätsausbau','P3 – Wartbarkeit',
-    'Entwickler-Übergabecheckliste','Vor jeder künftigen Entwicklerübergabe','Erledigt','Pflegevertrag'
+    'Entwickler-Übergabecheckliste','Vor jeder künftigen Entwicklerübergabe','Erledigt','Pflegevertrag',
+    'Diagnose-/Release-Evidence-Vertrag','0.5.1-B – Linux-Tauri-Bundle und Sidecar paketbezogen validieren'
 ]:
     assert needle in todo, f'TODO-Vertrag unvollständig: {needle}'
 
 readme = (root / 'README.md').read_text()
-for needle in ['CONTRIBUTING.md','docs/ENTWICKLERDOKUMENTATION.md','Entwickler-Einstieg','frontendDist']:
-    assert needle in readme, f'README-Entwicklereinstieg unvollständig: {needle}'
+for needle in [
+    'CONTRIBUTING.md','docs/ENTWICKLERDOKUMENTATION.md','Entwickler-Einstieg','frontendDist',
+    'Fortschritt 0.5.1','56 %','5 von 9 Hauptpunkten','0.5.1-C – DIAGNOSE, DEBUGGING, LOGGING & EVIDENCE-BINDUNG',
+    '32477864231','1721b92de3a23da0ece8e9833d6949bf9b9987d7cc3de69e76d1cd50fc83f2e4',
+    '6c4805c72c855ea5b627b10450bb3feec56ea31b8038aed052ce9260bc11529b'
+]:
+    assert needle in readme, f'README-Status/Entwicklereinstieg unvollständig: {needle}'
 
 contributing = (root / 'CONTRIBUTING.md').read_text()
 for needle in ['In 10 Minuten arbeitsfähig','Lokale Mindestprüfung','Definition „fertig“']:
@@ -85,8 +129,20 @@ for needle in [
     assert needle in developer, f'Entwicklerdokumentation unvollständig: {needle}'
 
 gitignore = (root / '.gitignore').read_text()
-for needle in ['.sidecar-build/','src-tauri/binaries/','src-tauri/target/','*.gguf','*.bin']:
+for needle in ['.sidecar-build/','src-tauri/binaries/','src-tauri/target/','/dist/','RELEASE_EVIDENCE.json','*.gguf','*.bin']:
     assert needle in gitignore, f'.gitignore unvollständig: {needle}'
+
+stage = (root / 'tools/stage_desktop_frontend.py').read_text()
+for needle in ['RUNTIME_FILES','BUILD_MANIFEST.json','SOURCE_DATE_EPOCH','Symlink ist im Desktop-Staging nicht erlaubt']:
+    assert needle in stage, f'Desktop-Staging unvollständig: {needle}'
+
+release_generator = (root / 'tools/generate_release_evidence.py').read_text()
+for needle in ['RELEASE_EVIDENCE.json','source_sidecar_sha_matches_packaged','runtime_dependencies_resolved','NAQYA_SOURCE_COMMIT']:
+    assert needle in release_generator, f'Release-Nachweisgenerator unvollständig: {needle}'
+
+bundle_workflow = (root / '.github/workflows/bundle-linux.yml').read_text()
+for needle in ['TAURI_CLI_VERSION',"'2.11.4'",'cargo tauri build --bundles deb','dpkg-deb -x','RELEASE_EVIDENCE.json','actions/upload-artifact@v4']:
+    assert needle in bundle_workflow, f'Linux-Bundle-Workflow unvollständig: {needle}'
 
 html = (root / 'index.html').read_text()
 for needle in [
@@ -138,8 +194,12 @@ assert 'version = "0.5.0"' in cargo
 assert 'sha2 = "0.10"' in cargo
 assert 'tauri-plugin-shell = "2"' in cargo
 
+sidecar_manifest = json.loads((root / 'src-tauri/sidecar/whisper-runtime.json').read_text())
+assert sidecar_manifest['build_profile'] == 'cpu-release-static'
+assert '-DBUILD_SHARED_LIBS=OFF' in sidecar_manifest['cmake_options']
+
 sidecar_build = (root / 'tools/build_whisper_sidecar.sh').read_text()
-for needle in ['UPSTREAM_TAG="v1.9.2"','306c88f4d1286aec1bf96e544632897886af5501','GGML_NATIVE=OFF','ENTWICKLERHINWEIS']:
+for needle in ['UPSTREAM_TAG="v1.9.2"','306c88f4d1286aec1bf96e544632897886af5501','GGML_NATIVE=OFF','BUILD_SHARED_LIBS=OFF','ENTWICKLERHINWEIS']:
     assert needle in sidecar_build, f'Sidecar-Buildvertrag unvollständig: {needle}'
 
 sw = (root / 'sw.js').read_text()
@@ -154,4 +214,4 @@ for f in [
     text = (root / f).read_text()
     assert not re.search(r'https?://(?!127\.0\.0\.1|localhost)', text), f'Externe Laufzeit-URL in {f}'
 
-print('NAQYA 0.5 statische Verträge: PASS')
+print('NAQYA 0.5.1-B statische Verträge: PASS')

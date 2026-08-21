@@ -25,6 +25,9 @@ assert manifest["upstream_commit"] == "306c88f4d1286aec1bf96e544632897886af5501"
 assert re.fullmatch(r"[0-9a-f]{40}", manifest["upstream_commit"])
 assert manifest["binary_basename"] == "naqya-whisper"
 assert manifest["upstream_binary"] == "whisper-cli"
+assert manifest["build_profile"] == "cpu-release-static"
+assert "-DGGML_NATIVE=OFF" in manifest["cmake_options"]
+assert "-DBUILD_SHARED_LIBS=OFF" in manifest["cmake_options"]
 assert manifest["integrity_policy"]["source_commit_must_match"] is True
 assert manifest["integrity_policy"]["binary_sha256_required_for_release"] is True
 assert manifest["integrity_policy"]["allow_runtime_download"] is False
@@ -41,6 +44,7 @@ for target, output in expected_targets.items():
     assert entry["output"] == output
 
 assert tauri["bundle"]["externalBin"] == ["binaries/naqya-whisper"]
+assert tauri["build"]["frontendDist"] == "../dist"
 assert 'tauri-plugin-shell = "2"' in cargo
 for needle in [
     'tauri_plugin_shell::ShellExt',
@@ -60,6 +64,7 @@ for needle in [
     "git clone --filter=blob:none --no-checkout",
     "checkout --detach",
     "GGML_NATIVE=OFF",
+    "BUILD_SHARED_LIBS=OFF",
     "--target whisper-cli",
     "sha256sum",
     "naqya-whisper-$TARGET_TRIPLE",

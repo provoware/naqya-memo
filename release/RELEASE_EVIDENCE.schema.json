@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://provoware.local/naqya/release-evidence.schema.json",
+  "title": "NAQYA Release Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "generated_at",
+    "source",
+    "target",
+    "frontend",
+    "whisper",
+    "desktop_package",
+    "runtime_dependencies",
+    "toolchain",
+    "ci",
+    "validations"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "status": {"const": "bundle-validated"},
+    "generated_at": {"type": "string"},
+    "source": {"type": "object"},
+    "target": {"type": "object"},
+    "frontend": {"type": "object"},
+    "whisper": {"type": "object"},
+    "desktop_package": {"type": "object"},
+    "runtime_dependencies": {"type": "object"},
+    "toolchain": {"type": "object"},
+    "ci": {"type": "object"},
+    "validations": {"type": "object"}
+  }
+}

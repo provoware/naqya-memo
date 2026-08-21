@@ -2,37 +2,40 @@
 
 Stand: 2026-08-21
 Validierter Basisstand: **0.5.0 – Tauri-Sidecar-Integration & Repository-Konsolidierung**
-Nächster Entwicklungsblock: **0.5.1 – Linux-Bundle-Abnahme, Release-Nachweis & Windows-Sidecar**
+Aktueller Arbeitsstand: **0.5.1-B – Linux-Bundle & Release-Nachweis**
+Fortschritt 0.5.1: **56 % – 5 von 9 Hauptpunkten erledigt**
+Nächster Entwicklungsblock: **0.5.1-C – Diagnose, Debugging, Logging & Evidence-Bindung**
 
 ## P0 – Freigabekritisch
 
-### [offen] Vollständiges Linux-Tauri-Bundle end-to-end validieren
-Komponente: Tauri / Linux / Sidecar
+### [offen] Professionelles Diagnose-/Debugging-/Logging-Modul integrieren
+Komponente: Diagnose / UX / Wartbarkeit / Regression
 
 Abnahmekriterien:
-- reproduzierbaren Linux-x86_64-Sidecar aus dem fest gepinnten whisper.cpp-Commit bauen
-- Tauri-Frontend deterministisch in einem eigenen Desktop-`dist/` bereitstellen
-- `src-tauri/tauri.conf.json` nicht mehr auf den gesamten Repository-Stamm als `frontendDist` zeigen lassen
-- vollständiges Linux-Desktop-Bundle erzeugen
-- nachweisen, dass `naqya-whisper` im Bundle enthalten ist
-- notwendige Sidecar-Laufzeitbibliotheken im Paketkontext prüfen
-- gebündelten Sidecar aus dem erzeugten Paket tatsächlich starten
-- Runtime-Diagnose meldet den Sidecar als bevorzugte Quelle
-- kein stiller Rückfall auf PATH bei erfolgreichem Sidecar
+- zentrale Ereignisstruktur mit stabilen Codefamilien
+- jedes relevante Ereignis beschreibt mindestens: Was, Wann, Wo, Wie, Ergebnis
+- menschenlesbare Kurzbeschreibung und maschinenlesbare JSON-Struktur aus derselben Quelle
+- begrenzter Ringpuffer statt unbegrenztem Logwachstum
+- wiederholte identische Fehler werden kontrolliert dedupliziert bzw. gezählt
+- Loggingfehler dürfen den eigentlichen Produktablauf nicht zum Absturz bringen
+- keine Audio-, Transkript-, Dokumentinhalte oder unnötigen vollständigen Dateipfade im Standardlog
+- Export als Diagnose-JSON und menschenlesbarer Textbericht
+- laienverständlicher Fehlerdialog mit sichtbarem Fehlercode
+- nur vorab registrierte sichere Benutzeraktionen wie „Erneut versuchen“, „Diagnose anzeigen“, „Einstellungen öffnen“, „Schließen“
+- kein automatischer unendlicher Retry
+- Regressionstests für Fehlercode-Eindeutigkeit, Deduplizierung, Puffergrenze und Offline-Verhalten
 
-### [offen] Release-Nachweis für Sidecar- und Desktop-Artefakte erzeugen
-Komponente: Release / Integrität / Supply Chain
+### [offen] Diagnose-/Release-Evidence-Vertrag verbinden
+Komponente: Release / Diagnose / Nachweisbarkeit
 
 Abnahmekriterien:
-- NAQYA-Version
-- Zielplattform und Zielarchitektur
-- whisper.cpp-Version und Upstream-Commit
-- Sidecar-Dateiname und Dateigröße
-- Sidecar-SHA-256
-- Desktop-Paket-Dateiname, Dateigröße und SHA-256
-- Compiler-/CMake-/Rust-/Tauri-Versionen
-- Buildzeitpunkt und CI-Run-Zuordnung
-- maschinenlesbares Nachweisformat
+- Ereignis- und Fehlercode-Schema versionieren
+- `RELEASE_EVIDENCE.json` referenziert die verwendete Diagnose-Schema-Version
+- Laufzeitdiagnosen enthalten Release-/Build-Identität ohne sensible Nutzdaten
+- Beziehung Build → Paket → Sidecar → Runtime → Ereigniscode → sichere Benutzeraktion maschinenlesbar abbildbar
+- Evidence- und Diagnose-IDs dürfen nicht zufällig kollidieren
+- Export muss vollständig offline funktionieren
+- statische und Laufzeittests verhindern stille Schema-Drift
 
 ## P1 – Hohe Priorität
 
@@ -46,18 +49,20 @@ Abnahmekriterien:
 - vollständiges Windows-Bundle erzeugen
 - `.exe`-Sidecar aus dem Bundle tatsächlich starten
 - Runtime-Diagnose zeigt den Sidecar als bevorzugte Quelle
+- Windows-Paket und Sidecar in den Release-Nachweis aufnehmen
 
 ### [offen] Reale Linux-Desktop-Abnahme durchführen
 Komponente: Linux / Mikrofon / STT
 
 Abnahmekriterien:
-- Desktop-Paket auf Referenzgerät starten
-- gebündelter Sidecar wird verwendet
+- validiertes Desktop-Paket auf Referenzgerät installieren und starten
+- gebündelter Sidecar wird real von NAQYA verwendet
 - echtes Modell aus geschütztem NAQYA-Modellpfad funktioniert
 - Mikrofonaufnahme und segmentiertes Live-Diktat funktionieren
 - temporäre WAV-Dateien werden zuverlässig bereinigt
 - Providerdiagnose zeigt `whisper.cpp-sidecar`
 - kurze sowie mindestens 30-minütige Sitzung ohne Datenverlust
+- Diagnose-/Fehlercodes bei absichtlich provozierten Fehlerfällen verifizieren
 
 ### [offen] Reale Windows-Desktop-Abnahme durchführen
 Komponente: Windows / Mikrofon / STT
@@ -65,15 +70,6 @@ Komponente: Windows / Mikrofon / STT
 Abnahmekriterien analog zur Linux-Abnahme, zusätzlich Prüfung des Windows-Pakets und des `.exe`-Sidecars.
 
 ## P2 – Qualitätsausbau
-
-### [offen] Runtime-Diagnose in der Oberfläche deutlicher darstellen
-Komponente: UI / Diagnose
-
-Abnahmekriterien:
-- Sidecar / externer Fallback / nicht verfügbar klar unterscheidbar
-- verwendeter Provider nach einer Transkription sichtbar
-- laienverständliche Fehlermeldung mit konkretem nächsten Schritt
-- Version und Integritätsstatus der Runtime darstellbar
 
 ### [offen] `ScriptProcessor` durch `AudioWorklet` ersetzen
 Komponente: Web Audio / Live-STT
@@ -83,6 +79,7 @@ Abnahmekriterien:
 - stabile Segmentbildung
 - keine Regression bei Live-Diktat und Recovery
 - Firefox- und Chrome-Kompatibilität geprüft
+- Diagnosemetriken bleiben erhalten
 
 ### [offen] Langzeit- und Lasttests für Live-STT durchführen
 Komponente: Performance / Stabilität
@@ -92,6 +89,7 @@ Abnahmekriterien:
 - CPU-/RAM-Verhalten dokumentiert
 - Echtzeitfaktor pro Referenzmodell dokumentiert
 - kontrolliertes Verhalten bei langsamer Transkription
+- Diagnose-Ringpuffer bleibt begrenzt und performant
 
 ## P3 – Wartbarkeit
 
@@ -109,23 +107,25 @@ Komponente: Wartbarkeit
 Abnahmekriterien:
 - feststellen, ob der Name nur historisch oder technisch störend ist
 - keine reine Umbenennung ohne Nutzen
-- bei Änderung HTML-, Service-Worker-, Test- und Modulreferenzen atomar anpassen
+- bei Änderung HTML-, Service-Worker-, Staging-Allowlist, Tests und Modulreferenzen atomar anpassen
 
 ## Entwickler-Übergabecheckliste
 
-### Aktuelle Übergabebereitschaft 0.5.0
+### Aktuelle Übergabebereitschaft 0.5.1-B
 
 - [x] `CONTRIBUTING.md` als kurzer GitHub-Einstieg angelegt
 - [x] `docs/ENTWICKLERDOKUMENTATION.md` mit Schnellübernahme, Repository-Landkarte und exakten lokalen Prüfungen angelegt
 - [x] aktuelle Architektur-, Daten-, STT- und Sidecar-Verträge verlinkt und voneinander abgegrenzt
-- [x] nächster Arbeitsblock 0.5.1 mit konkreten Touchpoints und Nicht-Zielen dokumentiert
 - [x] schwer erkennbare Invarianten an Native Bridge, Live-STT, Audio-Normalisierung, Rust-Runtime und Sidecar-Build sparsam direkt im Code markiert
 - [x] Dokumentations- und Kommentierregeln in `AGENTS.md` verbindlich festgelegt
 - [x] Entwicklerdokumentation in Text-/Statikverträge aufgenommen
 - [x] PWA-Produktversionsdrift in `app.js` auf 0.5.0 korrigiert und gegen `VERSION.json` automatisiert abgesichert
-- [ ] deterministisches Desktop-Frontend-`dist/` für 0.5.1 erzeugen
-- [ ] vollständiges Linux-Endanwender-Bundle nachweisen
-- [ ] maschinenlesbaren Release-Nachweis erzeugen
+- [x] deterministisches Desktop-Frontend-`dist/` erzeugt und geprüft
+- [x] Linux-DEB mit enthaltenem und startbarem Sidecar im CI nachgewiesen
+- [x] Sidecar-Laufzeitabhängigkeiten im Paketkontext ohne fehlende Bibliotheken geprüft
+- [x] maschinen- und menschenlesbaren Release-Nachweis erzeugt
+- [ ] professionelles Diagnose-/Debugging-/Logging-Modul vollständig integrieren
+- [ ] Diagnose-/Release-Evidence-Vertrag verbinden
 - [ ] Windows-x86_64-Bundle nachweisen
 - [ ] reale Linux-/Windows-Hardwareabnahme abschließen
 
@@ -133,26 +133,52 @@ Abnahmekriterien:
 
 - [ ] realen `main`-Commit, offene PRs und CI-Stand geprüft
 - [ ] README, TODO, CHANGELOG, Entwicklerdokumentation und maschinenlesbare Statusdateien gegen den Code geprüft
-- [ ] neue oder veränderte Vertrauensgrenzen direkt am Code knapp und in der Fach­dokumentation ausführlich erklärt
+- [ ] neue oder veränderte Vertrauensgrenzen direkt am Code knapp und in der Fachdokumentation ausführlich erklärt
 - [ ] Repository-Landkarte und lokale Befehle noch korrekt
 - [ ] Qualitätsgate für den exakten Übergabe-Head vollständig grün
+- [ ] paketbezogene Evidence bei Release-relevanten Änderungen geprüft
 - [ ] nach Merge resultierenden `main` erneut geprüft
 
 ## Erledigt
 
+### [erledigt] 0.5.1-B – Deterministisches Desktop-Frontend stagen
+Ergebnis:
+- Tauri `frontendDist` von Repository-Stamm auf `../dist` umgestellt
+- explizite Runtime-Allowlist eingeführt
+- Symlinks im Staging verboten
+- `BUILD_MANIFEST.json` mit Dateigröße und SHA-256 erzeugt
+- Tests verhindern zusätzliche oder fehlende Runtime-Dateien im `dist/`
+
+### [erledigt] 0.5.1-B – Linux-Tauri-Bundle und Sidecar paketbezogen validieren
+Ergebnis:
+- reales DEB im GitHub-Actions-Workflow gebaut
+- whisper.cpp-Sidecar mit `BUILD_SHARED_LIBS=OFF` paketierbar gehärtet
+- DEB extrahiert und genau einen `naqya-whisper` nachgewiesen
+- Sidecar aus dem Paketkontext erfolgreich gestartet
+- Laufzeitabhängigkeiten mit `ldd` geprüft; keine `not found`-Abhängigkeit
+- Build- und Paket-Sidecar per SHA-256 bytegenau abgeglichen
+
+### [erledigt] 0.5.1-B – Release-Nachweis erzeugen
+Ergebnis:
+- `RELEASE_EVIDENCE.schema.json` versioniert
+- `RELEASE_EVIDENCE.json` im realen Bundle-Workflow erzeugt und validiert
+- menschenlesbaren `RELEASE_EVIDENCE.txt` erzeugt
+- Paket-, Sidecar-, Frontend-Manifest-, Toolchain-, Zielplattform- und CI-Identität dokumentiert
+- erstes erfolgreiches Nachweisartefakt: `naqya-linux-bundle-nachweis-1`, Run-ID `32477864231`
+
 ### [erledigt] 0.5.1-A – PWA-Produktversion atomar synchronisieren
 Ergebnis:
-- `app.js` verwendet jetzt Produktversion 0.5.0
+- `app.js` verwendet Produktversion 0.5.0
 - `tests/validate_text_integrity.py` verlangt harte Gleichheit mit `VERSION.json`
-- Backup-Metadaten verwenden weiterhin dieselbe `VERSION`-Konstante und werden im Vertrag geprüft
+- Backup-Metadaten verwenden dieselbe `VERSION`-Konstante und werden im Vertrag geprüft
+- historischer `release-04.js`-Override kann UI und Backup nicht mehr still auf 0.4.0 zurücksetzen
 - `DB_VERSION=2` blieb unverändert, weil Datenbankschema und Produktversion getrennte Verträge sind
-- versehentliche Nebenänderungen an `app.js` wurden per Commit-Diff erkannt und vor Freigabe vollständig zurückgenommen
 
 ### [erledigt] Professionelle Entwicklerübergabe 0.5.0 aufbauen
 Ergebnis:
 - GitHub-Einstieg über `CONTRIBUTING.md`
 - kanonische technische Übergabe unter `docs/ENTWICKLERDOKUMENTATION.md`
-- Repository-Landkarte, Vertrauensgrenzen, lokale Prüfmatrix und 0.5.1-Übergabepunkt dokumentiert
+- Repository-Landkarte, Vertrauensgrenzen, lokale Prüfmatrix und Übergabepunkt dokumentiert
 - Codekommentare auf wenige nicht offensichtliche Architektur-/Sicherheitsinvarianten beschränkt
 - Übergabecheckliste und verbindliche Pflegeverträge ergänzt
 
@@ -163,13 +189,12 @@ Ergebnis:
 - doppelte JSON-Schlüssel aus `VERSION.json` und `PROJEKTSTATUS.json` entfernt
 - veraltete Sidecar-Dokumentation korrigiert
 - historische 0.2-/0.3-/0.4-Dokumente klar als historische Verträge gekennzeichnet
-- README als kanonischer Gesamtstand aktualisiert
 - automatischer Textintegritäts- und Duplicate-Key-Test ergänzt
 
 ### [erledigt] Repository-Konsolidierung 0.5.0
 Ergebnis:
-- PR #8 mit Tauri-Sidecar-Integration in `main`
-- veralteter Parallel-PR #3 geschlossen
+- Tauri-Sidecar-Integration in `main`
+- veraltete Parallelentwicklung geschlossen
 - `.gitignore` für Build-, Runtime- und Modellartefakte ergänzt
 - Versions- und Tauri-Metadaten auf 0.5.0 angehoben
 
@@ -190,4 +215,4 @@ Ergebnis:
 
 ## Pflegevertrag
 
-Diese Datei wird bei jeder relevanten funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung geprüft und aktualisiert. Vor und nach jeder Iteration wird der reale Repository-, PR-, Merge- und CI-Stand geprüft. Erledigte Punkte werden nicht kommentarlos gelöscht, sondern zunächst hier dokumentiert.
+Diese Datei wird bei jeder relevanten funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung geprüft und aktualisiert. Vor und nach jeder Iteration wird der reale Repository-, PR-, Merge- und CI-Stand geprüft. Erledigte Punkte werden nicht kommentarlos gelöscht, sondern hier nachvollziehbar dokumentiert.
