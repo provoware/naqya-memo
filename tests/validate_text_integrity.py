@@ -7,7 +7,7 @@ TEXT_SUFFIXES = {
     ".md", ".txt", ".json", ".webmanifest", ".yml", ".yaml", ".toml",
     ".js", ".html", ".css", ".sh", ".bat", ".rs"
 }
-SKIP_PARTS = {".git", ".sidecar-build", "target", "binaries", "node_modules"}
+SKIP_PARTS = {".git", ".sidecar-build", "dist", "target", "binaries", "node_modules"}
 MERGE_MARKER = re.compile(r"^(<<<<<<<(?: .*)?|=======$|>>>>>>>(?: .*)?)$", re.MULTILINE)
 
 
@@ -65,6 +65,7 @@ assert "0.5.1 – LINUX-BUNDLE-ABNAHME, RELEASE-NACHWEIS & WINDOWS-SIDECAR" in r
 assert "noch nicht als Release end-to-end abgenommen" in readme
 assert "CONTRIBUTING.md" in readme
 assert "docs/ENTWICKLERDOKUMENTATION.md" in readme
+assert "deterministisches Desktop-Frontend-Staging" in readme
 
 todo = read("TODO.md")
 for heading in [
@@ -79,6 +80,7 @@ for heading in [
 assert "Aktueller PR: wird" not in todo
 assert "pflege/0.5.0-status-konsistenz" not in todo
 assert "Vor jeder künftigen Entwicklerübergabe" in todo
+assert "Deterministisches Desktop-Frontend-Staging" in todo
 
 contributing = read("CONTRIBUTING.md")
 assert "docs/ENTWICKLERDOKUMENTATION.md" in contributing
@@ -96,7 +98,8 @@ for marker in [
     "## Definition of Done",
 ]:
     assert developer.count(marker) == 1, f"Entwicklerdokumentation unvollständig: {marker}"
-assert '"frontendDist": ".."' in developer
+assert '"frontendDist": "../dist"' in developer
+assert "tools/stage_desktop_frontend.py" in developer
 assert "Produktversion ≠ Datenbankschema" in developer
 
 version = json.loads(read("VERSION.json"), object_pairs_hook=reject_duplicate_keys)
