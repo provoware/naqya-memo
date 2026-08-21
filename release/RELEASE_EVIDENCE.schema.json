@@ -15,6 +15,7 @@
     "desktop_package",
     "runtime_dependencies",
     "diagnostics_contract",
+    "evidence_fingerprint",
     "toolchain",
     "ci",
     "validations"
@@ -61,6 +62,41 @@
         "sha256": {"const": "fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425"}
       }
     },
+    "evidence_fingerprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "algorithm", "sha256", "diagnostic_codes_sha256", "inputs"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "algorithm": {"const": "sha256"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "diagnostic_codes_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "inputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fingerprint_schema_version",
+            "naqya_version",
+            "source_commit",
+            "whisper_commit",
+            "diagnostics_contract_sha256",
+            "diagnostics_schema_version",
+            "diagnostics_event_schema_version",
+            "diagnostic_codes_sha256"
+          ],
+          "properties": {
+            "fingerprint_schema_version": {"const": 1},
+            "naqya_version": {"type": "string", "minLength": 1},
+            "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "whisper_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "diagnostics_contract_sha256": {"const": "fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425"},
+            "diagnostics_schema_version": {"const": 1},
+            "diagnostics_event_schema_version": {"const": 1},
+            "diagnostic_codes_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          }
+        }
+      }
+    },
     "toolchain": {"type": "object"},
     "ci": {"type": "object"},
     "validations": {
@@ -71,7 +107,8 @@
         "packaged_sidecar_started",
         "runtime_dependencies_resolved",
         "package_reproducibility_verified",
-        "diagnostics_contract_bound"
+        "diagnostics_contract_bound",
+        "evidence_fingerprint_verified"
       ],
       "properties": {
         "frontend_manifest_verified": {"const": true},
@@ -80,7 +117,8 @@
         "runtime_dependencies_resolved": {"const": true},
         "package_reproducibility_verified": {"const": true},
         "package_repack_deterministic": {"type": "boolean"},
-        "diagnostics_contract_bound": {"const": true}
+        "diagnostics_contract_bound": {"const": true},
+        "evidence_fingerprint_verified": {"const": true}
       }
     }
   }

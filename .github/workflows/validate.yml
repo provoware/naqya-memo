@@ -36,10 +36,11 @@ jobs:
           node tests/diagnostics_runtime.test.js
           python3 tests/validate_diagnostics.py
           python3 tests/validate_platform_diagnostics.py
-      - name: Windows- und Plattformvertrag statisch prüfen
+      - name: Windows-, Plattform- und Fingerprintvertrag statisch prüfen
         run: |
-          python3 -m py_compile tools/generate_release_evidence.py tests/validate_release_evidence.py tests/compare_release_evidence.py tests/validate_platform_diagnostics.py tests/validate_windows_release_contract.py
+          python3 -m py_compile tools/generate_release_evidence.py tests/validate_release_evidence.py tests/compare_release_evidence.py tests/validate_platform_diagnostics.py tests/validate_windows_release_contract.py tests/validate_evidence_fingerprint.py
           python3 tests/validate_windows_release_contract.py
+          python3 tests/validate_evidence_fingerprint.py
       - name: Desktop-Frontend stagen und prüfen
         run: |
           python3 tools/stage_desktop_frontend.py

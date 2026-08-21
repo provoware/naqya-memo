@@ -60,6 +60,18 @@ def main() -> None:
         "sha256": EXPECTED_DIAGNOSTICS_SHA256,
     }
 
+    linux_fingerprint = linux["evidence_fingerprint"]
+    windows_fingerprint = windows["evidence_fingerprint"]
+    assert linux_fingerprint == windows_fingerprint, (
+        "Linux und Windows besitzen nicht denselben Evidence-Fingerprint; gemeinsame Vertragsdaten driften"
+    )
+    assert linux_fingerprint["schema_version"] == 1
+    assert linux_fingerprint["algorithm"] == "sha256"
+    assert linux_fingerprint["inputs"]["source_commit"] == linux["source"]["commit"]
+    assert linux_fingerprint["inputs"]["naqya_version"] == linux["source"]["naqya_version"]
+    assert linux_fingerprint["inputs"]["whisper_commit"] == EXPECTED_WHISPER_COMMIT
+    assert linux_fingerprint["inputs"]["diagnostics_contract_sha256"] == EXPECTED_DIAGNOSTICS_SHA256
+
     for evidence, platform in ((linux, "linux"), (windows, "windows")):
         validations = evidence["validations"]
         for key in (
@@ -69,12 +81,13 @@ def main() -> None:
             "runtime_dependencies_resolved",
             "package_reproducibility_verified",
             "diagnostics_contract_bound",
+            "evidence_fingerprint_verified",
         ):
             assert validations[key] is True, f"{platform}: Gate nicht erfüllt: {key}"
 
     print(
         "NAQYA Linux/Windows-Evidence-Paar: PASS – gleicher Quellstand, gleiche whisper.cpp-Provenienz, "
-        f"gleicher Diagnosevertrag {EXPECTED_DIAGNOSTICS_SHA256}"
+        f"gleicher Diagnosevertrag und Evidence-Fingerprint {linux_fingerprint['sha256']}"
     )
 
 
