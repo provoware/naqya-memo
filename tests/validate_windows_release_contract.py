@@ -6,6 +6,7 @@ CONTRACT_SHA = "fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425
 WHISPER_COMMIT = "306c88f4d1286aec1bf96e544632897886af5501"
 
 required = [
+    ".gitattributes",
     "tools/build_whisper_sidecar_windows.ps1",
     "tools/generate_release_evidence.py",
     "tests/validate_platform_diagnostics.py",
@@ -18,6 +19,11 @@ required = [
 ]
 missing = [path for path in required if not (ROOT / path).is_file()]
 assert not missing, f"0.5.1-D-Vertragsdateien fehlen: {missing}"
+
+attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
+assert "diagnostics/DIAGNOSTICS_CONTRACT.json text eol=lf" in attributes, (
+    "Diagnosevertrag muss auch bei Windows-Checkout bytegenau mit LF materialisiert werden"
+)
 
 schema = json.loads((ROOT / "release/RELEASE_EVIDENCE.schema.json").read_text(encoding="utf-8"))
 target = schema["properties"]["target"]
