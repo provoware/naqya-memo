@@ -4,7 +4,23 @@ window.NAQYA=window.NAQYA||{};
 
 const LIVE_STT_SEGMENT_MS=4000;
 // ENTWICKLERHINWEIS: Die Promise-Kette serialisiert STT-Segmente absichtlich, damit Textreihenfolge und Messwerte stabil bleiben.
-const liveState={capture:null,queue:Promise.resolve(),stopping:false,segments:0,audioMs:0,sttMs:0,modelId:null,modelPath:'',transcript:''};
+const liveState={capture:null,queue:Promise.resolve(),stopping:false,segments:0,segmentsAttempted:0,segmentsFailed:0,audioMs:0,capturedAudioMs:0,sttMs:0,rtfMax:0,modelId:null,modelPath:'',transcript:''};
+
+function runtimeMetricsSnapshot(){
+  const avg=liveState.audioMs?liveState.sttMs/liveState.audioMs:0;
+  return {
+    schemaVersion:1,
+    targetSegmentMs:LIVE_STT_SEGMENT_MS,
+    segmentsTotal:liveState.segmentsAttempted,
+    segmentsSucceeded:liveState.segments,
+    segmentsLost:liveState.segmentsFailed,
+    capturedAudioMs:liveState.capturedAudioMs,
+    transcribedAudioMs:liveState.audioMs,
+    sttElapsedMs:liveState.sttMs,
+    realtimeFactorAvg:Number(avg.toFixed(6)),
+    realtimeFactorMax:Number(liveState.rtfMax.toFixed(6))
+  };
+}
 
 function liveDiagnosticFailure(code,error,detail={}){
   try{return window.NAQYA?.diagnostics?.failure?.(code,error,detail)||null}catch{return null}
@@ -34,17 +50,25 @@ async function invalidateCachedModelPath(){
 }
 
 async function transcribeLiveSegment(segment,sessionId){
+  const durationMs=Math.max(0,Number(segment.durationMs||0));
+  const segmentNumber=liveState.segmentsAttempted+1;
+  liveState.segmentsAttempted=segmentNumber;
+  liveState.capturedAudioMs+=durationMs;
   try{
     const result=await window.NAQYA.stt.transcribeNative(segment.blob,{language:'de',modelPath:liveState.modelPath,threads:null});
     const text=String(result?.text||'').trim();
-    liveState.segments+=1;liveState.audioMs+=segment.durationMs||0;liveState.sttMs+=Number(result?.elapsedMs||0);
+    const elapsedMs=Math.max(0,Number(result?.elapsedMs||0));
+    const factor=durationMs?elapsedMs/durationMs:0;
+    liveState.segments+=1;liveState.audioMs+=durationMs;liveState.sttMs+=elapsedMs;liveState.rtfMax=Math.max(liveState.rtfMax,factor);
     if(text){liveState.transcript=(liveState.transcript+' '+text).trim();state.dictationFinal=liveState.transcript+' ';state.dictationInterim='';const target=$('#dictationText');if(target)target.textContent=liveState.transcript}
-    await updateSession(sessionId,{transcriptDraft:liveState.transcript,nativeSttSegments:liveState.segments,nativeSttAudioMs:liveState.audioMs,nativeSttElapsedMs:liveState.sttMs,nativeModelId:liveState.modelId,nativeModelPath:liveState.modelPath});
+    await updateSession(sessionId,{transcriptDraft:liveState.transcript,nativeSttSegments:liveState.segments,nativeSttSegmentsAttempted:liveState.segmentsAttempted,nativeSttSegmentsLost:liveState.segmentsFailed,nativeSttAudioMs:liveState.audioMs,nativeSttCapturedAudioMs:liveState.capturedAudioMs,nativeSttElapsedMs:liveState.sttMs,nativeSttRealtimeFactorMax:liveState.rtfMax,nativeSttRuntimeMetrics:runtimeMetricsSnapshot(),nativeModelId:liveState.modelId,nativeModelPath:liveState.modelPath});
     const status=$('#dictationStatus');
-    if(status){const factor=liveState.audioMs?liveState.sttMs/liveState.audioMs:0;status.textContent=`Offline-Live-Diktat · ${liveState.segments} Segmente · Echtzeitfaktor ${factor.toFixed(2)}`}
+    if(status){const avg=liveState.audioMs?liveState.sttMs/liveState.audioMs:0;status.textContent=`Offline-Live-Diktat · ${liveState.segmentsAttempted} Segmente · Echtzeitfaktor Ø ${avg.toFixed(2)} / max ${liveState.rtfMax.toFixed(2)}`}
   }catch(err){
+    liveState.segmentsFailed+=1;
+    await updateSession(sessionId,{nativeSttSegmentsAttempted:liveState.segmentsAttempted,nativeSttSegmentsLost:liveState.segmentsFailed,nativeSttCapturedAudioMs:liveState.capturedAudioMs,nativeSttRuntimeMetrics:runtimeMetricsSnapshot(),nativeSttError:String(err?.message||err)});
     if(String(err?.message||err).includes('Sprachmodell'))await invalidateCachedModelPath();
-    liveDiagnosticFailure('NAQYA-STT-4002',err,{where:'liveSTT.transcribeLiveSegment',how:'4-Sekunden-Live-Segment über lokalen STT-Provider',context:{segment_duration_ms:segment.durationMs||0,segment_number:liveState.segments+1},dialog:true});
+    liveDiagnosticFailure('NAQYA-STT-4002',err,{where:'liveSTT.transcribeLiveSegment',how:'4-Sekunden-Live-Segment über lokalen STT-Provider',context:{segment_duration_ms:durationMs,segment_number:segmentNumber},dialog:true});
     throw err;
   }
 }
@@ -54,7 +78,7 @@ async function startNativeLiveDictation(){
   const capabilities=await window.NAQYA.stt.nativeCapabilities();
   if(!capabilities?.whisper)throw new Error('whisper.cpp wurde lokal nicht gefunden.');
   liveState.modelPath=await materializePreferredModel();
-  state.dictationFinal='';state.dictationInterim='';liveState.transcript='';liveState.queue=Promise.resolve();liveState.stopping=false;liveState.segments=0;liveState.audioMs=0;liveState.sttMs=0;
+  state.dictationFinal='';state.dictationInterim='';liveState.transcript='';liveState.queue=Promise.resolve();liveState.stopping=false;liveState.segments=0;liveState.segmentsAttempted=0;liveState.segmentsFailed=0;liveState.audioMs=0;liveState.capturedAudioMs=0;liveState.sttMs=0;liveState.rtfMax=0;
   const active=await startSegmentedRecorder('dictation');
   const Capture=window.NAQYA?.audioNormalizer?.LivePcmCapture;
   if(!Capture){await stopActiveRecorder('');throw new Error('Audio-Normalisierung ist nicht geladen.');}
@@ -101,9 +125,9 @@ async function stopNativeLiveDictation(){
         const entry=await get('entries',session.entryId);
         if(entry){await put('entries',{...entry,text:finalText,title:finalText.slice(0,70)||'Diktat',updatedAt:new Date().toISOString()})}
       }
-      await updateSession(active.sessionId,{transcriptDraft:finalText,nativeSttSegments:liveState.segments,nativeSttAudioMs:liveState.audioMs,nativeSttElapsedMs:liveState.sttMs});
+      await updateSession(active.sessionId,{transcriptDraft:finalText,nativeSttSegments:liveState.segments,nativeSttSegmentsAttempted:liveState.segmentsAttempted,nativeSttSegmentsLost:liveState.segmentsFailed,nativeSttAudioMs:liveState.audioMs,nativeSttCapturedAudioMs:liveState.capturedAudioMs,nativeSttElapsedMs:liveState.sttMs,nativeSttRealtimeFactorMax:liveState.rtfMax,nativeSttRuntimeMetrics:runtimeMetricsSnapshot()});
     }
-    if(status){const factor=liveState.audioMs?liveState.sttMs/liveState.audioMs:0;status.textContent=`Diktat gespeichert · ${liveState.segments} Segmente · Echtzeitfaktor ${factor.toFixed(2)}`}
+    if(status){const avg=liveState.audioMs?liveState.sttMs/liveState.audioMs:0;status.textContent=`Diktat gespeichert · ${liveState.segmentsAttempted} Segmente · verloren ${liveState.segmentsFailed} · Echtzeitfaktor Ø ${avg.toFixed(2)} / max ${liveState.rtfMax.toFixed(2)}`}
     await refresh();
   }catch(error){
     liveDiagnosticFailure('NAQYA-STT-4005',error,{where:'liveSTT.stopNativeLiveDictation',how:'Aufnahme stoppen, STT-Warteschlange leeren und Sitzung finalisieren',dialog:true});
@@ -126,4 +150,4 @@ toggleDictation=async function(){
   await previousToggleDictation();
 };
 
-window.NAQYA.liveSTT={LIVE_STT_SEGMENT_MS,materializePreferredModel,startNativeLiveDictation,stopNativeLiveDictation,state:liveState};
+window.NAQYA.liveSTT={LIVE_STT_SEGMENT_MS,materializePreferredModel,startNativeLiveDictation,stopNativeLiveDictation,runtimeMetricsSnapshot,state:liveState};

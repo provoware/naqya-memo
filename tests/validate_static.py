@@ -59,4 +59,19 @@ assert 'TARGET_RATE=16000' in normalizer
 assert 'LIVE_SEGMENT_MS=4000' in normalizer
 assert 'createScriptProcessor' in normalizer
 
-print('NAQYA statische Projektverträge: PASS – 0.5.1-D / 89 % / Evidence-Fingerprint konsistent')
+live_stt = (root / 'services/live-stt.js').read_text()
+for needle in (
+    'segmentsAttempted',
+    'segmentsFailed',
+    'capturedAudioMs',
+    'rtfMax',
+    'runtimeMetricsSnapshot',
+    'nativeSttRuntimeMetrics',
+    'realtimeFactorAvg',
+    'realtimeFactorMax',
+):
+    assert needle in live_stt
+assert 'segmentsLost:liveState.segmentsFailed' in live_stt
+assert 'realtimeFactorMax:Number(liveState.rtfMax.toFixed(6))' in live_stt
+
+print('NAQYA statische Projektverträge: PASS – 0.5.1-D / 89 % / Evidence-Fingerprint konsistent; E3 Runtime-Metrikvertrag vorhanden')
