@@ -37,7 +37,9 @@ jobs:
       - name: Tauri Linux-Prüfabhängigkeiten
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev cmake build-essential
+          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev cmake build-essential dpkg-dev
+      - name: Deterministische DEB-Reproduzierbarkeit prüfen
+        run: python3 tests/validate_deb_reproducibility.py
       - name: Reproduzierbaren Linux-Sidecar bauen
         run: bash tools/build_whisper_sidecar.sh
       - name: Sidecar-Artefakt prüfen
@@ -56,3 +58,4 @@ jobs:
         run: |
           bash -n START_NAQYA.sh
           bash -n tools/build_whisper_sidecar.sh
+          bash -n tools/repack_deb_deterministic.sh
