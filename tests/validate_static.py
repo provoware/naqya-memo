@@ -66,9 +66,12 @@ for needle in ['processLocally','nativeWhisper','transcribeNative','nativeCapabi
 rust=(root/'src-tauri/src/main.rs').read_text()
 for needle in [
     'naqya_capabilities','naqya_model_begin','naqya_model_append','naqya_model_finish','naqya_model_abort',
-    'naqya_transcribe','NAQYA_WHISPER_CLI','whisper-cli','trusted_model_path','Sha256','WAVE'
+    'naqya_transcribe','NAQYA_WHISPER_CLI','whisper-cli','trusted_model_path','Sha256','WAVE',
+    'stt_temp_root','app_cache_dir','write_private_temp_wav','create_new(true)','STT_TEMP_SEQUENCE'
 ]:
     assert needle in rust, f'Rust Desktop-Runtime unvollständig: {needle}'
+assert 'Command::new("main")' not in rust, 'Generische main-PATH-Auflösung darf nicht als Whisper-Runtime verwendet werden'
+assert 'std::env::temp_dir()' not in rust, 'STT-Audio darf nicht im allgemeinen System-Tempverzeichnis landen'
 
 cargo=(root/'src-tauri/Cargo.toml').read_text()
 assert 'version = "0.4.0"' in cargo
