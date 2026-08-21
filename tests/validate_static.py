@@ -5,9 +5,10 @@ root=Path(__file__).resolve().parents[1]
 required=[
     'index.html','styles.css','styles-02.css','styles-03.css','app.js','app-03.js','sw.js','manifest.webmanifest',
     'VERSION.json','PROJEKTSTATUS.json','README.md','START_NAQYA.sh','START_NAQYA.bat',
+    'START_NAQYA_DESKTOP_DEV.sh','START_NAQYA_DESKTOP_DEV.ps1',
     'services/native-bridge.js','services/capabilities.js','services/stt-core.js','services/pcm-worklet.js',
     'src-tauri/Cargo.toml','src-tauri/tauri.conf.json','src-tauri/build.rs','src-tauri/src/lib.rs','src-tauri/src/main.rs',
-    'src-tauri/capabilities/default.json','runtime/models/README.md','docs/AUDIO_OFFLINE_STT.md'
+    'src-tauri/capabilities/default.json','runtime/models/README.md','docs/AUDIO_OFFLINE_STT.md','docs/NATIVE_DESKTOP.md'
 ]
 missing=[p for p in required if not (root/p).exists()]
 assert not missing, f'Fehlende Dateien: {missing}'
@@ -60,6 +61,11 @@ for needle in ['whisper-rs = "0.16.0"','tauri = { version = "2"','sha2 = "0.10"'
 sw=(root/'sw.js').read_text()
 for needle in ['naqya-0.3.0','styles-03.css','services/native-bridge.js','services/pcm-worklet.js','app-03.js']:
     assert needle in sw, f'Offline-Cache unvollständig: {needle}'
+
+linux_start=(root/'START_NAQYA_DESKTOP_DEV.sh').read_text()
+assert 'cargo run --manifest-path' in linux_start
+windows_start=(root/'START_NAQYA_DESKTOP_DEV.ps1').read_text()
+assert 'cargo run --manifest-path' in windows_start
 
 for f in ['index.html','styles.css','styles-02.css','styles-03.css','app.js','app-03.js','services/native-bridge.js','services/capabilities.js','services/stt-core.js']:
     text=(root/f).read_text()
