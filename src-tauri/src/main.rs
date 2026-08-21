@@ -129,13 +129,18 @@ fn write_private_temp_wav(app: &tauri::AppHandle, bytes: &[u8]) -> Result<PathBu
         .as_millis();
     for _ in 0..32 {
         let seq = STT_TEMP_SEQUENCE.fetch_add(1, Ordering::Relaxed);
-        let path = root.join(format!("naqya-stt-{stamp}-{}-{seq}.wav", std::process::id()));
+        let path = root.join(format!(
+            "naqya-stt-{stamp}-{}-{seq}.wav",
+            std::process::id()
+        ));
         match OpenOptions::new().write(true).create_new(true).open(&path) {
             Ok(mut file) => {
-                file.write_all(bytes)
-                    .map_err(|e| format!("Temporäre Audiodatei konnte nicht geschrieben werden: {e}"))?;
-                file.sync_all()
-                    .map_err(|e| format!("Temporäre Audiodatei konnte nicht finalisiert werden: {e}"))?;
+                file.write_all(bytes).map_err(|e| {
+                    format!("Temporäre Audiodatei konnte nicht geschrieben werden: {e}")
+                })?;
+                file.sync_all().map_err(|e| {
+                    format!("Temporäre Audiodatei konnte nicht finalisiert werden: {e}")
+                })?;
                 return Ok(path);
             }
             Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
