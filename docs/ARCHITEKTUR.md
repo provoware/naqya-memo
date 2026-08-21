@@ -27,10 +27,26 @@
 - Audio-Recovery: `audioSessions` + `audioSegments`
 - Sprachmodelle: lokaler `models`-Store plus geschützter nativer Modellpfad
 - Offline-Cache: `sw.js`
+- Desktop-Frontend-Staging: `tools/stage_desktop_frontend.py` → `dist/`
 - Desktop-Hülle: Tauri 2 unter `src-tauri/`
 - native STT-Runtime: Tauri-Sidecar `naqya-whisper`
 - Runtimevertrag: `src-tauri/sidecar/whisper-runtime.json`
 - Sidecar-Build: `tools/build_whisper_sidecar.sh`
+
+## Desktop-Frontend-Staging
+
+Tauri verwendet nicht mehr den Repository-Stamm als Frontendquelle. Vor einem Desktop-Build erzeugt `tools/stage_desktop_frontend.py` ein frisches `dist/` aus einer expliziten Allowlist der benötigten Runtime-Dateien.
+
+Das Staging:
+
+- löscht ein vorhandenes generiertes `dist/` vor dem Neuaufbau
+- lehnt Symlink-Quellen ab
+- kopiert ausschließlich die festgelegten HTML-, CSS-, JavaScript-, Manifest- und Icon-Dateien
+- erzeugt `NAQYA_FRONTEND_MANIFEST.json` mit Dateigröße und SHA-256 je Runtime-Datei
+- verifiziert anschließend den exakten Dateisatz
+- wird durch `tests/validate_frontend_staging.py` im CI geprüft
+
+Damit gelangen Dokumentation, Tests, Repository-Metadaten, lokale Sprachmodelle, Sidecar-Buildreste und andere Entwicklerdateien nicht versehentlich in das Desktop-Frontend.
 
 ## Audio-Pipeline
 
@@ -100,14 +116,14 @@ Backup-Schema 2 ist selbstenthaltend und enthält Nutzdateien einschließlich Au
 - vollständiger Linux-Tauri-Bundle-Test steht noch aus
 - Windows-Sidecar und Windows-Bundle stehen noch aus
 - reale Hardware-/Mikrofonabnahme steht aus
+- `app.js` führt noch eine veraltete Produktversionskonstante 0.2.0; das IndexedDB-Schema `DB_VERSION=2` ist davon unabhängig
 - `ScriptProcessor` ist noch Übergangsadapter und soll später durch `AudioWorklet` ersetzt werden
 - Vollbackup ist noch JSON/Base64 statt streamingfähigem Container
 - native Mobiladapter stehen aus
 
 ## Nächste Zielarchitektur
 
-- deterministisch gestagtes Desktop-Frontend
-- end-to-end geprüfte Linux-/Windows-Tauri-Bundles
+- end-to-end geprüfte Linux-/Windows-Tauri-Bundles auf Basis des deterministischen Frontend-Stagings
 - maschinenlesbare Release-Artefakt-Nachweise
 - reale Messwerte für Latenz, Echtzeitfaktor, CPU und RAM
 - AudioWorklet für den Live-PCM-Pfad
