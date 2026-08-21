@@ -1,7 +1,7 @@
 {
   "produkt": "PROVOWARE – NAQYA Memo Tool 2026",
-  "version": "0.4.0",
-  "phase": "AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT",
+  "version": "0.5.0",
+  "phase": "TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG",
   "status": "ENTWICKLUNG",
   "schema_version": 2,
   "offline_first": true,
@@ -12,6 +12,7 @@
   "stt_pcm_rate_hz": 16000,
   "backup_schema": 2,
   "desktop_runtime": "tauri-2",
-  "native_stt_provider": "whisper.cpp-cli",
+  "native_stt_provider": "whisper.cpp-sidecar",
+  "native_stt_fallback": "whisper-cli",
   "model_transfer_chunk_bytes": 4194304
 }
