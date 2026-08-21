@@ -26,7 +26,7 @@ def main() -> None:
                 sys.executable, str(MEASURER),
                 '--interval-ms', '100',
                 '--output', str(output),
-                '--command', '--', sys.executable, '-c', parent_code,
+                '--command', sys.executable, '-c', parent_code,
             ],
             cwd=ROOT,
             text=True,
