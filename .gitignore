@@ -1,0 +1,20 @@
+# NAQYA – lokale Build- und Laufzeitartefakte
+.sidecar-build/
+src-tauri/binaries/
+src-tauri/target/
+target/
+
+# Lokale Sprachmodelle niemals versehentlich versionieren
+*.gguf
+*.bin
+
+# Temporäre Dateien / Protokolle
+*.log
+*.tmp
+*.part
+
+# Betriebssystem-/Editorreste
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

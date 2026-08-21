@@ -3,8 +3,8 @@ import json,re
 
 root=Path(__file__).resolve().parents[1]
 required=[
-    'index.html','styles.css','styles-02.css','app.js','sw.js','manifest.webmanifest',
-    'VERSION.json','PROJEKTSTATUS.json','README.md','AGENTS.md','TODO.md','START_NAQYA.sh','START_NAQYA.bat',
+    '.gitignore','index.html','styles.css','styles-02.css','app.js','sw.js','manifest.webmanifest',
+    'VERSION.json','PROJEKTSTATUS.json','README.md','AGENTS.md','TODO.md','CHANGELOG.md','START_NAQYA.sh','START_NAQYA.bat',
     'services/capabilities.js','services/native-bridge.js','services/stt-core.js',
     'services/audio-normalizer.js','services/live-stt.js','services/release-04.js',
     'docs/AUDIO_OFFLINE_STT.md','src-tauri/Cargo.toml','src-tauri/build.rs',
@@ -23,6 +23,7 @@ assert version['live_stt_segment_ms']==4000
 assert version['stt_pcm_rate_hz']==16000
 assert version['model_transfer_chunk_bytes']==4194304
 assert version['native_stt_provider']=='whisper.cpp-sidecar'
+assert version['native_stt_fallback']=='whisper-cli'
 assert version['native_stt_fallback']=='whisper.cpp-cli'
 assert status['kernfunktionen']['audio_segment_recovery'] is True
 assert status['kernfunktionen']['audio_normalisierung_web_audio'] is True
@@ -33,6 +34,7 @@ assert status['kernfunktionen']['sprachmodell_sha256_native'] is True
 assert status['kernfunktionen']['sprachmodell_atomare_aktivierung'] is True
 assert status['kernfunktionen']['whisper_cpp_native_runtime_bundled'] is True
 assert status['kernfunktionen']['whisper_cpp_sidecar_preferred'] is True
+assert status['kernfunktionen']['whisper_cpp_runtime_manifest'] is True
 assert status['kernfunktionen']['whisper_cpp_external_cli_fallback'] is True
 assert status['kernfunktionen']['whisper_cpp_runtime_source_diagnostic'] is True
 assert manifest['start_url']=='./'
@@ -45,6 +47,10 @@ for needle in ['TODO.md','Qualitätsgate','Sidecar- und Runtime-Regeln','Pflicht
 todo=(root/'TODO.md').read_text()
 for needle in ['P0 – Freigabekritisch','P1 – Hohe Priorität','P2 – Qualitätsausbau','Erledigt','Pflegevertrag']:
     assert needle in todo, f'TODO-Vertrag unvollständig: {needle}'
+
+gitignore=(root/'.gitignore').read_text()
+for needle in ['.sidecar-build/','src-tauri/binaries/','src-tauri/target/','*.gguf','*.bin']:
+    assert needle in gitignore, f'.gitignore unvollständig: {needle}'
 
 html=(root/'index.html').read_text()
 for needle in [
@@ -107,4 +113,5 @@ for f in [
     text=(root/f).read_text()
     assert not re.search(r'https?://(?!127\.0\.0\.1|localhost)',text), f'Externe Laufzeit-URL in {f}'
 
+print('NAQYA 0.5 static validation + Sidecar-Integration + Repository-Konsolidierung: PASS')
 print('NAQYA 0.5 static validation + Sidecar-Integration + Projektsteuerung: PASS')
