@@ -12,6 +12,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "release/RELEASE_EVIDENCE.schema.json"
 DIAGNOSTICS_CONTRACT = ROOT / "diagnostics/DIAGNOSTICS_CONTRACT.json"
+EXPECTED_DIAGNOSTICS_SHA256 = "fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425"
+
+TARGETS = {
+    "linux": {
+        "architecture": "x86_64",
+        "rust_target": "x86_64-unknown-linux-gnu",
+        "package_format": "deb",
+        "reproducibility_profile": "dpkg-deb-normalized-v1",
+    },
+    "windows": {
+        "architecture": "x86_64",
+        "rust_target": "x86_64-pc-windows-msvc",
+        "package_format": "nsis",
+        "reproducibility_profile": "tauri-nsis-pinned-v1",
+    },
+}
 
 
 def validate_schema_contract() -> None:
@@ -42,9 +58,10 @@ def main() -> None:
     assert re.fullmatch(r"[0-9a-f]{40}", source["commit"])
 
     target = evidence["target"]
-    assert target["os"] == "linux"
-    assert target["architecture"] == "x86_64"
-    assert target["rust_target"] == "x86_64-unknown-linux-gnu"
+    assert target["os"] in TARGETS, f"Nicht unterstützte Plattform: {target['os']}"
+    profile = TARGETS[target["os"]]
+    assert target["architecture"] == profile["architecture"]
+    assert target["rust_target"] == profile["rust_target"]
 
     for key in ("frontend", "whisper", "desktop_package"):
         item = evidence[key]
@@ -60,18 +77,19 @@ def main() -> None:
 
     package = evidence["desktop_package"]
     assert package["bytes"] > 0
-    assert package["reproducibility_profile"] == "dpkg-deb-normalized-v1"
+    assert package["format"] == profile["package_format"]
+    assert package["reproducibility_profile"] == profile["reproducibility_profile"]
     assert package["source_date_epoch"] == 946684800
 
     diagnostics = evidence["diagnostics_contract"]
     contract = json.loads(DIAGNOSTICS_CONTRACT.read_text(encoding="utf-8"))
-    expected_contract_sha = hashlib.sha256(DIAGNOSTICS_CONTRACT.read_bytes()).hexdigest()
+    actual_contract_sha = hashlib.sha256(DIAGNOSTICS_CONTRACT.read_bytes()).hexdigest()
+    assert actual_contract_sha == EXPECTED_DIAGNOSTICS_SHA256
     assert diagnostics["file"] == "diagnostics/DIAGNOSTICS_CONTRACT.json"
     assert diagnostics["schema_version"] == contract["schema_version"] == 1
     assert diagnostics["event_schema_version"] == contract["event_schema_version"] == 1
     assert diagnostics["format"] == contract["format"] == "NAQYA-DIAGNOSTICS"
-    assert diagnostics["sha256"] == expected_contract_sha
-    assert re.fullmatch(r"[0-9a-f]{64}", diagnostics["sha256"])
+    assert diagnostics["sha256"] == EXPECTED_DIAGNOSTICS_SHA256
 
     validations = evidence["validations"]
     for key in (
@@ -79,19 +97,27 @@ def main() -> None:
         "source_sidecar_sha_matches_packaged",
         "packaged_sidecar_started",
         "runtime_dependencies_resolved",
-        "package_repack_deterministic",
+        "package_reproducibility_verified",
         "diagnostics_contract_bound",
     ):
         assert validations[key] is True, f"Release-Gate nicht erfüllt: {key}"
 
     assert "2.11.4" in evidence["toolchain"]["tauri_cli"], "Tauri-CLI-Pin stimmt nicht"
-    assert "dpkg-deb" in evidence["toolchain"]["dpkg_deb"], "dpkg-deb-Version fehlt"
+    if target["os"] == "linux":
+        assert validations["package_repack_deterministic"] is True
+        assert "dpkg-deb" in evidence["toolchain"]["dpkg_deb"], "dpkg-deb-Version fehlt"
+    else:
+        assert evidence["toolchain"]["package_tool"] == "tauri-nsis"
+
     if os.environ.get("GITHUB_ACTIONS") == "true":
         assert evidence["ci"]["provider"] == "github-actions"
         assert str(evidence["ci"]["run_id"] or "").isdigit()
         assert str(evidence["ci"]["run_number"] or "").isdigit()
 
-    print("NAQYA Release-Nachweis inklusive DEB- und Diagnosebindung: PASS")
+    print(
+        "NAQYA Release-Nachweis inklusive Plattform-, Paket- und Diagnosebindung: "
+        f"PASS ({target['os']}/{target['rust_target']})"
+    )
 
 
 if __name__ == "__main__":
