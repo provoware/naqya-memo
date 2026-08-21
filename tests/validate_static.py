@@ -4,7 +4,7 @@ import json,re
 root=Path(__file__).resolve().parents[1]
 required=[
     'index.html','styles.css','styles-02.css','app.js','sw.js','manifest.webmanifest',
-    'VERSION.json','PROJEKTSTATUS.json','README.md','START_NAQYA.sh','START_NAQYA.bat',
+    'VERSION.json','PROJEKTSTATUS.json','README.md','AGENTS.md','TODO.md','START_NAQYA.sh','START_NAQYA.bat',
     'services/capabilities.js','services/native-bridge.js','services/stt-core.js',
     'services/audio-normalizer.js','services/live-stt.js','services/release-04.js',
     'docs/AUDIO_OFFLINE_STT.md','src-tauri/Cargo.toml','src-tauri/build.rs',
@@ -31,6 +31,15 @@ assert status['kernfunktionen']['sprachmodell_sha256_native'] is True
 assert status['kernfunktionen']['sprachmodell_atomare_aktivierung'] is True
 assert status['kernfunktionen']['whisper_cpp_native_runtime_bundled'] is False
 assert manifest['start_url']=='./'
+assert tauri['bundle']['externalBin']==['binaries/naqya-whisper']
+
+agents=(root/'AGENTS.md').read_text()
+for needle in ['TODO.md','Qualitätsgate','Sidecar- und Runtime-Regeln','Pflichtdateien bei Änderungen']:
+    assert needle in agents, f'AGENTS-Vertrag unvollständig: {needle}'
+
+todo=(root/'TODO.md').read_text()
+for needle in ['P0 – Freigabekritisch','P1 – Hohe Priorität','P2 – Qualitätsausbau','Erledigt','Pflegevertrag']:
+    assert needle in todo, f'TODO-Vertrag unvollständig: {needle}'
 
 html=(root/'index.html').read_text()
 for needle in [
@@ -67,15 +76,19 @@ rust=(root/'src-tauri/src/main.rs').read_text()
 for needle in [
     'naqya_capabilities','naqya_model_begin','naqya_model_append','naqya_model_finish','naqya_model_abort',
     'naqya_transcribe','NAQYA_WHISPER_CLI','whisper-cli','trusted_model_path','Sha256','WAVE',
-    'stt_temp_root','app_cache_dir','write_private_temp_wav','create_new(true)','STT_TEMP_SEQUENCE'
+    'stt_temp_root','app_cache_dir','write_private_temp_wav','create_new(true)','STT_TEMP_SEQUENCE',
+    'tauri_plugin_shell::ShellExt','sidecar("naqya-whisper")','tauri_plugin_shell::init()',
+    'bundled_sidecar_available','bundled_sidecar_preferred','whisper.cpp-sidecar','whisper.cpp-fallback'
 ]:
     assert needle in rust, f'Rust Desktop-Runtime unvollständig: {needle}'
+assert rust.index('sidecar("naqya-whisper")') < rust.index('Command::new(&cli)'), 'Gebündelter Sidecar muss vor dem externen CLI-Fallback versucht werden'
 assert 'Command::new("main")' not in rust, 'Generische main-PATH-Auflösung darf nicht als Whisper-Runtime verwendet werden'
 assert 'std::env::temp_dir()' not in rust, 'STT-Audio darf nicht im allgemeinen System-Tempverzeichnis landen'
 
 cargo=(root/'src-tauri/Cargo.toml').read_text()
 assert 'version = "0.4.0"' in cargo
 assert 'sha2 = "0.10"' in cargo
+assert 'tauri-plugin-shell = "2"' in cargo
 
 sw=(root/'sw.js').read_text()
 for needle in ['naqya-0.4.0','services/audio-normalizer.js','services/live-stt.js','services/release-04.js','services/native-bridge.js','services/stt-core.js']:
@@ -89,4 +102,4 @@ for f in [
     text=(root/f).read_text()
     assert not re.search(r'https?://(?!127\.0\.0\.1|localhost)',text), f'Externe Laufzeit-URL in {f}'
 
-print('NAQYA 0.4 static validation: PASS')
+print('NAQYA 0.4 static validation + 0.5 Sidecar-Integration + Projektsteuerung: PASS')

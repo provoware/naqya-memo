@@ -5,11 +5,18 @@ import re
 root = Path(__file__).resolve().parents[1]
 manifest_path = root / "src-tauri/sidecar/whisper-runtime.json"
 build_script = root / "tools/build_whisper_sidecar.sh"
+tauri_path = root / "src-tauri/tauri.conf.json"
+cargo_path = root / "src-tauri/Cargo.toml"
+rust_path = root / "src-tauri/src/main.rs"
 
 assert manifest_path.is_file(), "Whisper-Sidecar-Manifest fehlt"
 assert build_script.is_file(), "Whisper-Sidecar-Buildskript fehlt"
 
 manifest = json.loads(manifest_path.read_text())
+tauri = json.loads(tauri_path.read_text())
+cargo = cargo_path.read_text()
+rust = rust_path.read_text()
+
 assert manifest["schema_version"] == 1
 assert manifest["provider"] == "ggml-org/whisper.cpp"
 assert manifest["upstream_repository"] == "https://github.com/ggml-org/whisper.cpp"
@@ -33,6 +40,18 @@ for target, output in expected_targets.items():
     assert entry["status"] == "build-required"
     assert entry["output"] == output
 
+assert tauri["bundle"]["externalBin"] == ["binaries/naqya-whisper"]
+assert 'tauri-plugin-shell = "2"' in cargo
+for needle in [
+    'tauri_plugin_shell::ShellExt',
+    'sidecar("naqya-whisper")',
+    'tauri_plugin_shell::init()',
+    'bundled_sidecar_available',
+    'whisper.cpp-sidecar',
+    'whisper.cpp-fallback',
+]:
+    assert needle in rust, f"Tauri-Sidecar-Integration fehlt: {needle}"
+
 script = build_script.read_text()
 for needle in [
     "set -euo pipefail",
@@ -51,4 +70,4 @@ assert "curl " not in script
 assert "wget " not in script
 assert "latest" not in script.lower()
 
-print("NAQYA 0.5 Sidecar-Vertrag: PASS")
+print("NAQYA 0.5 Sidecar-Vertrag + Tauri-Integration: PASS")

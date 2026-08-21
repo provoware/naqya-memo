@@ -10,6 +10,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 use tauri::Manager;
+use tauri_plugin_shell::ShellExt;
 
 const MAX_AUDIO_BYTES: usize = 512 * 1024 * 1024;
 static STT_TEMP_SEQUENCE: AtomicU64 = AtomicU64::new(0);
@@ -21,6 +22,9 @@ struct Capabilities {
     platform: String,
     whisper: bool,
     whisper_cli: Option<String>,
+    whisper_source: Option<String>,
+    bundled_sidecar_preferred: bool,
+    bundled_sidecar_available: bool,
     logical_cpus: usize,
     model_store: Option<String>,
 }
@@ -219,15 +223,37 @@ fn trusted_model_path(app: &tauri::AppHandle, requested: &str) -> Result<PathBuf
     Ok(model)
 }
 
+async fn bundled_sidecar_available(app: &tauri::AppHandle) -> bool {
+    let command = match app.shell().sidecar("naqya-whisper") {
+        Ok(command) => command,
+        Err(_) => return false,
+    };
+    match command.arg("--help").output().await {
+        Ok(output) => output.status.success(),
+        Err(_) => false,
+    }
+}
+
 #[tauri::command]
-fn naqya_capabilities(app: tauri::AppHandle) -> Capabilities {
-    let cli = whisper_cli_path();
+async fn naqya_capabilities(app: tauri::AppHandle) -> Capabilities {
+    let sidecar_available = bundled_sidecar_available(&app).await;
+    let fallback_cli = whisper_cli_path();
     let root = model_root(&app).ok();
+    let source = if sidecar_available {
+        Some("bundled-sidecar".to_string())
+    } else if fallback_cli.is_some() {
+        Some("external-fallback".to_string())
+    } else {
+        None
+    };
     Capabilities {
         available: true,
         platform: std::env::consts::OS.to_string(),
-        whisper: cli.is_some(),
-        whisper_cli: cli.map(|p| p.to_string_lossy().to_string()),
+        whisper: sidecar_available || fallback_cli.is_some(),
+        whisper_cli: fallback_cli.map(|p| p.to_string_lossy().to_string()),
+        whisper_source: source,
+        bundled_sidecar_preferred: true,
+        bundled_sidecar_available: sidecar_available,
         logical_cpus: num_cpus::get(),
         model_store: root.map(|p| p.to_string_lossy().to_string()),
     }
@@ -341,14 +367,11 @@ fn naqya_model_abort(app: tauri::AppHandle, request: ModelAbortRequest) -> Resul
 }
 
 #[tauri::command]
-fn naqya_transcribe(
+async fn naqya_transcribe(
     app: tauri::AppHandle,
     request: TranscribeRequest,
 ) -> Result<TranscribeResult, String> {
     let started = std::time::Instant::now();
-    let cli = whisper_cli_path().ok_or(
-        "whisper.cpp CLI wurde nicht gefunden. NAQYA_WHISPER_CLI setzen oder whisper-cli installieren.",
-    )?;
     let model = trusted_model_path(&app, &request.model_path)?;
     let bytes = STANDARD
         .decode(request.audio_base64.as_bytes())
@@ -364,35 +387,68 @@ fn naqya_transcribe(
         .threads
         .unwrap_or_else(|| num_cpus::get().clamp(1, 8));
     let language = request.language.unwrap_or_else(|| "de".into());
-    let output = Command::new(&cli)
-        .arg("-m")
-        .arg(&model)
-        .arg("-f")
-        .arg(&wav)
-        .arg("-l")
-        .arg(language)
-        .arg("-t")
-        .arg(threads.to_string())
-        .arg("--no-timestamps")
-        .output();
+    let args = vec![
+        "-m".to_string(),
+        model.to_string_lossy().to_string(),
+        "-f".to_string(),
+        wav.to_string_lossy().to_string(),
+        "-l".to_string(),
+        language,
+        "-t".to_string(),
+        threads.to_string(),
+        "--no-timestamps".to_string(),
+    ];
+
+    let sidecar_result = match app.shell().sidecar("naqya-whisper") {
+        Ok(command) => command.args(&args).output().await.ok(),
+        Err(_) => None,
+    };
+
+    let result = if let Some(output) = sidecar_result {
+        if !output.status.success() {
+            Err(format!(
+                "Gebündelter whisper.cpp-Sidecar meldet einen Fehler: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            ))
+        } else {
+            Ok((
+                String::from_utf8_lossy(&output.stdout).trim().to_string(),
+                "whisper.cpp-sidecar".to_string(),
+            ))
+        }
+    } else {
+        let cli = whisper_cli_path().ok_or(
+            "Gebündelter whisper.cpp-Sidecar ist nicht verfügbar und es wurde kein freigegebener Fallback gefunden.",
+        )?;
+        let output = Command::new(&cli)
+            .args(&args)
+            .output()
+            .map_err(|e| format!("whisper.cpp Fallback konnte nicht gestartet werden: {e}"))?;
+        if !output.status.success() {
+            Err(format!(
+                "whisper.cpp Fallback-Fehler: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            ))
+        } else {
+            Ok((
+                String::from_utf8_lossy(&output.stdout).trim().to_string(),
+                "whisper.cpp-fallback".to_string(),
+            ))
+        }
+    };
+
     let _ = fs::remove_file(&wav);
-    let output = output.map_err(|e| format!("whisper.cpp konnte nicht gestartet werden: {e}"))?;
-    if !output.status.success() {
-        return Err(format!(
-            "whisper.cpp Fehler: {}",
-            String::from_utf8_lossy(&output.stderr).trim()
-        ));
-    }
-    let text = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let (text, provider) = result?;
     Ok(TranscribeResult {
         text,
-        provider: "whisper.cpp-native".into(),
+        provider,
         elapsed_ms: started.elapsed().as_millis(),
     })
 }
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             naqya_capabilities,
             naqya_model_begin,
