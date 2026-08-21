@@ -1,5 +1,6 @@
 # NAQYA – lokale Build- und Laufzeitartefakte
 .sidecar-build/
+dist/
 src-tauri/binaries/
 src-tauri/target/
 target/
