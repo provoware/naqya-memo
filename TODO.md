@@ -11,9 +11,9 @@ Komponente: Tauri / Linux / Sidecar
 
 Abnahmekriterien:
 - reproduzierbaren Linux-x86_64-Sidecar aus dem fest gepinnten whisper.cpp-Commit bauen
-- Tauri-Frontend deterministisch in einem eigenen Desktop-`dist/` bereitstellen
-- `src-tauri/tauri.conf.json` nicht mehr auf den gesamten Repository-Stamm als `frontendDist` zeigen lassen
+- das deterministisch erzeugte Desktop-`dist/` als einzige Frontendquelle verwenden
 - vollständiges Linux-Desktop-Bundle erzeugen
+- nachweisen, dass nur das gestagte Runtime-Frontend und keine Repository-/Test-/Dokudateien gebündelt werden
 - nachweisen, dass `naqya-whisper` im Bundle enthalten ist
 - notwendige Sidecar-Laufzeitbibliotheken im Paketkontext prüfen
 - gebündelten Sidecar aus dem erzeugten Paket tatsächlich starten
@@ -30,6 +30,7 @@ Abnahmekriterien:
 - Sidecar-Dateiname und Dateigröße
 - Sidecar-SHA-256
 - Desktop-Paket-Dateiname, Dateigröße und SHA-256
+- Frontend-Staging-Manifest mit Dateigrößen und SHA-256 einbeziehen
 - Compiler-/CMake-/Rust-/Tauri-Versionen
 - Buildzeitpunkt und CI-Run-Zuordnung
 - maschinenlesbares Nachweisformat
@@ -137,7 +138,7 @@ Abnahmekriterien:
 - [x] Dokumentations- und Kommentierregeln in `AGENTS.md` verbindlich festgelegt
 - [x] Entwicklerdokumentation in Text-/Statikverträge aufgenommen
 - [ ] bekannte PWA-Produktversionsdrift in `app.js` von 0.2.0 auf 0.5.0 korrigieren und automatisiert absichern
-- [ ] deterministisches Desktop-Frontend-`dist/` für 0.5.1 erzeugen
+- [x] deterministisches Desktop-Frontend-`dist/` für 0.5.1 erzeugen und automatisiert prüfen
 - [ ] vollständiges Linux-Endanwender-Bundle nachweisen
 - [ ] maschinenlesbaren Release-Nachweis erzeugen
 - [ ] Windows-x86_64-Bundle nachweisen
@@ -147,12 +148,21 @@ Abnahmekriterien:
 
 - [ ] realen `main`-Commit, offene PRs und CI-Stand geprüft
 - [ ] README, TODO, CHANGELOG, Entwicklerdokumentation und maschinenlesbare Statusdateien gegen den Code geprüft
-- [ ] neue oder veränderte Vertrauensgrenzen direkt am Code knapp und in der Fach­dokumentation ausführlich erklärt
+- [ ] neue oder veränderte Vertrauensgrenzen direkt am Code knapp und in der Fachdokumentation ausführlich erklärt
 - [ ] Repository-Landkarte und lokale Befehle noch korrekt
 - [ ] Qualitätsgate für den exakten Übergabe-Head vollständig grün
 - [ ] nach Merge resultierenden `main` erneut geprüft
 
 ## Erledigt
+
+### [erledigt] Deterministisches Desktop-Frontend-Staging für Tauri einführen
+Ergebnis:
+- `tools/stage_desktop_frontend.py` kopiert ausschließlich 14 explizit erlaubte Runtime-Dateien nach `dist/`
+- vorhandenes `dist/` wird vor jedem Staging sauber neu aufgebaut und Symlink-Quellen werden abgelehnt
+- `NAQYA_FRONTEND_MANIFEST.json` enthält Dateigröße und SHA-256 für jede Runtime-Datei
+- Tauri verwendet `beforeBuildCommand` und `frontendDist: ../dist` statt des gesamten Repository-Stamms
+- `tests/validate_frontend_staging.py` beweist Dateisatz, Hashes und Konfiguration
+- `dist/` ist als generiertes Artefakt in `.gitignore` ausgeschlossen
 
 ### [erledigt] Professionelle Entwicklerübergabe 0.5.0 aufbauen
 Ergebnis:
