@@ -1,5 +1,25 @@
 # Änderungsprotokoll
 
+## 0.5.1 – IN ENTWICKLUNG: DESKTOP-BUNDLE-ABNAHME
+
+- deterministisches Desktop-Frontend-Staging über `tools/stage_desktop_frontend.py` eingeführt
+- Tauri `frontendDist` vom Repository-Stamm auf das generierte `../dist` umgestellt
+- `beforeBuildCommand` erzeugt das Frontend vor Desktop-Builds automatisch neu
+- explizite Allowlist begrenzt das Desktop-Frontend auf 14 benötigte Runtime-Dateien
+- Staging lehnt Symlink-Quellen ab und baut vorhandenes `dist/` sauber neu auf
+- `NAQYA_FRONTEND_MANIFEST.json` weist Dateigröße und SHA-256 je gestagter Runtime-Datei nach
+- `tests/validate_frontend_staging.py` prüft exakten Dateisatz, Hashidentität und Tauri-Konfiguration
+- Qualitätsgate um automatische Desktop-Staging-Prüfung erweitert
+- generiertes `dist/` in `.gitignore` aufgenommen
+- Architektur-, Entwicklerdokumentation, README und TODO auf den neuen Übergabepunkt aktualisiert
+
+Noch offen für 0.5.1:
+- Produktversionsdrift in `app.js` von 0.2.0 auf 0.5.0 schließen, ohne `DB_VERSION=2` zu verändern
+- vollständiges Linux-Tauri-Endanwender-Bundle erzeugen und Paketinhalt prüfen
+- Sidecar aus dem Paketkontext tatsächlich starten
+- maschinenlesbaren Release-Nachweis erzeugen
+- Windows-x86_64-Bundle und reale Hardwareabnahme
+
 ## 0.5.0 – TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG
 
 - reproduzierbaren whisper.cpp-Runtimevertrag mit festem Upstream-Tag und Commit eingeführt
