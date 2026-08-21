@@ -48,7 +48,7 @@ Alternativ kann der Messer den Testprozess selbst starten:
 ```bash
 python3 tools/measure_process_resources.py \
   --output RESOURCE_METRICS.json \
-  --command -- /pfad/zu/naqya
+  --command /pfad/zu/naqya
 ```
 
 Der Nachweis enthält `peak_ram_mb`, `cpu_avg_pct`, `cpu_max_pct`, Messdauer, Intervall und die höchste gleichzeitig beobachtete Prozesszahl. Die Datei enthält keine Audio- oder Transkriptinhalte und erzeugt selbst keine Hardwarefreigabe. Für `HARDWARE_ACCEPTANCE.json` bleibt ausschließlich der reale Peak-RAM des tatsächlich getesteten NAQYA-Laufs maßgeblich.
