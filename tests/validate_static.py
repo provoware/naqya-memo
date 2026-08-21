@@ -11,7 +11,9 @@ required = [
     'docs/ARCHITEKTUR.md','docs/ENTWICKLERDOKUMENTATION.md','docs/AUDIO_OFFLINE_STT.md','docs/AUDIO_NORMALISIERUNG_LIVE_STT.md',
     'docs/NATIVE_WHISPER_DESKTOP.md','docs/DATENMODELL.md','docs/PLUGIN_VERTRAG.md','docs/WHISPER_SIDECAR.md',
     'src-tauri/Cargo.toml','src-tauri/build.rs','src-tauri/tauri.conf.json','src-tauri/src/main.rs',
-    'src-tauri/sidecar/whisper-runtime.json','tests/validate_text_integrity.py'
+    'src-tauri/sidecar/whisper-runtime.json','tests/validate_text_integrity.py','tests/validate_dist.py',
+    'tests/validate_release_evidence.py','tools/stage_desktop_frontend.py','tools/generate_release_evidence.py',
+    'release/RELEASE_EVIDENCE.schema.json','.github/workflows/bundle-linux.yml'
 ]
 missing = [p for p in required if not (root / p).exists()]
 assert not missing, f'Fehlende Dateien: {missing}'
@@ -51,6 +53,7 @@ assert kern['whisper_cpp_runtime_source_diagnostic'] is True
 assert 'whisper_cpp_native_runtime_bundled' not in kern
 
 assert manifest['start_url'] == './'
+assert tauri['build']['frontendDist'] == '../dist'
 assert tauri['bundle']['externalBin'] == ['binaries/naqya-whisper']
 
 agents = (root / 'AGENTS.md').read_text()
@@ -85,8 +88,20 @@ for needle in [
     assert needle in developer, f'Entwicklerdokumentation unvollständig: {needle}'
 
 gitignore = (root / '.gitignore').read_text()
-for needle in ['.sidecar-build/','src-tauri/binaries/','src-tauri/target/','*.gguf','*.bin']:
+for needle in ['.sidecar-build/','src-tauri/binaries/','src-tauri/target/','/dist/','RELEASE_EVIDENCE.json','*.gguf','*.bin']:
     assert needle in gitignore, f'.gitignore unvollständig: {needle}'
+
+stage = (root / 'tools/stage_desktop_frontend.py').read_text()
+for needle in ['RUNTIME_FILES','BUILD_MANIFEST.json','SOURCE_DATE_EPOCH','Symlink ist im Desktop-Staging nicht erlaubt']:
+    assert needle in stage, f'Desktop-Staging unvollständig: {needle}'
+
+release_generator = (root / 'tools/generate_release_evidence.py').read_text()
+for needle in ['RELEASE_EVIDENCE.json','source_sidecar_sha_matches_packaged','runtime_dependencies_resolved','NAQYA_SOURCE_COMMIT']:
+    assert needle in release_generator, f'Release-Nachweisgenerator unvollständig: {needle}'
+
+bundle_workflow = (root / '.github/workflows/bundle-linux.yml').read_text()
+for needle in ['TAURI_CLI_VERSION',"'2.11.4'",'cargo tauri build --bundles deb','dpkg-deb -x','RELEASE_EVIDENCE.json','actions/upload-artifact@v4']:
+    assert needle in bundle_workflow, f'Linux-Bundle-Workflow unvollständig: {needle}'
 
 html = (root / 'index.html').read_text()
 for needle in [
@@ -138,8 +153,12 @@ assert 'version = "0.5.0"' in cargo
 assert 'sha2 = "0.10"' in cargo
 assert 'tauri-plugin-shell = "2"' in cargo
 
+sidecar_manifest = json.loads((root / 'src-tauri/sidecar/whisper-runtime.json').read_text())
+assert sidecar_manifest['build_profile'] == 'cpu-release-static'
+assert '-DBUILD_SHARED_LIBS=OFF' in sidecar_manifest['cmake_options']
+
 sidecar_build = (root / 'tools/build_whisper_sidecar.sh').read_text()
-for needle in ['UPSTREAM_TAG="v1.9.2"','306c88f4d1286aec1bf96e544632897886af5501','GGML_NATIVE=OFF','ENTWICKLERHINWEIS']:
+for needle in ['UPSTREAM_TAG="v1.9.2"','306c88f4d1286aec1bf96e544632897886af5501','GGML_NATIVE=OFF','BUILD_SHARED_LIBS=OFF','ENTWICKLERHINWEIS']:
     assert needle in sidecar_build, f'Sidecar-Buildvertrag unvollständig: {needle}'
 
 sw = (root / 'sw.js').read_text()

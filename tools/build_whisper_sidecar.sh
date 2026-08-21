@@ -48,7 +48,11 @@ ACTUAL_COMMIT="$(git -C "$SRC_DIR" rev-parse HEAD)"
   exit 5
 }
 
-cmake -S "$SRC_DIR" -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=OFF
+# ENTWICKLERHINWEIS: Linux nutzt upstream standardmäßig Shared Libraries. OFF hält das Tauri-Sidecar eigenständig und paketierbar.
+cmake -S "$SRC_DIR" -B "$BUILD_DIR" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DGGML_NATIVE=OFF \
+  -DBUILD_SHARED_LIBS=OFF
 cmake --build "$BUILD_DIR" --config Release --target whisper-cli -j "${NAQYA_BUILD_JOBS:-2}"
 
 if [[ -f "$BUILD_DIR/bin/whisper-cli" ]]; then
@@ -67,6 +71,7 @@ printf '%s  %s\n' "$HASH" "$(basename "$OUTPUT")" > "$OUTPUT.sha256"
 printf 'NAQYA whisper.cpp Sidecar vorbereitet\n'
 printf 'Manifest: %s\n' "$MANIFEST"
 printf 'Upstream: %s @ %s\n' "$UPSTREAM_TAG" "$UPSTREAM_COMMIT"
+printf 'Profil: cpu-release-static\n'
 printf 'Ziel: %s\n' "$TARGET_TRIPLE"
 printf 'Binary: %s\n' "$OUTPUT"
 printf 'SHA-256: %s\n' "$HASH"

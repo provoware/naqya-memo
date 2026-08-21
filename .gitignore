@@ -3,6 +3,15 @@
 src-tauri/binaries/
 src-tauri/target/
 target/
+/dist/
+.bundle-extract/
+
+# Generierte Release-Nachweise und Pakete; das Schema selbst bleibt versioniert
+release/RELEASE_EVIDENCE.json
+release/RELEASE_EVIDENCE.txt
+release/runtime-deps.txt
+release/NAQYA-*-linux-*.deb
+release/naqya-whisper-packaged
 
 # Lokale Sprachmodelle niemals versehentlich versionieren
 *.gguf

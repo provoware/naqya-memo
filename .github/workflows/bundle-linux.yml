@@ -1,0 +1,133 @@
+name: NAQYA Linux-Bundle-Nachweis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/bundle-linux.yml'
+      - 'VERSION.json'
+      - 'PROJEKTSTATUS.json'
+      - 'index.html'
+      - 'styles.css'
+      - 'styles-02.css'
+      - 'app.js'
+      - 'sw.js'
+      - 'manifest.webmanifest'
+      - 'icons/**'
+      - 'services/**'
+      - 'src-tauri/**'
+      - 'tools/build_whisper_sidecar.sh'
+      - 'tools/stage_desktop_frontend.py'
+      - 'tools/generate_release_evidence.py'
+      - 'tests/validate_dist.py'
+      - 'tests/validate_release_evidence.py'
+      - 'release/RELEASE_EVIDENCE.schema.json'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bundle-linux.yml'
+      - 'VERSION.json'
+      - 'PROJEKTSTATUS.json'
+      - 'index.html'
+      - 'styles.css'
+      - 'styles-02.css'
+      - 'app.js'
+      - 'sw.js'
+      - 'manifest.webmanifest'
+      - 'icons/**'
+      - 'services/**'
+      - 'src-tauri/**'
+      - 'tools/build_whisper_sidecar.sh'
+      - 'tools/stage_desktop_frontend.py'
+      - 'tools/generate_release_evidence.py'
+      - 'tests/validate_dist.py'
+      - 'tests/validate_release_evidence.py'
+      - 'release/RELEASE_EVIDENCE.schema.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SOURCE_DATE_EPOCH: '946684800'
+  TAURI_CLI_VERSION: '2.11.4'
+
+jobs:
+  linux-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Linux-Buildabhängigkeiten installieren
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev libgtk-3-dev libxdo-dev libssl-dev \
+            libayatana-appindicator3-dev librsvg2-dev cmake build-essential \
+            patchelf dpkg-dev
+
+      - name: Desktop-Frontend deterministisch stagen
+        run: |
+          python3 tools/stage_desktop_frontend.py
+          python3 tests/validate_dist.py
+
+      - name: Statischen whisper.cpp-Sidecar bauen
+        run: |
+          bash tools/build_whisper_sidecar.sh
+          (cd src-tauri/binaries && sha256sum -c naqya-whisper-x86_64-unknown-linux-gnu.sha256)
+          src-tauri/binaries/naqya-whisper-x86_64-unknown-linux-gnu --help >/dev/null
+
+      - name: Tauri-CLI reproduzierbar installieren
+        run: cargo install tauri-cli --version "$TAURI_CLI_VERSION" --locked
+
+      - name: Linux-DEB bauen
+        run: cargo tauri build --bundles deb
+
+      - name: Paketinhalt und Sidecar im Paketkontext prüfen
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release .bundle-extract
+          mapfile -t packages < <(find src-tauri/target/release/bundle/deb -maxdepth 1 -type f -name '*.deb' -print)
+          [[ ${#packages[@]} -eq 1 ]] || { echo "FEHLER: Erwartet genau ein DEB-Paket, gefunden: ${#packages[@]}" >&2; exit 20; }
+          cp "${packages[0]}" release/NAQYA-0.5.0-linux-x86_64.deb
+          dpkg-deb -x release/NAQYA-0.5.0-linux-x86_64.deb .bundle-extract
+          mapfile -t sidecars < <(find .bundle-extract -type f -name 'naqya-whisper*' -print)
+          [[ ${#sidecars[@]} -eq 1 ]] || { echo "FEHLER: Erwartet genau einen gepackten Sidecar, gefunden: ${#sidecars[@]}" >&2; exit 21; }
+          cp "${sidecars[0]}" release/naqya-whisper-packaged
+          chmod +x release/naqya-whisper-packaged
+          release/naqya-whisper-packaged --help >/dev/null
+
+          if ldd release/naqya-whisper-packaged > release/runtime-deps.txt 2>&1; then
+            ! grep -q 'not found' release/runtime-deps.txt || { cat release/runtime-deps.txt; exit 22; }
+          else
+            grep -Eq 'not a dynamic executable|statically linked' release/runtime-deps.txt || { cat release/runtime-deps.txt; exit 23; }
+          fi
+
+          source_hash="$(sha256sum src-tauri/binaries/naqya-whisper-x86_64-unknown-linux-gnu | awk '{print $1}')"
+          packaged_hash="$(sha256sum release/naqya-whisper-packaged | awk '{print $1}')"
+          [[ "$source_hash" == "$packaged_hash" ]] || { echo "FEHLER: Gepackter Sidecar wurde verändert." >&2; exit 24; }
+
+      - name: Release-Nachweis erzeugen
+        env:
+          NAQYA_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python3 tools/generate_release_evidence.py \
+            --package release/NAQYA-0.5.0-linux-x86_64.deb \
+            --sidecar release/naqya-whisper-packaged \
+            --source-sidecar src-tauri/binaries/naqya-whisper-x86_64-unknown-linux-gnu \
+            --runtime-deps release/runtime-deps.txt \
+            --sidecar-started \
+            --dependencies-resolved
+          python3 tests/validate_release_evidence.py release/RELEASE_EVIDENCE.json
+
+      - name: Nachweisartefakte sichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: naqya-linux-bundle-nachweis-${{ github.run_number }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            release/NAQYA-0.5.0-linux-x86_64.deb
+            release/RELEASE_EVIDENCE.json
+            release/RELEASE_EVIDENCE.txt
+            release/runtime-deps.txt

@@ -16,6 +16,7 @@ jobs:
           python3 -m json.tool manifest.webmanifest >/dev/null
           python3 -m json.tool src-tauri/tauri.conf.json >/dev/null
           python3 -m json.tool src-tauri/sidecar/whisper-runtime.json >/dev/null
+          python3 -m json.tool release/RELEASE_EVIDENCE.schema.json >/dev/null
       - name: Text- und Merge-Integrität prüfen
         run: python3 tests/validate_text_integrity.py
       - name: JavaScript-Syntax prüfen
@@ -28,6 +29,11 @@ jobs:
           node --check services/audio-normalizer.js
           node --check services/live-stt.js
           node --check services/release-04.js
+      - name: Desktop-Frontend stagen und prüfen
+        run: |
+          python3 tools/stage_desktop_frontend.py
+          python3 tests/validate_dist.py
+          python3 tests/validate_release_evidence.py --schema-only
       - name: Tauri Linux-Prüfabhängigkeiten
         run: |
           sudo apt-get update

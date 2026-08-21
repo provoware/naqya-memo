@@ -6,10 +6,11 @@
   "upstream_commit": "306c88f4d1286aec1bf96e544632897886af5501",
   "binary_basename": "naqya-whisper",
   "upstream_binary": "whisper-cli",
-  "build_profile": "cpu-release",
+  "build_profile": "cpu-release-static",
   "cmake_options": [
     "-DCMAKE_BUILD_TYPE=Release",
-    "-DGGML_NATIVE=OFF"
+    "-DGGML_NATIVE=OFF",
+    "-DBUILD_SHARED_LIBS=OFF"
   ],
   "targets": {
     "x86_64-unknown-linux-gnu": {
