@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="de" data-theme="hell" data-scale="standard">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#5b5ce2">
+  <meta name="description" content="PROVOWARE – NAQYA Memo Tool 2026, offline-first Organizer">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>NAQYA Memo Tool 2026</title>
+</head>
+<body>
+<a class="skip" href="#hauptinhalt">Zum Hauptinhalt</a>
+<div class="app-shell">
+  <header class="topbar">
+    <button class="icon-button mobile-only" id="navToggle" aria-label="Navigation öffnen">☰</button>
+    <div class="brand"><span class="brand-mark">N</span><div><strong>NAQYA</strong><small>Memo Tool 2026</small></div></div>
+    <label class="searchbox"><span>🔎</span><input id="globalSearch" type="search" placeholder="Alles durchsuchen …" aria-label="Alles durchsuchen"></label>
+    <div class="top-actions">
+      <span id="offlineBadge" class="status-pill">● lokal</span>
+      <button class="primary" id="quickAdd">＋ Neu</button>
+    </div>
+  </header>
+
+  <aside class="sidebar" id="sidebar" aria-label="Hauptnavigation">
+    <nav>
+      <button data-view="dashboard" class="nav-item active">🏠 <span>Übersicht</span></button>
+      <button data-view="today" class="nav-item">☀️ <span>Heute</span></button>
+      <button data-view="calendar" class="nav-item">📅 <span>Kalender</span></button>
+      <button data-view="documents" class="nav-item">📄 <span>Dokumente</span></button>
+      <button data-view="projects" class="nav-item">📁 <span>Projekte</span></button>
+      <button data-view="audio" class="nav-item">🎤 <span>Audio & Diktat</span></button>
+      <button data-view="chronology" class="nav-item">🕓 <span>Chronologie</span></button>
+      <button data-view="search" class="nav-item">🔎 <span>Suche</span></button>
+      <button data-view="settings" class="nav-item">⚙️ <span>Einstellungen</span></button>
+    </nav>
+    <div class="sidebar-help">
+      <strong>Hilfe</strong>
+      <p>Speichere zuerst schnell. Ordnen kannst du später.</p>
+      <button id="openHelp" class="secondary full">? Was kann NAQYA?</button>
+    </div>
+  </aside>
+
+  <main id="hauptinhalt" tabindex="-1"><div id="view"></div></main>
+
+  <aside class="assistant-panel" id="assistantPanel" aria-label="NAQYA Assistent">
+    <div class="assistant-head"><span>✨</span><div><strong>NAQYA Assistent</strong><small>Schritt für Schritt</small></div></div>
+    <div id="assistantContent">
+      <p class="muted">Wähle eine Schnellaktion oder öffne „＋ Neu“. NAQYA erklärt jeden Schritt.</p>
+    </div>
+  </aside>
+</div>
+
+<dialog id="wizard" aria-labelledby="wizardTitle">
+  <form method="dialog" id="wizardForm">
+    <div class="dialog-head"><div><small id="wizardStepLabel">Schritt 1 von 3</small><h2 id="wizardTitle">Neuer Eintrag</h2></div><button value="cancel" class="icon-button" aria-label="Schließen">✕</button></div>
+    <div class="progress"><span id="wizardProgress"></span></div>
+    <section class="wizard-step" data-step="1">
+      <h3>Was möchtest du speichern?</h3>
+      <div class="type-grid" id="typeGrid">
+        <button type="button" data-type="note">📝<span>Notiz</span></button>
+        <button type="button" data-type="appointment">📅<span>Termin</span></button>
+        <button type="button" data-type="deadline">⏰<span>Frist</span></button>
+        <button type="button" data-type="task">✓<span>Aufgabe</span></button>
+        <button type="button" data-type="text">📄<span>Textdokument</span></button>
+        <button type="button" data-type="document">📎<span>Dokument/Foto</span></button>
+      </div>
+    </section>
+    <section class="wizard-step" data-step="2" hidden>
+      <label>Titel<input id="entryTitle" maxlength="160" placeholder="z. B. Versicherung anrufen"></label>
+      <label>Text / Beschreibung<textarea id="entryText" rows="6" placeholder="Optional – du kannst später ergänzen"></textarea></label>
+      <div class="two-col"><label>Datum / Zeit<input id="entryDate" type="datetime-local"></label><label>Priorität<select id="entryPriority"><option>normal</option><option>hoch</option><option>kritisch</option><option>niedrig</option></select></label></div>
+      <label id="fileLabel" hidden>Datei oder Foto<input id="entryFile" type="file" accept="image/*,.pdf,.txt,.md,.doc,.docx"></label>
+    </section>
+    <section class="wizard-step" data-step="3" hidden>
+      <label>Projekt<select id="entryProject"><option value="">Noch keinem Projekt zuordnen</option></select></label>
+      <label>Kategorie<input id="entryCategory" placeholder="z. B. Finanzen, Wohnung, Privat"></label>
+      <label>Tags<input id="entryTags" placeholder="z. B. wichtig, versicherung, offen"></label>
+      <div class="info-box">💡 Du kannst alles später ändern. Speichern wird nie durch fehlende Organisation verhindert.</div>
+    </section>
+    <div id="wizardMessage" class="message" role="status" aria-live="polite"></div>
+    <div class="dialog-actions"><button type="button" class="secondary" id="wizardBack">← Zurück</button><button type="button" class="secondary" id="wizardNext">Weiter →</button><button type="button" class="primary" id="wizardSave" hidden>✓ Speichern</button></div>
+  </form>
+</dialog>
+
+<dialog id="helpDialog"><div class="dialog-head"><h2>NAQYA Soforthilfe</h2><button class="icon-button" onclick="this.closest('dialog').close()" aria-label="Schließen">✕</button></div><div class="help-content"><h3>1. Schnell speichern</h3><p>Nutze „＋ Neu“, Audio oder Diktat. Nur ein Titel ist sinnvoll, aber nicht zwingend.</p><h3>2. Später organisieren</h3><p>Projekt, Kategorie und Tags können jederzeit ergänzt werden.</p><h3>3. Offline</h3><p>Daten, Dokumente und Audio bleiben lokal. Die App verwendet keinen Cloud-Fallback für Diktat.</p><h3>4. Backup</h3><p>Unter Einstellungen kannst du alle Metadaten als JSON exportieren und wieder einlesen.</p></div></dialog>
+<script src="app.js" defer></script>
+</body>
+</html>
