@@ -1,17 +1,24 @@
 # NAQYA – lokale Build- und Laufzeitartefakte
 .sidecar-build/
+.sidecar-build-windows/
 src-tauri/binaries/
 src-tauri/target/
 target/
 /dist/
 .bundle-extract/
+/evidence/
 
 # Generierte Release-Nachweise und Pakete; das Schema selbst bleibt versioniert
 release/RELEASE_EVIDENCE.json
 release/RELEASE_EVIDENCE.txt
+release/RELEASE_EVIDENCE.windows.json
+release/RELEASE_EVIDENCE.windows.txt
 release/runtime-deps.txt
+release/runtime-deps-windows.txt
 release/NAQYA-*-linux-*.deb
+release/NAQYA-*-windows-*.exe
 release/naqya-whisper-packaged
+release/naqya-whisper-packaged.exe
 
 # Lokale Sprachmodelle niemals versehentlich versionieren
 *.gguf

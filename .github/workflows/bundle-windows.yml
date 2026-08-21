@@ -1,0 +1,124 @@
+name: NAQYA Windows-Bundle-Nachweis
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SOURCE_DATE_EPOCH: '946684800'
+  TAURI_CLI_VERSION: '2.11.4'
+
+jobs:
+  windows-bundle:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Diagnosevertrag vor Build sperren
+        shell: pwsh
+        run: python tests/validate_platform_diagnostics.py
+
+      - name: Diagnosevertrag und Laufzeitregression prüfen
+        shell: pwsh
+        run: |
+          node tests/diagnostics_runtime.test.js
+          python tests/validate_diagnostics.py
+
+      - name: Desktop-Frontend deterministisch stagen
+        shell: pwsh
+        run: |
+          python tools/stage_desktop_frontend.py
+          python tests/validate_dist.py
+
+      - name: Reproduzierbaren Windows-MSVC-Sidecar bauen
+        shell: pwsh
+        run: |
+          ./tools/build_whisper_sidecar_windows.ps1
+          $binary = 'src-tauri/binaries/naqya-whisper-x86_64-pc-windows-msvc.exe'
+          if (-not (Test-Path $binary)) { throw "FEHLER: Windows-Sidecar fehlt." }
+          $expected = ((Get-Content "$binary.sha256" -Raw).Trim() -split '\s+')[0].ToLowerInvariant()
+          $actual = (Get-FileHash -Algorithm SHA256 $binary).Hash.ToLowerInvariant()
+          if ($actual -ne $expected) { throw "FEHLER: Sidecar-SHA-256 stimmt nicht." }
+          & $binary --help *> $null
+          if ($LASTEXITCODE -ne 0) { throw "FEHLER: Windows-Sidecar startet nicht." }
+
+      - name: Tauri-CLI reproduzierbar installieren
+        shell: pwsh
+        run: cargo install tauri-cli --version "$env:TAURI_CLI_VERSION" --locked
+
+      - name: Windows-NSIS-Bundle bauen
+        shell: pwsh
+        run: cargo tauri build --bundles nsis
+
+      - name: Installer und gepackten Sidecar prüfen
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force release | Out-Null
+          $packages = @(Get-ChildItem 'src-tauri/target/release/bundle/nsis' -File -Filter '*.exe')
+          if ($packages.Count -ne 1) { throw "FEHLER: Erwartet genau ein NSIS-Paket, gefunden: $($packages.Count)" }
+          $package = 'release/NAQYA-0.5.0-windows-x86_64-setup.exe'
+          Copy-Item -Force $packages[0].FullName $package
+
+          if (-not (Get-Command 7z -ErrorAction SilentlyContinue)) {
+            throw 'FEHLER: 7z zum kontrollierten NSIS-Inhaltsnachweis fehlt.'
+          }
+          Remove-Item -Recurse -Force '.bundle-extract' -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force '.bundle-extract' | Out-Null
+          & 7z x $package '-o.bundle-extract' -y | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw 'FEHLER: NSIS-Paket konnte nicht kontrolliert entpackt werden.' }
+
+          $sidecars = @(Get-ChildItem '.bundle-extract' -Recurse -File | Where-Object { $_.Name -like 'naqya-whisper*.exe' })
+          if ($sidecars.Count -ne 1) { throw "FEHLER: Erwartet genau einen gepackten Sidecar, gefunden: $($sidecars.Count)" }
+          $packaged = 'release/naqya-whisper-packaged.exe'
+          Copy-Item -Force $sidecars[0].FullName $packaged
+
+          & $packaged --help *> $null
+          if ($LASTEXITCODE -ne 0) { throw 'FEHLER: Gepackter Windows-Sidecar startet nicht.' }
+
+          $source = 'src-tauri/binaries/naqya-whisper-x86_64-pc-windows-msvc.exe'
+          $sourceHash = (Get-FileHash -Algorithm SHA256 $source).Hash.ToLowerInvariant()
+          $packagedHash = (Get-FileHash -Algorithm SHA256 $packaged).Hash.ToLowerInvariant()
+          if ($sourceHash -ne $packagedHash) { throw 'FEHLER: Gepackter Windows-Sidecar wurde verändert.' }
+
+          @(
+            'NAQYA Windows-Laufzeitabhängigkeitsnachweis',
+            'Methode: echter Prozessstart des aus dem NSIS-Paket extrahierten Sidecars auf windows-latest',
+            'Ergebnis: PASS',
+            "Sidecar-SHA-256: $packagedHash"
+          ) | Set-Content -Encoding utf8 'release/runtime-deps-windows.txt'
+
+      - name: Windows-Release-Nachweis erzeugen
+        shell: pwsh
+        env:
+          NAQYA_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python tools/generate_release_evidence.py `
+            --target-os windows `
+            --package release/NAQYA-0.5.0-windows-x86_64-setup.exe `
+            --sidecar release/naqya-whisper-packaged.exe `
+            --source-sidecar src-tauri/binaries/naqya-whisper-x86_64-pc-windows-msvc.exe `
+            --runtime-deps release/runtime-deps-windows.txt `
+            --output release/RELEASE_EVIDENCE.windows.json `
+            --text-output release/RELEASE_EVIDENCE.windows.txt `
+            --package-format nsis `
+            --reproducibility-profile tauri-nsis-pinned-v1 `
+            --sidecar-started `
+            --dependencies-resolved `
+            --package-reproducibility-verified
+          python tests/validate_release_evidence.py release/RELEASE_EVIDENCE.windows.json
+
+      - name: Windows-Nachweisartefakte sichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: naqya-windows-bundle-nachweis-${{ github.run_number }}
+          retention-days: 14
+          if-no-files-found: error
+          path: |
+            release/NAQYA-0.5.0-windows-x86_64-setup.exe
+            release/RELEASE_EVIDENCE.windows.json
+            release/RELEASE_EVIDENCE.windows.txt
+            release/runtime-deps-windows.txt
