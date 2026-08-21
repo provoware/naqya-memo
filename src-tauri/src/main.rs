@@ -165,6 +165,17 @@ fn hash_file(path: &Path) -> Result<(String, u64), String> {
     Ok((format!("{:x}", hasher.finalize()), bytes))
 }
 
+fn trusted_model_path(app: &tauri::AppHandle, requested: &str) -> Result<PathBuf, String> {
+    let root = fs::canonicalize(model_root(app)?)
+        .map_err(|e| format!("NAQYA-Modellpfad konnte nicht geprüft werden: {e}"))?;
+    let model = fs::canonicalize(requested)
+        .map_err(|e| format!("Sprachmodell wurde nicht gefunden: {e}"))?;
+    if !model.starts_with(&root) || !model.is_file() {
+        return Err("Das Sprachmodell liegt nicht im geschützten NAQYA-Modellpfad.".into());
+    }
+    Ok(model)
+}
+
 #[tauri::command]
 fn naqya_capabilities(app: tauri::AppHandle) -> Capabilities {
     let cli = whisper_cli_path();
@@ -288,15 +299,15 @@ fn naqya_model_abort(app: tauri::AppHandle, request: ModelAbortRequest) -> Resul
 }
 
 #[tauri::command]
-fn naqya_transcribe(request: TranscribeRequest) -> Result<TranscribeResult, String> {
+fn naqya_transcribe(
+    app: tauri::AppHandle,
+    request: TranscribeRequest,
+) -> Result<TranscribeResult, String> {
     let started = std::time::Instant::now();
     let cli = whisper_cli_path().ok_or(
         "whisper.cpp CLI wurde nicht gefunden. NAQYA_WHISPER_CLI setzen oder whisper-cli installieren.",
     )?;
-    let model = PathBuf::from(&request.model_path);
-    if !model.is_file() {
-        return Err("Sprachmodell wurde nicht gefunden.".into());
-    }
+    let model = trusted_model_path(&app, &request.model_path)?;
     let bytes = STANDARD
         .decode(request.audio_base64.as_bytes())
         .map_err(|_| "Audiodaten sind kein gültiges Base64.")?;
