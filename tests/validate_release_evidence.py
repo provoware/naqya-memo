@@ -54,7 +54,11 @@ def main() -> None:
     assert whisper["commit"] == "306c88f4d1286aec1bf96e544632897886af5501"
     assert whisper["build_profile"] == "cpu-release-static"
     assert whisper["bytes"] > 0
-    assert evidence["desktop_package"]["bytes"] > 0
+
+    package = evidence["desktop_package"]
+    assert package["bytes"] > 0
+    assert package["reproducibility_profile"] == "dpkg-deb-normalized-v1"
+    assert package["source_date_epoch"] == 946684800
 
     validations = evidence["validations"]
     for key in (
@@ -62,16 +66,18 @@ def main() -> None:
         "source_sidecar_sha_matches_packaged",
         "packaged_sidecar_started",
         "runtime_dependencies_resolved",
+        "package_repack_deterministic",
     ):
         assert validations[key] is True, f"Release-Gate nicht erfüllt: {key}"
 
     assert "2.11.4" in evidence["toolchain"]["tauri_cli"], "Tauri-CLI-Pin stimmt nicht"
+    assert "dpkg-deb" in evidence["toolchain"]["dpkg_deb"], "dpkg-deb-Version fehlt"
     if os.environ.get("GITHUB_ACTIONS") == "true":
         assert evidence["ci"]["provider"] == "github-actions"
         assert str(evidence["ci"]["run_id"] or "").isdigit()
         assert str(evidence["ci"]["run_number"] or "").isdigit()
 
-    print("NAQYA Release-Nachweis: PASS")
+    print("NAQYA Release-Nachweis inklusive DEB-Reproduzierbarkeit: PASS")
 
 
 if __name__ == "__main__":
