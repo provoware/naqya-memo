@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+DIAGNOSTIC_CONTRACT = ROOT / "diagnostics/DIAGNOSTIC_CONTRACT.json"
 
 
 def sha256_file(path: Path) -> str:
@@ -49,6 +50,22 @@ def rust_target() -> str:
     raise SystemExit("FEHLER: Rust-Zielplattform konnte nicht ermittelt werden.")
 
 
+def load_diagnostic_contract() -> dict:
+    contract = json.loads(DIAGNOSTIC_CONTRACT.read_text(encoding="utf-8"))
+    if contract.get("schema_version") != 1 or contract.get("contract_id") != "naqya-diagnostics-v1":
+        raise SystemExit("FEHLER: Unbekannter Diagnosevertrag.")
+    codes = [item.get("code") for item in contract.get("error_codes", [])]
+    if not codes or len(codes) != len(set(codes)):
+        raise SystemExit("FEHLER: Diagnosevertrag enthält keine oder doppelte Fehlercodes.")
+    actions = [item.get("id") for item in contract.get("safe_actions", [])]
+    if not actions or len(actions) != len(set(actions)):
+        raise SystemExit("FEHLER: Diagnosevertrag enthält keine oder doppelte sichere Aktionen.")
+    action_set = set(actions)
+    if any(item.get("safe_action") not in action_set for item in contract["error_codes"]):
+        raise SystemExit("FEHLER: Fehlercode verweist auf unbekannte sichere Aktion.")
+    return contract
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--package", required=True)
@@ -73,6 +90,7 @@ def main() -> None:
         "Build-Sidecar": source_sidecar,
         "Laufzeitabhängigkeitsbericht": deps,
         "Frontend-Manifest": dist_manifest,
+        "Diagnosevertrag": DIAGNOSTIC_CONTRACT,
     }.items():
         if not path.is_file():
             raise SystemExit(f"FEHLER: {label} fehlt: {path}")
@@ -82,6 +100,7 @@ def main() -> None:
 
     version = json.loads((ROOT / "VERSION.json").read_text(encoding="utf-8"))
     whisper = json.loads((ROOT / "src-tauri/sidecar/whisper-runtime.json").read_text(encoding="utf-8"))
+    diagnostics = load_diagnostic_contract()
     commit = git_commit()
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise SystemExit(f"FEHLER: Ungültiger Quellcommit: {commit}")
@@ -110,6 +129,16 @@ def main() -> None:
         "frontend": {
             "manifest_file": dist_manifest.name,
             "manifest_sha256": sha256_file(dist_manifest),
+        },
+        "diagnostics": {
+            "contract_id": diagnostics["contract_id"],
+            "contract_file": str(DIAGNOSTIC_CONTRACT.relative_to(ROOT)),
+            "contract_sha256": sha256_file(DIAGNOSTIC_CONTRACT),
+            "schema_version": diagnostics["schema_version"],
+            "error_code_namespace": diagnostics["error_code_namespace"],
+            "event_id_format": diagnostics["event_id_format"],
+            "safe_action_ids": sorted(item["id"] for item in diagnostics["safe_actions"]),
+            "error_codes": sorted(item["code"] for item in diagnostics["error_codes"]),
         },
         "whisper": {
             "provider": whisper["provider"],
@@ -146,6 +175,7 @@ def main() -> None:
         },
         "validations": {
             "frontend_manifest_verified": True,
+            "diagnostic_contract_verified": True,
             "source_sidecar_sha_matches_packaged": True,
             "packaged_sidecar_started": True,
             "runtime_dependencies_resolved": True,
@@ -163,6 +193,7 @@ def main() -> None:
         f"Wann: {generated_at}\n"
         f"Wo: Git-Commit {commit}, Ziel {evidence['target']['rust_target']}\n"
         f"Wie: deterministisches Frontend-Staging, statischer whisper.cpp-Sidecar, Tauri-Bundle, Paketstart- und Abhängigkeitsprüfung\n"
+        f"Diagnosevertrag: {diagnostics['contract_id']} / {evidence['diagnostics']['contract_sha256']}\n"
         f"Sidecar: {packaged_hash} ({sidecar.stat().st_size} Bytes)\n"
         f"Paket: {evidence['desktop_package']['sha256']} ({package.stat().st_size} Bytes)\n"
         "Ergebnis: BUNDLE-VALIDIERT\n",
