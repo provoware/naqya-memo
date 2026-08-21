@@ -3,10 +3,50 @@
   "repo": "provoware/naqya-memo",
   "version": "0.5.0",
   "entwicklungsphase": "TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG",
-  "status": "ENTWICKLUNG",
+  "aktueller_arbeitsstand": "0.5.1-B – LINUX-BUNDLE & RELEASE-NACHWEIS",
+  "status": "ENTWICKLUNG – LINUX-BUNDLE CI-VALIDIERT",
   "referenzplattform": "PWA + Tauri Desktop",
   "zielplattformen": ["Linux", "Windows", "Android", "iPhone/iPad", "PWA"],
   "hauptdatei": "index.html",
+  "fortschritt": {
+    "bezug": "Entwicklungsblock 0.5.1",
+    "prozent": 56,
+    "erledigt": 5,
+    "gesamt": 9,
+    "berechnung": "5 abgeschlossene Hauptpunkte / 9 definierte Hauptpunkte, kaufmännisch gerundet",
+    "erledigte_punkte": [
+      "Produktversion und Backup-Metadaten konsistent absichern",
+      "Desktop-Frontend deterministisch in dist/ stagen",
+      "Linux-Tauri-DEB mit gebündeltem Sidecar erzeugen",
+      "Sidecar im Paketkontext starten und Laufzeitabhängigkeiten prüfen",
+      "maschinen- und menschenlesbaren Release-Nachweis erzeugen"
+    ],
+    "offene_punkte": [
+      "professionelles Diagnose-, Debugging- und Logging-Modul mit stabilen Fehlercodes",
+      "gemeinsamen Diagnose-/Release-Evidence-Vertrag und Ereignisreferenzen integrieren",
+      "Windows-x86_64-Sidecar und Windows-Bundle vollständig nachweisen",
+      "reale Linux-/Windows-Hardwareabnahme sowie AudioWorklet- und Langzeithärtung abschließen"
+    ]
+  },
+  "release_nachweis": {
+    "linux_bundle_validiert": true,
+    "workflow": "NAQYA Linux-Bundle-Nachweis",
+    "workflow_run_id": 32477864231,
+    "workflow_run_number": 1,
+    "qualitaetspruefung_run_id": 32477864261,
+    "qualitaetspruefung_run_number": 216,
+    "source_commit": "602d0dd974abc1fe17490492c7a453bce88089fe",
+    "artifact_id": 9445169821,
+    "artifact_name": "naqya-linux-bundle-nachweis-1",
+    "artifact_sha256": "6831027b0ed6f5dd1ee1137d2cb814d5e6868f4a2ef041169318b4a54be2661d",
+    "desktop_package": "NAQYA-0.5.0-linux-x86_64.deb",
+    "desktop_package_bytes": 5148416,
+    "desktop_package_sha256": "1721b92de3a23da0ece8e9833d6949bf9b9987d7cc3de69e76d1cd50fc83f2e4",
+    "sidecar_bytes": 2828584,
+    "sidecar_sha256": "6c4805c72c855ea5b627b10450bb3feec56ea31b8038aed052ce9260bc11529b",
+    "frontend_manifest_sha256": "5290ff2a7e20c5b8c28e4e32ed727c08054ea38c0f4aabea924694f3ade97351",
+    "release_evidence_schema": 1
+  },
   "kernfunktionen": {
     "indexeddb": true,
     "pwa_offline": true,
@@ -22,17 +62,21 @@
     "live_diktat_on_device_browser": "feature-detect",
     "stt_provider_contract": true,
     "tauri_desktop_scaffold": true,
+    "desktop_frontend_dist_deterministic": true,
     "native_bridge_javascript": true,
     "whisper_cpp_cli_detection": true,
     "whisper_cpp_native_command": true,
     "whisper_cpp_sidecar_bundle_configured": true,
     "whisper_cpp_sidecar_linux_ci_built": true,
-    "whisper_cpp_sidecar_release_bundle_validated": false,
+    "whisper_cpp_sidecar_release_bundle_validated": true,
     "whisper_cpp_sidecar_preferred": true,
     "whisper_cpp_fallback_diagnose": true,
     "whisper_cpp_runtime_manifest": true,
     "whisper_cpp_external_cli_fallback": true,
     "whisper_cpp_runtime_source_diagnostic": true,
+    "release_evidence_linux_ci_generated": true,
+    "release_evidence_machine_readable": true,
+    "release_evidence_human_readable": true,
     "sprachmodell_manager": true,
     "sprachmodell_native_materialisierung": true,
     "sprachmodell_transfer_chunk_bytes": 4194304,
@@ -48,12 +92,12 @@
     "backup_sha256": true
   },
   "bekannte_grenzen": [
-    "Tauri ist für den whisper.cpp-Sidecar konfiguriert und der Linux-x86_64-Sidecar wird im CI reproduzierbar gebaut und per SHA-256 geprüft; ein vollständiges Endanwender-Linux-Bundle mit nachgewiesen enthaltenem und startbarem Sidecar ist noch nicht end-to-end abgenommen.",
+    "Das Linux-DEB, der enthaltene Sidecar, dessen Bytegleichheit und Laufzeitabhängigkeiten sind im CI paketbezogen validiert; eine reale Endgeräte-, Mikrofon- und Langzeithardwareabnahme steht weiterhin aus.",
     "Der Windows-x86_64-Sidecar und das Windows-Bundle benötigen noch Build-, Integritäts- und Startabnahme.",
+    "Ein einheitliches professionelles Diagnose-/Debugging-/Logging-Modul mit stabilen Ereignis- und Fehlercodes wird als 0.5.1-C umgesetzt.",
     "Die Live-PCM-Erfassung verwendet weiterhin Web Audio ScriptProcessor als Übergangsadapter; eine AudioWorklet-Umstellung ist vorgesehen.",
-    "Die segmentierte native Transkription benötigt reale Linux-/Windows-Latenz-, CPU-, RAM-, Mikrofon- und Langzeittests mit echten Modellen.",
     "Das Vollbackup nutzt weiterhin JSON/Base64 und ist für sehr große Datenbestände speicherintensiver als ein streamingfähiger Container.",
     "Native Mobiladapter für Android und iPhone/iPad stehen weiterhin aus."
   ],
-  "naechster_meilenstein": "0.5.1 – LINUX-BUNDLE-ABNAHME, RELEASE-NACHWEIS & WINDOWS-SIDECAR"
+  "naechster_meilenstein": "0.5.1-C – DIAGNOSE, DEBUGGING, LOGGING & EVIDENCE-BINDUNG"
 }
