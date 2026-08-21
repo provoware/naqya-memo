@@ -11,6 +11,7 @@
     "source",
     "target",
     "frontend",
+    "diagnostics",
     "whisper",
     "desktop_package",
     "runtime_dependencies",
@@ -25,6 +26,30 @@
     "source": {"type": "object"},
     "target": {"type": "object"},
     "frontend": {"type": "object"},
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "contract_file",
+        "contract_sha256",
+        "schema_version",
+        "error_code_namespace",
+        "event_id_format",
+        "safe_action_ids",
+        "error_codes"
+      ],
+      "properties": {
+        "contract_id": {"const": "naqya-diagnostics-v1"},
+        "contract_file": {"const": "diagnostics/DIAGNOSTIC_CONTRACT.json"},
+        "contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "schema_version": {"const": 1},
+        "error_code_namespace": {"const": "NAQYA"},
+        "event_id_format": {"const": "NAQYA-EVT-<unix_ms>-<sequence>"},
+        "safe_action_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "error_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^NAQYA-[A-Z]+-[0-9]{3}$"}}
+      }
+    },
     "whisper": {"type": "object"},
     "desktop_package": {"type": "object"},
     "runtime_dependencies": {"type": "object"},
