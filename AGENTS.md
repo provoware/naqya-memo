@@ -29,6 +29,7 @@ Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dies
 - Merge-Marker `<<<<<<<`, `=======`, `>>>>>>>` dürfen nicht verbleiben.
 - `README.md` ist die kanonische menschenlesbare Gesamtübersicht.
 - `PROJEKTSTATUS.json` ist die kanonische maschinenlesbare Statusübersicht.
+- `TODO.md` ist die operative Restarbeitenliste und muss denselben Fortschrittsstand führen.
 
 ## Code- und Entwicklerdokumentationsregeln
 - `CONTRIBUTING.md` ist der kurze Einstieg.
@@ -54,11 +55,17 @@ Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dies
 - `RELEASE_EVIDENCE.json` bindet den exakten Diagnosevertrag über SHA-256.
 
 ### Plattforminvariante ab 0.5.1-D
-Der in 0.5.1-C validierte Diagnosevertrag wird für den Windows-Nachweis **unverändert wiederverwendet**. Der Windows-Build muss den SHA-256
-`fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
-hart prüfen. Eine Abweichung ist ein Vertragsbruch und muss CI abbrechen.
+Linux und Windows verwenden denselben Diagnosevertrag und denselben fachlichen Evidence-Fingerprint. Aktuell validierter Fingerprint:
+`018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf`
 
-Wenn eine fachliche Änderung am Diagnosevertrag wirklich nötig wird, erfolgt sie als eigener versionierter Diagnoseblock mit neuen Tests und neuer Evidence – niemals still als Nebenwirkung eines Plattformbuilds.
+Der Fingerprint bindet gemeinsame Software-/Diagnoseinvarianten, nicht plattformspezifische Paket- oder Sidecar-Binärhashes. Eine fachliche Änderung am Diagnosevertrag, Fehlercodekatalog oder Fingerprint-Schema erfolgt nur als eigener versionierter Vertragswechsel mit neuen Tests und neuer Evidence.
+
+## Hardware-Abnahmeregeln ab 0.5.1-E
+- CI-Paketabnahme ist keine reale Hardwarefreigabe.
+- Hardwarefreigaben müssen an einen validierten Evidence-Fingerprint gebunden sein.
+- Plattform, OS-Version, Hardware, Mikrofon, Modell-SHA, Testdauer und Ergebnis müssen nachvollziehbar dokumentiert sein.
+- 30-/60-Minuten-Aussagen zu Stabilität, CPU, RAM oder Echtzeitfaktor dürfen nur aus realen Messungen stammen.
+- `AudioWorklet` wird erst gegen eine dokumentierte Baseline bewertet; die bestehende Aufnahmeimplementierung wird nicht gleichzeitig mit der Baseline-Erhebung umgebaut.
 
 ## Pflichtdateien bei Änderungen
 Bei funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderungen sind mindestens zu prüfen:
@@ -76,12 +83,12 @@ Bei funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder
 Unveränderte Dateien bleiben unverändert, wenn keine inhaltliche Änderung nötig ist.
 
 ## TODO-Vertrag
-`TODO.md` ist die operative Restarbeitenliste. Erledigte Punkte werden nachvollziehbar in `Erledigt` verschoben. Fortschrittsangaben müssen mit README und `PROJEKTSTATUS.json` übereinstimmen.
+`TODO.md` ist die operative Restarbeitenliste. Erledigte Punkte werden nachvollziehbar in `Erledigt` verschoben. Fortschrittsangaben müssen mit README und `PROJEKTSTATUS.json` übereinstimmen. Diese Gleichheit wird automatisiert geprüft.
 
 ## Qualitätsgate
 Je nach Änderungsumfang mindestens:
 1. JSON-Struktur + Duplicate-Key-Erkennung
-2. Text-/Merge-Integrität
+2. Text-/Merge-Integrität einschließlich README/TODO/Status-Gleichstand
 3. JavaScript-Syntax
 4. Diagnose-Laufzeitregression und Diagnosevertrag
 5. deterministisches Desktop-Staging
@@ -108,24 +115,28 @@ Je nach Änderungsumfang mindestens:
 - eine Iteration ist erst abgeschlossen, wenn Repository, PR, CI und Dokumentation übereinstimmen.
 
 ## Aktueller validierter Stand
-**0.5.1-C – Diagnose, Logging & Evidence-Bindung**
+**0.5.1-D – Windows-Bundle & Plattform-Evidence, 89 % / 8 von 9 Hauptpunkten**
 
 Validiert:
 - deterministisches Linux-DEB mit startbarem Sidecar
-- deterministisches DEB-Repacking
-- Release Evidence
-- zentraler Diagnosevertrag
-- Ringpuffer, Deduplizierung, Privacy-Redaktion, Safe Actions und `retry-once`
-- SHA-256-Bindung Diagnosevertrag ↔ Release Evidence
-- Qualitätsprüfung #268 und Linux-Bundle-Nachweis #14 auf Quellcommit `0388cda77c6696017c5b00cb795f5758af2d5e22`
+- Windows-NSIS mit startbarem gepacktem Sidecar
+- Linux-/Windows-Release-Evidence und automatischer Paarvergleich
+- zentraler Diagnosevertrag mit unveränderter plattformübergreifender Semantik
+- Evidence-Fingerprint `018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf`
+- Qualitäts- und Plattformgates für den D-Funktionsstand
+
+Nicht als reale Hardwarefreigabe validiert:
+- Mikrofon-/Endgerätebetrieb unter Linux und Windows
+- 30-/60-Minuten-Langzeitverhalten
+- CPU-/RAM-/Echtzeitfaktor-Baseline auf Referenzhardware
+- AudioWorklet als Ersatz für ScriptProcessor
 
 ## Nächster Entwicklungsblock
-**0.5.1-D – Windows-x86_64-Bundle & plattformübergreifender Evidence-Nachweis**
+**0.5.1-E – Reale Hardwareabnahme, AudioWorklet & Langzeithärtung**
 
 Reihenfolge:
-1. C-Contract-SHA unverändert als Windows-Invariante prüfen.
-2. whisper.cpp für `x86_64-pc-windows-msvc` aus demselben Upstream-Commit bauen.
-3. Windows-Tauri-Bundle erzeugen und Sidecar aus Paketkontext starten.
-4. Windows-Paket-/Sidecar-SHA und Toolchain in Evidence aufnehmen.
-5. Linux/Windows auf identische Diagnosecodebedeutung prüfen.
-6. danach reale Hardwareabnahme und AudioWorklet-/Langzeithärtung.
+1. maschinenlesbaren Hardware-Abnahmevertrag an den Evidence-Fingerprint binden
+2. reale Linux-/Windows-Baseline mit Mikrofon, Modell und Live-Diktat erfassen
+3. 30-/60-Minuten-Langzeit- und Lastmessungen durchführen
+4. erst danach `AudioWorklet` gegen die dokumentierte Baseline implementieren und regressionsprüfen
+5. 0.5.1 erst bei real nachgewiesenem letzten Hauptpunkt abschließen.
