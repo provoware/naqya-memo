@@ -35,6 +35,7 @@ jobs:
         run: |
           node tests/diagnostics_runtime.test.js
           python3 tests/validate_diagnostics.py
+          python3 tests/validate_platform_diagnostics.py
       - name: Desktop-Frontend stagen und prüfen
         run: |
           python3 tools/stage_desktop_frontend.py
