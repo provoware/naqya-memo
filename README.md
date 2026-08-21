@@ -2,14 +2,13 @@
 
 Offline-first Organizer für Termine, Fristen, Aufgaben, Dokumente, Fotos, Audio-Memos, Live-Diktat, Projekte, Kategorien, Tags und Chronologie.
 
-## Stand
+## Aktueller Stand
 
 **0.5.0 – TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG**
 
-NAQYA verarbeitet Sprache weiterhin lokal und ohne Cloudpflicht. Der aktuelle Desktoppfad bündelt whisper.cpp als bevorzugten Tauri-Sidecar, baut den Linux-x86_64-Sidecar reproduzierbar aus einem fest gepinnten Upstream-Commit und prüft das erzeugte Artefakt per SHA-256. Ein expliziter lokaler `whisper-cli`-Fallback bleibt nur als diagnostizierbarer Ersatzpfad erhalten.
-**0.5.0 – DESKTOP SIDECAR INTEGRATION & HARDENING**
+NAQYA verarbeitet Sprache lokal und ohne Cloudpflicht. Der Quellstand integriert `whisper.cpp` als bevorzugte native Tauri-Runtime. Tauri ist über `bundle.externalBin` für den Sidecar `naqya-whisper` konfiguriert; GitHub Actions baut den Linux-x86_64-Sidecar reproduzierbar aus dem fest gepinnten Upstream-Commit und prüft das erzeugte Artefakt per SHA-256.
 
-NAQYA verarbeitet Sprache weiterhin ohne Cloudpflicht. Der 0.5.0-Stand baut auf der 0.4-Audio-/Modellpfad-Härtung auf und integriert zusätzlich einen reproduzierbar gebauten whisper.cpp-Sidecar in die Tauri-Desktop-Runtime. Der gebündelte Sidecar wird bevorzugt; ein explizit verfügbares externes `whisper-cli` bleibt nur als diagnostizierbarer Fallback erhalten.
+Wichtig: Ein vollständiges Endanwender-Desktoppaket mit eingebettetem Sidecar ist **noch nicht als Release end-to-end abgenommen**. Aktuell validiert CI den Sidecar-Build, seine Integrität sowie Rust/Tauri per `cargo check`. Die vollständige Bundle-Abnahme ist der nächste Freigabeschritt.
 
 ## Schnellstart PWA
 
@@ -30,41 +29,35 @@ Doppelklick auf `START_NAQYA.bat`.
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Dann `http://127.0.0.1:8765` öffnen.
+Danach `http://127.0.0.1:8765` öffnen.
 
 ## Neu in 0.5.0
 
 - reproduzierbarer whisper.cpp-Runtimevertrag mit festem Upstream-Tag und Commit
-- Linux-/Windows-Zielnamen für Tauri-Sidecars definiert
-- `tauri-plugin-shell` und `bundle.externalBin` integriert
-- gebündelter `naqya-whisper`-Sidecar wird vor externem CLI-Fallback verwendet
-- Runtime-Diagnose unterscheidet Sidecar, Fallback und Nichtverfügbarkeit
-- Linux-x86_64-Sidecar wird im CI real gebaut und per SHA-256 geprüft
-- Laufzeit-Downloads ungeprüfter kritischer Binärdateien bleiben verboten
-- temporäre STT-WAV-Dateien liegen im privaten Tauri-App-Cache
-- `AGENTS.md` und `TODO.md` steuern Entwicklung, Freigabe und Restarbeiten verbindlich
-- `.gitignore` schützt Buildausgaben, Sidecar-Artefakte und lokale Sprachmodelle vor versehentlichem Commit
-- Versions-, Status- und Offline-Cache-Metadaten sind auf 0.5.0 konsolidiert
-## Neu in 0.5.0
-
-- fest gepinnter whisper.cpp-Upstream und Commit als reproduzierbarer Runtimevertrag
-- Linux-x86_64-Sidecar-Build im Qualitätsgate
-- SHA-256-Prüfung des erzeugten Sidecar-Artefakts
-- Tauri `externalBin` für `binaries/naqya-whisper`
+- Tauri `bundle.externalBin` für `binaries/naqya-whisper`
 - Sidecar-Ausführung über `tauri-plugin-shell`
-- gebündelter Sidecar wird vor externem CLI-Fallback verwendet
-- Capabilities prüfen die Runtimequelle real und diagnostizierbar
-- Provider unterscheiden `whisper.cpp-sidecar` und `whisper.cpp-fallback`
-- sichere temporäre STT-Dateien im privaten Tauri-App-Cache
+- Linux-x86_64-Sidecar wird im CI real gebaut und per SHA-256 geprüft
+- gebündelter Sidecar hat Vorrang vor einem externen `whisper-cli`-Fallback
+- Runtime-Diagnose unterscheidet Sidecar, Fallback und Nichtverfügbarkeit
 - keine generische `main`-PATH-Auflösung für whisper.cpp
-- 0.4-Funktionen bleiben erhalten: 16-kHz-Mono-WAV, geschützter Modellpfad, SHA-256-Modellprüfung, atomare Modellaktivierung und segmentiertes Live-STT
+- temporäre STT-WAV-Dateien liegen im privaten Tauri-App-Cache
+- Sprachmodelle werden blockweise materialisiert, per SHA-256 geprüft und atomar aktiviert
+- 16-kHz-Mono-PCM16/WAV und segmentiertes Offline-Live-Diktat bleiben erhalten
+- `AGENTS.md` und `TODO.md` steuern Entwicklung, Freigabe und Restarbeiten verbindlich
+- `.gitignore` schützt Buildausgaben, lokale Modelle und Sidecar-Artefakte vor versehentlichen Commits
+- Text-/Metadatenprüfung erkennt Merge-Konfliktmarker, doppelte JSON-Schlüssel und zentrale Dokumentationsdrift
 
-Priorität der nativen Runtime:
 ## Desktop-Spracherkennung
 
-Die bevorzugte Desktop-Runtime ist der gebündelte `naqya-whisper`-Sidecar. Nur wenn dieser nicht verfügbar ist, darf ein explizit ermitteltes externes `whisper-cli` als Fallback verwendet werden. Die verwendete Runtimequelle bleibt diagnostizierbar.
+Die native Runtime-Priorität lautet:
 
-Ein importiertes Modell wird nicht direkt aus einem beliebigen Dateipfad an whisper.cpp übergeben. NAQYA überträgt es zuerst in den eigenen App-Datenbereich, prüft SHA-256 und verwendet anschließend ausschließlich diesen kontrollierten Pfad.
+1. Tauri-Sidecar `naqya-whisper`
+2. explizit verfügbarer lokaler `whisper-cli`-Fallback (`NAQYA_WHISPER_CLI` beziehungsweise kontrollierte `whisper-cli`-PATH-Erkennung)
+3. keine native Transkription
+
+Der Fallback darf den Sidecar nicht still überstimmen. Die tatsächlich verwendete Runtimequelle wird diagnostizierbar gehalten.
+
+Ein importiertes Modell wird nicht aus einem beliebigen Dateipfad direkt an whisper.cpp übergeben. NAQYA überträgt es in den eigenen App-Datenbereich, prüft SHA-256 und aktiviert es erst danach atomar.
 
 Der Live-Diktatpfad lautet:
 
@@ -75,69 +68,83 @@ Originalaufnahme + 3-s-Recovery
   ↓
 Web Audio PCM
   ↓
-16 kHz / Mono / WAV
+16 kHz / Mono / PCM16-WAV
   ↓
 4-s-Live-Segment
   ↓
-gebündelter whisper.cpp-Sidecar
-  ↓
-optional expliziter externer CLI-Fallback
+Tauri-Sidecar, sonst expliziter lokaler CLI-Fallback
   ↓
 Transkriptsegment
   ↓
 persistenter Diktattext
 ```
 
-1. gebündelter Tauri-Sidecar `naqya-whisper`
-2. explizit freigegebener lokaler `whisper-cli`-Fallback über `NAQYA_WHISPER_CLI` bzw. kontrollierte PATH-Erkennung
+## Datenschutz und Offline-Prinzip
 
-Ein importiertes Modell wird zuerst in den eigenen App-Datenbereich übertragen, per SHA-256 geprüft und erst anschließend für native Transkription verwendet.
+Der Kern benötigt keinen Account, keine Cloud und keine Telemetrie. Es gibt keinen automatischen Online-STT-Fallback. Kritische Runtime- oder Modellartefakte werden nicht ungeprüft zur Laufzeit heruntergeladen.
 
-## Datenschutz
+## Was aktuell validiert ist
 
-Der Kern benötigt keinen Account, keine Cloud und keine Telemetrie. Es gibt keinen automatischen Online-STT-Fallback.
-Der Kern benötigt keinen Account, keine Cloud und keine Telemetrie. Diktat startet nur mit einer lokal verfügbaren STT-Engine. Es gibt keinen automatischen Online-Fallback.
+- PWA-Grundfunktionen und lokaler Datenpfad
+- 3-Sekunden-Audio-Recovery
+- 16-kHz-Mono-WAV-Normalisierung
+- 4-Sekunden-Live-STT-Segmentierung
+- geschützter nativer Modellpfad
+- blockweiser Modelltransfer mit SHA-256 und atomarer Aktivierung
+- native Runtime-Härtung und privater STT-Tempbereich
+- fest gepinnter whisper.cpp-Upstream
+- Linux-x86_64-Sidecar-Build im CI
+- SHA-256-Prüfung des erzeugten Linux-Sidecars
+- Tauri-Sidecar-Konfiguration und Rust-Kompilierungsprüfung
+- statische Architektur-, Sicherheits-, Text- und Dokumentationsverträge
 
-## Technische Grenzen von 0.5.0
+## Noch nicht als Release abgenommen
 
-- Der Linux-x86_64-Sidecar ist reproduzierbar gebaut und integriert; die vollständige Windows-Bundle-Abnahme steht noch aus.
-- Die Live-PCM-Erfassung nutzt aktuell `ScriptProcessor` als breit kompatiblen Übergangsadapter. Eine AudioWorklet-Umstellung ist vorgesehen.
-- Reale Linux-/Windows-Abnahmen mit verschiedenen CPUs, Modellen, Mikrofonen und Langzeitaufnahmen stehen noch aus.
-- Das Vollbackup verwendet weiterhin JSON/Base64 und ist bei sehr großen Datenbeständen speicherintensiv.
-- Android- und iOS-Native-STT folgen später.
+- vollständiges Linux-Tauri-Bundle mit nachgewiesen enthaltenem und startbarem Sidecar
+- reproduzierbarer Windows-x86_64-Sidecar und Windows-Bundle
+- konkrete Release-Artefakt-Nachweise mit Dateigröße, SHA-256 und Buildumgebung
+- reale Mikrofon-/Hardwareabnahme unter Linux und Windows
+- Langzeitmessungen für CPU, RAM, Latenz und Echtzeitfaktor
+- `AudioWorklet` als Ersatz für den derzeitigen `ScriptProcessor`
+- native Android-/iPhone-/iPad-Adapter
 
 ## Qualitätsprüfung
 
-GitHub Actions prüft unter anderem:
+GitHub Actions prüft derzeit:
 
-- JSON-Struktur
+- JSON-Struktur und eindeutige JSON-Schlüssel
+- Textintegrität und Merge-Konfliktmarker
+- Konsistenz zentraler Dokumentationsaussagen
 - JavaScript-Syntax
 - reproduzierbaren Linux-Sidecar-Build
 - SHA-256 des erzeugten Sidecars
 - Rust-Formatierung
 - Rust/Tauri-Kompilierung
-- statische Architektur-/Projektverträge
-- Sidecar-Integrität per SHA-256
-- Rust-Formatierung
-- Rust/Tauri-Kompilierung
 - statische Architektur- und Sicherheitsverträge
 - Shell-Syntax
 
-## Bekannte Grenzen
+## Dokumentationsstatus
 
-- reale Linux-Desktop-/Mikrofonabnahme auf Referenzhardware steht noch aus
-- Windows-x86_64-Sidecar benötigt noch Build-, Bundle- und Hardwareabnahme
-- Live-PCM nutzt weiterhin `ScriptProcessor`; `AudioWorklet` folgt als Qualitätsausbau
-- sehr große Vollbackups sind durch JSON/Base64 speicherintensiv
-- native Mobiladapter für Android und iPhone/iPad stehen noch aus
-Nächster Hauptblock: **0.5.1 – WINDOWS SIDECAR, RELEASE-MANIFEST & REAL-HARDWARE-ABNAHME**.
+Aktuelle Referenzen:
 
-## Nächster Hauptblock
+- `README.md` – kanonischer Gesamtstand und nächster Entwicklungsblock
+- `AGENTS.md` – verbindlicher Entwicklungs-, Merge- und Freigabevertrag
+- `TODO.md` – priorisierte Restarbeiten mit Abnahmekriterien
+- `CHANGELOG.md` – tatsächlich umgesetzte Änderungen je Versionsstufe
+- `PROJEKTSTATUS.json` und `VERSION.json` – maschinenlesbarer Status
+- `docs/ARCHITEKTUR.md` – aktuelle technische Architektur
+- `docs/WHISPER_SIDECAR.md` – aktueller Sidecar-/Supply-Chain-Vertrag
 
-**0.5.x – WINDOWS-SIDECAR, RELEASE-NACHWEIS & REAL-HARDWARE-ABNAHME**.
-- reproduzierbarer Windows-x86_64-Sidecar
-- Release-Manifest mit Plattform, Upstream-Commit, Dateigröße und SHA-256
-- echte Linux-Referenzabnahme mit Mikrofon und Modell
-- Windows-Bundle-Abnahme
-- Latenz-, CPU-, RAM- und 30/60-Minuten-Diktattests
-- danach AudioWorklet als moderner Live-PCM-Pfad
+Die Dokumente zu 0.2, 0.3 und 0.4 bleiben als **historische Entwicklungsverträge** erhalten und sind entsprechend gekennzeichnet. Aussagen über den heutigen Runtime-Stand werden daraus nicht abgeleitet.
+
+## Nächster Entwicklungsblock
+
+**0.5.1 – LINUX-BUNDLE-ABNAHME, RELEASE-NACHWEIS & WINDOWS-SIDECAR**
+
+Reihenfolge:
+
+1. vollständiges Linux-Tauri-Bundle bauen und nachweisen, dass der Sidecar enthalten und startbar ist
+2. maschinenlesbaren Release-Nachweis mit Plattform, Upstream-Commit, Dateiname, Dateigröße, SHA-256 und Buildumgebung erzeugen
+3. denselben Buildvertrag auf Windows x86_64 übertragen
+4. reale Linux-/Windows-Mikrofon- und Hardwareabnahme
+5. danach AudioWorklet und Langzeithärtung

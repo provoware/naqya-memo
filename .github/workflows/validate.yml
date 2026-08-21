@@ -9,13 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: JSON prüfen
+      - name: JSON-Struktur prüfen
         run: |
           python3 -m json.tool VERSION.json >/dev/null
           python3 -m json.tool PROJEKTSTATUS.json >/dev/null
           python3 -m json.tool manifest.webmanifest >/dev/null
           python3 -m json.tool src-tauri/tauri.conf.json >/dev/null
           python3 -m json.tool src-tauri/sidecar/whisper-runtime.json >/dev/null
+      - name: Text- und Merge-Integrität prüfen
+        run: python3 tests/validate_text_integrity.py
       - name: JavaScript-Syntax prüfen
         run: |
           node --check app.js
