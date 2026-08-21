@@ -40,8 +40,10 @@ def windows_process_table() -> dict[int, int]:
         ]
 
     kernel32 = ctypes.windll.kernel32
+    kernel32.CreateToolhelp32Snapshot.restype = ctypes.c_void_p
+    kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
     snapshot = kernel32.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
-    if snapshot == INVALID_HANDLE_VALUE:
+    if snapshot in (None, INVALID_HANDLE_VALUE):
         return {}
     table: dict[int, int] = {}
     try:
@@ -111,6 +113,8 @@ def windows_sample(pid: int) -> tuple[int, float] | None:
 
     kernel32 = ctypes.windll.kernel32
     psapi = ctypes.windll.psapi
+    kernel32.OpenProcess.restype = ctypes.c_void_p
+    kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
     handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ, False, pid)
     if not handle:
         return None
@@ -122,9 +126,11 @@ def windows_sample(pid: int) -> tuple[int, float] | None:
         creation, exit_time, kernel, user = FILETIME(), FILETIME(), FILETIME(), FILETIME()
         if not kernel32.GetProcessTimes(handle, ctypes.byref(creation), ctypes.byref(exit_time), ctypes.byref(kernel), ctypes.byref(user)):
             return None
+
         def ft_seconds(value: FILETIME) -> float:
             ticks = (int(value.dwHighDateTime) << 32) | int(value.dwLowDateTime)
             return ticks / 10_000_000.0
+
         return int(counters.WorkingSetSize), ft_seconds(kernel) + ft_seconds(user)
     finally:
         kernel32.CloseHandle(handle)
@@ -191,19 +197,14 @@ def main() -> None:
                 cpu_pct = max(0.0, (total_cpu - previous_cpu) / (now - previous_time) * 100.0 / cpu_count)
                 cpu_samples.append(cpu_pct)
             previous_cpu, previous_time = total_cpu, now
-        else:
-            if child is None or child.poll() is not None:
-                break
+        elif child is None or child.poll() is not None:
+            break
 
         if child is not None and child.poll() is not None and not alive:
             break
         time.sleep(args.interval_ms / 1000.0)
 
-    if child is not None:
-        return_code = child.wait()
-    else:
-        return_code = None
-
+    return_code = child.wait() if child is not None else None
     if peak_bytes <= 0:
         raise SystemExit('FEHLER: Für die Prozessfamilie konnten keine Ressourcenmesswerte erfasst werden.')
 
