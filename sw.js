@@ -1,5 +1,5 @@
-const CACHE='naqya-0.2.0';
-const CORE=['./','./index.html','./styles.css','./styles-02.css','./services/capabilities.js','./services/stt-core.js','./app.js','./manifest.webmanifest','./icons/icon.svg','./icons/icon-maskable.svg'];
+const CACHE='naqya-0.3.0';
+const CORE=['./','./index.html','./styles.css','./styles-02.css','./services/native-bridge.js','./services/capabilities.js','./services/stt-core.js','./services/pcm-worklet.js','./app.js','./app-03.js','./manifest.webmanifest','./icons/icon.svg','./icons/icon-maskable.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{
