@@ -18,14 +18,22 @@ window.NAQYA.capabilities={
       }
       if(navigator.storage?.persisted)storage.persisted=await navigator.storage.persisted();
     }catch{}
+    let nativeStatus={available:false,models:[],modelDir:'',runtime:'PWA'};
+    try{nativeStatus=await (window.NAQYANativeSTT?.status?.()||Promise.resolve(nativeStatus))}catch{}
     return {
       indexedDB:'indexedDB' in window,
       serviceWorker:'serviceWorker' in navigator,
       mediaDevices:Boolean(navigator.mediaDevices?.getUserMedia),
       mediaRecorder:'MediaRecorder' in window,
+      audioWorklet:Boolean((window.AudioContext||window.webkitAudioContext)?.prototype?.audioWorklet)||'AudioWorkletNode' in window,
       speechRecognition:Boolean(SpeechCtor),
       onDeviceSpeech,
-      nativeWhisper:Boolean(window.NAQYANativeSTT?.transcribe||window.NAQYANativeSTT?.startLive),
+      nativeDesktop:Boolean(window.NAQYANativeSTT?.isTauri?.()),
+      nativeWhisper:Boolean(nativeStatus?.available),
+      nativeWhisperModels:nativeStatus?.models?.length||0,
+      nativeWhisperRuntime:nativeStatus?.runtime||null,
+      nativeWhisperVersion:nativeStatus?.whisperCppVersion||null,
+      nativeModelDir:nativeStatus?.modelDir||null,
       cryptoSubtle:Boolean(window.crypto?.subtle),
       fileReader:'FileReader' in window,
       online:navigator.onLine,
