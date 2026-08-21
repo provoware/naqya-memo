@@ -28,6 +28,8 @@ def validate_schema_contract() -> None:
     measurement_properties = schema["properties"]["measurements"]["properties"]
     for key in ("resource_metrics_sha256", "resource_duration_seconds", "cpu_avg_pct", "cpu_max_pct"):
         assert key in measurement_properties, f"Ressourcen-Messfeld fehlt im Schema: {key}"
+    for key in ("runtime_metrics_sha256", "segments_succeeded", "runtime_target_segment_ms", "runtime_captured_audio_ms", "runtime_transcribed_audio_ms", "runtime_stt_elapsed_ms"):
+        assert key in measurement_properties, f"Runtime-Messfeld fehlt im Schema: {key}"
 
 
 def require_sha(value: str, label: str) -> None:
@@ -77,8 +79,25 @@ def main() -> None:
     assert measurements["segments_total"] >= 1
     assert 0 <= measurements["segments_lost"] <= measurements["segments_total"]
     assert measurements["realtime_factor_avg"] > 0
-    assert measurements["realtime_factor_max"] > 0
+    assert measurements["realtime_factor_max"] >= measurements["realtime_factor_avg"]
     assert measurements["peak_ram_mb"] > 0
+
+    runtime_fields = (
+        "runtime_metrics_sha256", "segments_succeeded", "runtime_target_segment_ms",
+        "runtime_captured_audio_ms", "runtime_transcribed_audio_ms", "runtime_stt_elapsed_ms",
+    )
+    present_runtime_fields = [key for key in runtime_fields if key in measurements]
+    assert len(present_runtime_fields) in (0, len(runtime_fields)), "Runtime-Herkunft muss vollständig oder gar nicht vorhanden sein"
+    if present_runtime_fields:
+        require_sha(measurements["runtime_metrics_sha256"], "measurements.runtime_metrics_sha256")
+        assert measurements["segments_succeeded"] + measurements["segments_lost"] == measurements["segments_total"]
+        assert measurements["runtime_target_segment_ms"] > 0
+        assert measurements["runtime_captured_audio_ms"] > 0
+        assert 0 < measurements["runtime_transcribed_audio_ms"] <= measurements["runtime_captured_audio_ms"]
+        assert measurements["runtime_stt_elapsed_ms"] > 0
+        calculated_rtf = measurements["runtime_stt_elapsed_ms"] / measurements["runtime_transcribed_audio_ms"]
+        assert abs(calculated_rtf - measurements["realtime_factor_avg"]) <= max(0.00001, calculated_rtf * 0.00002)
+        assert measurements["duration_seconds"] == int(measurements["runtime_captured_audio_ms"] // 1000)
 
     resource_fields = ("resource_metrics_sha256", "resource_duration_seconds", "cpu_avg_pct", "cpu_max_pct")
     present_resource_fields = [key for key in resource_fields if key in measurements]
