@@ -21,6 +21,7 @@ on:
       - 'tools/generate_release_evidence.py'
       - 'tests/validate_dist.py'
       - 'tests/validate_diagnostics.py'
+      - 'tests/validate_platform_diagnostics.py'
       - 'tests/diagnostics_runtime.test.js'
       - 'tests/validate_release_evidence.py'
       - 'release/RELEASE_EVIDENCE.schema.json'
@@ -45,6 +46,7 @@ on:
       - 'tools/generate_release_evidence.py'
       - 'tests/validate_dist.py'
       - 'tests/validate_diagnostics.py'
+      - 'tests/validate_platform_diagnostics.py'
       - 'tests/diagnostics_runtime.test.js'
       - 'tests/validate_release_evidence.py'
       - 'release/RELEASE_EVIDENCE.schema.json'
@@ -62,6 +64,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Diagnosevertrag vor Build sperren
+        run: python3 tests/validate_platform_diagnostics.py
 
       - name: Linux-Buildabhängigkeiten installieren
         run: |
@@ -130,13 +135,16 @@ jobs:
           NAQYA_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python3 tools/generate_release_evidence.py \
+            --target-os linux \
             --package release/NAQYA-0.5.0-linux-x86_64.deb \
             --sidecar release/naqya-whisper-packaged \
             --source-sidecar src-tauri/binaries/naqya-whisper-x86_64-unknown-linux-gnu \
             --runtime-deps release/runtime-deps.txt \
+            --package-format deb \
+            --reproducibility-profile dpkg-deb-normalized-v1 \
             --sidecar-started \
             --dependencies-resolved \
-            --package-repack-deterministic
+            --package-reproducibility-verified
           python3 tests/validate_release_evidence.py release/RELEASE_EVIDENCE.json
 
       - name: Nachweisartefakte sichern
