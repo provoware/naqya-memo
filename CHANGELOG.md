@@ -1,5 +1,16 @@
 # Änderungsprotokoll
 
+## 0.5.1-A – PRODUKTVERSIONS-KONSISTENZ
+
+- PWA-Produktversionskonstante in `app.js` von 0.2.0 auf 0.5.0 synchronisiert
+- harten Gleichheitstest zwischen `app.js` und `VERSION.json` eingeführt
+- Backup-Vertrag prüft nun explizit, dass exportierte Produktmetadaten dieselbe `VERSION`-Konstante verwenden
+- `DB_VERSION=2` bewusst unverändert gelassen, da Produktversion und IndexedDB-Schema getrennte Verträge sind
+- README und TODO von der zuvor dokumentierten Versionsdrift bereinigt
+- versehentliche Nebenänderung an der HTML-Escaping-Funktion im Entwicklungszweig per Commit-Diff erkannt und vor Freigabe vollständig zurückgenommen
+
+Die formale Produktversion bleibt bis zum Abschluss des 0.5.1-Releaseblocks bei 0.5.0.
+
 ## 0.5.0 – TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG
 
 - reproduzierbaren whisper.cpp-Runtimevertrag mit festem Upstream-Tag und Commit eingeführt
@@ -24,11 +35,10 @@
 - TODO um eine dauerhaft nutzbare Entwickler-Übergabecheckliste erweitert
 - wenige schwer erkennbare Architektur-/Sicherheitsinvarianten direkt im Code mit `ENTWICKLERHINWEIS` markiert
 - Entwicklerdokumentation und Übergabeverträge in die automatischen Text-/Statikprüfungen aufgenommen
-- beim Entwickleraudit eine noch offene Produktversionsdrift in `app.js` erkannt und als explizite P1-Restarbeit dokumentiert
+- beim Entwickleraudit eine Produktversionsdrift in `app.js` erkannt; Korrektur erfolgte anschließend in 0.5.1-A
 
 Bekannte Grenzen:
 - Tauri ist für den Sidecar konfiguriert und Linux x86_64 wird im CI gebaut; ein vollständiges Endanwender-Linux-Bundle ist noch nicht end-to-end abgenommen
-- `app.js` meldet intern noch Produktversion 0.2.0; `DB_VERSION=2` ist dagegen korrekt das separate IndexedDB-Schema. Die Produktversionskorrektur ist im TODO als P1 geführt
 - Windows-x86_64-Sidecar benötigt noch vollständige Build-/Bundle-/Hardwareabnahme
 - reale Linux-Hardware-/Mikrofonabnahme steht noch aus
 - AudioWorklet-Umstellung und Langzeittests folgen
