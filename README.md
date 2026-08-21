@@ -4,9 +4,9 @@ Offline-first Organizer für Termine, Fristen, Aufgaben, Dokumente, Fotos, Audio
 
 ## Stand
 
-**0.4.0 – AUDIO NORMALISIERUNG, MODELLPFAD & LIVE-SEGMENT-STT**
+**0.5.0 – TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG**
 
-NAQYA verarbeitet Sprache weiterhin ohne Cloudpflicht. Version 0.4.0 schließt die drei zentralen Desktop-Lücken der vorherigen Stufe: lokale Audio-Normalisierung auf 16 kHz Mono-WAV, kontrollierte Materialisierung importierter Sprachmodelle in einen geschützten NAQYA-Modellpfad und segmentierte native Live-Transkription über whisper.cpp.
+NAQYA verarbeitet Sprache weiterhin lokal und ohne Cloudpflicht. Der aktuelle Desktoppfad bündelt whisper.cpp als bevorzugten Tauri-Sidecar, baut den Linux-x86_64-Sidecar reproduzierbar aus einem fest gepinnten Upstream-Commit und prüft das erzeugte Artefakt per SHA-256. Ein expliziter lokaler `whisper-cli`-Fallback bleibt nur als diagnostizierbarer Ersatzpfad erhalten.
 
 ## Schnellstart PWA
 
@@ -29,106 +29,54 @@ python3 -m http.server 8765 --bind 127.0.0.1
 
 Dann `http://127.0.0.1:8765` öffnen.
 
-> Mikrofon, Service Worker und PWA-Installation benötigen einen sicheren Kontext. `localhost`/`127.0.0.1` gilt dafür als sicher.
+## Neu in 0.5.0
 
-## Neu in 0.4.0
-
-- lokale Web-Audio-Normalisierung auf **16.000 Hz, Mono, PCM16/WAV**
-- 4-Sekunden-PCM-Fenster für native Live-Transkription
-- Originalaufnahme und 3-Sekunden-Recovery bleiben parallel erhalten
-- echte lokale Live-STT-Warteschlange statt paralleler unkontrollierter Transkriptionsaufrufe
-- Messung von Audiozeit, Transkriptionszeit und Echtzeitfaktor
-- importierte `.bin`/`.gguf`-Modelle werden beim ersten nativen Diktat in den geschützten App-Datenpfad übertragen
-- Modelltransfer speicherschonend in **4-MiB-Blöcken**
-- native SHA-256-Prüfung des vollständigen Modells
-- atomare Aktivierung erst nach erfolgreicher Integritätsprüfung
-- Transkription akzeptiert nur Modelle aus dem kontrollierten NAQYA-Modellpfad
-- abgebrochene Modelltransfers werden bereinigt
-- PWA-Offline-Cache auf die 0.4-Dienste erweitert
-- CI prüft JavaScript, statische Verträge sowie Rust/Tauri-Kompilierung
+- reproduzierbarer whisper.cpp-Runtimevertrag mit festem Upstream-Tag und Commit
+- Linux-/Windows-Zielnamen für Tauri-Sidecars definiert
+- `tauri-plugin-shell` und `bundle.externalBin` integriert
+- gebündelter `naqya-whisper`-Sidecar wird vor externem CLI-Fallback verwendet
+- Runtime-Diagnose unterscheidet Sidecar, Fallback und Nichtverfügbarkeit
+- Linux-x86_64-Sidecar wird im CI real gebaut und per SHA-256 geprüft
+- Laufzeit-Downloads ungeprüfter kritischer Binärdateien bleiben verboten
+- temporäre STT-WAV-Dateien liegen im privaten Tauri-App-Cache
+- `AGENTS.md` und `TODO.md` steuern Entwicklung, Freigabe und Restarbeiten verbindlich
+- `.gitignore` schützt Buildausgaben, Sidecar-Artefakte und lokale Sprachmodelle vor versehentlichem Commit
+- Versions-, Status- und Offline-Cache-Metadaten sind auf 0.5.0 konsolidiert
 
 ## Desktop-Spracherkennung
 
-Die Desktop-Brücke erkennt `whisper-cli` entweder:
+Priorität der nativen Runtime:
 
-1. im lokalen `PATH`, oder
-2. über die Umgebungsvariable `NAQYA_WHISPER_CLI`.
+1. gebündelter Tauri-Sidecar `naqya-whisper`
+2. explizit freigegebener lokaler `whisper-cli`-Fallback über `NAQYA_WHISPER_CLI` bzw. kontrollierte PATH-Erkennung
 
-Ein importiertes Modell wird nicht direkt aus einem beliebigen Dateipfad an whisper.cpp übergeben. NAQYA überträgt es zuerst in den eigenen App-Datenbereich, prüft SHA-256 und verwendet anschließend ausschließlich diesen kontrollierten Pfad.
-
-Der Live-Diktatpfad lautet:
-
-```text
-Mikrofon
-  ↓
-Originalaufnahme + 3-s-Recovery
-  ↓
-Web Audio PCM
-  ↓
-16 kHz / Mono / WAV
-  ↓
-4-s-Live-Segment
-  ↓
-whisper.cpp lokal
-  ↓
-Transkriptsegment
-  ↓
-persistenter Diktattext
-```
-
-## Bereits enthalten
-
-- Tauri-2-Desktop-Grundstruktur
-- JavaScript↔Rust-Brücke
-- persistente Audioaufnahme in 3-Sekunden-Segmenten
-- Crash-/Unterbrechungs-Recovery
-- Browser-On-Device-STT, sofern tatsächlich lokal verfügbar
-- vier Sprachprofile: Schnell, Ausgewogen, Genau, Maximum
-- lokaler Import von `.bin`/`.gguf`-Sprachmodellen
-- vollständiges Binärbackup für Dokumente und Audio
-- modernes responsives Kachel-Dashboard
-- vier Themes und fünf Schrift-/Sichtbarkeitsprofile
-- lokale IndexedDB-Datenbank
-- Termine, Fristen, Aufgaben, Notizen und Textdokumente
-- Projekte, Kategorien und Tags
-- Dokument-/Fotoablage
-- Kalender-Monatsansicht
-- persistente Chronologie
-- globale lokale Suche
-- Diagnosebereich
+Ein importiertes Modell wird zuerst in den eigenen App-Datenbereich übertragen, per SHA-256 geprüft und erst anschließend für native Transkription verwendet.
 
 ## Datenschutz
 
-Der Kern benötigt keinen Account, keine Cloud und keine Telemetrie. Diktat startet nur mit einer lokal verfügbaren STT-Engine. Es gibt keinen automatischen Online-Fallback.
-
-## Technische Grenzen von 0.4.0
-
-- whisper.cpp selbst wird weiterhin noch nicht als reproduzierbares Sidecar mit der Anwendung ausgeliefert.
-- Die Live-PCM-Erfassung nutzt aktuell `ScriptProcessor` als breit kompatiblen Übergangsadapter. Eine spätere AudioWorklet-Umstellung ist vorgesehen.
-- Reale Linux-/Windows-Abnahmen mit verschiedenen CPUs, Modellen, Mikrofonen und Langzeitaufnahmen stehen noch aus.
-- Das Vollbackup verwendet weiterhin JSON/Base64 und ist bei sehr großen Datenbeständen speicherintensiv.
-- Android- und iOS-Native-STT folgen später.
+Der Kern benötigt keinen Account, keine Cloud und keine Telemetrie. Es gibt keinen automatischen Online-STT-Fallback.
 
 ## Qualitätsprüfung
 
-GitHub Actions prüft:
+GitHub Actions prüft unter anderem:
 
 - JSON-Struktur
 - JavaScript-Syntax
+- reproduzierbaren Linux-Sidecar-Build
+- SHA-256 des erzeugten Sidecars
 - Rust-Formatierung
 - Rust/Tauri-Kompilierung
-- statische Architekturverträge
+- statische Architektur-/Projektverträge
 - Shell-Syntax
 
-## Roadmap
+## Bekannte Grenzen
 
-Nächster Hauptblock: **0.5.0 – DESKTOP SELF-SETUP, WHISPER SIDECAR & REAL-HARDWARE-ABNAHME**.
+- reale Linux-Desktop-/Mikrofonabnahme auf Referenzhardware steht noch aus
+- Windows-x86_64-Sidecar benötigt noch Build-, Bundle- und Hardwareabnahme
+- Live-PCM nutzt weiterhin `ScriptProcessor`; `AudioWorklet` folgt als Qualitätsausbau
+- sehr große Vollbackups sind durch JSON/Base64 speicherintensiv
+- native Mobiladapter für Android und iPhone/iPad stehen noch aus
 
-Ziele:
+## Nächster Hauptblock
 
-- reproduzierbare lokale whisper.cpp-Bereitstellung
-- Self-Setup/Diagnose für Einsteiger
-- erste echte Linux-Referenzabnahme
-- Windows-Abnahme
-- Latenz-, CPU-, RAM- und 30/60-Minuten-Diktattests
-- AudioWorklet als moderner Live-PCM-Pfad
+**0.5.x – WINDOWS-SIDECAR, RELEASE-NACHWEIS & REAL-HARDWARE-ABNAHME**.
