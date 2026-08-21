@@ -84,7 +84,11 @@
         "segments_lost": {"type": "integer", "minimum": 0},
         "realtime_factor_avg": {"type": "number", "exclusiveMinimum": 0},
         "realtime_factor_max": {"type": "number", "exclusiveMinimum": 0},
-        "peak_ram_mb": {"type": "number", "exclusiveMinimum": 0}
+        "peak_ram_mb": {"type": "number", "exclusiveMinimum": 0},
+        "resource_metrics_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "resource_duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "cpu_avg_pct": {"type": "number", "minimum": 0},
+        "cpu_max_pct": {"type": "number", "minimum": 0}
       }
     },
     "diagnostics": {
