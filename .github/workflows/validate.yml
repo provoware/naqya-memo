@@ -35,7 +35,9 @@ jobs:
       - name: Rust kompilieren prüfen
         run: cargo check --manifest-path src-tauri/Cargo.toml
       - name: Statische Verträge prüfen
-        run: python3 tests/validate_static.py
+        run: |
+          python3 tests/validate_static.py
+          python3 tests/validate_sidecar.py
       - name: Shell-Syntax prüfen
         run: |
           bash -n START_NAQYA.sh
