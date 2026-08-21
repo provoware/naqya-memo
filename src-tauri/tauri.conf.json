@@ -4,7 +4,8 @@
   "version": "0.5.0",
   "identifier": "de.provoware.naqya.memo",
   "build": {
-    "frontendDist": ".."
+    "beforeBuildCommand": "python3 tools/stage_desktop_frontend.py",
+    "frontendDist": "../dist"
   },
   "app": {
     "windows": [
