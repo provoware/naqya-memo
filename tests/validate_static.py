@@ -17,11 +17,13 @@ version=json.loads((root/'VERSION.json').read_text())
 status=json.loads((root/'PROJEKTSTATUS.json').read_text())
 manifest=json.loads((root/'manifest.webmanifest').read_text())
 tauri=json.loads((root/'src-tauri/tauri.conf.json').read_text())
-assert version['version']==status['version']==tauri['version']=='0.4.0'
+assert version['version']==status['version']==tauri['version']=='0.5.0'
 assert version['schema_version']==2
 assert version['live_stt_segment_ms']==4000
 assert version['stt_pcm_rate_hz']==16000
 assert version['model_transfer_chunk_bytes']==4194304
+assert version['native_stt_provider']=='whisper.cpp-sidecar'
+assert version['native_stt_fallback']=='whisper.cpp-cli'
 assert status['kernfunktionen']['audio_segment_recovery'] is True
 assert status['kernfunktionen']['audio_normalisierung_web_audio'] is True
 assert status['kernfunktionen']['audio_normalisierung_pcm_hz']==16000
@@ -29,12 +31,15 @@ assert status['kernfunktionen']['native_live_stt_segment_ms']==4000
 assert status['kernfunktionen']['sprachmodell_native_materialisierung'] is True
 assert status['kernfunktionen']['sprachmodell_sha256_native'] is True
 assert status['kernfunktionen']['sprachmodell_atomare_aktivierung'] is True
-assert status['kernfunktionen']['whisper_cpp_native_runtime_bundled'] is False
+assert status['kernfunktionen']['whisper_cpp_native_runtime_bundled'] is True
+assert status['kernfunktionen']['whisper_cpp_sidecar_preferred'] is True
+assert status['kernfunktionen']['whisper_cpp_external_cli_fallback'] is True
+assert status['kernfunktionen']['whisper_cpp_runtime_source_diagnostic'] is True
 assert manifest['start_url']=='./'
 assert tauri['bundle']['externalBin']==['binaries/naqya-whisper']
 
 agents=(root/'AGENTS.md').read_text()
-for needle in ['TODO.md','Qualitätsgate','Sidecar- und Runtime-Regeln','Pflichtdateien bei Änderungen']:
+for needle in ['TODO.md','Qualitätsgate','Sidecar- und Runtime-Regeln','Pflichtdateien bei Änderungen','Repository- und Merge-Pflicht je Iteration']:
     assert needle in agents, f'AGENTS-Vertrag unvollständig: {needle}'
 
 todo=(root/'TODO.md').read_text()
@@ -86,12 +91,12 @@ assert 'Command::new("main")' not in rust, 'Generische main-PATH-Auflösung darf
 assert 'std::env::temp_dir()' not in rust, 'STT-Audio darf nicht im allgemeinen System-Tempverzeichnis landen'
 
 cargo=(root/'src-tauri/Cargo.toml').read_text()
-assert 'version = "0.4.0"' in cargo
+assert 'version = "0.5.0"' in cargo
 assert 'sha2 = "0.10"' in cargo
 assert 'tauri-plugin-shell = "2"' in cargo
 
 sw=(root/'sw.js').read_text()
-for needle in ['naqya-0.4.0','services/audio-normalizer.js','services/live-stt.js','services/release-04.js','services/native-bridge.js','services/stt-core.js']:
+for needle in ['naqya-0.5.0','services/audio-normalizer.js','services/live-stt.js','services/release-04.js','services/native-bridge.js','services/stt-core.js']:
     assert needle in sw, f'Offline-Cache unvollständig: {needle}'
 
 for f in [
@@ -102,4 +107,4 @@ for f in [
     text=(root/f).read_text()
     assert not re.search(r'https?://(?!127\.0\.0\.1|localhost)',text), f'Externe Laufzeit-URL in {f}'
 
-print('NAQYA 0.4 static validation + 0.5 Sidecar-Integration + Projektsteuerung: PASS')
+print('NAQYA 0.5 static validation + Sidecar-Integration + Projektsteuerung: PASS')
