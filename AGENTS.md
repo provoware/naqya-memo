@@ -65,6 +65,7 @@ Der Fingerprint bindet gemeinsame Software-/Diagnoseinvarianten, nicht plattform
 - Hardwarefreigaben müssen an einen validierten Evidence-Fingerprint gebunden sein.
 - Plattform, OS-Version, Hardware, Mikrofon, Modell-SHA, Testdauer und Ergebnis müssen nachvollziehbar dokumentiert sein.
 - 30-/60-Minuten-Aussagen zu Stabilität, CPU, RAM oder Echtzeitfaktor dürfen nur aus realen Messungen stammen.
+- E3-Runtime-Metriken und E4-Ressourcenmetriken werden im Standardpfad über E5/E6 direkt und SHA-gebunden in den Hardware-Nachweis importiert; manuelles Abschreiben ist kein bevorzugter Freigabepfad.
 - `AudioWorklet` wird erst gegen eine dokumentierte Baseline bewertet; die bestehende Aufnahmeimplementierung wird nicht gleichzeitig mit der Baseline-Erhebung umgebaut.
 
 ## Pflichtdateien bei Änderungen
@@ -115,7 +116,7 @@ Je nach Änderungsumfang mindestens:
 - eine Iteration ist erst abgeschlossen, wenn Repository, PR, CI und Dokumentation übereinstimmen.
 
 ## Aktueller validierter Stand
-**0.5.1-D – Windows-Bundle & Plattform-Evidence, 89 % / 8 von 9 Hauptpunkten**
+**0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence, 89 % / 8 von 9 Hauptpunkten**
 
 Validiert:
 - deterministisches Linux-DEB mit startbarem Sidecar
@@ -123,7 +124,10 @@ Validiert:
 - Linux-/Windows-Release-Evidence und automatischer Paarvergleich
 - zentraler Diagnosevertrag mit unveränderter plattformübergreifender Semantik
 - Evidence-Fingerprint `018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf`
-- Qualitäts- und Plattformgates für den D-Funktionsstand
+- maschinenlesbarer Hardware-Abnahmevertrag und fail-closed Collector
+- Runtime-Metrikexport mit Segmentbilanz und RTF
+- Prozessfamilienmessung für CPU und Peak-RAM
+- direkter SHA-gebundener Import von Runtime- und Ressourcenmetriken in Hardware-Evidence
 
 Nicht als reale Hardwarefreigabe validiert:
 - Mikrofon-/Endgerätebetrieb unter Linux und Windows
@@ -132,11 +136,11 @@ Nicht als reale Hardwarefreigabe validiert:
 - AudioWorklet als Ersatz für ScriptProcessor
 
 ## Nächster Entwicklungsblock
-**0.5.1-E – Reale Hardwareabnahme, AudioWorklet & Langzeithärtung**
+**0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme**
 
 Reihenfolge:
-1. maschinenlesbaren Hardware-Abnahmevertrag an den Evidence-Fingerprint binden
-2. reale Linux-/Windows-Baseline mit Mikrofon, Modell und Live-Diktat erfassen
-3. 30-/60-Minuten-Langzeit- und Lastmessungen durchführen
-4. erst danach `AudioWorklet` gegen die dokumentierte Baseline implementieren und regressionsprüfen
-5. 0.5.1 erst bei real nachgewiesenem letzten Hauptpunkt abschließen.
+1. validiertes Linux-Paket auf realem Referenzgerät installieren und starten
+2. Mikrofon, geschützten Modellpfad und gebündelten Sidecar real verwenden
+3. E3/E4-Messdateien erzeugen und über E5/E6 in `HARDWARE_ACCEPTANCE.json` importieren
+4. Hardware-Nachweis validieren; kein PASS ohne 0 Segmentverluste und alle realen Bestätigungen
+5. danach Windows-Smoke, `long30`, `long60` und erst dann `AudioWorklet`.
