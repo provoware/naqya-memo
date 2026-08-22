@@ -82,6 +82,46 @@ jobs:
           packaged_hash="$(sha256sum release/naqya-whisper-packaged | awk '{print $1}')"
           [[ "$source_hash" == "$packaged_hash" ]] || { echo "FEHLER: Gepackter Sidecar wurde verändert." >&2; exit 24; }
 
+      - name: Installiertes Linux-Paket und GUI-Start in sauberer Runtime prüfen
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "$PWD/release:/release:ro" \
+            ubuntu:24.04 \
+            bash -lc '
+              set -euo pipefail
+              export DEBIAN_FRONTEND=noninteractive
+              apt-get update
+              apt-get install -y --no-install-recommends \
+                /release/NAQYA-0.5.0-linux-x86_64.deb \
+                xvfb xauth dbus-x11 passwd ca-certificates
+
+              dpkg-query -W -f="${Status}\n" libwebkit2gtk-4.1-0 | grep -qx "install ok installed"
+              dpkg-query -W -f="${Status}\n" libgtk-3-0 | grep -qx "install ok installed"
+
+              ldd /usr/bin/naqya-memo > /tmp/naqya-gui-runtime-deps.txt
+              ! grep -q "not found" /tmp/naqya-gui-runtime-deps.txt || {
+                cat /tmp/naqya-gui-runtime-deps.txt
+                exit 25
+              }
+
+              useradd --create-home --shell /bin/bash naqya-test
+              set +e
+              timeout --signal=TERM 8s runuser -u naqya-test -- \
+                dbus-run-session -- xvfb-run -a \
+                env WEBKIT_DISABLE_COMPOSITING_MODE=1 /usr/bin/naqya-memo \
+                > /tmp/naqya-gui-start.log 2>&1
+              rc=$?
+              set -e
+
+              if [[ "$rc" -ne 124 ]]; then
+                echo "FEHLER: Installierte NAQYA-GUI blieb nicht bis zum Smoke-Timeout aktiv (Exit $rc)." >&2
+                cat /tmp/naqya-gui-start.log >&2
+                exit 26
+              fi
+            '
+
       - name: Release-Nachweis erzeugen
         env:
           NAQYA_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
