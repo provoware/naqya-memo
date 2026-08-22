@@ -3,8 +3,8 @@
   "repo": "provoware/naqya-memo",
   "version": "0.5.0",
   "entwicklungsphase": "TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG",
-  "aktueller_arbeitsstand": "0.5.1-D – WINDOWS-BUNDLE & PLATTFORM-EVIDENCE",
-  "status": "ENTWICKLUNG – LINUX/WINDOWS-BUNDLE + EVIDENCE-FINGERPRINT CI-VALIDIERT",
+  "aktueller_arbeitsstand": "0.5.1-E6 – RUNTIME-METRIKEN DIREKT IN HARDWARE-EVIDENCE",
+  "status": "ENTWICKLUNG – HARDWARE-EVIDENCE-KETTE AUTOMATISIERT, REALE GERÄTEABNAHME AUSSTEHEND",
   "referenzplattform": "PWA + Tauri Desktop",
   "zielplattformen": ["Linux", "Windows", "Android", "iPhone/iPad", "PWA"],
   "hauptdatei": "index.html",
@@ -68,6 +68,12 @@
     "native_live_stt_segment_ms": 4000,
     "native_live_stt_queue": true,
     "live_stt_realtime_factor_metric": true,
+    "live_stt_runtime_metrics_export": true,
+    "hardware_acceptance_contract": true,
+    "hardware_acceptance_collector": true,
+    "process_resource_metrics": true,
+    "hardware_resource_metrics_import": true,
+    "hardware_runtime_metrics_import": true,
     "live_diktat_on_device_browser": "feature-detect",
     "stt_provider_contract": true,
     "tauri_desktop_scaffold": true,
@@ -100,9 +106,10 @@
   },
   "bekannte_grenzen": [
     "Linux-DEB und Windows-NSIS sind im CI paketbezogen validiert; eine reale Endgeräte-, Mikrofon- und Langzeithardwareabnahme steht weiterhin aus.",
+    "E1 bis E6 automatisieren Hardwarevertrag, Collector, Runtime-/Ressourcenmessung und deren kryptografisch gebundenen Import; sie ersetzen keine reale Mikrofonabnahme.",
     "Die Live-PCM-Erfassung verwendet weiterhin Web Audio ScriptProcessor als Übergangsadapter; eine AudioWorklet-Umstellung ist vorgesehen.",
     "Das Vollbackup nutzt weiterhin JSON/Base64 und ist für sehr große Datenbestände speicherintensiver als ein streamingfähiger Container.",
     "Native Mobiladapter für Android und iPhone/iPad stehen weiterhin aus."
   ],
-  "naechster_meilenstein": "0.5.1-E – REALE HARDWAREABNAHME, AUDIOWORKLET & LANGZEITHÄRTUNG"
+  "naechster_meilenstein": "0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME"
 }
