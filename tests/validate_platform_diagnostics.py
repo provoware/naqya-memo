@@ -38,7 +38,10 @@ assert evidence_contract["format"] == "NAQYA-DIAGNOSTICS"
 assert release["linux_bundle_validiert"] is True
 assert release["windows_bundle_validiert"] is True
 assert release["plattform_evidence_validiert"] is True
-assert status["aktueller_arbeitsstand"].startswith("0.5.1-D – WINDOWS-BUNDLE")
-assert status["naechster_meilenstein"].startswith("0.5.1-E – REALE HARDWAREABNAHME")
 
-print("NAQYA Plattform-Diagnosevertrag: PASS – D plattformübergreifend abgeschlossen")
+# Der Plattformvertrag bleibt auch nach D gültig. Der aktuelle Arbeitsstand darf
+# deshalb auf E weiterlaufen, solange der D-Nachweis unverändert grün gebunden ist.
+assert status["aktueller_arbeitsstand"].startswith("0.5.1-E6 – RUNTIME-METRIKEN")
+assert status["naechster_meilenstein"].startswith("0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME")
+
+print("NAQYA Plattform-Diagnosevertrag: PASS – D-Nachweis unverändert, E6-Status konsistent")

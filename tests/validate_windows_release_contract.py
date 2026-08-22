@@ -71,6 +71,7 @@ assert (progress["prozent"], progress["erledigt"], progress["gesamt"]) == (89, 8
 assert release["windows_bundle_validiert"] is True
 assert release["plattform_evidence_validiert"] is True
 assert release["evidence_fingerprint_validiert"] is True
-assert status["naechster_meilenstein"].startswith("0.5.1-E – REALE HARDWAREABNAHME")
+assert status["aktueller_arbeitsstand"].startswith("0.5.1-E6 – ")
+assert status["naechster_meilenstein"].startswith("0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME")
 
-print("NAQYA 0.5.1-D Windows-/Plattform-Evidence-Vertrag: PASS – D nach real grünem Windows-/Paar-Gate abgeschlossen")
+print("NAQYA Windows-/Plattform-Evidence-Vertrag: PASS – D-Nachweis unverändert, E6-Status und E7-Meilenstein konsistent")
