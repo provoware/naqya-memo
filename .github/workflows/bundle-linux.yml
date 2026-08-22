@@ -97,8 +97,8 @@ jobs:
                 /release/NAQYA-0.5.0-linux-x86_64.deb \
                 xvfb xauth dbus-x11 passwd ca-certificates
 
-              dpkg-query -W -f="${Status}\n" libwebkit2gtk-4.1-0 | grep -qx "install ok installed"
-              dpkg-query -W -f="${Status}\n" libgtk-3-0 | grep -qx "install ok installed"
+              dpkg-query -W -f="\${Status}\n" libwebkit2gtk-4.1-0 | grep -qx "install ok installed"
+              dpkg-query -W -f="\${Status}\n" libgtk-3-0 | grep -qx "install ok installed"
 
               ldd /usr/bin/naqya-memo > /tmp/naqya-gui-runtime-deps.txt
               ! grep -q "not found" /tmp/naqya-gui-runtime-deps.txt || {
