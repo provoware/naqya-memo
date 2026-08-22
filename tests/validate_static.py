@@ -22,8 +22,8 @@ progress = status['fortschritt']
 assert (progress['prozent'], progress['erledigt'], progress['gesamt']) == (89, 8, 9)
 assert len(progress['erledigte_punkte']) == 8
 assert len(progress['offene_punkte']) == 1
-assert status['aktueller_arbeitsstand'] == '0.5.1-D – WINDOWS-BUNDLE & PLATTFORM-EVIDENCE'
-assert status['naechster_meilenstein'] == '0.5.1-E – REALE HARDWAREABNAHME, AUDIOWORKLET & LANGZEITHÄRTUNG'
+assert status['aktueller_arbeitsstand'] == '0.5.1-E6 – RUNTIME-METRIKEN DIREKT IN HARDWARE-EVIDENCE'
+assert status['naechster_meilenstein'] == '0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME'
 
 release = status['release_nachweis']
 for key in ('linux_bundle_validiert','windows_bundle_validiert','diagnostics_evidence_validiert','plattform_evidence_validiert','evidence_fingerprint_validiert'):
@@ -40,11 +40,29 @@ assert contract['schema_version'] == contract['event_schema_version'] == 1
 assert contract['format'] == 'NAQYA-DIAGNOSTICS'
 assert 'NAQYA-STT-4002' in contract['codes']
 
+kern = status['kernfunktionen']
+for key in (
+    'live_stt_runtime_metrics_export',
+    'hardware_acceptance_contract',
+    'hardware_acceptance_collector',
+    'process_resource_metrics',
+    'hardware_resource_metrics_import',
+    'hardware_runtime_metrics_import',
+):
+    assert kern[key] is True
+
 assert tauri['build']['frontendDist'] == '../dist'
 assert tauri['bundle']['externalBin'] == ['binaries/naqya-whisper']
 
 readme = (root / 'README.md').read_text()
-for needle in ('89 %','8 von 9 Hauptpunkten',FINGERPRINT,CONTRACT_SHA,'0.5.1-E – REALE HARDWAREABNAHME, AUDIOWORKLET & LANGZEITHÄRTUNG'):
+for needle in (
+    '89 %',
+    '8 von 9 Hauptpunkten',
+    FINGERPRINT,
+    CONTRACT_SHA,
+    '0.5.1-E6',
+    '0.5.1-E7',
+):
     assert needle in readme
 
 release_generator = (root / 'tools/generate_release_evidence.py').read_text()
@@ -74,4 +92,4 @@ for needle in (
 assert 'segmentsLost:liveState.segmentsFailed' in live_stt
 assert 'realtimeFactorMax:Number(liveState.rtfMax.toFixed(6))' in live_stt
 
-print('NAQYA statische Projektverträge: PASS – 0.5.1-D / 89 % / Evidence-Fingerprint konsistent; E3 Runtime-Metrikvertrag vorhanden')
+print('NAQYA statische Projektverträge: PASS – 0.5.1-E6 / 89 % / Evidence-Fingerprint konsistent; E7 Linux-Smoke bleibt reale Freigabegrenze')
