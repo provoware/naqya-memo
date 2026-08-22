@@ -1,10 +1,10 @@
 # TODO – NAQYA
 
-Stand: 2026-08-21
+Stand: 2026-08-22
 Validierter Basisstand: **0.5.0 – Tauri-Sidecar-Integration & Repository-Konsolidierung**
-Aktueller Arbeitsstand: **0.5.1-D – Windows-Bundle & Plattform-Evidence**
+Aktueller Arbeitsstand: **0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence**
 Fortschritt 0.5.1: **89 % – 8 von 9 Hauptpunkten erledigt**
-Nächster Entwicklungsblock: **0.5.1-E – Reale Hardwareabnahme, AudioWorklet & Langzeithärtung**
+Nächster Entwicklungsblock: **0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme**
 
 ## P0 – Freigabekritisch
 
@@ -20,6 +20,7 @@ Abnahmekriterien:
 - Providerdiagnose zeigt `whisper.cpp-sidecar`
 - absichtlich provozierte Diagnose-/Fehlercodes entsprechen dem unveränderten Diagnosevertrag
 - Evidence-Fingerprint der getesteten Software wird in `HARDWARE_ACCEPTANCE.json` gebunden
+- E3-Runtime-Metriken und E4-Ressourcenmessung werden ohne manuelles Abschreiben über E5/E6 importiert
 - kurze sowie mindestens 30-minütige Sitzung ohne Datenverlust
 - keine Hardware-Freigabe ohne real gemessenen und validierten Nachweis
 
@@ -69,7 +70,7 @@ Abnahmekriterien:
 
 ## Entwickler-Übergabecheckliste
 
-### Aktuelle Übergabebereitschaft 0.5.1-D / E1-Vertrag
+### Aktuelle Übergabebereitschaft 0.5.1-E6
 
 - [x] professioneller Entwickler-Einstieg und technische Übergabedokumentation
 - [x] PWA-/Backup-Produktversion gegen `VERSION.json` abgesichert
@@ -84,6 +85,8 @@ Abnahmekriterien:
 - [x] plattformübergreifender Evidence-Fingerprint validiert: `018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf`
 - [x] Diagnose-Contract-SHA: `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
 - [x] maschinenlesbares Hardware-Abnahmeschema und Validator vorhanden
+- [x] Hardware-Collector, Runtime-Metrikexport und Prozessressourcenmessung vorhanden
+- [x] Runtime- und Ressourcenmesswerte werden direkt und SHA-gebunden in Hardware-Evidence importiert
 - [ ] reale Linux-/Windows-Hardware-, Mikrofon- und Langzeitabnahme abschließen
 
 ### Vor jeder künftigen Entwicklerübergabe
@@ -97,6 +100,35 @@ Abnahmekriterien:
 - [ ] nach Merge resultierenden `main` erneut geprüft
 
 ## Erledigt
+
+### [erledigt] 0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence
+Ergebnis:
+- kanonischer `NAQYA-LIVE-STT-RUNTIME`-Export aus der echten Live-STT-Sitzung
+- direkte Übernahme von Dauer, Segmentbilanz und RTF in den Hardware-Collector
+- Runtime-Quelldatei per SHA-256 an `HARDWARE_ACCEPTANCE.json` gebunden
+- inkonsistente Segment-/Audio-/RTF-Werte werden fail-closed abgelehnt
+- manuelles Abschreiben von Segment- und RTF-Werten ist für den Standardpfad entfallen
+
+### [erledigt] 0.5.1-E5 – Ressourcenmetriken direkt importieren
+Ergebnis:
+- `RESOURCE_METRICS.json` wird direkt in Hardware-Evidence importiert
+- Peak-RAM, CPU-Durchschnitt/-Maximum und Messdauer werden übernommen
+- Ressourcenquelle wird per SHA-256 gebunden
+
+### [erledigt] 0.5.1-E4 – Prozess-Ressourcenmessung
+Ergebnis:
+- Linux-/Windows-Messer für NAQYA-Prozessfamilie und Sidecar
+- Peak-RAM, CPU und Prozessanzahl werden maschinenlesbar erfasst
+
+### [erledigt] 0.5.1-E3 – Runtime-Messadapter
+Ergebnis:
+- Segmente gesamt/erfolgreich/verloren sowie RTF Ø/Maximum werden in Live-STT erfasst
+- Segmentverlust ist Bestandteil der realen Sitzungsmessung
+
+### [erledigt] 0.5.1-E2 – Hardware-Evidence-Collector
+Ergebnis:
+- plattformübergreifender Collector erzeugt `HARDWARE_ACCEPTANCE.json`
+- Paket-/Modell-SHA, Hardwaredaten und reale Messwerte werden fail-closed geprüft
 
 ### [erledigt] 0.5.1-E1 – Maschinenlesbarer Hardware-Abnahmevertrag
 Ergebnis:
