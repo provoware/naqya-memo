@@ -32,6 +32,9 @@ jobs:
           node --check services/audio-normalizer.js
           node --check services/live-stt.js
           node --check services/release-04.js
+          node --check tests/stt_provider_contract.test.js
+      - name: STT-Plattformvertrag prüfen
+        run: node tests/stt_provider_contract.test.js
       - name: Diagnose-Laufzeitregression prüfen
         run: |
           node tests/diagnostics_runtime.test.js
