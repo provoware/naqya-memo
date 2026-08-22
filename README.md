@@ -1,10 +1,10 @@
 # PROVOWARE – NAQYA Memo Tool 2026
 
-> **Aktueller Entwicklungsstand:** 0.5.1-D – Windows-Bundle & Plattform-Evidence  
+> **Aktueller Entwicklungsstand:** 0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence  
 > **Produktversion:** 0.5.0  
-> **Status:** Entwicklung – Linux/Windows-Bundle + Evidence-Fingerprint CI-validiert  
+> **Status:** Entwicklung – Hardware-Evidence-Kette automatisiert, reale Geräteabnahme ausstehend  
 > **Fortschritt 0.5.1:** **89 %** – **8 von 9 Hauptpunkten erledigt**  
-> **Nächster Schritt:** 0.5.1-E – reale Hardwareabnahme, AudioWorklet & Langzeithärtung
+> **Nächster Schritt:** 0.5.1-E7 – reale Linux-Smoke-Hardwareabnahme
 
 ## Fortschritt auf einen Blick
 
@@ -42,6 +42,7 @@ Technischer Kern:
 - **Desktop-Build:** deterministisches `dist/`; Tauri `frontendDist` zeigt auf `../dist`
 - **Release-Nachweis:** Paket, Sidecar, Toolchain, Zielplattform, CI-Lauf, Diagnosevertrag und gemeinsamer Evidence-Fingerprint werden maschinenlesbar gebunden
 - **Hardware-Abnahmevertrag:** `hardware/HARDWARE_ACCEPTANCE.schema.json` bindet reale Linux-/Windows-Messungen an denselben Evidence-Fingerprint; ohne reale Messdaten entsteht keine Hardwarefreigabe
+- **Hardware-Evidence-Kette E2–E6:** Collector, Runtime-Metrikexport, Prozessressourcenmessung sowie direkte SHA-gebundene Importe für Runtime- und Ressourcenwerte sind vorhanden
 
 ## Diagnose-, Logging- und Evidence-Vertrag
 
@@ -63,18 +64,20 @@ Git-Commit
   → gepackter Sidecar
   → Diagnosevertrag
   → Evidence-Fingerprint
+  → E3-Runtime-Messung + E4-Ressourcenmessung
+  → E5/E6-Import in HARDWARE_ACCEPTANCE.json
   → reale Hardware-Abnahme
   → Runtime-Ereignis / Fehlercode
   → sichere Benutzeraktion
 ```
 
-## Hardware-Abnahmevertrag 0.5.1-E1
+## Hardware-Abnahmevertrag 0.5.1-E1 bis E6
 
-Der E1-Vertrag ist bewusst von der eigentlichen Gerätefreigabe getrennt. `hardware/HARDWARE_ACCEPTANCE.schema.json` beschreibt die Messdaten; `tests/validate_hardware_acceptance.py` prüft sie gegen den aktuell validierten Evidence-Fingerprint und Diagnosevertrag.
+E1 definiert den maschinenlesbaren Hardwarevertrag. E2 erzeugt `HARDWARE_ACCEPTANCE.json`. E3 erfasst reale Segment- und RTF-Metriken der Live-STT-Sitzung. E4 misst CPU und Peak-RAM der NAQYA-Prozessfamilie. E5 importiert `RESOURCE_METRICS.json` direkt und SHA-gebunden. E6 exportiert `NAQYA-LIVE-STT-RUNTIME` und importiert Dauer, Segmentbilanz und RTF ebenfalls direkt und SHA-gebunden.
 
-Ein Hardware-`PASS` verlangt mindestens: installierte und gestartete App, tatsächlich verwendeten gebündelten Sidecar, Modell aus dem geschützten Pfad, funktionierende Mikrofonaufnahme und Live-Diktat, erfolgreiche Temp-WAV-Bereinigung sowie **0 verlorene Segmente**. Die Profile `long30` und `long60` erzwingen mindestens 1800 beziehungsweise 3600 Sekunden reale Testdauer.
+Ein Hardware-`PASS` verlangt weiterhin mindestens: installierte und gestartete App, tatsächlich verwendeten gebündelten Sidecar, Modell aus dem geschützten Pfad, funktionierende Mikrofonaufnahme und Live-Diktat, erfolgreiche Temp-WAV-Bereinigung sowie **0 verlorene Segmente**. Die Profile `long30` und `long60` erzwingen mindestens 1800 beziehungsweise 3600 Sekunden reale Testdauer.
 
-Der Vertrag selbst ist automatisiert prüfbar; **reale Linux-/Windows-Hardwaremessungen stehen weiterhin aus** und werden nicht aus CI-Paketdaten abgeleitet.
+Die Evidence-Kette ist automatisiert prüfbar; **reale Linux-/Windows-Hardwaremessungen stehen weiterhin aus** und werden nicht aus CI-Paketdaten abgeleitet.
 
 ## Aktueller Plattform-Nachweis
 
@@ -139,6 +142,8 @@ Danach `http://127.0.0.1:8765` öffnen.
 - plattformübergreifender Evidence-Fingerprint
 - automatisierter Linux/Windows-Evidence-Paarvergleich
 - maschinenlesbares Hardware-Abnahmeschema und Validator
+- Hardware-Collector, Runtime-Metrikexport und Prozessressourcenmessung
+- direkter SHA-gebundener Import von Runtime- und Ressourcenmetriken in Hardware-Evidence
 
 ## Noch offen bzw. nicht als Hardware-Release abgenommen
 
@@ -149,11 +154,12 @@ Danach `http://127.0.0.1:8765` öffnen.
 
 ## Nächster Entwicklungsblock
 
-**0.5.1-E – REALE HARDWAREABNAHME, AUDIOWORKLET & LANGZEITHÄRTUNG**
+**0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME**
 
 Priorität:
 
-1. reale Linux- und Windows-Mikrofon-/Sidecar-Abnahme mit `HARDWARE_ACCEPTANCE.json` durchführen
-2. 30-/60-Minuten-Langzeitmessungen für CPU, RAM, Latenz, Echtzeitfaktor und Segmentverlust erfassen
-3. `ScriptProcessor` kontrolliert durch `AudioWorklet` ersetzen
-4. identische Diagnose-/Evidence-Invarianten während der Runtime-Abnahme erzwingen
+1. validiertes Linux-Paket auf realem Referenzgerät installieren und starten
+2. echtes Mikrofon + geschützten Modellpfad + gebündelten Sidecar verwenden
+3. Runtime- und Ressourcenmetriken exportieren und über E5/E6 in `HARDWARE_ACCEPTANCE.json` importieren
+4. Nachweis mit `tests/validate_hardware_acceptance.py` prüfen
+5. erst danach Windows-Smoke, `long30`, `long60` und schließlich `AudioWorklet`
