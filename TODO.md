@@ -1,10 +1,10 @@
 # TODO – NAQYA
 
-Stand: 2026-08-22
+Stand: 2026-08-23
 Validierter Basisstand: **0.5.0 – Tauri-Sidecar-Integration & Repository-Konsolidierung**
-Aktueller Arbeitsstand: **0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence**
+Aktueller Arbeitsstand: **0.5.1-E7 – Linux-Hardware-Smoke-Harness bereit**
 Fortschritt 0.5.1: **89 % – 8 von 9 Hauptpunkten erledigt**
-Nächster Entwicklungsblock: **0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme**
+Nächster Entwicklungsblock: **0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme mit `HARDWARE_ACCEPTANCE.json`**
 
 ## P0 – Freigabekritisch
 
@@ -18,11 +18,21 @@ Abnahmekriterien:
 - Mikrofonaufnahme und segmentiertes Live-Diktat funktionieren
 - temporäre WAV-Dateien werden zuverlässig bereinigt
 - Providerdiagnose zeigt `whisper.cpp-sidecar`
-- absichtlich provozierte Diagnose-/Fehlercodes entsprechen dem unveränderten Diagnosevertrag
 - Evidence-Fingerprint der getesteten Software wird in `HARDWARE_ACCEPTANCE.json` gebunden
 - E3-Runtime-Metriken und E4-Ressourcenmessung werden ohne manuelles Abschreiben über E5/E6 importiert
-- kurze sowie mindestens 30-minütige Sitzung ohne Datenverlust
+- Linux-Smoke wird mit `tools/run_linux_hardware_smoke.py` interaktiv und fail-closed durchgeführt
 - keine Hardware-Freigabe ohne real gemessenen und validierten Nachweis
+
+### [offen] Erstes reales Linux-`HARDWARE_ACCEPTANCE.json` erzeugen
+Komponente: E7 / reale Abnahme
+
+Abnahmekriterien:
+- genau getestetes Paket und Modell als echte Dateien angeben
+- Runtime- und Ressourcenmetriken aus derselben realen Sitzung verwenden
+- sieben Realbestätigungen einzeln durchführen; Default bleibt `NEIN`
+- nicht-interaktive Ausführung darf keinen PASS erzeugen
+- `tests/validate_hardware_acceptance.py` akzeptiert den erzeugten Nachweis
+- Ergebnis nur bei vollständig real beobachteten Kriterien auf PASS setzen
 
 ## P1 – Hohe Priorität
 
@@ -70,13 +80,14 @@ Abnahmekriterien:
 
 ## Entwickler-Übergabecheckliste
 
-### Aktuelle Übergabebereitschaft 0.5.1-E6
+### Aktuelle Übergabebereitschaft 0.5.1-E7
 
 - [x] professioneller Entwickler-Einstieg und technische Übergabedokumentation
 - [x] PWA-/Backup-Produktversion gegen `VERSION.json` abgesichert
 - [x] deterministisches Desktop-Frontend-`dist/`
 - [x] Linux-DEB mit enthaltenem und startbarem Sidecar im CI nachgewiesen
 - [x] Windows-NSIS mit enthaltenem und startbarem Sidecar im CI nachgewiesen
+- [x] Linux-GUI-Start im sauberen CI-Runtime-Kontext nachgewiesen
 - [x] Sidecar-Laufzeitabhängigkeiten und Bytegleichheit geprüft
 - [x] deterministisches DEB-Repacking nachgewiesen
 - [x] maschinen- und menschenlesbarer Release-Nachweis erzeugt
@@ -87,6 +98,7 @@ Abnahmekriterien:
 - [x] maschinenlesbares Hardware-Abnahmeschema und Validator vorhanden
 - [x] Hardware-Collector, Runtime-Metrikexport und Prozessressourcenmessung vorhanden
 - [x] Runtime- und Ressourcenmesswerte werden direkt und SHA-gebunden in Hardware-Evidence importiert
+- [x] E7-Linux-Hardware-Smoke-Harness mit fail-closed Realbestätigungen vorhanden
 - [ ] reale Linux-/Windows-Hardware-, Mikrofon- und Langzeitabnahme abschließen
 
 ### Vor jeder künftigen Entwicklerübergabe
@@ -100,6 +112,15 @@ Abnahmekriterien:
 - [ ] nach Merge resultierenden `main` erneut geprüft
 
 ## Erledigt
+
+### [erledigt] 0.5.1-E7 – Geführten Linux-Hardware-Smoke vorbereiten
+Ergebnis:
+- `tools/run_linux_hardware_smoke.py` bündelt Collector und Validator in einem geführten Ablauf
+- Paket, Modell, Runtime- und Ressourcenmetriken werden als echte Dateien vorausgesetzt
+- sieben reale Beobachtungen werden einzeln abgefragt, Default ist `NEIN`
+- nicht-interaktive Ausführung bricht fail-closed ab
+- unvollständige Bestätigungen erzeugen FAIL statt Freigabe
+- reale Hardwarefreigabe bleibt ausdrücklich ausstehend; Fortschritt bleibt 89 % / 8 von 9
 
 ### [erledigt] 0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence
 Ergebnis:
