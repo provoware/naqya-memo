@@ -31,7 +31,7 @@ for path in ROOT.rglob('*'):
 for rel in ['VERSION.json','PROJEKTSTATUS.json','manifest.webmanifest','src-tauri/tauri.conf.json','src-tauri/sidecar/whisper-runtime.json','diagnostics/DIAGNOSTICS_CONTRACT.json','release/RELEASE_EVIDENCE.schema.json']:
     json.loads(read(rel), object_pairs_hook=reject_duplicate_keys)
 
-for rel in ['README.md','CONTRIBUTING.md','TODO.md','AGENTS.md','docs/ARCHITEKTUR.md','docs/ENTWICKLERDOKUMENTATION.md','docs/WHISPER_SIDECAR.md','docs/DIAGNOSE_LOGGING.md']:
+for rel in ['README.md','CONTRIBUTING.md','TODO.md','AGENTS.md','docs/ARCHITEKTUR.md','docs/ENTWICKLERDOKUMENTATION.md','docs/WHISPER_SIDECAR.md','docs/DIAGNOSE_LOGGING.md','docs/HARDWARE_ACCEPTANCE.md']:
     headings = re.findall(r'^## .+$', read(rel), flags=re.MULTILINE)
     duplicates = sorted({h for h in headings if headings.count(h) > 1})
     assert not duplicates, f'Doppelte H2-Abschnitte in {rel}: {duplicates}'
@@ -43,6 +43,7 @@ readme = read('README.md')
 todo = read('TODO.md')
 agents = read('AGENTS.md')
 developer = read('docs/ENTWICKLERDOKUMENTATION.md')
+hardware_doc = read('docs/HARDWARE_ACCEPTANCE.md')
 changelog = read('CHANGELOG.md')
 
 assert version['version'] == status['version'] == '0.5.0'
@@ -71,6 +72,10 @@ else:
     assert 'reale Linux-Smoke-Hardwareabnahme' in readme
     assert 'Aktueller Arbeitsstand: **0.5.1-E7' in todo
     assert 'HARDWARE_ACCEPTANCE.json' in todo
+    assert 'tools/run_linux_hardware_smoke.py --self-check' in hardware_doc
+    assert '--runtime-metrics /pfad/RUNTIME_METRICS.json' in hardware_doc
+    assert '--resource-metrics /pfad/RESOURCE_METRICS.json' in hardware_doc
+    assert 'keine hardwarefreigabe' in hardware_doc.lower()
 
 assert 'Fortschritt 0.5.1: **89 % – 8 von 9 Hauptpunkten erledigt**' in todo
 for stage_name in ('0.5.1-E2', '0.5.1-E3', '0.5.1-E4', '0.5.1-E5', '0.5.1-E6'):
