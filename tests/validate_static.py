@@ -65,10 +65,10 @@ for needle in (
     '8 von 9 Hauptpunkten',
     FINGERPRINT,
     CONTRACT_SHA,
-    '0.5.1-E6',
-    '0.5.1-E7',
 ):
     assert needle in readme
+current_readme_phase = '0.5.1-E7' if status['aktueller_arbeitsstand'] == E7 else '0.5.1-E6'
+assert current_readme_phase in readme
 
 release_generator = (root / 'tools/generate_release_evidence.py').read_text()
 for needle in ('evidence_fingerprint','diagnostic_codes_sha256','diagnostics_contract','NAQYA_SOURCE_COMMIT'):
