@@ -1,10 +1,10 @@
 # TODO – NAQYA
 
-Stand: 2026-08-22
+Stand: 2026-08-23
 Validierter Basisstand: **0.5.0 – Tauri-Sidecar-Integration & Repository-Konsolidierung**
-Aktueller Arbeitsstand: **0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence**
+Aktueller Arbeitsstand: **0.5.1-E7 – Geführte reale Linux-Smoke-Hardwareabnahme vorbereitet**
 Fortschritt 0.5.1: **89 % – 8 von 9 Hauptpunkten erledigt**
-Nächster Entwicklungsblock: **0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme**
+Nächster Entwicklungsblock: **0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme durchführen**
 
 ## P0 – Freigabekritisch
 
@@ -13,6 +13,7 @@ Komponente: Hardware / Mikrofon / STT / Release
 
 Abnahmekriterien:
 - validierte Linux- und Windows-Pakete auf realen Referenzgeräten installieren und starten
+- Linux-Smoke interaktiv über `python3 tools/run_linux_hardware_smoke.py` durchführen
 - gebündelter `naqya-whisper` wird real von NAQYA verwendet
 - echtes Modell aus dem geschützten NAQYA-Modellpfad funktioniert
 - Mikrofonaufnahme und segmentiertes Live-Diktat funktionieren
@@ -23,6 +24,7 @@ Abnahmekriterien:
 - E3-Runtime-Metriken und E4-Ressourcenmessung werden ohne manuelles Abschreiben über E5/E6 importiert
 - kurze sowie mindestens 30-minütige Sitzung ohne Datenverlust
 - keine Hardware-Freigabe ohne real gemessenen und validierten Nachweis
+- nicht-interaktive oder unvollständige E7-Läufe bleiben fail-closed
 
 ## P1 – Hohe Priorität
 
@@ -70,7 +72,7 @@ Abnahmekriterien:
 
 ## Entwickler-Übergabecheckliste
 
-### Aktuelle Übergabebereitschaft 0.5.1-E6
+### Aktuelle Übergabebereitschaft 0.5.1-E7
 
 - [x] professioneller Entwickler-Einstieg und technische Übergabedokumentation
 - [x] PWA-/Backup-Produktversion gegen `VERSION.json` abgesichert
@@ -87,6 +89,7 @@ Abnahmekriterien:
 - [x] maschinenlesbares Hardware-Abnahmeschema und Validator vorhanden
 - [x] Hardware-Collector, Runtime-Metrikexport und Prozessressourcenmessung vorhanden
 - [x] Runtime- und Ressourcenmesswerte werden direkt und SHA-gebunden in Hardware-Evidence importiert
+- [x] geführter Linux-Hardware-Smoke-Harness vorhanden und fail-closed abgesichert
 - [ ] reale Linux-/Windows-Hardware-, Mikrofon- und Langzeitabnahme abschließen
 
 ### Vor jeder künftigen Entwicklerübergabe
