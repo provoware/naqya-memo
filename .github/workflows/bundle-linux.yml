@@ -103,7 +103,15 @@ jobs:
 
               dpkg-query -W -f="\${Status}\n" libwebkit2gtk-4.1-0 | grep -qx "install ok installed"
               dpkg-query -W -f="\${Status}\n" libjavascriptcoregtk-4.1-0 | grep -qx "install ok installed"
-              dpkg-query -W -f="\${Status}\n" libgtk-3-0 | grep -qx "install ok installed"
+              if dpkg-query -W -f="\${Status}\n" libgtk-3-0t64 2>/dev/null | grep -qx "install ok installed"; then
+                gtk_runtime_package=libgtk-3-0t64
+              elif dpkg-query -W -f="\${Status}\n" libgtk-3-0 2>/dev/null | grep -qx "install ok installed"; then
+                gtk_runtime_package=libgtk-3-0
+              else
+                echo "FEHLER: Keine installierte GTK-3-Runtime gefunden." | tee /ci-smoke/result.txt >&2
+                exit 27
+              fi
+              echo "GTK_RUNTIME=$gtk_runtime_package" >> /ci-smoke/result.txt
 
               ldd /usr/bin/naqya-memo | tee /ci-smoke/naqya-gui-runtime-deps.txt
               if grep -q "not found" /ci-smoke/naqya-gui-runtime-deps.txt; then
@@ -137,7 +145,7 @@ jobs:
                 echo "--- GUI-LOG ---"
                 cat /ci-smoke/naqya-gui-start.log || true
                 echo "--- PAKETE ---"
-                dpkg-query -W libwebkit2gtk-4.1-0 libjavascriptcoregtk-4.1-0 libgtk-3-0 || true
+                dpkg-query -W libwebkit2gtk-4.1-0 libjavascriptcoregtk-4.1-0 libgtk-3-0t64 libgtk-3-0 || true
                 echo "--- RUNTIME ---"
                 ls -ld /home/naqya-test /tmp/naqya-runtime || true
               } | tee /ci-smoke/result.txt >&2
