@@ -1,10 +1,10 @@
 # PROVOWARE – NAQYA Memo Tool 2026
 
-> **Aktueller Entwicklungsstand:** 0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence  
+> **Aktueller Entwicklungsstand:** 0.5.1-E7 – Geführte reale Linux-Smoke-Hardwareabnahme vorbereitet  
 > **Produktversion:** 0.5.0  
-> **Status:** Entwicklung – Hardware-Evidence-Kette automatisiert, reale Geräteabnahme ausstehend  
+> **Status:** Entwicklung – E7-Hardware-Smoke fail-closed vorbereitet, reale Geräteabnahme ausstehend  
 > **Fortschritt 0.5.1:** **89 %** – **8 von 9 Hauptpunkten erledigt**  
-> **Nächster Schritt:** 0.5.1-E7 – reale Linux-Smoke-Hardwareabnahme
+> **Nächster Schritt:** 0.5.1-E7 – reale Linux-Smoke-Hardwareabnahme durchführen
 
 ## Fortschritt auf einen Blick
 
@@ -37,12 +37,14 @@ Technischer Kern:
 - **STT-Normalisierung:** 16 kHz, Mono, PCM16/WAV
 - **Live-STT:** 4-Sekunden-Segmente mit geordneter lokaler Transkriptionswarteschlange
 - **Desktop-STT:** bevorzugter Tauri-Sidecar `naqya-whisper`; kontrollierter lokaler `whisper-cli` nur als Fallback
+- **STT-Providervertrag:** plattformneutral; Linux/Windows aktiv, Android/iOS fail-closed vorbereitet
 - **whisper.cpp:** `v1.9.2`, Commit `306c88f4d1286aec1bf96e544632897886af5501`
 - **Modellsicherheit:** 4-MiB-Transferblöcke, SHA-256, geschützter App-Modellpfad, atomare Aktivierung
 - **Desktop-Build:** deterministisches `dist/`; Tauri `frontendDist` zeigt auf `../dist`
 - **Release-Nachweis:** Paket, Sidecar, Toolchain, Zielplattform, CI-Lauf, Diagnosevertrag und gemeinsamer Evidence-Fingerprint werden maschinenlesbar gebunden
 - **Hardware-Abnahmevertrag:** `hardware/HARDWARE_ACCEPTANCE.schema.json` bindet reale Linux-/Windows-Messungen an denselben Evidence-Fingerprint; ohne reale Messdaten entsteht keine Hardwarefreigabe
 - **Hardware-Evidence-Kette E2–E6:** Collector, Runtime-Metrikexport, Prozessressourcenmessung sowie direkte SHA-gebundene Importe für Runtime- und Ressourcenwerte sind vorhanden
+- **E7-Hardware-Smoke-Harness:** geführter Linux-Ablauf bündelt die vorhandenen Evidence-Bausteine; ohne interaktive reale Bestätigungen bleibt der Nachweis fail-closed
 
 ## Diagnose-, Logging- und Evidence-Vertrag
 
@@ -66,14 +68,15 @@ Git-Commit
   → Evidence-Fingerprint
   → E3-Runtime-Messung + E4-Ressourcenmessung
   → E5/E6-Import in HARDWARE_ACCEPTANCE.json
+  → E7 geführter Linux-Smoke
   → reale Hardware-Abnahme
   → Runtime-Ereignis / Fehlercode
   → sichere Benutzeraktion
 ```
 
-## Hardware-Abnahmevertrag 0.5.1-E1 bis E6
+## Hardware-Abnahmevertrag 0.5.1-E1 bis E7
 
-E1 definiert den maschinenlesbaren Hardwarevertrag. E2 erzeugt `HARDWARE_ACCEPTANCE.json`. E3 erfasst reale Segment- und RTF-Metriken der Live-STT-Sitzung. E4 misst CPU und Peak-RAM der NAQYA-Prozessfamilie. E5 importiert `RESOURCE_METRICS.json` direkt und SHA-gebunden. E6 exportiert `NAQYA-LIVE-STT-RUNTIME` und importiert Dauer, Segmentbilanz und RTF ebenfalls direkt und SHA-gebunden.
+E1 definiert den maschinenlesbaren Hardwarevertrag. E2 erzeugt `HARDWARE_ACCEPTANCE.json`. E3 erfasst reale Segment- und RTF-Metriken der Live-STT-Sitzung. E4 misst CPU und Peak-RAM der NAQYA-Prozessfamilie. E5 importiert `RESOURCE_METRICS.json` direkt und SHA-gebunden. E6 exportiert `NAQYA-LIVE-STT-RUNTIME` und importiert Dauer, Segmentbilanz und RTF ebenfalls direkt und SHA-gebunden. E7 stellt dafür einen geführten Linux-Smoke-Harness bereit, der reale Bestätigungen verlangt und ohne interaktives Terminal keinen Hardware-PASS erzeugt.
 
 Ein Hardware-`PASS` verlangt weiterhin mindestens: installierte und gestartete App, tatsächlich verwendeten gebündelten Sidecar, Modell aus dem geschützten Pfad, funktionierende Mikrofonaufnahme und Live-Diktat, erfolgreiche Temp-WAV-Bereinigung sowie **0 verlorene Segmente**. Die Profile `long30` und `long60` erzwingen mindestens 1800 beziehungsweise 3600 Sekunden reale Testdauer.
 
@@ -134,6 +137,7 @@ Danach `http://127.0.0.1:8765` öffnen.
 - 16-kHz-Mono-WAV-Normalisierung
 - 4-Sekunden-Live-STT-Segmentierung
 - geschützter nativer Modellpfad und SHA-256-Modelltransfer
+- plattformneutraler STT-Providervertrag mit rückwärtskompatiblem Desktop-Pfad
 - deterministisches Desktop-Frontend-Staging
 - Linux-DEB und Windows-NSIS im CI
 - Sidecars im Paketkontext vorhanden, startbar und integritätsgeprüft
@@ -144,6 +148,7 @@ Danach `http://127.0.0.1:8765` öffnen.
 - maschinenlesbares Hardware-Abnahmeschema und Validator
 - Hardware-Collector, Runtime-Metrikexport und Prozessressourcenmessung
 - direkter SHA-gebundener Import von Runtime- und Ressourcenmetriken in Hardware-Evidence
+- geführter Linux-Hardware-Smoke-Harness mit fail-closed Verhalten
 
 ## Noch offen bzw. nicht als Hardware-Release abgenommen
 
@@ -159,7 +164,8 @@ Danach `http://127.0.0.1:8765` öffnen.
 Priorität:
 
 1. validiertes Linux-Paket auf realem Referenzgerät installieren und starten
-2. echtes Mikrofon + geschützten Modellpfad + gebündelten Sidecar verwenden
-3. Runtime- und Ressourcenmetriken exportieren und über E5/E6 in `HARDWARE_ACCEPTANCE.json` importieren
-4. Nachweis mit `tests/validate_hardware_acceptance.py` prüfen
-5. erst danach Windows-Smoke, `long30`, `long60` und schließlich `AudioWorklet`
+2. `python3 tools/run_linux_hardware_smoke.py` interaktiv ausführen
+3. echtes Mikrofon + geschützten Modellpfad + gebündelten Sidecar verwenden
+4. Runtime- und Ressourcenmetriken exportieren und über E5/E6 in `HARDWARE_ACCEPTANCE.json` importieren
+5. Nachweis mit `tests/validate_hardware_acceptance.py` prüfen
+6. erst danach Windows-Smoke, `long30`, `long60` und schließlich `AudioWorklet`
