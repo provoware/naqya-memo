@@ -82,6 +82,85 @@ jobs:
           packaged_hash="$(sha256sum release/naqya-whisper-packaged | awk '{print $1}')"
           [[ "$source_hash" == "$packaged_hash" ]] || { echo "FEHLER: Gepackter Sidecar wurde verändert." >&2; exit 24; }
 
+      - name: Installiertes Linux-Paket und GUI-Start in sauberer Runtime prüfen
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf ci-smoke
+          mkdir -p ci-smoke
+          docker run --rm \
+            -v "$PWD/release:/release:ro" \
+            -v "$PWD/ci-smoke:/ci-smoke" \
+            ubuntu:24.04 \
+            bash -lc '
+              set -euo pipefail
+              export DEBIAN_FRONTEND=noninteractive
+              echo "START: saubere Ubuntu-24.04-Runtime" > /ci-smoke/result.txt
+              apt-get update
+              apt-get install -y --no-install-recommends \
+                /release/NAQYA-0.5.0-linux-x86_64.deb \
+                xvfb xauth dbus-x11 passwd ca-certificates
+
+              dpkg-query -W -f="\${Status}\n" libwebkit2gtk-4.1-0 | grep -qx "install ok installed"
+              dpkg-query -W -f="\${Status}\n" libjavascriptcoregtk-4.1-0 | grep -qx "install ok installed"
+              if dpkg-query -W -f="\${Status}\n" libgtk-3-0t64 2>/dev/null | grep -qx "install ok installed"; then
+                gtk_runtime_package=libgtk-3-0t64
+              elif dpkg-query -W -f="\${Status}\n" libgtk-3-0 2>/dev/null | grep -qx "install ok installed"; then
+                gtk_runtime_package=libgtk-3-0
+              else
+                echo "FEHLER: Keine installierte GTK-3-Runtime gefunden." | tee /ci-smoke/result.txt >&2
+                exit 27
+              fi
+              echo "GTK_RUNTIME=$gtk_runtime_package" >> /ci-smoke/result.txt
+
+              ldd /usr/bin/naqya-memo | tee /ci-smoke/naqya-gui-runtime-deps.txt
+              if grep -q "not found" /ci-smoke/naqya-gui-runtime-deps.txt; then
+                echo "FEHLER: Der installierten NAQYA-GUI fehlen dynamische Bibliotheken." | tee /ci-smoke/result.txt >&2
+                exit 25
+              fi
+
+              useradd --create-home --shell /bin/bash naqya-test
+              install -d -m 700 -o naqya-test -g naqya-test /tmp/naqya-runtime
+              set +e
+              timeout --signal=TERM 8s runuser -u naqya-test -- \
+                env HOME=/home/naqya-test \
+                    XDG_RUNTIME_DIR=/tmp/naqya-runtime \
+                    GDK_BACKEND=x11 \
+                    WEBKIT_DISABLE_DMABUF_RENDERER=1 \
+                    WEBKIT_DISABLE_COMPOSITING_MODE=1 \
+                    LIBGL_ALWAYS_SOFTWARE=1 \
+                    NO_AT_BRIDGE=1 \
+                dbus-run-session -- xvfb-run -a /usr/bin/naqya-memo \
+                > /ci-smoke/naqya-gui-start.log 2>&1
+              rc=$?
+              set -e
+
+              if [[ "$rc" -eq 124 ]]; then
+                echo "PASS: Installierte NAQYA-GUI blieb bis zum 8-Sekunden-Smoke-Timeout aktiv." | tee /ci-smoke/result.txt
+                exit 0
+              fi
+
+              {
+                echo "FEHLER: Installierte NAQYA-GUI beendete sich vor dem Smoke-Timeout (Exit $rc)."
+                echo "--- GUI-LOG ---"
+                cat /ci-smoke/naqya-gui-start.log || true
+                echo "--- PAKETE ---"
+                dpkg-query -W libwebkit2gtk-4.1-0 libjavascriptcoregtk-4.1-0 libgtk-3-0t64 libgtk-3-0 || true
+                echo "--- RUNTIME ---"
+                ls -ld /home/naqya-test /tmp/naqya-runtime || true
+              } | tee /ci-smoke/result.txt >&2
+              exit 26
+            '
+
+      - name: GUI-Smoke-Diagnose sichern
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: naqya-linux-gui-smoke-${{ github.run_number }}
+          retention-days: 14
+          if-no-files-found: warn
+          path: ci-smoke/
+
       - name: Release-Nachweis erzeugen
         env:
           NAQYA_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
