@@ -9,8 +9,8 @@ SKIP_PARTS = {'.git','.sidecar-build','target','binaries','node_modules','dist',
 MERGE_MARKER = re.compile(r'^(<<<<<<<(?: .*)?|=======$|>>>>>>>(?: .*)?)$', re.MULTILINE)
 CONTRACT_SHA = 'fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425'
 FINGERPRINT = '018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf'
-CURRENT_STAGE = '0.5.1-E6'
-NEXT_STAGE = '0.5.1-E7'
+E6_STAGE = '0.5.1-E6'
+E7_STAGE = '0.5.1-E7'
 
 
 def read(path):
@@ -53,24 +53,34 @@ assert len(progress['erledigte_punkte']) == 8 and len(progress['offene_punkte'])
 assert '**Fortschritt 0.5.1:** **89 %** – **8 von 9 Hauptpunkten erledigt**' in readme
 assert '### Erledigt – 8 von 9' in readme
 assert '### Offen – 1 von 9' in readme
-assert status['aktueller_arbeitsstand'].startswith(CURRENT_STAGE)
-assert status['naechster_meilenstein'] == '0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME'
 
-# Kopfstände müssen den real gemergten E6-Stand beschreiben; Fortschritt bleibt bis zur realen Hardwareabnahme 89 %.
-assert '**Aktueller Entwicklungsstand:** 0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence' in readme
-assert '**Nächster Schritt:** 0.5.1-E7 – reale Linux-Smoke-Hardwareabnahme' in readme
-assert 'Aktueller Arbeitsstand: **0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence**' in todo
+stage = status['aktueller_arbeitsstand']
+assert stage.startswith((E6_STAGE, E7_STAGE)), f'Unerwarteter Arbeitsstand: {stage}'
+
+if stage.startswith(E6_STAGE):
+    assert status['naechster_meilenstein'] == '0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME'
+    assert '**Aktueller Entwicklungsstand:** 0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence' in readme
+    assert '**Nächster Schritt:** 0.5.1-E7 – reale Linux-Smoke-Hardwareabnahme' in readme
+    assert 'Aktueller Arbeitsstand: **0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence**' in todo
+    assert 'Nächster Entwicklungsblock: **0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme**' in todo
+else:
+    assert status['naechster_meilenstein'].startswith('0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME')
+    assert status['kernfunktionen'].get('linux_hardware_smoke_harness') is True
+    assert status['kernfunktionen'].get('linux_hardware_smoke_fail_closed') is True
+    assert '**Aktueller Entwicklungsstand:** 0.5.1-E7' in readme
+    assert 'reale Linux-Smoke-Hardwareabnahme' in readme
+    assert 'Aktueller Arbeitsstand: **0.5.1-E7' in todo
+    assert 'HARDWARE_ACCEPTANCE.json' in todo
+
 assert 'Fortschritt 0.5.1: **89 % – 8 von 9 Hauptpunkten erledigt**' in todo
-assert 'Nächster Entwicklungsblock: **0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme**' in todo
-for stage in ('0.5.1-E2', '0.5.1-E3', '0.5.1-E4', '0.5.1-E5', '0.5.1-E6'):
-    assert f'### [erledigt] {stage}' in todo, f'Erledigter Entwicklungsstand fehlt in TODO: {stage}'
+for stage_name in ('0.5.1-E2', '0.5.1-E3', '0.5.1-E4', '0.5.1-E5', '0.5.1-E6'):
+    assert f'### [erledigt] {stage_name}' in todo, f'Erledigter Entwicklungsstand fehlt in TODO: {stage_name}'
 assert '**0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence, 89 % / 8 von 9 Hauptpunkten**' in agents
 assert '**0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme**' in agents
-assert 'runtime_metrics_export' not in status['kernfunktionen']  # alte, uneindeutige Aliasbezeichnung nicht einführen
+assert 'runtime_metrics_export' not in status['kernfunktionen']
 for key in ('live_stt_runtime_metrics_export','hardware_acceptance_contract','hardware_acceptance_collector','process_resource_metrics','hardware_resource_metrics_import','hardware_runtime_metrics_import'):
     assert status['kernfunktionen'][key] is True, f'E6-Kernfunktion fehlt im Projektstatus: {key}'
 
-# Entwicklerdoku und Changelog dürfen historische D-Abschnitte behalten, müssen aber den gemeinsamen Fingerprint führen.
 assert '## 0.5.1-D – WINDOWS-BUNDLE, PLATTFORM-EVIDENCE & FINGERPRINT' in changelog
 for document in (readme, todo, agents, developer, changelog):
     assert FINGERPRINT in document, 'Evidence-Fingerprint fehlt in aktueller Dokumentation'
@@ -97,4 +107,4 @@ release_04 = read('services/release-04.js')
 assert 'window.NAQYA.release={version:VERSION' in release_04
 assert "version:'0.4.0'" not in release_04
 
-print('NAQYA 0.5.1-E6 Text-/Merge-/Dokumentations-/Statusintegrität: PASS')
+print('NAQYA 0.5.1 E6/E7 Text-/Merge-/Dokumentations-/Statusintegrität: PASS')
