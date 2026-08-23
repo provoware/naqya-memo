@@ -75,7 +75,7 @@ else:
     assert 'tools/run_linux_hardware_smoke.py --self-check' in hardware_doc
     assert '--runtime-metrics /pfad/RUNTIME_METRICS.json' in hardware_doc
     assert '--resource-metrics /pfad/RESOURCE_METRICS.json' in hardware_doc
-    assert 'keine Hardwarefreigabe' in hardware_doc.lower()
+    assert 'keine hardwarefreigabe' in hardware_doc.lower()
 
 assert 'Fortschritt 0.5.1: **89 % – 8 von 9 Hauptpunkten erledigt**' in todo
 for stage_name in ('0.5.1-E2', '0.5.1-E3', '0.5.1-E4', '0.5.1-E5', '0.5.1-E6'):
