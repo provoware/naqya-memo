@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import importlib.util
-import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -19,8 +18,8 @@ def load_module():
     return module
 
 
-def test_command(module) -> None:
-    args = SimpleNamespace(
+def sample_args(**overrides):
+    values = dict(
         package=Path("/tmp/naqya.deb"),
         model=Path("/tmp/model.bin"),
         microphone="USB Mic",
@@ -29,9 +28,14 @@ def test_command(module) -> None:
         profile="smoke",
         output=Path("/tmp/acceptance.json"),
     )
+    values.update(overrides)
+    return SimpleNamespace(**values)
+
+
+def test_command(module) -> None:
+    args = sample_args()
     all_flags = [f"--{flag}" for flag, _ in module.CONFIRMATIONS]
     command = module.build_collector_command(args, all_flags)
-    assert "--result" in command
     assert command[command.index("--result") + 1] == "PASS"
     assert "--runtime-metrics" in command
     assert "--resource-metrics" in command
@@ -56,11 +60,26 @@ def test_fail_closed_confirmation(module) -> None:
             __builtins__.input = original_input
 
 
+def test_self_check_needs_no_realtest_artifacts(module) -> None:
+    module.validate_harness()
+
+
+def test_realtest_requires_inputs(module) -> None:
+    try:
+        module.validate_realtest_inputs(sample_args(package=None))
+    except SystemExit as error:
+        assert "Installationspaket wurde nicht angegeben" in str(error)
+    else:
+        raise AssertionError("Fehlendes Installationspaket muss fail-closed abgelehnt werden")
+
+
 def main() -> None:
     module = load_module()
     assert len(module.CONFIRMATIONS) == 7
     test_command(module)
     test_fail_closed_confirmation(module)
+    test_self_check_needs_no_realtest_artifacts(module)
+    test_realtest_requires_inputs(module)
     print("Linux hardware smoke harness regression: OK")
 
 
