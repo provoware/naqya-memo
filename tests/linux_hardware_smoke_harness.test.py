@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import tempfile
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -27,6 +28,7 @@ def sample_args(**overrides):
         resource_metrics=Path("/tmp/resources.json"),
         profile="smoke",
         output=Path("/tmp/acceptance.json"),
+        overwrite=False,
     )
     values.update(overrides)
     return SimpleNamespace(**values)
@@ -73,6 +75,26 @@ def test_realtest_requires_inputs(module) -> None:
         raise AssertionError("Fehlendes Installationspaket muss fail-closed abgelehnt werden")
 
 
+def test_existing_evidence_is_protected(module) -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        output = Path(tmp) / "HARDWARE_ACCEPTANCE.json"
+        output.write_text("{}", encoding="utf-8")
+        try:
+            module.validate_output_path(output, overwrite=False)
+        except SystemExit as error:
+            assert "existiert bereits" in str(error)
+        else:
+            raise AssertionError("Vorhandene Hardware-Evidence darf nicht still überschrieben werden")
+        module.validate_output_path(output, overwrite=True)
+
+
+def test_output_directory_is_created(module) -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        output = Path(tmp) / "evidence" / "HARDWARE_ACCEPTANCE.json"
+        module.validate_output_path(output, overwrite=False)
+        assert output.parent.is_dir()
+
+
 def main() -> None:
     module = load_module()
     assert len(module.CONFIRMATIONS) == 7
@@ -80,6 +102,8 @@ def main() -> None:
     test_fail_closed_confirmation(module)
     test_self_check_needs_no_realtest_artifacts(module)
     test_realtest_requires_inputs(module)
+    test_existing_evidence_is_protected(module)
+    test_output_directory_is_created(module)
     print("Linux hardware smoke harness regression: OK")
 
 
