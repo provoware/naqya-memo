@@ -1,8 +1,8 @@
 # PROVOWARE – NAQYA Memo Tool 2026
 
-> **Aktueller Entwicklungsstand:** 0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence  
+> **Aktueller Entwicklungsstand:** 0.5.1-E7 – Geführte reale Linux-Smoke-Hardwareabnahme vorbereitet  
 > **Produktversion:** 0.5.0  
-> **Status:** Entwicklung – Hardware-Evidence-Kette automatisiert, reale Geräteabnahme ausstehend  
+> **Status:** Entwicklung – E7-Hardware-Smoke-Harness vorbereitet, reale Geräteabnahme ausstehend  
 > **Fortschritt 0.5.1:** **89 %** – **8 von 9 Hauptpunkten erledigt**  
 > **Nächster Schritt:** 0.5.1-E7 – reale Linux-Smoke-Hardwareabnahme
 
@@ -43,6 +43,7 @@ Technischer Kern:
 - **Release-Nachweis:** Paket, Sidecar, Toolchain, Zielplattform, CI-Lauf, Diagnosevertrag und gemeinsamer Evidence-Fingerprint werden maschinenlesbar gebunden
 - **Hardware-Abnahmevertrag:** `hardware/HARDWARE_ACCEPTANCE.schema.json` bindet reale Linux-/Windows-Messungen an denselben Evidence-Fingerprint; ohne reale Messdaten entsteht keine Hardwarefreigabe
 - **Hardware-Evidence-Kette E2–E6:** Collector, Runtime-Metrikexport, Prozessressourcenmessung sowie direkte SHA-gebundene Importe für Runtime- und Ressourcenwerte sind vorhanden
+- **E7-Hardware-Smoke-Harness:** geführter, fail-closed Linux-Ablauf zur realen Geräte-, Mikrofon-, Sidecar-, Modell- und Evidence-Abnahme; ein CI-Lauf allein erzeugt keinen Hardware-PASS
 
 ## Diagnose-, Logging- und Evidence-Vertrag
 
@@ -66,14 +67,15 @@ Git-Commit
   → Evidence-Fingerprint
   → E3-Runtime-Messung + E4-Ressourcenmessung
   → E5/E6-Import in HARDWARE_ACCEPTANCE.json
+  → E7-Hardware-Smoke-Harness
   → reale Hardware-Abnahme
   → Runtime-Ereignis / Fehlercode
   → sichere Benutzeraktion
 ```
 
-## Hardware-Abnahmevertrag 0.5.1-E1 bis E6
+## Hardware-Abnahmevertrag 0.5.1-E1 bis E7
 
-E1 definiert den maschinenlesbaren Hardwarevertrag. E2 erzeugt `HARDWARE_ACCEPTANCE.json`. E3 erfasst reale Segment- und RTF-Metriken der Live-STT-Sitzung. E4 misst CPU und Peak-RAM der NAQYA-Prozessfamilie. E5 importiert `RESOURCE_METRICS.json` direkt und SHA-gebunden. E6 exportiert `NAQYA-LIVE-STT-RUNTIME` und importiert Dauer, Segmentbilanz und RTF ebenfalls direkt und SHA-gebunden.
+E1 definiert den maschinenlesbaren Hardwarevertrag. E2 erzeugt `HARDWARE_ACCEPTANCE.json`. E3 erfasst reale Segment- und RTF-Metriken der Live-STT-Sitzung. E4 misst CPU und Peak-RAM der NAQYA-Prozessfamilie. E5 importiert `RESOURCE_METRICS.json` direkt und SHA-gebunden. E6 exportiert `NAQYA-LIVE-STT-RUNTIME` und importiert Dauer, Segmentbilanz und RTF ebenfalls direkt und SHA-gebunden. E7 führt diese Bausteine in einem geführten, interaktiven und fail-closed Linux-Smoke zusammen.
 
 Ein Hardware-`PASS` verlangt weiterhin mindestens: installierte und gestartete App, tatsächlich verwendeten gebündelten Sidecar, Modell aus dem geschützten Pfad, funktionierende Mikrofonaufnahme und Live-Diktat, erfolgreiche Temp-WAV-Bereinigung sowie **0 verlorene Segmente**. Die Profile `long30` und `long60` erzwingen mindestens 1800 beziehungsweise 3600 Sekunden reale Testdauer.
 
@@ -144,6 +146,7 @@ Danach `http://127.0.0.1:8765` öffnen.
 - maschinenlesbares Hardware-Abnahmeschema und Validator
 - Hardware-Collector, Runtime-Metrikexport und Prozessressourcenmessung
 - direkter SHA-gebundener Import von Runtime- und Ressourcenmetriken in Hardware-Evidence
+- E7-Hardware-Smoke-Harness vorhanden und fail-closed abgesichert
 
 ## Noch offen bzw. nicht als Hardware-Release abgenommen
 
@@ -159,7 +162,7 @@ Danach `http://127.0.0.1:8765` öffnen.
 Priorität:
 
 1. validiertes Linux-Paket auf realem Referenzgerät installieren und starten
-2. echtes Mikrofon + geschützten Modellpfad + gebündelten Sidecar verwenden
-3. Runtime- und Ressourcenmetriken exportieren und über E5/E6 in `HARDWARE_ACCEPTANCE.json` importieren
+2. echten E7-Hardware-Smoke-Harness mit Mikrofon, geschütztem Modellpfad und gebündeltem Sidecar ausführen
+3. Runtime- und Ressourcenmetriken über E5/E6 in `HARDWARE_ACCEPTANCE.json` importieren
 4. Nachweis mit `tests/validate_hardware_acceptance.py` prüfen
 5. erst danach Windows-Smoke, `long30`, `long60` und schließlich `AudioWorklet`
