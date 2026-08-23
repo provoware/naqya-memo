@@ -95,6 +95,7 @@ jobs:
             bash -lc '
               set -euo pipefail
               export DEBIAN_FRONTEND=noninteractive
+              echo "START: saubere Ubuntu-24.04-Runtime" > /ci-smoke/result.txt
               apt-get update
               apt-get install -y --no-install-recommends \
                 /release/NAQYA-0.5.0-linux-x86_64.deb \
