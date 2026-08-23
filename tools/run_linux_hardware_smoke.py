@@ -25,11 +25,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Geführter, fail-closed E7-Linux-Hardware-Smoke für NAQYA."
     )
-    parser.add_argument("--package", required=True, type=Path)
-    parser.add_argument("--model", required=True, type=Path)
-    parser.add_argument("--microphone", required=True)
-    parser.add_argument("--runtime-metrics", required=True, type=Path)
-    parser.add_argument("--resource-metrics", required=True, type=Path)
+    parser.add_argument("--package", type=Path)
+    parser.add_argument("--model", type=Path)
+    parser.add_argument("--microphone")
+    parser.add_argument("--runtime-metrics", type=Path)
+    parser.add_argument("--resource-metrics", type=Path)
     parser.add_argument("--profile", choices=("smoke", "long30", "long60"), default="smoke")
     parser.add_argument("--output", type=Path, default=Path("HARDWARE_ACCEPTANCE.json"))
     parser.add_argument("--self-check", action="store_true", help="Nur Harness-Voraussetzungen prüfen")
@@ -41,21 +41,27 @@ def require_linux() -> None:
         raise SystemExit("FEHLER: Dieser Assistent ist ausschließlich für Linux gedacht.")
 
 
-def require_file(label: str, path: Path) -> None:
+def require_file(label: str, path: Path | None) -> None:
+    if path is None:
+        raise SystemExit(f"FEHLER: {label} wurde nicht angegeben.")
     if not path.is_file():
         raise SystemExit(f"FEHLER: {label} fehlt oder ist keine Datei: {path}")
 
 
-def validate_inputs(args: argparse.Namespace) -> None:
+def validate_harness() -> None:
     require_linux()
+    require_file("Hardware-Collector", COLLECTOR)
+    require_file("Hardware-Validator", VALIDATOR)
+
+
+def validate_realtest_inputs(args: argparse.Namespace) -> None:
+    validate_harness()
     require_file("Installationspaket", args.package)
     require_file("Whisper-Modell", args.model)
     require_file("Runtime-Metriken", args.runtime_metrics)
     require_file("Ressourcenmetriken", args.resource_metrics)
-    require_file("Hardware-Collector", COLLECTOR)
-    require_file("Hardware-Validator", VALIDATOR)
-    if not args.microphone.strip():
-        raise SystemExit("FEHLER: Mikrofonbezeichnung darf nicht leer sein.")
+    if not (args.microphone or "").strip():
+        raise SystemExit("FEHLER: Mikrofonbezeichnung wurde nicht angegeben.")
 
 
 def ask_confirmation(question: str) -> bool:
@@ -109,10 +115,11 @@ def print_result(output: Path, passed: bool) -> None:
 
 def main() -> int:
     args = parse_args()
-    validate_inputs(args)
     if args.self_check:
+        validate_harness()
         print("E7 Linux hardware smoke harness: SELF-CHECK OK")
         return 0
+    validate_realtest_inputs(args)
     if not sys.stdin.isatty():
         raise SystemExit("FEHLER: Reale Bestätigungen benötigen ein interaktives Terminal.")
     flags = collect_confirmations()
