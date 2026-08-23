@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -32,6 +33,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--resource-metrics", type=Path)
     parser.add_argument("--profile", choices=("smoke", "long30", "long60"), default="smoke")
     parser.add_argument("--output", type=Path, default=Path("HARDWARE_ACCEPTANCE.json"))
+    parser.add_argument("--overwrite", action="store_true", help="Vorhandenen Nachweis bewusst ersetzen")
     parser.add_argument("--self-check", action="store_true", help="Nur Harness-Voraussetzungen prüfen")
     return parser.parse_args()
 
@@ -54,6 +56,19 @@ def validate_harness() -> None:
     require_file("Hardware-Validator", VALIDATOR)
 
 
+def validate_output_path(output: Path, overwrite: bool) -> None:
+    target = output.expanduser()
+    if target.exists() and not overwrite:
+        raise SystemExit(
+            f"FEHLER: Nachweis existiert bereits: {target}. "
+            "Zum bewussten Ersetzen --overwrite verwenden."
+        )
+    parent = target.parent
+    parent.mkdir(parents=True, exist_ok=True)
+    if not parent.is_dir() or not os.access(parent, os.W_OK):
+        raise SystemExit(f"FEHLER: Zielordner ist nicht beschreibbar: {parent}")
+
+
 def validate_realtest_inputs(args: argparse.Namespace) -> None:
     validate_harness()
     require_file("Installationspaket", args.package)
@@ -62,6 +77,7 @@ def validate_realtest_inputs(args: argparse.Namespace) -> None:
     require_file("Ressourcenmetriken", args.resource_metrics)
     if not (args.microphone or "").strip():
         raise SystemExit("FEHLER: Mikrofonbezeichnung wurde nicht angegeben.")
+    validate_output_path(args.output, args.overwrite)
 
 
 def ask_confirmation(question: str) -> bool:
