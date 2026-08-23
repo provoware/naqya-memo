@@ -3,8 +3,8 @@
   "repo": "provoware/naqya-memo",
   "version": "0.5.0",
   "entwicklungsphase": "TAURI-SIDECAR-INTEGRATION & REPOSITORY-KONSOLIDIERUNG",
-  "aktueller_arbeitsstand": "0.5.1-E6 – RUNTIME-METRIKEN DIREKT IN HARDWARE-EVIDENCE",
-  "status": "ENTWICKLUNG – HARDWARE-EVIDENCE-KETTE AUTOMATISIERT, REALE GERÄTEABNAHME AUSSTEHEND",
+  "aktueller_arbeitsstand": "0.5.1-E7 – LINUX-HARDWARE-SMOKE-HARNESS BEREIT",
+  "status": "ENTWICKLUNG – E7-HARDWARE-SMOKE FAIL-CLOSED VORBEREITET, REALE GERÄTEABNAHME AUSSTEHEND",
   "referenzplattform": "PWA + Tauri Desktop",
   "zielplattformen": ["Linux", "Windows", "Android", "iPhone/iPad", "PWA"],
   "hauptdatei": "index.html",
@@ -74,6 +74,8 @@
     "process_resource_metrics": true,
     "hardware_resource_metrics_import": true,
     "hardware_runtime_metrics_import": true,
+    "linux_hardware_smoke_harness": true,
+    "linux_hardware_smoke_fail_closed": true,
     "live_diktat_on_device_browser": "feature-detect",
     "stt_provider_contract": true,
     "tauri_desktop_scaffold": true,
@@ -106,10 +108,11 @@
   },
   "bekannte_grenzen": [
     "Linux-DEB und Windows-NSIS sind im CI paketbezogen validiert; eine reale Endgeräte-, Mikrofon- und Langzeithardwareabnahme steht weiterhin aus.",
+    "Der E7-Linux-Hardware-Smoke-Harness führt reale Bestätigungen fail-closed; er erzeugt ohne interaktives Terminal und vollständige reale Bestätigung keinen PASS.",
     "E1 bis E6 automatisieren Hardwarevertrag, Collector, Runtime-/Ressourcenmessung und deren kryptografisch gebundenen Import; sie ersetzen keine reale Mikrofonabnahme.",
     "Die Live-PCM-Erfassung verwendet weiterhin Web Audio ScriptProcessor als Übergangsadapter; eine AudioWorklet-Umstellung ist vorgesehen.",
     "Das Vollbackup nutzt weiterhin JSON/Base64 und ist für sehr große Datenbestände speicherintensiver als ein streamingfähiger Container.",
     "Native Mobiladapter für Android und iPhone/iPad stehen weiterhin aus."
   ],
-  "naechster_meilenstein": "0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME"
+  "naechster_meilenstein": "0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME MIT HARDWARE_ACCEPTANCE.json"
 }
