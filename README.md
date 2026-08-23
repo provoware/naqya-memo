@@ -1,10 +1,10 @@
 # PROVOWARE – NAQYA Memo Tool 2026
 
-> **Aktueller Entwicklungsstand:** 0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence  
+> **Aktueller Entwicklungsstand:** 0.5.1-E7 – Linux-Hardware-Smoke-Harness bereit  
 > **Produktversion:** 0.5.0  
-> **Status:** Entwicklung – Hardware-Evidence-Kette automatisiert, reale Geräteabnahme ausstehend  
+> **Status:** Entwicklung – E7-Hardware-Smoke fail-closed vorbereitet, reale Geräteabnahme ausstehend  
 > **Fortschritt 0.5.1:** **89 %** – **8 von 9 Hauptpunkten erledigt**  
-> **Nächster Schritt:** 0.5.1-E7 – reale Linux-Smoke-Hardwareabnahme
+> **Nächster Schritt:** 0.5.1-E7 – reale Linux-Smoke-Hardwareabnahme mit `HARDWARE_ACCEPTANCE.json`
 
 ## Fortschritt auf einen Blick
 
@@ -38,11 +38,33 @@ Technischer Kern:
 - **Live-STT:** 4-Sekunden-Segmente mit geordneter lokaler Transkriptionswarteschlange
 - **Desktop-STT:** bevorzugter Tauri-Sidecar `naqya-whisper`; kontrollierter lokaler `whisper-cli` nur als Fallback
 - **whisper.cpp:** `v1.9.2`, Commit `306c88f4d1286aec1bf96e544632897886af5501`
+- **STT-Providervertrag:** plattformneutral; Desktop implementiert, Android/iOS fail-closed vorbereitet
 - **Modellsicherheit:** 4-MiB-Transferblöcke, SHA-256, geschützter App-Modellpfad, atomare Aktivierung
 - **Desktop-Build:** deterministisches `dist/`; Tauri `frontendDist` zeigt auf `../dist`
 - **Release-Nachweis:** Paket, Sidecar, Toolchain, Zielplattform, CI-Lauf, Diagnosevertrag und gemeinsamer Evidence-Fingerprint werden maschinenlesbar gebunden
 - **Hardware-Abnahmevertrag:** `hardware/HARDWARE_ACCEPTANCE.schema.json` bindet reale Linux-/Windows-Messungen an denselben Evidence-Fingerprint; ohne reale Messdaten entsteht keine Hardwarefreigabe
 - **Hardware-Evidence-Kette E2–E6:** Collector, Runtime-Metrikexport, Prozessressourcenmessung sowie direkte SHA-gebundene Importe für Runtime- und Ressourcenwerte sind vorhanden
+- **E7-Harness:** `tools/run_linux_hardware_smoke.py` führt den realen Linux-Smoke interaktiv und fail-closed; ohne vollständige reale Bestätigungen entsteht kein PASS
+
+## E7 – geführte reale Linux-Smoke-Hardwareabnahme
+
+Der E7-Harness bündelt die bereits vorhandenen E2–E6-Bausteine zu einem reproduzierbaren Realtest. Er akzeptiert nur echte lokale Dateien für Paket, Modell, Runtime- und Ressourcenmetriken und verlangt sieben einzelne Beobachtungsbestätigungen mit sicherem Default `NEIN`.
+
+Ein PASS verlangt: exakt getestetes Paket installiert, NAQYA real gestartet, gebündelten `naqya-whisper` verwendet, geschützten Modellpfad verwendet, Mikrofonaufnahme erfolgreich, lokales Live-Diktat erfolgreich und temporäre WAV-Dateien bereinigt. Nicht-interaktive Ausführung bricht ab; unvollständige Bestätigung ergibt FAIL.
+
+Beispiel:
+
+```bash
+python3 tools/run_linux_hardware_smoke.py \
+  --package ./naqya.deb \
+  --model ./ggml-base.bin \
+  --microphone "Gerätename" \
+  --runtime-metrics ./NAQYA-LIVE-STT-RUNTIME.json \
+  --resource-metrics ./RESOURCE_METRICS.json \
+  --output ./HARDWARE_ACCEPTANCE.json
+```
+
+**Wichtig:** Der Harness ist jetzt Bestandteil des Codes, aber eine reale Linux-Hardwarefreigabe wurde noch nicht behauptet. Der Fortschritt bleibt deshalb korrekt bei 89 % / 8 von 9.
 
 ## Diagnose-, Logging- und Evidence-Vertrag
 
@@ -66,6 +88,7 @@ Git-Commit
   → Evidence-Fingerprint
   → E3-Runtime-Messung + E4-Ressourcenmessung
   → E5/E6-Import in HARDWARE_ACCEPTANCE.json
+  → E7 geführter Realtest
   → reale Hardware-Abnahme
   → Runtime-Ereignis / Fehlercode
   → sichere Benutzeraktion
@@ -123,9 +146,10 @@ Danach `http://127.0.0.1:8765` öffnen.
 2. `docs/ENTWICKLERDOKUMENTATION.md` – Architekturkarte, Vertrauensgrenzen und lokale Prüfungen
 3. `docs/DIAGNOSE_LOGGING.md` – Diagnose-, Privacy- und Evidence-Vertrag
 4. `docs/HARDWARE_ACCEPTANCE.md` – realer Hardware-Abnahmevertrag und Prüfprofile
-5. `AGENTS.md` – verbindlicher Entwicklungs-, Merge- und Freigabevertrag
-6. `TODO.md` – Prioritäten und Abnahmekriterien
-7. `PROJEKTSTATUS.json` – maschinenlesbarer aktueller Stand und Release-Nachweis
+5. `docs/STT_PROVIDER_CONTRACT.md` – plattformneutraler STT-Providervertrag
+6. `AGENTS.md` – verbindlicher Entwicklungs-, Merge- und Freigabevertrag
+7. `TODO.md` – Prioritäten und Abnahmekriterien
+8. `PROJEKTSTATUS.json` – maschinenlesbarer aktueller Stand und Release-Nachweis
 
 ## Was aktuell validiert ist
 
@@ -134,9 +158,11 @@ Danach `http://127.0.0.1:8765` öffnen.
 - 16-kHz-Mono-WAV-Normalisierung
 - 4-Sekunden-Live-STT-Segmentierung
 - geschützter nativer Modellpfad und SHA-256-Modelltransfer
+- plattformneutraler STT-Providervertrag mit Desktop-Rückwärtskompatibilität
 - deterministisches Desktop-Frontend-Staging
 - Linux-DEB und Windows-NSIS im CI
 - Sidecars im Paketkontext vorhanden, startbar und integritätsgeprüft
+- Linux-GUI-Start im sauberen CI-Runtime-Kontext abgesichert
 - Diagnose-Laufzeitregression, Privacy-Redaktion und sichere Aktionen
 - SHA-256-Bindung von Diagnosevertrag und Release Evidence
 - plattformübergreifender Evidence-Fingerprint
@@ -144,10 +170,12 @@ Danach `http://127.0.0.1:8765` öffnen.
 - maschinenlesbares Hardware-Abnahmeschema und Validator
 - Hardware-Collector, Runtime-Metrikexport und Prozessressourcenmessung
 - direkter SHA-gebundener Import von Runtime- und Ressourcenmetriken in Hardware-Evidence
+- E7-Linux-Hardware-Smoke-Harness mit fail-closed Realbestätigungen
 
 ## Noch offen bzw. nicht als Hardware-Release abgenommen
 
 - reale Mikrofon-/Hardwareabnahme unter Linux und Windows
+- erstes reales, validiertes `HARDWARE_ACCEPTANCE.json`
 - 30-/60-Minuten-Langzeitmessungen für CPU, RAM, Latenz und Echtzeitfaktor
 - `AudioWorklet` als Ersatz für `ScriptProcessor`
 - native Android-/iPhone-/iPad-Adapter
@@ -160,6 +188,7 @@ Priorität:
 
 1. validiertes Linux-Paket auf realem Referenzgerät installieren und starten
 2. echtes Mikrofon + geschützten Modellpfad + gebündelten Sidecar verwenden
-3. Runtime- und Ressourcenmetriken exportieren und über E5/E6 in `HARDWARE_ACCEPTANCE.json` importieren
-4. Nachweis mit `tests/validate_hardware_acceptance.py` prüfen
-5. erst danach Windows-Smoke, `long30`, `long60` und schließlich `AudioWorklet`
+3. Runtime- und Ressourcenmetriken exportieren
+4. `tools/run_linux_hardware_smoke.py` mit real beobachteten Bestätigungen ausführen
+5. erzeugtes `HARDWARE_ACCEPTANCE.json` mit `tests/validate_hardware_acceptance.py` validieren
+6. erst danach Windows-Smoke, `long30`, `long60` und schließlich `AudioWorklet`
