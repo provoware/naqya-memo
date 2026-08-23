@@ -6,6 +6,8 @@ import re
 root = Path(__file__).resolve().parents[1]
 CONTRACT_SHA = 'fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425'
 FINGERPRINT = '018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf'
+E6 = '0.5.1-E6 – RUNTIME-METRIKEN DIREKT IN HARDWARE-EVIDENCE'
+E7 = '0.5.1-E7 – GEFÜHRTE REALE LINUX-SMOKE-HARDWAREABNAHME VORBEREITET'
 
 version = json.loads((root / 'VERSION.json').read_text())
 status = json.loads((root / 'PROJEKTSTATUS.json').read_text())
@@ -22,8 +24,8 @@ progress = status['fortschritt']
 assert (progress['prozent'], progress['erledigt'], progress['gesamt']) == (89, 8, 9)
 assert len(progress['erledigte_punkte']) == 8
 assert len(progress['offene_punkte']) == 1
-assert status['aktueller_arbeitsstand'] == '0.5.1-E6 – RUNTIME-METRIKEN DIREKT IN HARDWARE-EVIDENCE'
-assert status['naechster_meilenstein'] == '0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME'
+assert status['aktueller_arbeitsstand'] in (E6, E7)
+assert status['naechster_meilenstein'].startswith('0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME')
 
 release = status['release_nachweis']
 for key in ('linux_bundle_validiert','windows_bundle_validiert','diagnostics_evidence_validiert','plattform_evidence_validiert','evidence_fingerprint_validiert'):
@@ -50,6 +52,9 @@ for key in (
     'hardware_runtime_metrics_import',
 ):
     assert kern[key] is True
+if status['aktueller_arbeitsstand'] == E7:
+    assert kern['linux_hardware_smoke_harness'] is True
+    assert kern['linux_hardware_smoke_fail_closed'] is True
 
 assert tauri['build']['frontendDist'] == '../dist'
 assert tauri['bundle']['externalBin'] == ['binaries/naqya-whisper']
@@ -92,4 +97,4 @@ for needle in (
 assert 'segmentsLost:liveState.segmentsFailed' in live_stt
 assert 'realtimeFactorMax:Number(liveState.rtfMax.toFixed(6))' in live_stt
 
-print('NAQYA statische Projektverträge: PASS – 0.5.1-E6 / 89 % / Evidence-Fingerprint konsistent; E7 Linux-Smoke bleibt reale Freigabegrenze')
+print('NAQYA statische Projektverträge: PASS – E6/E7-Übergang, 89 % und Evidence-Fingerprint konsistent; reale E7-Hardwarefreigabe bleibt separat')
