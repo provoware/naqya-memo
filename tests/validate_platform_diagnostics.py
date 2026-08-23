@@ -8,6 +8,7 @@ STATUS = ROOT / "PROJEKTSTATUS.json"
 EXPECTED_SHA256 = "fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425"
 EXPECTED_SCHEMA = 1
 EXPECTED_EVENT_SCHEMA = 1
+VALID_STAGES = ("0.5.1-E6", "0.5.1-E7")
 
 raw = CONTRACT.read_bytes()
 actual_sha256 = hashlib.sha256(raw).hexdigest()
@@ -39,9 +40,15 @@ assert release["linux_bundle_validiert"] is True
 assert release["windows_bundle_validiert"] is True
 assert release["plattform_evidence_validiert"] is True
 
-# Der Plattformvertrag bleibt auch nach D gültig. Der aktuelle Arbeitsstand darf
-# deshalb auf E weiterlaufen, solange der D-Nachweis unverändert grün gebunden ist.
-assert status["aktueller_arbeitsstand"].startswith("0.5.1-E6 – RUNTIME-METRIKEN")
+# Der D-Nachweis bleibt auch während E6→E7 unverändert bindend. Der Arbeitsstand
+# darf nur innerhalb dieses expliziten Übergangsfensters weiterlaufen.
+stage = status["aktueller_arbeitsstand"]
+assert stage.startswith(VALID_STAGES), f"Unerwarteter Arbeitsstand: {stage}"
 assert status["naechster_meilenstein"].startswith("0.5.1-E7 – REALE LINUX-SMOKE-HARDWAREABNAHME")
 
-print("NAQYA Plattform-Diagnosevertrag: PASS – D-Nachweis unverändert, E6-Status konsistent")
+if stage.startswith("0.5.1-E7"):
+    assert status["fortschritt"]["prozent"] == 89
+    assert status["fortschritt"]["erledigt"] == 8
+    assert status["fortschritt"]["gesamt"] == 9
+
+print("NAQYA Plattform-Diagnosevertrag: PASS – D-Nachweis unverändert, E6/E7-Übergang konsistent")
