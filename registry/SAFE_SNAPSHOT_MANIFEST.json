@@ -1,0 +1,27 @@
+{
+  "format": "PROVOWARE_SAFE_SNAPSHOT_MANIFEST",
+  "schema_version": 1,
+  "project": "OI - PROVOWARE - IO / Multi-Memo-Modul-Tool 2026 / OI - Naqya - IO",
+  "project_version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE",
+  "snapshot_branch": "sync/v0.12.2.3-safe-state-20260829",
+  "historical_backup_branch": "backup/pre-v0.12.2.3-20260829",
+  "historical_main_commit": "334dd2923fc01a633946137d71fdbebae34364da",
+  "complete_local_snapshot": {
+    "filename": "OI_PROVOWARE_IO_Multi_Memo_Modul_Tool_2026_V0.12.2.3_UI_SIMPLIFICATION_INPUT_GUIDANCE.zip",
+    "sha256": "1797354a69ec768122b83fbf8de515bf9d904e681b0fb2fd64d490cf0fec21e7",
+    "state": "VERIFIED_LOCAL_ARTIFACT"
+  },
+  "quality": {
+    "targeted_acceptance": "57/57 PASS",
+    "mobile_web_bundle_sync": "PASS",
+    "browser_visual_gate": "OPEN_REAL_LINUX_TARGET",
+    "release_status": "NO-GO",
+    "release_gates": "1/7 PASS"
+  },
+  "github_sync": {
+    "safe_state_metadata": "PASS",
+    "historical_main_backup": "PASS",
+    "full_expanded_source_tree": "PENDING",
+    "main_promotion": "BLOCKED_UNTIL_FULL_TREE_AND_HASH_AUDIT"
+  }
+}
