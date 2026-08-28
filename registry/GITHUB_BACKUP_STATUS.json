@@ -7,13 +7,14 @@
   "pre_sync_backup_branch": "backup/pre-v0.12.2.3-20260829",
   "pre_sync_main_commit": "334dd2923fc01a633946137d71fdbebae34364da",
   "snapshot_zip": "OI_PROVOWARE_IO_Multi_Memo_Modul_Tool_2026_V0.12.2.3_UI_SIMPLIFICATION_INPUT_GUIDANCE.zip",
-  "snapshot_sha256": "1797354a69ec768122b83fbf8de515bf9d904e681b0fb2fd64d490cf0fec21e7",
+  "snapshot_sha256": "330293effe3d4bc52936c800ce23186863efd40b238d357d63e4223abc70e6a0",
   "target_branch": "main",
   "target_branch_modified": false,
   "sync_status": "SAFE_STATE_BRANCH_CREATED_FULL_TREE_PENDING",
   "release_status": "NO-GO",
   "passed_real_release_gates": 1,
   "required_real_release_gates": 7,
+  "draft_pr_number": 54,
   "restore_rule": "Restore the historical GitHub state from backup/pre-v0.12.2.3-20260829. Verify the current local snapshot against snapshot_sha256 before any main promotion.",
   "safety_rule": "No force update of main before full tree sync and hash audit."
 }
