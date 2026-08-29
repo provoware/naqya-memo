@@ -4,8 +4,6 @@ from __future__ import annotations
 import os
 import sys
 
-import secure_server as secure
-
 
 def _bounded_int_env(name: str, default: int, minimum: int, maximum: int) -> int:
     """Read an integer security setting without letting malformed env break startup.
@@ -21,6 +19,28 @@ def _bounded_int_env(name: str, default: int, minimum: int, maximum: int) -> int
     except (TypeError, ValueError):
         return default
     return max(minimum, min(value, maximum))
+
+
+def _normalize_int_env(name: str, default: int, minimum: int, maximum: int) -> int:
+    """Normalize an upstream security env before importing the auth layer.
+
+    ``secure_server`` reads its auth limits during module import. Normalizing the
+    four existing integer settings here keeps the official production entrypoint
+    fail-safe without changing the established defaults or safety envelopes.
+    """
+    value = _bounded_int_env(name, default, minimum, maximum)
+    os.environ[name] = str(value)
+    return value
+
+
+# These four settings are consumed while importing secure_server. Normalize them
+# first so malformed operator/environment values cannot abort the official start.
+AUTH_CACHE_TTL_SECONDS = _normalize_int_env('PROVOWARE_AUTH_CACHE_TTL', 300, 5, 3600)
+AUTH_MAX_DISTINCT_FAILURES = _normalize_int_env('PROVOWARE_AUTH_MAX_FAILURES', 5, 3, 20)
+AUTH_FAILURE_WINDOW_SECONDS = _normalize_int_env('PROVOWARE_AUTH_FAILURE_WINDOW', 120, 5, 3600)
+AUTH_LOCKOUT_SECONDS = _normalize_int_env('PROVOWARE_AUTH_LOCKOUT_SECONDS', 30, 1, 3600)
+
+import secure_server as secure
 
 
 JSON_POST_MAX_BYTES = _bounded_int_env(
