@@ -34,7 +34,7 @@ jobs:
 
       - name: Python syntax
         run: |
-          python -m py_compile app/server.py tools/startup_port_guard.py
+          python -m py_compile app/server.py app/secure_server.py tools/startup_port_guard.py
 
       - name: JavaScript syntax
         run: |
@@ -65,6 +65,10 @@ jobs:
             PYTHONPATH=core/reference_python python -S tests/startup/test_startup_port_guard.py
           fi
 
+      - name: Desktop PIN gate
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_pin_gate.py
+
       - name: Mobile source contracts
         run: |
           if [ -f tests/mobile/test_mobile_sources.py ]; then
@@ -79,5 +83,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates source contracts only."
+          echo "CI validates source contracts and the local desktop PIN runtime gate only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
