@@ -203,6 +203,40 @@ class SecureHandler(base.Handler):
         self.send_header('Vary','Authorization')
         return super().end_headers()
 
+    def _allowed_local_authorities(self) -> set[str]:
+        port=str(self.server.server_port)
+        return {f'127.0.0.1:{port}',f'localhost:{port}'}
+
+    def _transport_trust_error(self) -> tuple[int,str] | None:
+        """Reject DNS-rebinding and cross-site use of the loopback HTTP service."""
+        allowed=self._allowed_local_authorities()
+        host=self.headers.get('Host','').strip().lower()
+        if host not in allowed:
+            return 421,'LOCAL_HOST_BLOCKED'
+        origin=self.headers.get('Origin','').strip().lower()
+        if origin and origin not in {f'http://{authority}' for authority in allowed}:
+            return 403,'CROSS_SITE_ORIGIN_BLOCKED'
+        fetch_site=self.headers.get('Sec-Fetch-Site','').strip().lower()
+        if fetch_site=='cross-site':
+            return 403,'CROSS_SITE_REQUEST_BLOCKED'
+        return None
+
+    def _reject_transport(self,status: int,code: str) -> None:
+        body=(f'PROVOWARE hat eine nicht vertrauenswürdige lokale Browser-Anfrage blockiert ({code}).\n').encode('utf-8')
+        self.send_response(status)
+        self.send_header('Content-Type','text/plain; charset=utf-8')
+        self.send_header('X-Content-Type-Options','nosniff')
+        self.send_header('Content-Length',str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _require_transport_trust(self) -> bool:
+        error=self._transport_trust_error()
+        if error is None:
+            return True
+        self._reject_transport(*error)
+        return False
+
     def _challenge(self):
         body=(
             'PROVOWARE ist gesperrt. Im Browser-Benutzerfeld "provoware" '
@@ -268,11 +302,15 @@ class SecureHandler(base.Handler):
         return False
 
     def do_GET(self):
+        if not self._require_transport_trust():
+            return
         if not self._require_auth():
             return
         return super().do_GET()
 
     def do_POST(self):
+        if not self._require_transport_trust():
+            return
         if not self._require_auth():
             return
         return super().do_POST()
