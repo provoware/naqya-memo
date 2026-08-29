@@ -6,6 +6,7 @@ import base64
 import http.client
 import os
 import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -47,30 +48,59 @@ def wait(port,proc):
     raise AssertionError('secure server did not become ready')
 
 
+def read_first_pin(project):
+    path=project/'nutzer-einstellungen'/'ERSTSTART_PIN_EINMAL.txt'
+    deadline=time.time()+5
+    while time.time()<deadline and not path.is_file():
+        time.sleep(.05)
+    assert path.is_file(), 'one-time first PIN file missing'
+    lines=path.read_text(encoding='utf-8').splitlines()
+    pin=next((line.split(':',1)[1].strip() for line in lines if line.startswith('PIN:')),None)
+    assert pin and len(pin)==12 and pin.isdigit(),pin
+    mode=stat.S_IMODE(path.stat().st_mode)
+    assert mode==0o600,oct(mode)
+    return path,pin
+
+
 def main():
     port=free_port()
     with tempfile.TemporaryDirectory(prefix='provoware-pin-gate-') as td:
+        project=Path(td)/'project'
         env=os.environ.copy()
-        env['PROVOWARE_PROJECT_PATH']=str(Path(td)/'project')
+        env['PROVOWARE_PROJECT_PATH']=str(project)
         env['PROVOWARE_PORT']=str(port)
         env['PYTHONPATH']=str(ROOT/'core'/'reference_python')
         p=subprocess.Popen([sys.executable,'-S',str(SERVER),'--no-browser'],cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
         try:
             wait(port,p)
+            first_pin_file,first_pin=read_first_pin(project)
+            print('PASS first profile receives a 12-digit random PIN')
+            print('PASS one-time PIN file is mode 0600')
+
             status,h,_=request(port,'/index.html')
             assert status==401,status
             assert 'Basic realm="PROVOWARE Desktop PIN"' in h.get('WWW-Authenticate','')
             print('PASS unauthenticated UI is blocked')
 
-            status,_,_=request(port,'/index.html',auth('9999'))
+            status,_,_=request(port,'/index.html',auth('0000'))
+            assert status==401,status
+            print('PASS legacy fixed PIN 0000 is rejected on fresh project')
+
+            status,_,_=request(port,'/index.html',auth('999999999999'))
             assert status==401,status
             print('PASS wrong PIN is rejected')
 
-            status,_,body=request(port,'/index.html',auth('0000'))
+            status,_,body=request(port,'/index.html',auth(first_pin))
             assert status==200,(status,body[:120])
-            print('PASS correct profile PIN unlocks UI')
+            print('PASS generated first PIN unlocks UI')
 
-            status,_,body=request(port,'/api/state',auth('0000'))
+            deadline=time.time()+2
+            while time.time()<deadline and first_pin_file.exists():
+                time.sleep(.05)
+            assert not first_pin_file.exists(),'one-time PIN file survived successful login'
+            print('PASS one-time PIN file is removed after first successful login')
+
+            status,_,body=request(port,'/api/state',auth(first_pin))
             assert status==200,(status,body[:160])
             assert b'"ok": true' in body
             print('PASS authenticated API access works')
@@ -80,7 +110,7 @@ def main():
             assert 'app/secure_server.py' in linux and 'app/server.py' not in linux
             assert 'app/secure_server.py' in headless and 'app/server.py' not in headless
             print('PASS official Linux launchers enforce secure server')
-            print('SUMMARY total=5 passed=5 failed=0')
+            print('SUMMARY total=9 passed=9 failed=0')
         finally:
             p.terminate()
             try:p.wait(timeout=5)
