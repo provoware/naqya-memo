@@ -1,0 +1,98 @@
+{
+  "version": "0.12.0-RC-HARDENING",
+  "v012_hardening_core": "PASS",
+  "v1_release_candidate": "NO-GO",
+  "reason": "Mandatory cross-platform/browser/endurance/native-hardware gates remain open",
+  "gates": [
+    {
+      "id": "G01",
+      "name": "Core regression",
+      "status": "PASS",
+      "evidence": "89/89 automated tests"
+    },
+    {
+      "id": "G02",
+      "name": "100k data stress",
+      "status": "PASS",
+      "evidence": "100000 records; integrity ok"
+    },
+    {
+      "id": "G03",
+      "name": "Large audio/PDF stock",
+      "status": "PASS",
+      "evidence": "40 assets / 80 MiB; backup hash verified"
+    },
+    {
+      "id": "G04",
+      "name": "Asset transaction-kill recovery",
+      "status": "PASS",
+      "evidence": "4 kill phases"
+    },
+    {
+      "id": "G05",
+      "name": "Corruption/recovery",
+      "status": "PASS",
+      "evidence": "DB backup rejected; asset quarantine; full restore"
+    },
+    {
+      "id": "G06",
+      "name": "Upgrade compatibility",
+      "status": "PASS",
+      "evidence": "V0.10-style schema-v2 fixture opens correctly"
+    },
+    {
+      "id": "G07",
+      "name": "Startup/performance budgets",
+      "status": "PASS",
+      "evidence": "startup 0.622s; 100k budgets green"
+    },
+    {
+      "id": "G08",
+      "name": "Linux portable E2E",
+      "status": "PASS",
+      "evidence": "fresh extract → health → integrity ok"
+    },
+    {
+      "id": "G09",
+      "name": "Long-term soak >= 8h",
+      "status": "OPEN",
+      "evidence": "10s bounded CI soak passed; not equivalent to endurance test"
+    },
+    {
+      "id": "G10",
+      "name": "Chromium visual/A11y",
+      "status": "BLOCKED",
+      "evidence": "runtime blocks file:// with ERR_BLOCKED_BY_ADMINISTRATOR"
+    },
+    {
+      "id": "G11",
+      "name": "Firefox visual/A11y",
+      "status": "BLOCKED",
+      "evidence": "Firefox Playwright engine unavailable"
+    },
+    {
+      "id": "G12",
+      "name": "Android native device acceptance",
+      "status": "OPEN",
+      "evidence": "CONTRACT_ONLY"
+    },
+    {
+      "id": "G13",
+      "name": "iOS native device acceptance",
+      "status": "OPEN",
+      "evidence": "CONTRACT_ONLY"
+    },
+    {
+      "id": "G14",
+      "name": "Physical microphone capture",
+      "status": "OPEN",
+      "evidence": "synthetic FFmpeg pipeline passed; microphone hardware not tested"
+    },
+    {
+      "id": "G15",
+      "name": "Native target disk-full/read-only",
+      "status": "OPEN",
+      "evidence": "deterministic failure injection passed; real target volumes pending"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "gate": "GATE_04_LINUX_MICROPHONE",
+  "status": "BLOCKED",
+  "timestamp": "2026-08-28T18:56:24.066974+00:00",
+  "ffmpeg": "/usr/bin/ffmpeg",
+  "dev_snd_exists": false,
+  "backend": "pulse",
+  "device": "default",
+  "reason": "No ALSA/Pulse microphone device/socket is exposed to this runner; physical microphone cannot be evidenced."
+}

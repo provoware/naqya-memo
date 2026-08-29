@@ -1,0 +1,80 @@
+{
+  "version": "0.11.0-NATIVE-MEDIA-PACKAGING",
+  "timestamp_utc": "2026-08-28T17:57:28.614106+00:00",
+  "core_gate_green": true,
+  "tests_passed": 43,
+  "tests_total": 43,
+  "portable_linux_health": {
+    "status": "PASS",
+    "proof": "fresh extraction -> local server -> /api/health ok"
+  },
+  "native_microphone_hardware_evidence": false,
+  "android_native_build": false,
+  "ios_native_build": false,
+  "suites": [
+    {
+      "name": "test_persistence_contract.py",
+      "return_code": 0,
+      "output": "PASS test_atomic_write\nPASS test_backup_restore_verification\nPASS test_profile_entity_revision_and_checksum\nPASS test_revision_conflict_rolls_back\nPASS test_soft_delete_is_not_hard_delete\nPASS total=5\n"
+    },
+    {
+      "name": "test_recovery_acceptance.py",
+      "return_code": 0,
+      "output": "PASS test_corrupted_backup_rejected\nPASS test_corrupted_entity_checksum_detected\nPASS test_database_locked_fails_without_corruption\nPASS test_disk_full_is_classifiable\nPASS test_kill_after_begin_rolls_back\nPASS test_kill_after_commit_preserves_committed_write\nPASS test_kill_after_write_before_commit_rolls_back\nPASS test_kill_before_begin_leaves_no_write\nPASS test_mutation_queue_serializes_writes\nPASS test_permission_denied_is_classifiable\nPASS test_project_lock_rejects_second_owner\nPASS test_read_only_guard_detected_preflight\nPASS test_restore_to_fresh_project_preserves_data\nPASS test_undo_redo_semantics\nSUMMARY total=14 passed=14 failed=0\n"
+    },
+    {
+      "name": "test_domain_modules.py",
+      "return_code": 0,
+      "output": "PASS test_calendar_colors_day_and_next10\nPASS test_memo_crud_undo_redo\nPASS test_revision_conflict_domain\nPASS test_todo_complete_and_rule\nSUMMARY total=4 passed=4 failed=0\n"
+    },
+    {
+      "name": "test_v09_asset_safety.py",
+      "return_code": 0,
+      "output": "PASS test_asset_backup_verifies_hash\nPASS test_audio_import_manifest_hash_and_quota\nPASS test_corrupt_asset_moves_to_quarantine\nPASS test_document_extension_guard\nPASS test_playlist_persistent\nPASS test_quota_guard\nSUMMARY total=6 passed=6 failed=0\n"
+    },
+    {
+      "name": "test_v010_reminder_acceptance.py",
+      "return_code": 0,
+      "output": "PASS test_due_reminder_and_dedup\nPASS test_future_reminder_not_due\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "name": "test_v010_platform_evidence.py",
+      "return_code": 0,
+      "output": "PASS test_linux_probe_native\nPASS test_mobile_contracts_not_falsely_native\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "name": "test_v010_calendar_ui_contract.py",
+      "return_code": 0,
+      "output": "PASS test_accessibility_and_responsive_css\nPASS test_calendar_modes_present\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "name": "test_v011_native_media.py",
+      "return_code": 0,
+      "output": "PASS test_linux_recorder_command_is_native_capture_contract\nPASS test_synthetic_ffmpeg_recording_commits_asset\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "name": "test_v011_document_revisions.py",
+      "return_code": 0,
+      "output": "PASS test_pdf_is_read_only_for_internal_editor\nPASS test_text_revision_history_and_conflict\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "name": "test_v011_packaging_contracts.py",
+      "return_code": 0,
+      "output": "PASS test_android_structure_has_runtime_permissions\nPASS test_ios_contract_has_microphone_usage_text\nPASS test_linux_portable_archive_contains_launcher\nSUMMARY total=3 passed=3 failed=0\n"
+    },
+    {
+      "name": "test_v011_service_e2e.py",
+      "return_code": 1,
+      "output": "Traceback (most recent call last):\n  File \"/mnt/data/OI_PROVOWARE_IO_Multi_Memo_Modul_Tool_2026_V0.11_NATIVE_MEDIA_PACKAGING/core/reference_python/tests/test_v011_service_e2e.py\", line 21, in <module>\n    pm=req(base,'/api/assets/import','POST',{'source_path':str(pdf),'kind':'document','title':'PDF'})\n  File \"/mnt/data/OI_PROVOWARE_IO_Multi_Memo_Modul_Tool_2026_V0.11_NATIVE_MEDIA_PACKAGING/core/reference_python/tests/test_v011_service_e2e.py\", line 8, in req\n    with urllib.request.urlopen(r,timeout=5) as x:\n         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/urllib/request.py\", line 189, in urlopen\n    return opener.open(url, data, timeout)\n           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/urllib/request.py\", line 495, in open\n    response = meth(req, response)\n  File \"/usr/lib/python3.13/urllib/request.py\", line 604, in http_response\n    response = self.parent.error(\n        'http', request, response, code, msg, hdrs)\n  File \"/usr/lib/python3.13/urllib/request.py\", line 533, in error\n    return self._call_chain(*args)\n           ~~~~~~~~~~~~~~~~^^^^^^^\n  File \"/usr/lib/python3.13/urllib/request.py\", line 466, in _call_chain\n    result = func(*args)\n  File \"/usr/lib/python3.13/urllib/request.py\", line 613, in http_error_default\n    raise HTTPError(req.full_url, code, msg, hdrs, fp)\nurllib.error.HTTPError: HTTP Error 400: Bad Request\n"
+    }
+  ],
+  "linux_audio_pipeline_evidence": "PASS_SYNTHETIC_FFMPEG_STAGING_COMMIT",
+  "linux_microphone_hardware_evidence": false,
+  "android_packaging": "BUILD_STRUCTURE_ONLY",
+  "ios_packaging": "BUILD_CONCEPT_ONLY",
+  "important_limits": [
+    "synthetic audio does not prove physical microphone capture",
+    "Android APK not built",
+    "iOS/Xcode build not possible in Linux runtime"
+  ]
+}

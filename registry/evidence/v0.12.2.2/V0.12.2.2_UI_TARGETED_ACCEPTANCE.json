@@ -1,0 +1,123 @@
+{
+  "version": "0.12.2.2-RELEASE-UI-CONSISTENCY",
+  "timestamp_utc": "2026-08-28T20:22:08.719654+00:00",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "python_syntax",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "tail": ""
+    },
+    {
+      "name": "app_js_syntax",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "tail": ""
+    },
+    {
+      "name": "mobile_js_syntax",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "tail": ""
+    },
+    {
+      "name": "ui_consistency",
+      "status": "PASS",
+      "passed": 13,
+      "total": 13,
+      "tail": "PASS test_desktop_file_picker_primary\nPASS test_display_controls_moved_to_dashboard_top\nPASS test_html_ids_are_unique\nPASS test_input_contrast_contract\nPASS test_mobile_build_info_matches_registry\nPASS test_navigation_size_contract\nPASS test_no_stale_visible_version_literals\nPASS test_server_version_comes_from_registry\nPASS test_theme_and_font_persist_through_settings\nPASS test_truthful_status_contract\nPASS test_voice_technical_details_collapsed\nPASS test_zoom_and_quickbar_contract\nPASS test_zoom_overflow_hardening_contract\nSUMMARY total=13 passed=13 failed=0\n"
+    },
+    {
+      "name": "upload_e2e",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "tail": "{\"status\": \"PASS\", \"version\": \"0.12.2.2-RELEASE-UI-CONSISTENCY\", \"backup\": {\"generations\": 0, \"state\": \"EMPTY\", \"label\": \"Noch keine\"}, \"uploaded_asset\": \"92b921a9-cbdf-45c3-9750-5a1c26f255b7\", \"bytes\": 38}\n"
+    },
+    {
+      "name": "startup_port_guard",
+      "status": "PASS",
+      "passed": 4,
+      "total": 4,
+      "tail": "PASS test_foreign_listener_uses_fallback_without_kill\nPASS test_free_requested_port\nPASS test_same_app_same_project_is_reused\nPASS test_strict_mode_refuses_occupied_port\nSUMMARY total=4 passed=4 failed=0\n"
+    },
+    {
+      "name": "v07_ui_contract",
+      "status": "PASS",
+      "passed": 9,
+      "total": 9,
+      "tail": "PASS api binding\nPASS memo\nPASS todo\nPASS calendar\nPASS quick note\nPASS undo redo\nPASS responsive\nPASS accessibility\nPASS no sqlite in UI\nSUMMARY total=9 passed=9 failed=0\n"
+    },
+    {
+      "name": "v07_service_e2e",
+      "status": "PASS",
+      "passed": 5,
+      "total": 5,
+      "tail": "PASS api_state\nPASS memo_ui_service_path\nPASS todo_ui_service_path\nPASS calendar_ui_service_path\nPASS quick_note_file_path\nSUMMARY total=5 passed=5 failed=0\n"
+    },
+    {
+      "name": "v08_interaction_calendar",
+      "status": "PASS",
+      "passed": 6,
+      "total": 6,
+      "tail": "PASS test_calendar_day_color_update_is_revision_safe\nPASS test_diagnostic_privacy_contract_static\nPASS test_edit_memo_todo_event_and_revisions\nPASS test_no_direct_sqlite_from_ui\nPASS test_restore_entity_after_trash\nPASS test_ui_contains_real_month_calendar_and_edit_controls\nSUMMARY total=6 passed=6 failed=0\n"
+    },
+    {
+      "name": "v08_service_e2e",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "tail": "PASS service_edit_restore_calendar_diagnostics\n"
+    },
+    {
+      "name": "v010_calendar_ui",
+      "status": "PASS",
+      "passed": 2,
+      "total": 2,
+      "tail": "PASS test_accessibility_and_responsive_css\nPASS test_calendar_modes_present\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "name": "v011_document_revisions",
+      "status": "PASS",
+      "passed": 2,
+      "total": 2,
+      "tail": "PASS test_pdf_is_read_only_for_internal_editor\nPASS test_text_revision_history_and_conflict\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "name": "v011_service_e2e",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "tail": "PASS service_pdf_view_text_revision\n"
+    },
+    {
+      "name": "mobile_core",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "tail": "{\"status\":\"PASS\",\"memos\":1,\"todos\":1,\"events\":1,\"assets\":2,\"backups\":4,\"profiles\":2,\"pin_guard\":\"PASS\"}\n"
+    },
+    {
+      "name": "mobile_sources",
+      "status": "PASS",
+      "passed": 4,
+      "total": 4,
+      "tail": "PASS test_android_runtime_source\nPASS test_ios_runtime_source\nPASS test_mobile_api_parity_surface\nPASS test_ui_uses_mobile_adapter\nSUMMARY total=4 passed=4 failed=0\n"
+    },
+    {
+      "name": "cross_runtime_parity",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "tail": "{\"status\": \"PASS\", \"python\": {\"memo\": {\"title\": \"M2\", \"body\": \"two\", \"revision\": 2, \"status\": \"ACTIVE\"}, \"todo\": {\"completed\": true, \"revision\": 2, \"status\": \"ACTIVE\"}, \"event\": {\"title\": \"E\", \"revision\": 1, \"status\": \"ACTIVE\"}, \"colors\": 5, \"day_color\": true}, \"mobile\": {\"memo\": {\"title\": \"M2\", \"body\": \"two\", \"revision\": 2, \"status\": \"ACTIVE\"}, \"todo\": {\"completed\": true, \"revision\": 2, \"status\": \"ACTIVE\"}, \"event\": {\"title\": \"E\", \"revision\": 1, \"status\": \"ACTIVE\"}, \"colors\": 5, \"day_color\": true}}\n"
+    }
+  ],
+  "contract_passed": 53,
+  "contract_total": 53,
+  "browser_visual_gate": "BLOCKED_IN_CURRENT_BUILD_RUNNER",
+  "browser_visual_pass_claimed": false
+}

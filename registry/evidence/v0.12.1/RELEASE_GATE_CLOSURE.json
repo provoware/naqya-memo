@@ -1,0 +1,99 @@
+{
+  "version": "0.12.1-RELEASE-GATE-CLOSURE",
+  "generated_at": "2026-08-28T18:33:53.941502+00:00",
+  "feature_freeze": true,
+  "required_gates": 7,
+  "passed_gates": 1,
+  "all_required_gates_pass": false,
+  "release_status": "NO-GO",
+  "v1_rc_allowed": false,
+  "gates": [
+    {
+      "gate": "GATE_01_8H_SOAK",
+      "status": "PRECHECK_PASS",
+      "qualification": "PRECHECK_ONLY",
+      "required_seconds": 28800,
+      "executed_seconds": 5.02,
+      "operations": 414,
+      "integrity": "ok",
+      "errors": [],
+      "max_rss_kb": 23548,
+      "checkpoints": [
+        {
+          "at_seconds": 1.3,
+          "ops": 100,
+          "integrity": "ok",
+          "rss_kb": 22908
+        }
+      ],
+      "started_at": "2026-08-28T18:31:52.646705+00:00",
+      "finished_at": "2026-08-28T18:31:57.662550+00:00"
+    },
+    {
+      "gate": "GATE_02_CHROMIUM",
+      "status": "BLOCKED",
+      "browser": "/usr/bin/chromium",
+      "started_at": "2026-08-28T18:31:57.714977+00:00",
+      "service_ready": true,
+      "reason": "Chromium headless timed out in this execution environment",
+      "timeout_seconds": 12,
+      "finished_at": "2026-08-28T18:32:09.955101+00:00"
+    },
+    {
+      "gate": "GATE_03_FIREFOX",
+      "status": "BLOCKED",
+      "executable": null,
+      "timestamp": "2026-08-28T18:32:09.993544+00:00",
+      "reason": "Firefox executable is not installed in this runner."
+    },
+    {
+      "gate": "GATE_04_LINUX_MICROPHONE",
+      "status": "BLOCKED",
+      "timestamp": "2026-08-28T18:33:53.856468+00:00",
+      "ffmpeg": "/usr/bin/ffmpeg",
+      "dev_snd_exists": false,
+      "backend": "pulse",
+      "device": "default",
+      "reason": "No ALSA/Pulse microphone device/socket is exposed to this runner; physical microphone cannot be evidenced."
+    },
+    {
+      "gate": "GATE_05_STORAGE_FAILURE",
+      "status": "PASS",
+      "timestamp": "2026-08-28T18:32:29.076740+00:00",
+      "tests": {
+        "dev_full": {
+          "status": "PASS",
+          "errno": 28,
+          "message": "[Errno 28] No space left on device"
+        },
+        "read_only_mount": {
+          "status": "PASS",
+          "errno": 30,
+          "message": "[Errno 30] Read-only file system: '/sys/provoware_rc_write_probe'"
+        }
+      },
+      "application_failure_matrix_evidence_present": true,
+      "application_failure_matrix_pass": true,
+      "scope": "REAL_LINUX_KERNEL_STORAGE_SIGNALS + V0.12_APPLICATION_RECOVERY_MATRIX"
+    },
+    {
+      "gate": "GATE_06_ANDROID_DEVICE",
+      "status": "BLOCKED",
+      "adb": null,
+      "apk": null,
+      "package": "de.provoware.naqya",
+      "timestamp": "2026-08-28T18:33:53.893013+00:00",
+      "reason": "ADB is not installed in this runner."
+    },
+    {
+      "gate": "GATE_07_IOS_IPHONE_X",
+      "status": "BLOCKED",
+      "host_platform": "Linux",
+      "xcrun": null,
+      "app_bundle": null,
+      "target": "iPhone X / iOS 16.7.x",
+      "timestamp": "2026-08-28T18:33:53.919221+00:00",
+      "reason": "Native iOS build/sign/install requires macOS/Xcode; current runner is not macOS."
+    }
+  ]
+}

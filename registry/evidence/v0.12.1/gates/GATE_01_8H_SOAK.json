@@ -1,0 +1,21 @@
+{
+  "gate": "GATE_01_8H_SOAK",
+  "status": "PRECHECK_PASS",
+  "qualification": "PRECHECK_ONLY",
+  "required_seconds": 28800,
+  "executed_seconds": 5.02,
+  "operations": 414,
+  "integrity": "ok",
+  "errors": [],
+  "max_rss_kb": 23548,
+  "checkpoints": [
+    {
+      "at_seconds": 1.3,
+      "ops": 100,
+      "integrity": "ok",
+      "rss_kb": 22908
+    }
+  ],
+  "started_at": "2026-08-28T18:31:52.646705+00:00",
+  "finished_at": "2026-08-28T18:31:57.662550+00:00"
+}

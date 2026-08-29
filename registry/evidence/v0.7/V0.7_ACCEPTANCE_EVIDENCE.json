@@ -1,0 +1,17 @@
+{
+  "version": "0.7.0-SERVICE-UI-BINDING",
+  "passed": true,
+  "tests_passed": 51,
+  "tests_failed": 0,
+  "suites": [
+    "persistence",
+    "recovery",
+    "domain",
+    "startup_profile",
+    "v07_ui_contract",
+    "v07_service_e2e"
+  ],
+  "browser_screenshot_evidence": "BLOCKED_IN_CONTAINER_DBUS_CHROMIUM_TIMEOUT",
+  "note": "UI runtime/API E2E is proven via loopback HTTP. Chromium screenshot attempt was blocked by container DBus/browser environment and is not claimed green.",
+  "timestamp_utc": "2026-08-28T03:05:34.129598+00:00"
+}

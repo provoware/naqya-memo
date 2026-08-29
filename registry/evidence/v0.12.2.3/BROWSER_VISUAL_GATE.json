@@ -1,0 +1,27 @@
+{
+  "version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE",
+  "timestamp_utc": "2026-08-28T22:02:02.789291+00:00",
+  "status": "BLOCKED",
+  "pass_claimed": false,
+  "probe": "system Chromium headless against live loopback service",
+  "result": "timeout after 15 seconds before DOM output",
+  "observed_environment_issue": "DBus connection errors in containerized build runner",
+  "real_target_runner": "RUN_VISUAL_ACCEPTANCE_LINUX.sh",
+  "views": [
+    "dashboard",
+    "memo",
+    "todo",
+    "calendar",
+    "trash",
+    "diagnostics",
+    "voice",
+    "docs",
+    "audio",
+    "settings"
+  ],
+  "scales": [
+    "100%",
+    "150%",
+    "200%"
+  ]
+}

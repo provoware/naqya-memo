@@ -1,0 +1,2 @@
+/* GENERATED FROM registry/VERSION.json - DO NOT EDIT BY HAND */
+window.PROVOWARE_BUILD_INFO={"version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE", "source": "registry/VERSION.json"};

@@ -1,0 +1,106 @@
+{
+  "version": "0.12.2-MOBILE-RUNTIME-COMPLETION",
+  "generated_at": "2026-08-28T19:25:14.999539+00:00",
+  "feature_freeze": true,
+  "freeze_exception": "platform parity completion only",
+  "mobile_runtime_source_status": "PASS",
+  "required_real_gates": 7,
+  "passed_real_gates": 1,
+  "all_required_real_gates_pass": false,
+  "release_status": "NO-GO",
+  "v1_rc_allowed": false,
+  "gates": [
+    {
+      "gate": "GATE_01_8H_SOAK",
+      "status": "PRECHECK_PASS",
+      "qualification": "PRECHECK_ONLY",
+      "required_seconds": 28800,
+      "executed_seconds": 5.02,
+      "operations": 448,
+      "integrity": "ok",
+      "errors": [],
+      "max_rss_kb": 23456,
+      "checkpoints": [
+        {
+          "at_seconds": 1.3,
+          "ops": 113,
+          "integrity": "ok",
+          "rss_kb": 23072
+        }
+      ],
+      "started_at": "2026-08-28T18:56:06.666755+00:00",
+      "finished_at": "2026-08-28T18:56:11.682019+00:00"
+    },
+    {
+      "gate": "GATE_02_CHROMIUM",
+      "status": "BLOCKED",
+      "browser": "/usr/bin/chromium",
+      "started_at": "2026-08-28T18:56:11.734006+00:00",
+      "service_ready": true,
+      "reason": "Chromium headless timed out in this execution environment",
+      "timeout_seconds": 12,
+      "finished_at": "2026-08-28T18:56:23.985645+00:00"
+    },
+    {
+      "gate": "GATE_03_FIREFOX",
+      "status": "BLOCKED",
+      "executable": null,
+      "timestamp": "2026-08-28T18:56:24.018541+00:00",
+      "reason": "Firefox executable is not installed in this runner."
+    },
+    {
+      "gate": "GATE_04_LINUX_MICROPHONE",
+      "status": "BLOCKED",
+      "timestamp": "2026-08-28T18:56:24.066974+00:00",
+      "ffmpeg": "/usr/bin/ffmpeg",
+      "dev_snd_exists": false,
+      "backend": "pulse",
+      "device": "default",
+      "reason": "No ALSA/Pulse microphone device/socket is exposed to this runner; physical microphone cannot be evidenced."
+    },
+    {
+      "gate": "GATE_05_STORAGE_FAILURE",
+      "status": "PASS",
+      "timestamp": "2026-08-28T18:56:24.093396+00:00",
+      "tests": {
+        "dev_full": {
+          "status": "PASS",
+          "errno": 28,
+          "message": "[Errno 28] No space left on device"
+        },
+        "read_only_mount": {
+          "status": "PASS",
+          "errno": 30,
+          "message": "[Errno 30] Read-only file system: '/sys/provoware_rc_write_probe'"
+        }
+      },
+      "application_failure_matrix_evidence_present": true,
+      "application_failure_matrix_pass": true,
+      "scope": "REAL_LINUX_KERNEL_STORAGE_SIGNALS + V0.12_APPLICATION_RECOVERY_MATRIX"
+    },
+    {
+      "gate": "GATE_06_ANDROID_DEVICE",
+      "status": "BLOCKED",
+      "adb": null,
+      "acceptance_apk": null,
+      "release_apk": null,
+      "package": "de.provoware.naqya",
+      "runtime_source": "V0.12.2",
+      "timestamp": "2026-08-28T19:06:24.983822+00:00",
+      "reason": "ADB is not installed in this runner. Runtime source is complete, but native device evidence is impossible here."
+    },
+    {
+      "gate": "GATE_07_IOS_IPHONE_X",
+      "status": "BLOCKED",
+      "host_platform": "Linux",
+      "xcrun": null,
+      "xcodebuild": null,
+      "app_bundle": null,
+      "device_id": null,
+      "target": "iPhone X / iOS 16.7.16",
+      "runtime_source": "V0.12.2",
+      "timestamp": "2026-08-28T19:06:25.069490+00:00",
+      "reason": "Native iOS build/sign/install requires macOS/Xcode; current runner is not macOS."
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "100k": {
+    "records": 100000,
+    "insert_seconds": 2.202,
+    "count_query_ms": 5.465,
+    "latest100_query_ms": 21.12,
+    "integrity": "ok",
+    "db_bytes": 50470912,
+    "max_rss_kb": 117056,
+    "status": "PASS"
+  },
+  "large_assets": {
+    "assets": 40,
+    "verified": 40,
+    "used_bytes": 83886080,
+    "import_seconds": 0.974,
+    "backup_seconds": 0.095,
+    "backup_count": 40,
+    "status": "PASS"
+  },
+  "startup": {
+    "ready": true,
+    "startup_seconds": 0.622,
+    "budget_seconds": 5.0,
+    "status": "PASS"
+  },
+  "bounded_soak": {
+    "duration_seconds": 10.01,
+    "operations": 834,
+    "integrity": "ok",
+    "qualification": "BOUNDED_CI_SOAK_NOT_LONG_TERM",
+    "status": "PASS"
+  },
+  "linux_portable_e2e": {
+    "health": "PASS",
+    "integrity": "ok",
+    "queue": "running",
+    "audio_capture_status": "AVAILABLE",
+    "native_microphone_tested": false
+  }
+}

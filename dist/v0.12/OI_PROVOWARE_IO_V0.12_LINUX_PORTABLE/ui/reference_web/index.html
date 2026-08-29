@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="de" data-theme="neon-core">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>OI - PROVOWARE - IO · V0.12</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#workspace">Zum Arbeitsbereich</a>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<div class="app-shell">
+  <header class="topbar">
+    <button class="icon-btn mobile-only" id="menuBtn" aria-controls="mainNav" aria-expanded="false">☰</button>
+    <section class="brand-card">
+      <div class="eyebrow">✦ OI - PROVOWARE - IO</div>
+      <h1>MULTI-MEMO <span>2026</span></h1>
+      <div class="subbrand">OI - Naqya - IO · V0.12</div>
+    </section>
+    <section class="quick-note">
+      <div class="quick-note-title">SCHNELLMEMO</div>
+      <label class="sr-only" for="quickTitle">Dateititel</label>
+      <input id="quickTitle" value="Notizen" maxlength="80" aria-label="Dateititel">
+      <label class="sr-only" for="quickInput">Schnellnotiz</label>
+      <input id="quickInput" placeholder="Notiz eingeben und Enter …" autocomplete="off">
+      <button class="primary" id="quickSave">Speichern</button>
+      <button id="quickOpen">Datei</button>
+      <button id="quickShare">Teilen</button>
+    </section>
+    <section class="status-strip">
+      <div class="status-chip ok"><b>START</b><span id="startStatus">verbunden</span></div>
+      <div class="status-chip"><b>DATEN</b><span id="dataStatus">prüfe…</span></div>
+      <div class="status-chip"><b>BACKUP</b><span>Recovery aktiv</span></div>
+      <div class="status-chip accent"><b>V0.12</b><span>Interaction</span></div>
+    </section>
+    <section class="next-items">
+      <div class="section-title"><b>NÄCHSTE 10</b><span>Todos & Termine</span></div>
+      <div class="next-grid" id="nextGrid"></div>
+    </section>
+  </header>
+
+  <aside class="nav-panel" id="mainNav">
+    <div class="nav-head"><b>MENÜ</b><button class="icon-btn mobile-only" id="closeMenuBtn">×</button></div>
+    <nav>
+      <button class="nav-item active" data-view="dashboard"><span>⌂</span>Dashboard</button>
+      <button class="nav-item" data-view="memo"><span>▤</span>Textmemos</button>
+      <button class="nav-item" data-view="todo"><span>✓</span>Todos</button>
+      <button class="nav-item" data-view="calendar"><span>▦</span>Kalender</button>
+      <button class="nav-item" data-view="trash"><span>⌫</span>Papierkorb</button>
+      <button class="nav-item" data-view="diagnostics"><span>⌁</span>Diagnose</button>
+      <button class="nav-item" data-view="voice"><span>◉</span>Sprachmemos</button>
+      <button class="nav-item" data-view="docs"><span>▣</span>Dokument / PDF</button>
+      <button class="nav-item" data-view="audio"><span>♫</span>Audio</button>
+      <button class="nav-item" data-view="search"><span>⌕</span>Suche</button>
+    </nav>
+    <div class="nav-bottom">
+      <button class="nav-item" data-view="settings"><span>⚙</span>Einstellungen</button>
+      <button class="nav-item" data-view="help"><span>?</span>Hilfe</button>
+    </div>
+  </aside>
+
+  <section class="quickbar" aria-label="Schnellstart">
+    <button data-open="memo">＋ Memo</button><button data-open="todo">＋ Todo</button>
+    <button data-open="calendar">＋ Termin</button><button data-open="diagnostics">⌁ Diagnose</button>
+    <button id="undoBtn">↶ Undo</button><button id="redoBtn">↷ Redo</button>
+    <span class="quickbar-spacer"></span>
+    <button id="themeBtn">◐ Theme</button><button id="fontDown">A−</button><button id="fontUp">A＋</button>
+  </section>
+
+  <main class="workspace" id="workspace" tabindex="-1">
+    <section class="workspace-toolbar">
+      <div><b id="viewTitle">Dashboard</b><span id="viewHint">Validierter Arbeitsbereich</span></div>
+      <div class="zoom-controls"><button id="zoomOut">−</button><output id="zoomValue">100 %</output><button id="zoomIn">＋</button><button id="zoomReset">100</button></div>
+    </section>
+    <section class="module-host" id="moduleHost"></section>
+  </main>
+
+  <aside class="side-panel">
+    <section class="panel-card">
+      <header><b>TOOL-INFO</b><span class="lamp ok"></span></header>
+      <dl><div><dt>Version</dt><dd>0.8.0</dd></div><div><dt>Profil</dt><dd id="profileName">…</dd></div><div><dt>DB</dt><dd id="integrity">…</dd></div><div><dt>Layout</dt><dd id="layoutMode">Desktop</dd></div></dl>
+    </section>
+    <section class="panel-card">
+      <header><b>INHALT</b><span>live</span></header>
+      <div class="stats-mini">
+        <div><strong id="countMemo">0</strong><span>Memos</span></div>
+        <div><strong id="countTodo">0</strong><span>Todos</span></div>
+        <div><strong id="countEvent">0</strong><span>Termine</span></div>
+        <div><strong id="countTrash">0</strong><span>Papierkorb</span></div>
+      </div>
+    </section>
+    <section class="panel-card quote-card"><header><b>ZITAT</b><span>10 min</span></header><blockquote>„Daten retten. Dann darf es leuchten.“</blockquote></section>
+  </aside>
+
+  <footer class="footerbar">
+    <span><b>LOG</b> <i id="logState">bereit</i></span><span><b>DEBUG</b> <i id="debugState">0 Fehler</i></span>
+    <span><b>CHECKPOINT</b> V0.12</span><span><b>A11Y</b> aktiv</span>
+    <button id="devToggle" aria-expanded="false" aria-controls="devPanel">Entwickler ▴</button>
+    <div class="dev-panel" id="devPanel" hidden><b>V0.12 Entwicklerbereich</b><span>UI → Loopback API → Domain → Mutation Queue → SQLite → Recovery.</span></div>
+  </footer>
+</div>
+<div class="scrim" id="scrim" hidden></div>
+<script src="app.js"></script>
+</body></html>

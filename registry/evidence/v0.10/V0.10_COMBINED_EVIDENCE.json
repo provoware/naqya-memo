@@ -1,0 +1,83 @@
+{
+  "version": "0.10.0-CALENDAR-REMINDER-PLATFORM",
+  "timestamp_utc": "2026-08-28T11:00:50.081063+00:00",
+  "core_gate_green": true,
+  "tests_passed": 35,
+  "tests_total": 35,
+  "suite_summary": {
+    "test_persistence_contract.py": {
+      "passed": 5,
+      "total": 5
+    },
+    "test_recovery_acceptance.py": {
+      "passed": 14,
+      "total": 14
+    },
+    "test_domain_modules.py": {
+      "passed": 4,
+      "total": 4
+    },
+    "test_v09_asset_safety.py": {
+      "passed": 6,
+      "total": 6
+    },
+    "test_v010_reminder_acceptance.py": {
+      "passed": 2,
+      "total": 2
+    },
+    "test_v010_platform_evidence.py": {
+      "passed": 2,
+      "total": 2
+    },
+    "test_v010_calendar_ui_contract.py": {
+      "passed": 2,
+      "total": 2
+    }
+  },
+  "browser": {
+    "chromium": {
+      "status": "BLOCKED",
+      "reason": "Error('Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at file:///mnt/data/OI_PROVOWARE_IO_Multi_Memo_Modul_Tool_2026_V0.10_CALENDAR_REMINDER_PLATFORM/ui/reference_web/index.html\\nCall log:\\n  - navigating to \"file:///mnt/data/OI_PROVOWARE_IO_Multi_Memo_Modul_Tool_2026_V0.10_CALENDAR_REMINDER_PLATFORM/ui/reference_web/index.html\", waiting until \"domcontentloaded\"\\n')"
+    },
+    "firefox": {
+      "status": "BLOCKED",
+      "reason": "Error(\"BrowserType.launch: Executable doesn't exist at /home/oai/.cache/ms-playwright/firefox-1497/firefox/firefox\\n╔════════════════════════════════════════════════════════════╗\\n║ Looks like Playwright was just installed or updated.       ║\\n║ Please run the following command to download new browsers: ║\\n║                                                            ║\\n║     playwright install                                     ║\\n║                                                            ║\\n║ <3 Playwright Team                                         ║\\n╚════════════════════════════════════════════════════════════╝\")"
+    },
+    "viewports": []
+  },
+  "platform": {
+    "linux": {
+      "platform": "linux",
+      "runtime": "linux",
+      "kernel": "6.18.35",
+      "xdg_open": true,
+      "xdg_email": true,
+      "notify_send": false,
+      "ffmpeg": true,
+      "ffprobe": true,
+      "filesystem_write_test": true,
+      "evidence_type": "NATIVE_RUNTIME_PROBE"
+    },
+    "android": {
+      "platform": "android",
+      "notifications": "RUNTIME_PERMISSION_REQUIRED",
+      "storage": "SCOPED_STORAGE",
+      "background": "OS_RESTRICTED",
+      "microphone": "RUNTIME_PERMISSION_REQUIRED",
+      "share": "INTENT_ADAPTER",
+      "evidence_type": "CONTRACT_ONLY",
+      "native_device_tested": false
+    },
+    "ios": {
+      "platform": "ios",
+      "notifications": "USER_AUTHORIZATION_REQUIRED",
+      "storage": "APP_SANDBOX_DOCUMENT_PICKER",
+      "background": "STRICTLY_RESTRICTED",
+      "microphone": "USER_AUTHORIZATION_REQUIRED",
+      "share": "SHARE_SHEET",
+      "evidence_type": "CONTRACT_ONLY",
+      "native_device_tested": false
+    }
+  },
+  "important_note": "Browser visual gates remain BLOCKED and are not counted as PASS."
+}

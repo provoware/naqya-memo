@@ -1,0 +1,51 @@
+{
+  "version": "0.12.2.2-RELEASE-UI-CONSISTENCY",
+  "status": "PARTIAL",
+  "suites": [
+    {
+      "suite": "test_persistence_contract.py",
+      "status": "PASS",
+      "passed": 5,
+      "total": 5,
+      "seconds": 0.2
+    },
+    {
+      "suite": "test_domain_modules.py",
+      "status": "PASS",
+      "passed": 4,
+      "total": 4,
+      "seconds": 0.42
+    },
+    {
+      "suite": "test_v07_ui_contract.py",
+      "status": "PASS",
+      "passed": 9,
+      "total": 9,
+      "seconds": 0.02
+    },
+    {
+      "suite": "test_v07_service_e2e.py",
+      "status": "PASS",
+      "passed": 5,
+      "total": 5,
+      "seconds": 0.31
+    },
+    {
+      "suite": "test_v08_interaction_calendar.py",
+      "status": "PASS",
+      "passed": 6,
+      "total": 6,
+      "seconds": 0.32
+    },
+    {
+      "suite": "test_v08_service_e2e.py",
+      "status": "FAIL",
+      "passed": 0,
+      "total": 0,
+      "seconds": 11.65
+    }
+  ],
+  "passed": 29,
+  "total": 29,
+  "excluded_long_suite": "test_recovery_acceptance.py was not re-run here because the current artifact runner interrupts long subprocess suites; prior V0.12.2 recovery evidence remains unchanged and no recovery-core code was modified."
+}

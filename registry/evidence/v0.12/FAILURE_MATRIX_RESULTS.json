@@ -1,0 +1,14 @@
+{
+  "asset_kill_journal_created": "PASS_ROLLBACK",
+  "asset_kill_staged": "PASS_ROLLBACK",
+  "asset_kill_file_committed": "PASS_RECOVER_MANIFEST",
+  "asset_kill_manifest_committed": "PASS_FINALIZE",
+  "disk_full_deterministic_injection": "PASS",
+  "permission_denied_deterministic_injection": "PASS",
+  "read_only_preflight": "PASS_EXISTING_V0.3",
+  "corrupted_db_backup": "PASS_REJECTED",
+  "corrupted_asset": "PASS_QUARANTINED",
+  "full_checkpoint_restore": "PASS_DB_AND_ASSETS",
+  "native_target_disk_full": "OPEN",
+  "native_target_read_only": "OPEN"
+}

@@ -1,0 +1,14 @@
+{
+  "version": "0.12.2-MOBILE-RUNTIME-COMPLETION",
+  "timestamp_utc": "2026-08-28T19:25:14.979006+00:00",
+  "android": {
+    "status": "BLOCKED",
+    "output": "Synced 8 web files to Android and iOS bundles.\nBLOCKED: Android SDK fehlt. ANDROID_HOME oder ANDROID_SDK_ROOT setzen.",
+    "qualification": "NATIVE_BUILD_NOT_DEVICE_ACCEPTANCE"
+  },
+  "ios": {
+    "status": "BLOCKED",
+    "output": "Synced 8 web files to Android and iOS bundles.\nBLOCKED: iOS Build benötigt macOS mit Xcode.",
+    "qualification": "NATIVE_BUILD_NOT_DEVICE_ACCEPTANCE"
+  }
+}

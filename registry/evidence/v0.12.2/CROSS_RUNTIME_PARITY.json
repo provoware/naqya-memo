@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "python": {
+    "memo": {
+      "title": "M2",
+      "body": "two",
+      "revision": 2,
+      "status": "ACTIVE"
+    },
+    "todo": {
+      "completed": true,
+      "revision": 2,
+      "status": "ACTIVE"
+    },
+    "event": {
+      "title": "E",
+      "revision": 1,
+      "status": "ACTIVE"
+    },
+    "colors": 5,
+    "day_color": true
+  },
+  "mobile": {
+    "memo": {
+      "title": "M2",
+      "body": "two",
+      "revision": 2,
+      "status": "ACTIVE"
+    },
+    "todo": {
+      "completed": true,
+      "revision": 2,
+      "status": "ACTIVE"
+    },
+    "event": {
+      "title": "E",
+      "revision": 1,
+      "status": "ACTIVE"
+    },
+    "colors": 5,
+    "day_color": true
+  },
+  "version": "0.12.2-MOBILE-RUNTIME-COMPLETION",
+  "timestamp_utc": "2026-08-28T19:25:14.978888+00:00"
+}

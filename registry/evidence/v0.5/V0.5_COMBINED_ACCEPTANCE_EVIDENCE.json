@@ -1,0 +1,24 @@
+{
+  "version": "0.5.0-STARTUP-PROFILE-CAPABILITY",
+  "passed": true,
+  "suites": {
+    "persistence": {
+      "total": 5,
+      "passed": 5
+    },
+    "recovery": {
+      "total": 14,
+      "passed": 14
+    },
+    "domain": {
+      "total": 4,
+      "passed": 4
+    },
+    "v05": {
+      "total": 14,
+      "passed": 14
+    }
+  },
+  "output": "### persistence\nPASS test_atomic_write\nPASS test_backup_restore_verification\nPASS test_profile_entity_revision_and_checksum\nPASS test_revision_conflict_rolls_back\nPASS test_soft_delete_is_not_hard_delete\nPASS total=5\n\n### recovery\nPASS test_corrupted_backup_rejected\nPASS test_corrupted_entity_checksum_detected\nPASS test_database_locked_fails_without_corruption\nPASS test_disk_full_is_classifiable\nPASS test_kill_after_begin_rolls_back\nPASS test_kill_after_commit_preserves_committed_write\nPASS test_kill_after_write_before_commit_rolls_back\nPASS test_kill_before_begin_leaves_no_write\nPASS test_mutation_queue_serializes_writes\nPASS test_permission_denied_is_classifiable\nPASS test_project_lock_rejects_second_owner\nPASS test_read_only_guard_detected_preflight\nPASS test_restore_to_fresh_project_preserves_data\nPASS test_undo_redo_semantics\nSUMMARY total=14 passed=14 failed=0\n\n### domain\nPASS test_calendar_colors_day_and_next10\nPASS test_memo_crud_undo_redo\nPASS test_revision_conflict_domain\nPASS test_todo_complete_and_rule\nSUMMARY total=4 passed=4 failed=0\n\n### v05\nPASS test_external_path_confirmation_cannot_be_disabled\nPASS test_guided_first_start_creates_checkpoint_and_settings\nPASS test_guided_first_start_without_profile_leads_to_profile_selection\nPASS test_pin_change_requires_current_pin\nPASS test_pin_hash_is_salted_and_verifiable\nPASS test_pin_requires_exactly_four_ascii_digits\nPASS test_platform_capability_contracts_are_conservative\nPASS test_platform_permissions_require_visible_user_action_on_mobile\nPASS test_profile_create_verify_and_access_log\nPASS test_project_preflight_creates_safe_tree\nPASS test_project_preflight_low_disk_is_red_deterministically\nPASS test_project_preflight_rejects_file_as_project_folder\nPASS test_settings_defaults_and_persistence\nPASS test_v1_to_v2_migration_preserves_existing_entity\nSUMMARY total=14 passed=14 failed=0\n",
+  "timestamp_utc": "2026-08-28T02:25:40.543530+00:00"
+}

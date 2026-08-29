@@ -1,0 +1,38 @@
+{
+  "linux": {
+    "platform": "linux",
+    "runtime": "linux",
+    "kernel": "6.18.35",
+    "xdg_open": true,
+    "xdg_email": true,
+    "notify_send": false,
+    "ffmpeg": true,
+    "ffprobe": true,
+    "filesystem_write_test": true,
+    "evidence_type": "NATIVE_RUNTIME_PROBE"
+  },
+  "android": {
+    "platform": "android",
+    "evidence_type": "CONTRACT_ONLY",
+    "native_device_tested": false,
+    "open": [
+      "notification permission",
+      "scoped storage on device",
+      "background restrictions",
+      "microphone permission",
+      "packaging/install"
+    ]
+  },
+  "ios": {
+    "platform": "ios",
+    "evidence_type": "CONTRACT_ONLY",
+    "native_device_tested": false,
+    "open": [
+      "notification authorization",
+      "sandbox/document picker",
+      "background restrictions",
+      "microphone authorization",
+      "Xcode build/install"
+    ]
+  }
+}

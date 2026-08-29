@@ -1,0 +1,11 @@
+{
+  "gate": "GATE_06_ANDROID_DEVICE",
+  "status": "BLOCKED",
+  "adb": null,
+  "acceptance_apk": null,
+  "release_apk": null,
+  "package": "de.provoware.naqya",
+  "runtime_source": "V0.12.2",
+  "timestamp": "2026-08-28T19:06:24.983822+00:00",
+  "reason": "ADB is not installed in this runner. Runtime source is complete, but native device evidence is impossible here."
+}

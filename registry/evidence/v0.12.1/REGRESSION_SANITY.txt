@@ -1,0 +1,48 @@
+===== test_persistence_contract.py =====
+PASS test_atomic_write
+PASS test_backup_restore_verification
+PASS test_profile_entity_revision_and_checksum
+PASS test_revision_conflict_rolls_back
+PASS test_soft_delete_is_not_hard_delete
+PASS total=5
+===== test_domain_modules.py =====
+PASS test_calendar_colors_day_and_next10
+PASS test_memo_crud_undo_redo
+PASS test_revision_conflict_domain
+PASS test_todo_complete_and_rule
+SUMMARY total=4 passed=4 failed=0
+===== test_v09_asset_safety.py =====
+PASS test_asset_backup_verifies_hash
+PASS test_audio_import_manifest_hash_and_quota
+PASS test_corrupt_asset_moves_to_quarantine
+PASS test_document_extension_guard
+PASS test_playlist_persistent
+PASS test_quota_guard
+SUMMARY total=6 passed=6 failed=0
+===== test_v010_reminder_acceptance.py =====
+PASS test_due_reminder_and_dedup
+PASS test_future_reminder_not_due
+SUMMARY total=2 passed=2 failed=0
+===== test_v010_platform_evidence.py =====
+PASS test_linux_probe_native
+PASS test_mobile_contracts_not_falsely_native
+SUMMARY total=2 passed=2 failed=0
+===== test_v010_calendar_ui_contract.py =====
+PASS test_accessibility_and_responsive_css
+PASS test_calendar_modes_present
+SUMMARY total=2 passed=2 failed=0
+===== test_v011_native_media.py =====
+PASS test_linux_recorder_command_is_native_capture_contract
+PASS test_synthetic_ffmpeg_recording_commits_asset
+SUMMARY total=2 passed=2 failed=0
+===== test_v011_document_revisions.py =====
+PASS test_pdf_is_read_only_for_internal_editor
+PASS test_text_revision_history_and_conflict
+SUMMARY total=2 passed=2 failed=0
+===== test_v011_packaging_contracts.py =====
+PASS test_android_structure_has_runtime_permissions
+PASS test_ios_contract_has_microphone_usage_text
+PASS test_linux_portable_archive_contains_launcher
+SUMMARY total=3 passed=3 failed=0
+===== test_v011_service_e2e.py =====
+PASS service_pdf_view_text_revision

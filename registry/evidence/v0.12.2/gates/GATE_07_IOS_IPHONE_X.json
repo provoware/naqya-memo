@@ -1,0 +1,13 @@
+{
+  "gate": "GATE_07_IOS_IPHONE_X",
+  "status": "BLOCKED",
+  "host_platform": "Linux",
+  "xcrun": null,
+  "xcodebuild": null,
+  "app_bundle": null,
+  "device_id": null,
+  "target": "iPhone X / iOS 16.7.16",
+  "runtime_source": "V0.12.2",
+  "timestamp": "2026-08-28T19:06:25.069490+00:00",
+  "reason": "Native iOS build/sign/install requires macOS/Xcode; current runner is not macOS."
+}

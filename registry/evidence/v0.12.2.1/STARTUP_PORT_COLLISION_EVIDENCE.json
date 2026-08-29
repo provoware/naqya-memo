@@ -1,0 +1,17 @@
+{
+  "version": "0.12.2.1-STARTUP-PORT-GUARD",
+  "timestamp_utc": "2026-08-28T19:45:36.290027+00:00",
+  "status": "PASS",
+  "unit_tests": "PASS test_foreign_listener_uses_fallback_without_kill\nPASS test_free_requested_port\nPASS test_same_app_same_project_is_reused\nPASS test_strict_mode_refuses_occupied_port\nSUMMARY total=4 passed=4 failed=0",
+  "occupied_port_integration_smoke": "{\"status\": \"PASS\", \"requested\": 41089, \"selected\": 41090, \"health_version\": \"0.12.2.1-STARTUP-PORT-GUARD\"}",
+  "python_startup_isolation": "python3 -S for guard, JSON parsing and local server launcher",
+  "policy": {
+    "requested_free": "START",
+    "same_version_same_project": "REUSE",
+    "foreign_or_stale_listener": "SELECT_NEXT_FREE_PORT",
+    "strict_mode": "REFUSE_WITHOUT_KILL",
+    "automatic_process_kill": false
+  },
+  "release_status": "NO-GO",
+  "passed_real_release_gates": 1
+}
