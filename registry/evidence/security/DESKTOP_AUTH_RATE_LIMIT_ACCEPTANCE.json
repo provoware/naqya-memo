@@ -1,7 +1,12 @@
 {
   "date": "2026-08-29",
   "optimization": "Desktop PIN brute-force rate limiting",
-  "status": "PENDING_CI",
+  "status": "PASS",
+  "validated_implementation_commit": "8fa0dc3e0d962792c9bdd0b24ad4cdd8ac7c331b",
+  "github_actions_run_id": 33257426587,
+  "github_actions_job": "source-contracts",
+  "github_actions_conclusion": "success",
+  "desktop_pin_runtime_regression": "11/11 PASS",
   "contracts": [
     "unauthenticated requests do not consume the failure budget",
     "repeated requests with the same wrong Authorization value count once per window",
@@ -18,5 +23,5 @@
   },
   "release_gate_promotion": false,
   "release_status": "NO-GO",
-  "note": "CI must pass before this evidence is promoted from PENDING_CI. Real platform release gates remain separate."
+  "note": "PASS covers this source/runtime security contract only. Real browser, microphone, Android-device and iPhone-device release gates remain separate and are not promoted by this evidence."
 }
