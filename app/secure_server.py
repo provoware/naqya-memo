@@ -22,7 +22,7 @@ def _active_profile_exists_before_product_import() -> bool:
     """Detect whether the project already owns an active profile.
 
     This check intentionally runs before importing ``server`` because that module
-    creates the reference profile during import.  A missing/empty/old database is
+    creates the reference profile during import. A missing/empty/old database is
     therefore treated as a first-profile bootstrap and hardened immediately after
     the product module has initialized its schema.
     """
@@ -74,8 +74,16 @@ def _remove_first_pin_file() -> None:
         FIRST_PIN_FILE.unlink(missing_ok=True)
     except OSError:
         # Authentication must not become a false failure after the PIN itself was
-        # proven valid.  A leftover credential file is reported at next start.
+        # proven valid. A leftover credential file is reported at next start.
         pass
+
+
+def _generate_first_pin() -> str:
+    """Generate a random PIN compatible with the current four-digit core contract."""
+    while True:
+        pin = f'{secrets.randbelow(10000):04d}'
+        if pin != '0000':
+            return pin
 
 
 def _harden_first_profile_if_needed() -> None:
@@ -85,7 +93,7 @@ def _harden_first_profile_if_needed() -> None:
     # If that upstream contract changes, fail closed instead of guessing.
     if not base.profile_service.verify_access(base.PROFILE_ID, '0000', source='FIRST_PIN_BOOTSTRAP_CHECK'):
         raise RuntimeError('FIRST_PIN_BOOTSTRAP_CONTRACT_CHANGED')
-    pin = ''.join(secrets.choice('0123456789') for _ in range(12))
+    pin = _generate_first_pin()
     _write_first_pin_file(pin)
     try:
         base.profile_service.change_pin(base.PROFILE_ID, '0000', pin)
