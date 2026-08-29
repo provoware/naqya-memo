@@ -195,6 +195,14 @@ def _clear_failures(client: str) -> None:
 class SecureHandler(base.Handler):
     """Fail-closed desktop transport guard around the existing product handler."""
 
+    def end_headers(self):
+        """Prevent authenticated memo/profile responses from surviving in caches."""
+        self.send_header('Cache-Control','no-store, no-cache, must-revalidate, max-age=0')
+        self.send_header('Pragma','no-cache')
+        self.send_header('Expires','0')
+        self.send_header('Vary','Authorization')
+        return super().end_headers()
+
     def _challenge(self):
         body=(
             'PROVOWARE ist gesperrt. Im Browser-Benutzerfeld "provoware" '
@@ -204,7 +212,6 @@ class SecureHandler(base.Handler):
         self.send_response(401)
         self.send_header('WWW-Authenticate',f'Basic realm="{AUTH_REALM}", charset="UTF-8"')
         self.send_header('Content-Type','text/plain; charset=utf-8')
-        self.send_header('Cache-Control','no-store')
         self.send_header('X-Content-Type-Options','nosniff')
         self.send_header('Content-Length',str(len(body)))
         self.end_headers()
@@ -218,7 +225,6 @@ class SecureHandler(base.Handler):
         self.send_response(429)
         self.send_header('Retry-After',str(retry_after))
         self.send_header('Content-Type','text/plain; charset=utf-8')
-        self.send_header('Cache-Control','no-store')
         self.send_header('X-Content-Type-Options','nosniff')
         self.send_header('Content-Length',str(len(body)))
         self.end_headers()
