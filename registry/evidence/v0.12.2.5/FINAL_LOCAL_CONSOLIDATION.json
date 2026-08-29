@@ -1,0 +1,16 @@
+{
+  "format": "PROVOWARE_V01225_FINAL_LOCAL_CONSOLIDATION",
+  "generated_at_utc": "2026-08-29T01:08:35.706402+00:00",
+  "version": "0.12.2.5-REAL-VIEWPORT-UX-FIX",
+  "targeted_acceptance": "89/89 PASS",
+  "offline_geometry": "8/8 PASS",
+  "real_loopback_visual_e2e": "BLOCKED_BY_ADMIN_POLICY",
+  "real_loopback_pass_claimed": false,
+  "android_ios_webasset_parity": "PASS",
+  "github_quality_main": "PASS",
+  "github_main_sha": "de9f25f54bfbcecb008614402a0eb77745dcc1e7",
+  "github_review_base_sha": "e3f63066e86325752ede2699082e9866d6847d83",
+  "github_review_branch": "review/v0.12.2.5-real-viewport-20260829",
+  "release_status": "NO-GO",
+  "release_gates": "1/7"
+}

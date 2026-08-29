@@ -11,38 +11,43 @@
   },
   {
     "file": ".github/workflows/quality.yml",
-    "sha256": "e98802ba832b110bfe7728f8e304db51a4004e625d2a5f9c432698c0cb8e31c2",
-    "bytes": 1833
+    "sha256": "99a0b45765c5269e4dbf878cbc1b4bdfe7439464621248cbf928863275de641d",
+    "bytes": 1906
   },
   {
     "file": ".gitignore",
-    "sha256": "3dee90156f3a3129cc22d6702b8e4e96e38127520f1ec114ba4b20eb8b66d988",
-    "bytes": 497
+    "sha256": "952e916200b6d2b1ef7a785428baf54c74f3ff399a6a8a670d78347fe431d1b4",
+    "bytes": 634
   },
   {
     "file": "AGENTS.md",
-    "sha256": "7a31442cafc0e1a1acd9a453e6415f3312db24ea32cc4ae1012bb5306e1fbea8",
-    "bytes": 5732
+    "sha256": "1486bbcefd8a280e00ece003f7770ce68c62c147082d417a527b501d57cb029d",
+    "bytes": 6367
   },
   {
     "file": "BRAIN.md",
-    "sha256": "6a8d22a0ae0ec4b73a29952247fc51e00aaf60e063af0ac847606187d37f53e1",
-    "bytes": 16401
+    "sha256": "0962e2e5d79b6b88ee311492e7c8fd886bf462b69c4d2f766c1243bd0bca6c75",
+    "bytes": 17996
   },
   {
     "file": "CHANGELOG.md",
-    "sha256": "1f444ba8b885ef37843472ead9cbe9e1ebae01db88796b4280d690099114accc",
-    "bytes": 12304
+    "sha256": "5acd019c56217e7df4fa52c4c6bd3bc33b184279cd38365513edab3a2aebc6d5",
+    "bytes": 13316
   },
   {
     "file": "CONTRIBUTING.md",
-    "sha256": "0bb5e2a66810fd3de92d5edc1ad3c2a81ea073122472e740ac8f1352af11477e",
-    "bytes": 1315
+    "sha256": "2ed4827c7fd96007e18379f97bddec67e0a00f2340841787d5e7c4b9c3fd69e2",
+    "bytes": 1379
+  },
+  {
+    "file": "GITHUB_SAFE_SYNC_STARTEN.sh",
+    "sha256": "4865894867adb6be9e87f425c1bfed6207abd7b061829c820e40243c06b38d25",
+    "bytes": 697
   },
   {
     "file": "GPT_TAGE_UND_WISSENSBUCH.md",
-    "sha256": "f876c11de4e8f552b3574babad3890aa5ffecfb96ebfadfce06653d3a797f661",
-    "bytes": 10039
+    "sha256": "b4e70e13b7a5832495ed6df27ccd0de4e7b5b75ee205e0609315fb0750c9767f",
+    "bytes": 10629
   },
   {
     "file": "LAIENANLEITUNG.md",
@@ -51,8 +56,8 @@
   },
   {
     "file": "README.md",
-    "sha256": "62e169caf9f8ea77be8d420038c6303c77145c8ff70e5bbafb28ebca0579a722",
-    "bytes": 24386
+    "sha256": "7c2dace36e087a38a7e066b8a56223c7cb0495d5d34ffab917f2fa8dab210783",
+    "bytes": 26615
   },
   {
     "file": "RUN_8H_SOAK_ONLY.sh",
@@ -86,8 +91,8 @@
   },
   {
     "file": "RUN_VISUAL_ACCEPTANCE_LINUX.sh",
-    "sha256": "e907f2cea0df934fc87eddfe2277885231e69d3f2d41276bb8930e55f163a9c9",
-    "bytes": 353
+    "sha256": "eaae31817c97421881dba47837e54e552669fa55d47bb074ce7a82f25fd07395",
+    "bytes": 391
   },
   {
     "file": "STARTEN_LINUX.sh",
@@ -105,14 +110,19 @@
     "bytes": 6833
   },
   {
+    "file": "SYNC_PROVOWARE_V0.12.2.5_SAFE_REVIEW.sh",
+    "sha256": "cd3dea34a8597f95914935b25c26de704c2bec9f03c29c32a51af47da202ebc1",
+    "bytes": 8445
+  },
+  {
     "file": "TODO.md",
-    "sha256": "1be227711557b2caaa77dc26af3402a1cda46f58cf98e554d30dbbb02ebbcb90",
-    "bytes": 18745
+    "sha256": "dae17ba4c99978a17747a0e9d00a5b95c04bdffa3a1872fea6c2c608985069a9",
+    "bytes": 20510
   },
   {
     "file": "UPGRADE_POTENZIAL.md",
-    "sha256": "5d94d63044ed32dd9892db28c42168cb5263c32bfb0ac23571348bbf19911d28",
-    "bytes": 7303
+    "sha256": "12ce41f87703b2e3b6ba00b65d3524c32912b0d5eb1e50004bf13031cf118a07",
+    "bytes": 7777
   },
   {
     "file": "agents/AGENT_DATENSICHERHEIT__STATUS-AKTIV.md",
@@ -1331,18 +1341,18 @@
   },
   {
     "file": "platform/android/app/src/main/assets/www/app.js",
-    "sha256": "e70e4f5a076092f41df04cb33905d8e8316db4a614e16b0269e8521681962f12",
-    "bytes": 40231
+    "sha256": "4099d852bd954283864ab6d45b53154ba62427e41f29e0fd18c17fc797af7573",
+    "bytes": 42744
   },
   {
     "file": "platform/android/app/src/main/assets/www/build_info.js",
-    "sha256": "6a282a43d52e3ac318e25175934a8fe82481c3194c7777e38b825a0864b2cc37",
-    "bytes": 178
+    "sha256": "be7e52f9205881acac38b752b05214813a4fa8851aa983e7efab1ae0a61bb562",
+    "bytes": 174
   },
   {
     "file": "platform/android/app/src/main/assets/www/index.html",
-    "sha256": "911a091057ad7ecb885c3c4e1fb04cf5f985f0d93cee23459c6c308eb96fee78",
-    "bytes": 7652
+    "sha256": "db0bc7736e4da51aec9f77cae8a8d667875686bd6240d03d2377a898295a5490",
+    "bytes": 8835
   },
   {
     "file": "platform/android/app/src/main/assets/www/mobile/mobile_acceptance.js",
@@ -1361,8 +1371,8 @@
   },
   {
     "file": "platform/android/app/src/main/assets/www/styles.css",
-    "sha256": "ce2a0a3fd29925bf2c5d5a7c71a3dea96dbc2b1b27e91510f28281fa49435215",
-    "bytes": 41771
+    "sha256": "f0a42050222297acb8e95af289311e6bad81c21fb9c51f304f9264d6cd4ca28e",
+    "bytes": 58684
   },
   {
     "file": "platform/android/app/src/main/assets/www/tests/test_shell_contract.py",
@@ -1446,18 +1456,18 @@
   },
   {
     "file": "platform/ios/WebAssets/app.js",
-    "sha256": "e70e4f5a076092f41df04cb33905d8e8316db4a614e16b0269e8521681962f12",
-    "bytes": 40231
+    "sha256": "4099d852bd954283864ab6d45b53154ba62427e41f29e0fd18c17fc797af7573",
+    "bytes": 42744
   },
   {
     "file": "platform/ios/WebAssets/build_info.js",
-    "sha256": "6a282a43d52e3ac318e25175934a8fe82481c3194c7777e38b825a0864b2cc37",
-    "bytes": 178
+    "sha256": "be7e52f9205881acac38b752b05214813a4fa8851aa983e7efab1ae0a61bb562",
+    "bytes": 174
   },
   {
     "file": "platform/ios/WebAssets/index.html",
-    "sha256": "911a091057ad7ecb885c3c4e1fb04cf5f985f0d93cee23459c6c308eb96fee78",
-    "bytes": 7652
+    "sha256": "db0bc7736e4da51aec9f77cae8a8d667875686bd6240d03d2377a898295a5490",
+    "bytes": 8835
   },
   {
     "file": "platform/ios/WebAssets/mobile/mobile_acceptance.js",
@@ -1476,8 +1486,8 @@
   },
   {
     "file": "platform/ios/WebAssets/styles.css",
-    "sha256": "ce2a0a3fd29925bf2c5d5a7c71a3dea96dbc2b1b27e91510f28281fa49435215",
-    "bytes": 41771
+    "sha256": "f0a42050222297acb8e95af289311e6bad81c21fb9c51f304f9264d6cd4ca28e",
+    "bytes": 58684
   },
   {
     "file": "platform/ios/WebAssets/tests/test_shell_contract.py",
@@ -1501,8 +1511,8 @@
   },
   {
     "file": "registry/FILE_STATUS_REGISTRY.json",
-    "sha256": "8e3410c994e76c3997516bff39b8e647856cb4e68d4bd61b0cfc1d99544b5d71",
-    "bytes": 42423
+    "sha256": "57efd4a80d281ced1ae4cfd571bb8576cf7a72cdc10fea0e31f498701092d0e5",
+    "bytes": 44493
   },
   {
     "file": "registry/GITHUB_BACKUP_STATUS.json",
@@ -1525,14 +1535,24 @@
     "bytes": 871
   },
   {
+    "file": "registry/GITHUB_V0.12.2.5_FILESET_SHA256.txt",
+    "sha256": "1e921e4e527b4e5b04e0e49ac8d9e0527659315b9343bd69e986ee988dbd4914",
+    "bytes": 52433
+  },
+  {
+    "file": "registry/GITHUB_V0.12.2.5_REVIEW_STATE.json",
+    "sha256": "508ba9996322292872497df11ec7ef0a03ea6ce16fccff4bdb9f8012bd0b6e01",
+    "bytes": 1223
+  },
+  {
     "file": "registry/PROJECT_STATUS.json",
-    "sha256": "e202ab768be22ab462c3e0cb74b535856d8fd71a38485393e343e248c7f84b88",
-    "bytes": 3399
+    "sha256": "0a4db56e6ef299ea817cae55f41e35f3d337f69806b5f2b48397c2811b1d4246",
+    "bytes": 4421
   },
   {
     "file": "registry/VERSION.json",
-    "sha256": "dc49443ecab4a030cf4bb478387641adc8e7bcae8cce6f167bb7cadaa164a6ed",
-    "bytes": 218
+    "sha256": "85dc3765ac1e16b7b85af0d5ad9a0c171fcd64b2ae8f2fb863f21a8c90843e0d",
+    "bytes": 201
   },
   {
     "file": "registry/evidence/V0.2_PERSISTENCE_TEST_EVIDENCE.json",
@@ -1775,6 +1795,71 @@
     "bytes": 7738
   },
   {
+    "file": "registry/evidence/v0.12.2.5/FINAL_LOCAL_CONSOLIDATION.json",
+    "sha256": "1e796d943f9a7317f23724e5d53fba1087c9096f36380729694ff2f1f6a50648",
+    "bytes": 669
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/MOBILE_WEB_BUNDLE_SYNC.json",
+    "sha256": "75b5934c98c7ea91c5ca6db140d61cbe1bce453ff4e01b1326f268d2b2c7d036",
+    "bytes": 1624
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/REAL_VIEWPORT_UX_ACCEPTANCE.json",
+    "sha256": "98b5ba3934e5fbd2c25a00a72c19056e24c551cd2fc1903145b69ce8853a2a21",
+    "bytes": 10205
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/browser/ALL_VIEWS_VISUAL_ACCEPTANCE.json",
+    "sha256": "d673bf765e6b0f57fd521b0365d5e08f6c7afd1148c3c3714c2ec475c0b73055",
+    "bytes": 437
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/offline-geometry/OFFLINE_GEOMETRY_ACCEPTANCE.json",
+    "sha256": "c767c7ef7835f747ea56c9e5b821de3e333fae313378d3175b066a326e5cbaa4",
+    "bytes": 69911
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/offline-geometry/compact_1100.png",
+    "sha256": "b73ab51d79128aeac6ca477f27d31056f80912d62c4e01bcfd8314505a8b1619",
+    "bytes": 414258
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/offline-geometry/compact_900.png",
+    "sha256": "5b53798844c8747d09481479edc1ea6668d0a08ed89ed9381bb3d67ac3bee2b2",
+    "bytes": 340364
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/offline-geometry/desktop_1366.png",
+    "sha256": "593192ceacb2f9d9d703ad9e606e71fa3a2c51703b0a86d10a9d288a1d1f1eb6",
+    "bytes": 463406
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/offline-geometry/desktop_150.png",
+    "sha256": "00fa4065f0e799a473b60adad15397a20be05c7a99f3d1551352d747aca5c604",
+    "bytes": 642438
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/offline-geometry/desktop_1600.png",
+    "sha256": "94e3340ca08ab1183ef72c7b0c0457e3fbe36d65190acc52898ecd7ca8abc33f",
+    "bytes": 549159
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/offline-geometry/desktop_1920.png",
+    "sha256": "09e76bf6e1fbc2f61478970ea83adade7d372ebfca40395e89bd528c2eaf3a9f",
+    "bytes": 660514
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/offline-geometry/desktop_200.png",
+    "sha256": "c6a2590ed8d0176eee6b1c2c6da43ca6eab9a3f8df406f2f6afb36ab7c05c15f",
+    "bytes": 792233
+  },
+  {
+    "file": "registry/evidence/v0.12.2.5/offline-geometry/mobile_390.png",
+    "sha256": "614468fc050facdf878e4e4a2467493cd714582ad2fe8501882d12a0810c4061",
+    "bytes": 254011
+  },
+  {
     "file": "registry/evidence/v0.3/RECOVERY_ACCEPTANCE_EVIDENCE.json",
     "sha256": "d66967ee94a832fae26a33fc8bda6d2d166482aaed071d3d5dbff407fd88894c",
     "bytes": 1602
@@ -1885,6 +1970,16 @@
     "bytes": 5990
   },
   {
+    "file": "tests/ui_consistency/run_v01225_all_views_visual_acceptance.py",
+    "sha256": "c7510604e0c344c9f69d65be98aea8517c40b85da6e1e29d34363ba5df52ed3a",
+    "bytes": 6876
+  },
+  {
+    "file": "tests/ui_consistency/run_v01225_offline_geometry_acceptance.py",
+    "sha256": "21baf9ecd2449af742d13495d9c332a5c5d45b54dcac6f674f06d079e3f05352",
+    "bytes": 8188
+  },
+  {
     "file": "tests/ui_consistency/test_v01222_service_upload_e2e.py",
     "sha256": "d6e5072e3abcab0b90c0475eba1a6b10dd52d4511b951e124655170e0f691a13",
     "bytes": 2394
@@ -1901,8 +1996,13 @@
   },
   {
     "file": "tests/ui_consistency/test_v01224_ux_control_plane.py",
-    "sha256": "7d43616cffbbb2fa30a848e86926dbe085d01af45988ed591a7de00d94e2475c",
-    "bytes": 2997
+    "sha256": "06f1b84b6395dcaf16c8ccd1caa529c82bede83ba60c7394a348a0c9b442bfdb",
+    "bytes": 3076
+  },
+  {
+    "file": "tests/ui_consistency/test_v01225_real_viewport_ux.py",
+    "sha256": "7a2028f11ec63fdac63c6eb35e724f101dc4622ef6f7529565bcbca42aa6faf9",
+    "bytes": 3934
   },
   {
     "file": "tools/mobile/sync_web_assets.py",
@@ -1956,18 +2056,18 @@
   },
   {
     "file": "ui/reference_web/app.js",
-    "sha256": "e70e4f5a076092f41df04cb33905d8e8316db4a614e16b0269e8521681962f12",
-    "bytes": 40231
+    "sha256": "4099d852bd954283864ab6d45b53154ba62427e41f29e0fd18c17fc797af7573",
+    "bytes": 42744
   },
   {
     "file": "ui/reference_web/build_info.js",
-    "sha256": "6a282a43d52e3ac318e25175934a8fe82481c3194c7777e38b825a0864b2cc37",
-    "bytes": 178
+    "sha256": "be7e52f9205881acac38b752b05214813a4fa8851aa983e7efab1ae0a61bb562",
+    "bytes": 174
   },
   {
     "file": "ui/reference_web/index.html",
-    "sha256": "911a091057ad7ecb885c3c4e1fb04cf5f985f0d93cee23459c6c308eb96fee78",
-    "bytes": 7652
+    "sha256": "db0bc7736e4da51aec9f77cae8a8d667875686bd6240d03d2377a898295a5490",
+    "bytes": 8835
   },
   {
     "file": "ui/reference_web/mobile/mobile_acceptance.js",
@@ -1986,8 +2086,8 @@
   },
   {
     "file": "ui/reference_web/styles.css",
-    "sha256": "ce2a0a3fd29925bf2c5d5a7c71a3dea96dbc2b1b27e91510f28281fa49435215",
-    "bytes": 41771
+    "sha256": "f0a42050222297acb8e95af289311e6bad81c21fb9c51f304f9264d6cd4ca28e",
+    "bytes": 58684
   },
   {
     "file": "ui/reference_web/tests/test_shell_contract.py",

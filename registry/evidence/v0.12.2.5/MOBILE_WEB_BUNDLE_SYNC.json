@@ -1,0 +1,56 @@
+{
+  "version": "0.12.2.5-REAL-VIEWPORT-UX-FIX",
+  "generated_at": "2026-08-29T00:48:11.890840+00:00",
+  "source": "ui/reference_web",
+  "targets": [
+    "platform/android/app/src/main/assets/www",
+    "platform/ios/WebAssets"
+  ],
+  "files": [
+    {
+      "file": "app.js",
+      "sha256": "4099d852bd954283864ab6d45b53154ba62427e41f29e0fd18c17fc797af7573",
+      "bytes": 42744
+    },
+    {
+      "file": "build_info.js",
+      "sha256": "be7e52f9205881acac38b752b05214813a4fa8851aa983e7efab1ae0a61bb562",
+      "bytes": 174
+    },
+    {
+      "file": "index.html",
+      "sha256": "db0bc7736e4da51aec9f77cae8a8d667875686bd6240d03d2377a898295a5490",
+      "bytes": 8835
+    },
+    {
+      "file": "mobile/mobile_acceptance.js",
+      "sha256": "a0bfbba4327213bb7d4133925f62eed1cb75d7e28d46ada0cb6e54ce636754a2",
+      "bytes": 3214
+    },
+    {
+      "file": "mobile/mobile_bootstrap.js",
+      "sha256": "b5d7f3660c3a29f956d7ea8369dd645315896a6bad835a24c9c509e46cd44c2e",
+      "bytes": 7161
+    },
+    {
+      "file": "mobile/mobile_core.js",
+      "sha256": "8a6b3cab82ef3ec78e1ca3feba63e5d7aa86c79b57b49df4bdb0698992ef476b",
+      "bytes": 32056
+    },
+    {
+      "file": "styles.css",
+      "sha256": "f0a42050222297acb8e95af289311e6bad81c21fb9c51f304f9264d6cd4ca28e",
+      "bytes": 58684
+    },
+    {
+      "file": "tests/test_shell_contract.py",
+      "sha256": "6b2519685ffb89b0f95253bbdc36039436e5d40908d9defb92467731c634e4ff",
+      "bytes": 2188
+    },
+    {
+      "file": "theme_tokens.json",
+      "sha256": "2443f5bcaf0fe55f81cadcf827fe54c03573e91e1c460da55eb96c436c1d47c4",
+      "bytes": 1269
+    }
+  ]
+}

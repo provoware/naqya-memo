@@ -381,3 +381,22 @@
 - `CONTRIBUTING.md` und `LAIENANLEITUNG.md` an neue Architektur angepasst
 - historische 0.5.1-E7-GitHub-Evidence über History-Dokument + Backupbranches bewahrt
 - CI darf reale Device/Browser/Mikrofon-Gates ausdrücklich nicht simulieren
+
+## [0.12.2.5-REAL-VIEWPORT-UX-FIX] – 2026-08-29
+### 🖥️ Real Viewport UX Fix
+- linke Navigation von zu engem Kachelband auf lesbare Desktopbreite umgestellt
+- persistentes Desktop-Einklappen der Navigation ergänzt
+- Menülabels gegen buchstabenweisen Umbruch gehärtet
+- Ansicht-Steuerung nutzt jetzt eine komplette Headerzeile
+- Schnellmemo und Status-/Ansichtsbereiche für 150/200 % neu proportioniert
+- rechte Infoleiste auf eine kompakte Karte reduziert und einklappbar gemacht
+- bei 200 % wird Info als optionaler Drawer behandelt
+- technische Details vom Arbeitsbereichs-Overlay in einen eigenen Drawer verschoben
+- Dashboardkarten verkleinert und horizontal informationsdichter gestaltet
+- mobile Schnellleiste auf overflowfreies Raster umgestellt
+
+### 🧪 Neue Evidence
+- Offline-Chromium-Geometriegate rendert echtes Produktions-HTML/CSS ohne Backend
+- 8/8 Viewport-/Zoomfälle PASS
+- vollständige gezielte Regression 89/89 PASS
+- reales Loopback-E2E bleibt bewusst separates Zielsystem-Gate

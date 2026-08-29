@@ -292,3 +292,26 @@
 [2026-08-29] [BRAIN-0038] [CI-EVIDENCE-GRENZE] [BEWIESEN]
 - CI-Source-Checks dürfen reale Browser-, Mikrofon- oder Geräte-Gates niemals ersetzen.
 - Workflowtexte und Status müssen diese Grenze explizit ausweisen.
+
+[2026-08-29] [BRAIN-0039] [REAL-VIEWPORT] [BEWIESEN]
+- Statische CSS-Verträge erkennen nicht zuverlässig abgeschnittene Labels oder legacy-spezifische Grid-Overrides.
+- Screenshot-/DOM-Geometrie muss zusätzlich zu String-/Contracttests laufen.
+- V0.12.2.5 fand und behob damit drei reale Probleme: Navigation 150/200 %, mobile Quickbar und XL-Statusraster.
+
+[2026-08-29] [BRAIN-0040] [HIGH-MAGNIFICATION] [BEWIESEN]
+- 200 % ist kein normaler Desktop mit größerer Schrift, sondern ein eigener Layoutmodus.
+- Regel: Primärbedienung verbreitern, Zusatzinformation in Drawer verschieben, nicht alles gleichzeitig in feste Spalten pressen.
+
+[2026-08-29] [BRAIN-0041] [DRAWER-PRINZIP] [BEWIESEN]
+- Technik und Zusatzinfo dürfen den Arbeitsbereich nicht dauerhaft überdecken.
+- Nutzerinitiierte Drawer sind zulässig, wenn sie einen eigenen Schließweg, Escape und Scrim besitzen.
+
+[2026-08-29] [BRAIN-0042] [REGRESSION-WERT] [BEWIESEN]
+- Beim Viewport-Umbau wurde Theme/Font/Zoom-Logik versehentlich mit entfernt.
+- Historischer V0.12.2-Test erkannte den Funktionsverlust trotz grünem JS-Syntaxcheck.
+- Konsequenz: alte Verträge nicht leichtfertig löschen; bei Layoutumbauten immer Interaktionsregression mitlaufen lassen.
+
+[2026-08-29] [BRAIN-0043] [MOBILE-CRITICAL-VISIBILITY] [BEWIESEN]
+- Kein horizontaler Overflow allein beweist noch keine benutzbare Mobile-Ansicht.
+- V0.12.2.5 prüft zusätzlich, dass START/DATEN/BACKUP, NÄCHSTE 10 und ANSICHT innerhalb der Topbar tatsächlich sichtbar bleiben.
+- Vertikaler Container-Overflow wird als eigenständiger Geometriefehler behandelt.

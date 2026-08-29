@@ -32,6 +32,10 @@
     "status": "AKTIV"
   },
   {
+    "path": "GITHUB_SAFE_SYNC_STARTEN.sh",
+    "status": "AKTIV"
+  },
+  {
     "path": "GPT_TAGE_UND_WISSENSBUCH.md",
     "status": "AKTIV"
   },
@@ -81,6 +85,10 @@
   },
   {
     "path": "SYNC_PROVOWARE_V0.12.2.4_SAFE_REVIEW.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "SYNC_PROVOWARE_V0.12.2.5_SAFE_REVIEW.sh",
     "status": "AKTIV"
   },
   {
@@ -1216,6 +1224,14 @@
     "status": "AKTIV"
   },
   {
+    "path": "registry/GITHUB_V0.12.2.5_FILESET_SHA256.txt",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/GITHUB_V0.12.2.5_REVIEW_STATE.json",
+    "status": "AKTIV"
+  },
+  {
     "path": "registry/PROJECT_STATUS.json",
     "status": "AKTIV"
   },
@@ -1416,6 +1432,58 @@
     "status": "AKTIV"
   },
   {
+    "path": "registry/evidence/v0.12.2.5/FINAL_LOCAL_CONSOLIDATION.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/MOBILE_WEB_BUNDLE_SYNC.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/REAL_VIEWPORT_UX_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/browser/ALL_VIEWS_VISUAL_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/offline-geometry/OFFLINE_GEOMETRY_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/offline-geometry/compact_1100.png",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/offline-geometry/compact_900.png",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/offline-geometry/desktop_1366.png",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/offline-geometry/desktop_150.png",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/offline-geometry/desktop_1600.png",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/offline-geometry/desktop_1920.png",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/offline-geometry/desktop_200.png",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.5/offline-geometry/mobile_390.png",
+    "status": "AKTIV"
+  },
+  {
     "path": "registry/evidence/v0.3/RECOVERY_ACCEPTANCE_EVIDENCE.json",
     "status": "AKTIV"
   },
@@ -1504,6 +1572,14 @@
     "status": "AKTIV"
   },
   {
+    "path": "tests/ui_consistency/run_v01225_all_views_visual_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/ui_consistency/run_v01225_offline_geometry_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
     "path": "tests/ui_consistency/test_v01222_service_upload_e2e.py",
     "status": "AKTIV"
   },
@@ -1517,6 +1593,10 @@
   },
   {
     "path": "tests/ui_consistency/test_v01224_ux_control_plane.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/ui_consistency/test_v01225_real_viewport_ux.py",
     "status": "AKTIV"
   },
   {

@@ -119,3 +119,11 @@ Bis V1.0 RC gilt weiterhin Feature Freeze. Einzige Ausnahme ist die vom Projekt 
 - Bei 80–200 % Zoom muss Layout neu ordnen, bevor horizontaler Überlauf akzeptiert wird.
 - Linke Navigation darf keine horizontale Scrollleiste benötigen.
 - Redundante UI-Information wird entfernt statt an eine andere Stelle verschoben.
+
+## REAL VIEWPORT CONTRACT
+- Jede relevante UI-Härtung muss mindestens 1366×768, 1600×900, 1920×1080, 150 %, 200 % und Mobile berücksichtigen.
+- Navigation darf Labels nicht buchstabenweise umbrechen oder abschneiden; bei Platzmangel einklappen.
+- 200 % ist als eigener High-Magnification-Modus zu behandeln.
+- Zusatzinfo und technische Details dürfen den primären Arbeitsbereich nicht dauerhaft überdecken.
+- Offline-Geometrie-Screenshots sind Evidence für Layout, aber kein Ersatz für echtes Loopback-/Browser-E2E.
+- Nach Änderungen an Navigation/Drawer/Layout immer Theme-, Schrift- und Zoombedienung regressionsprüfen.

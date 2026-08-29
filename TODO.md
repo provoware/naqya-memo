@@ -466,3 +466,37 @@ Ein TODO darf nur abgehakt werden, wenn:
 - [x] V0.12.2.4-Review-Branch auf `a05ea824…` ausgerichtet
 - [x] V0.12.2.4-Syncvertrag auf neuen Main-SHA korrigiert
 - [ ] V0.12.2.4 Review-Branch erst nach lokalem Gate pushen
+
+## 🟢 V0.12.2.5 – Real Viewport UX Fix
+- [x] reale Screenshotbefunde aus 1600×900 analysiert
+- [x] Desktopnavigation auf lesbare Breite gebracht
+- [x] Navigation optional einklappbar gemacht
+- [x] buchstabenweisen Menüumbruch verhindert
+- [x] `Dokument / PDF` im Menü auf `Dokumente` verkürzt, Modultitel bleibt vollständig
+- [x] Ansicht-Steuerung auf volle eigene Headerzeile gelegt
+- [x] Schnellmemo bei hoher Schriftstufe verbreitert
+- [x] Technik-Overlay durch rechten Technik-Drawer ersetzt
+- [x] Info-Seitenleiste auf eine Karte reduziert und einklappbar gemacht
+- [x] Zitat-Zusatzkarte entfernt
+- [x] Dashboardkarten deutlich kompakter
+- [x] mobile Schnellleiste ohne horizontalen Overflow
+- [x] mobile START/DATEN/BACKUP, NÄCHSTE 10 und ANSICHT vollständig sichtbar
+- [x] 150-%-Layout visuell geprüft und korrigiert
+- [x] 200-%-High-Magnification-Modus mit automatisch ausgelagerter Infoleiste
+- [x] alte XL-Status-2-Spaltenregel neutralisiert
+- [x] Theme-/Schrift-/Zoombedienung nach Drawer-Umbau regressionssicher wiederhergestellt
+- [x] Offline-Chromium-Geometriegate 8/8 PASS
+- [x] Gesamt-Acceptance 89/89 PASS
+- [x] Android-/iOS-WebAssets final synchronisiert
+- [ ] echtes Loopback-Visual-E2E auf Ziel-Linux ausführen
+- [ ] V0.12.2.5 Review-PR CI + Architektur-Diff prüfen
+
+## 🟢 GitHub CI Bootstrap
+- [x] CI-Bootstrap PR #57 als Ein-Datei-Control-Plane-PR erstellt
+- [x] PR #57 kontrolliert gemergt
+- [x] Main `de9f25f…` mit `quality` GitHub Action SUCCESS
+- [x] neuen Main-CI-Zustand separat als `backup/pre-v0.12.2.5-main-ci-20260829` gesichert
+- [x] PR #56 `quality` SUCCESS bestätigt
+- [x] V0.12.2.5 Safe-Review-Runner auf neuen Main-SHA nachgezogen
+
+- [x] Ein-Befehl-GitHub-Sync-Wrapper `GITHUB_SAFE_SYNC_STARTEN.sh` ergänzt

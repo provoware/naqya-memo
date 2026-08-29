@@ -76,3 +76,9 @@
 - **Offen:** `RUN_VISUAL_ACCEPTANCE_LINUX.sh` auf dem realen Linux-Rechner ausführen.
 - **Umfang:** Dashboard, Memo, Todo, Kalender, Papierkorb, Diagnose, Sprachmemo, Dokument/PDF, Audio, Einstellungen bei Desktop 100/150/200 %, kompakt und Mobile.
 - **Nutzen:** beweist tatsächliche Nicht-Überdeckung und Randtreue; statische CSS-Verträge allein reichen dafür nicht.
+
+## UP-VIEWPORT-LIVE-E2E-V01225 – 🔴 HOCH
+- **Offen:** `RUN_VISUAL_ACCEPTANCE_LINUX.sh` auf dem realen Linux-Rechner gegen den echten Loopback-Service ausführen.
+- **Bereits bewiesen:** Offline-Chromium-Geometrie 8/8 PASS.
+- **Noch nicht bewiesen:** echte API-Daten, dynamische Modalinhalte, Fokusfolgen und Browser-/Service-Interaktion unter denselben Viewports.
+- **Wirkung:** schließt die Differenz zwischen geometrischer Rendering-Evidence und echtem Browser-E2E.

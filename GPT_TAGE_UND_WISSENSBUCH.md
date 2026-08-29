@@ -120,3 +120,9 @@
 [2026-08-29] GPT-0060 — Feldhilfen sind im Knappmodus fokusabhängig und bleiben in geführten Modi sichtbar.
 [2026-08-29] GPT-0061 — GitHub-Control-Plane-Dateien sind Merge-Voraussetzung für den Full-Tree-Architekturwechsel.
 [2026-08-29] GPT-0062 — CI validiert Source-Verträge, niemals reale Device-/Browser-/Mikrofon-Gates.
+
+[2026-08-29] GPT-0063 — V0.12.2.5 besitzt ein Offline-Chromium-Geometriegate für 8 Viewport-/Zoomfälle.
+[2026-08-29] GPT-0064 — Navigation darf bei 150/200 % verbreitern oder einklappen, aber niemals buchstabenweise zerfallen.
+[2026-08-29] GPT-0065 — Technik und Zusatzinfo werden als Drawer behandelt, damit der Arbeitsbereich frei bleibt.
+[2026-08-29] GPT-0066 — 200 % ist ein eigener High-Magnification-Modus mit weniger dauerhaft sichtbaren Zusatzinformationen.
+[2026-08-29] GPT-0067 — Regressionstest V0.12.2 verhinderte unbemerkten Verlust der Theme-/Font-/Zoom-Handler.

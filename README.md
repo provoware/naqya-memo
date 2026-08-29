@@ -1,3 +1,42 @@
+# 🖥️ **V0.12.2.5 – REAL VIEWPORT UX FIX**
+> **Feature-Freeze:** 🔒 aktiv  
+> **gezielte Regression + Geometrie:** 🟢 **89/89 PASS**  
+> **Offline-Chromium-Geometrie:** 🟢 **8/8 Viewportfälle PASS**  
+> **Navigation:** 🟢 normal breit + einklappbar; kein buchstabenweiser Umbruch  
+> **Ansicht-Leiste:** 🟢 eigene volle Headerzeile statt gequetschter Statusspalte  
+> **Technik:** 🟢 eigener Drawer statt Overlay über dem Arbeitsbereich  
+> **Info-Seitenleiste:** 🟢 kompakt, einklappbar, bei 200 % automatisch Drawer  
+> **Dashboard:** 🟢 kompakter, weniger Leerraum  
+> **150/200 %:** 🟢 eigener High-Magnification-Modus  
+> **Mobile:** 🟢 Schnellleiste ohne horizontalen Overflow  
+> **Android/iOS-WebAssets:** 🟢 bytegleich zur Referenzoberfläche  
+> **echtes Loopback-Browser-E2E:** 🟡 weiterhin auf realem Linux auszuführen  
+> **CI-Bootstrap-Main:** `de9f25f…` · GitHub Actions `quality` 🟢 SUCCESS  
+> **Main-CI-Backup:** `backup/pre-v0.12.2.5-main-ci-20260829` → `de9f25f…`  
+> **PR #56 Source-CI:** 🟢 SUCCESS · bleibt Draft wegen nachfolgendem Viewport-Fix  
+> **Release:** 🔴 `NO-GO` · weiterhin **1/7 reale Gates**
+
+### Automatisch geprüfte Ansichten
+
+`1920×1080` · `1600×900` · `1366×768` · `1600×900 @ 150 %` · `1920×1080 @ 200 %` · `1100×800` · `900×760` · `390×844`
+
+Das Offline-Geometriegate rendert **das echte Produktions-HTML und -CSS in Chromium**, benutzt aber absichtlich kein Backend/Netzwerk. Es beweist deshalb Layout/Überlauf, ersetzt jedoch **nicht** das reale Loopback-E2E.
+
+Die erzeugten PNG-Screenshots bleiben im vollständigen ZIP-Snapshot. Im GitHub-Quellbaum werden nur der reproduzierbare Runner und der JSON-Geometriebericht versioniert, damit das Repository schlank bleibt.
+
+---
+
+## 🚀 Ein-Befehl-GitHub-Sync für V0.12.2.5
+
+Nach dem Entpacken im Projektordner genügt:
+
+```bash
+./GITHUB_SAFE_SYNC_STARTEN.sh
+```
+
+Der Start schreibt **nicht auf `main`**. Er prüft Authentifizierung, bekannte Remote-SHAs, lokale Acceptance, Visual-E2E soweit auf dem Zielrechner möglich, Secrets, SHA-Dateimanifest und Konfliktmarker. Erst danach wird ausschließlich der V0.12.2.5-Reviewbranch aktualisiert und ein Draft-PR angelegt.
+
+
 # 🧷 GITHUB-BACKUP- UND REVIEW-ZUSTAND
 
 > **Repository:** `provoware/naqya-memo`  

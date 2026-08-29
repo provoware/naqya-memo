@@ -48,6 +48,7 @@ jobs:
           python -S tests/ui_consistency/test_v01222_static_ui_consistency.py
           python -S tests/ui_consistency/test_v01223_simplification_guidance.py
           python -S tests/ui_consistency/test_v01224_ux_control_plane.py
+          python -S tests/ui_consistency/test_v01225_real_viewport_ux.py
 
       - name: Startup contracts
         run: |

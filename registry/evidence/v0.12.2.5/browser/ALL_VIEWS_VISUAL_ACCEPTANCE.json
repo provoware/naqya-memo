@@ -1,0 +1,8 @@
+{
+  "version": "0.12.2.5-REAL-VIEWPORT-UX-FIX",
+  "status": "BLOCKED",
+  "cases": [],
+  "reason": "Playwright oder Chromium/Chrome ist auf diesem Rechner nicht verfügbar.",
+  "browser_path": "/usr/bin/chromium",
+  "playwright_available": false
+}

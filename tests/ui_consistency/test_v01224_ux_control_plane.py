@@ -29,8 +29,9 @@ def test_footer_complexity_reduced():
     assert '<b>SYSTEM</b>' in H
     visible_footer=H[H.index('<footer class="footerbar">'):H.index('</footer>')+9]
     assert '<b>LOG</b>' not in visible_footer
-    assert 'Technische Details' in visible_footer
-    assert 'id="logState"' in visible_footer and 'id="debugState"' in visible_footer
+    assert 'id="logState"' not in visible_footer and 'id="debugState"' not in visible_footer
+    assert 'id="devPanel"' in H and 'Technische Details' in H
+    assert 'id="logState"' in H and 'id="debugState"' in H
 
 def test_accessibility_and_motion_contract():
     assert "--touch:44px" in C

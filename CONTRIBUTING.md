@@ -19,6 +19,7 @@ Sicherheit betreffen.
 python3 -S tests/ui_consistency/test_v01222_static_ui_consistency.py
 python3 -S tests/ui_consistency/test_v01223_simplification_guidance.py
 python3 -S tests/ui_consistency/test_v01224_ux_control_plane.py
+python3 -S tests/ui_consistency/test_v01225_real_viewport_ux.py
 PYTHONPATH=core/reference_python python3 -S tests/startup/test_startup_port_guard.py
 PYTHONPATH=core/reference_python python3 -S tests/mobile/test_mobile_sources.py
 ```

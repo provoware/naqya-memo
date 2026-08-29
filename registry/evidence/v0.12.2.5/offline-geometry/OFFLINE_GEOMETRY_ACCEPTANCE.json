@@ -1,0 +1,2702 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "case": {
+        "name": "desktop_1920",
+        "w": 1920,
+        "h": 1080,
+        "font": 1.0,
+        "zoom": 1.0,
+        "tier": "normal"
+      },
+      "metrics": {
+        "vw": 1920,
+        "vh": 1080,
+        "docHorizontal": false,
+        "boxes": {
+          ".app-shell": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 0,
+            "right": 1920,
+            "top": 0,
+            "bottom": 1080,
+            "width": 1920,
+            "height": 1080,
+            "clientWidth": 1920,
+            "scrollWidth": 1920,
+            "clientHeight": 1080,
+            "scrollHeight": 1080,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".topbar": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 187,
+            "right": 1910,
+            "top": 10,
+            "bottom": 200,
+            "width": 1723,
+            "height": 190,
+            "clientWidth": 1723,
+            "scrollWidth": 1723,
+            "clientHeight": 190,
+            "scrollHeight": 190,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".nav-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 10,
+            "right": 178,
+            "top": 10,
+            "bottom": 1070,
+            "width": 168,
+            "height": 1060,
+            "clientWidth": 166,
+            "scrollWidth": 166,
+            "clientHeight": 1058,
+            "scrollHeight": 1058,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".quickbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 187,
+            "right": 1671,
+            "top": 209,
+            "bottom": 263,
+            "width": 1484,
+            "height": 54,
+            "clientWidth": 1482,
+            "scrollWidth": 1482,
+            "clientHeight": 52,
+            "scrollHeight": 52,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".workspace": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 187,
+            "right": 1671,
+            "top": 272,
+            "bottom": 1021,
+            "width": 1484,
+            "height": 749,
+            "clientWidth": 1482,
+            "scrollWidth": 1482,
+            "clientHeight": 747,
+            "scrollHeight": 747,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".display-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 446,
+            "right": 1910,
+            "top": 144,
+            "bottom": 200,
+            "width": 1464,
+            "height": 56,
+            "clientWidth": 1462,
+            "scrollWidth": 1462,
+            "clientHeight": 54,
+            "scrollHeight": 56,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".status-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 1610,
+            "right": 1910,
+            "top": 83,
+            "bottom": 135,
+            "width": 300,
+            "height": 52,
+            "clientWidth": 298,
+            "scrollWidth": 298,
+            "clientHeight": 50,
+            "scrollHeight": 50,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".next-items": {
+            "display": "block",
+            "visibility": "visible",
+            "left": 446,
+            "right": 1601,
+            "top": 83,
+            "bottom": 135,
+            "width": 1155,
+            "height": 52,
+            "clientWidth": 1153,
+            "scrollWidth": 1153,
+            "clientHeight": 50,
+            "scrollHeight": 50,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".side-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 1680,
+            "right": 1910,
+            "top": 209,
+            "bottom": 1021,
+            "width": 230,
+            "height": 812,
+            "clientWidth": 230,
+            "scrollWidth": 230,
+            "clientHeight": 812,
+            "scrollHeight": 812,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".footerbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 187,
+            "right": 1910,
+            "top": 1030,
+            "bottom": 1070,
+            "width": 1723,
+            "height": 40,
+            "clientWidth": 1721,
+            "scrollWidth": 1721,
+            "clientHeight": 38,
+            "scrollHeight": 38,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          }
+        },
+        "navLabels": [
+          {
+            "text": "Dashboard",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Textmemos",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Todos",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Kalender",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Papierkorb",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Diagnose",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Sprachmemos",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Dokumente",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Audio",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Suche",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Einstellungen",
+            "width": 99,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Hilfe",
+            "width": 99,
+            "height": 17.28125,
+            "lines": 1
+          }
+        ],
+        "displayControls": [
+          {
+            "id": "themeBtn",
+            "left": 661.140625,
+            "right": 738.6875,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "themeValue",
+            "left": 743.6875,
+            "right": 791.6875,
+            "top": 165.5,
+            "bottom": 180.5,
+            "outside": false
+          },
+          {
+            "id": "fontDown",
+            "left": 1089.546875,
+            "right": 1119.234375,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "fontValue",
+            "left": 1124.234375,
+            "right": 1172.234375,
+            "top": 165.5,
+            "bottom": 180.5,
+            "outside": false
+          },
+          {
+            "id": "fontUp",
+            "left": 1177.234375,
+            "right": 1211.4375,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "zoomOut",
+            "left": 1525.53125,
+            "right": 1548.265625,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "zoomValue",
+            "left": 1553.265625,
+            "right": 1601.265625,
+            "top": 165.5,
+            "bottom": 180.5,
+            "outside": false
+          },
+          {
+            "id": "zoomIn",
+            "left": 1606.265625,
+            "right": 1633.515625,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "zoomReset",
+            "left": 1638.515625,
+            "right": 1673.5625,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          }
+        ]
+      },
+      "issues": [],
+      "screenshot": "desktop_1920.png"
+    },
+    {
+      "case": {
+        "name": "desktop_1600",
+        "w": 1600,
+        "h": 900,
+        "font": 1.0,
+        "zoom": 1.0,
+        "tier": "normal"
+      },
+      "metrics": {
+        "vw": 1600,
+        "vh": 900,
+        "docHorizontal": false,
+        "boxes": {
+          ".app-shell": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 0,
+            "right": 1600,
+            "top": 0,
+            "bottom": 900,
+            "width": 1600,
+            "height": 900,
+            "clientWidth": 1600,
+            "scrollWidth": 1600,
+            "clientHeight": 900,
+            "scrollHeight": 900,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".topbar": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 187,
+            "right": 1590,
+            "top": 10,
+            "bottom": 200,
+            "width": 1403,
+            "height": 190,
+            "clientWidth": 1403,
+            "scrollWidth": 1403,
+            "clientHeight": 190,
+            "scrollHeight": 190,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".nav-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 10,
+            "right": 178,
+            "top": 10,
+            "bottom": 890,
+            "width": 168,
+            "height": 880,
+            "clientWidth": 166,
+            "scrollWidth": 166,
+            "clientHeight": 878,
+            "scrollHeight": 878,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".quickbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 187,
+            "right": 1351,
+            "top": 209,
+            "bottom": 263,
+            "width": 1164,
+            "height": 54,
+            "clientWidth": 1162,
+            "scrollWidth": 1162,
+            "clientHeight": 52,
+            "scrollHeight": 52,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".workspace": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 187,
+            "right": 1351,
+            "top": 272,
+            "bottom": 841,
+            "width": 1164,
+            "height": 569,
+            "clientWidth": 1162,
+            "scrollWidth": 1162,
+            "clientHeight": 567,
+            "scrollHeight": 567,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".display-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 446,
+            "right": 1590,
+            "top": 144,
+            "bottom": 200,
+            "width": 1144,
+            "height": 56,
+            "clientWidth": 1142,
+            "scrollWidth": 1142,
+            "clientHeight": 54,
+            "scrollHeight": 56,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".status-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 1290,
+            "right": 1590,
+            "top": 83,
+            "bottom": 135,
+            "width": 300,
+            "height": 52,
+            "clientWidth": 298,
+            "scrollWidth": 298,
+            "clientHeight": 50,
+            "scrollHeight": 50,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".next-items": {
+            "display": "block",
+            "visibility": "visible",
+            "left": 446,
+            "right": 1281,
+            "top": 83,
+            "bottom": 135,
+            "width": 835,
+            "height": 52,
+            "clientWidth": 833,
+            "scrollWidth": 833,
+            "clientHeight": 50,
+            "scrollHeight": 50,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".side-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 1360,
+            "right": 1590,
+            "top": 209,
+            "bottom": 841,
+            "width": 230,
+            "height": 632,
+            "clientWidth": 230,
+            "scrollWidth": 230,
+            "clientHeight": 632,
+            "scrollHeight": 632,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".footerbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 187,
+            "right": 1590,
+            "top": 850,
+            "bottom": 890,
+            "width": 1403,
+            "height": 40,
+            "clientWidth": 1401,
+            "scrollWidth": 1401,
+            "clientHeight": 38,
+            "scrollHeight": 38,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          }
+        },
+        "navLabels": [
+          {
+            "text": "Dashboard",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Textmemos",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Todos",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Kalender",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Papierkorb",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Diagnose",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Sprachmemos",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Dokumente",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Audio",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Suche",
+            "width": 98,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Einstellungen",
+            "width": 99,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Hilfe",
+            "width": 99,
+            "height": 17.28125,
+            "lines": 1
+          }
+        ],
+        "displayControls": [
+          {
+            "id": "themeBtn",
+            "left": 661.140625,
+            "right": 738.6875,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "themeValue",
+            "left": 743.6875,
+            "right": 791.6875,
+            "top": 165.5,
+            "bottom": 180.5,
+            "outside": false
+          },
+          {
+            "id": "fontDown",
+            "left": 982.890625,
+            "right": 1012.578125,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "fontValue",
+            "left": 1017.578125,
+            "right": 1065.578125,
+            "top": 165.5,
+            "bottom": 180.5,
+            "outside": false
+          },
+          {
+            "id": "fontUp",
+            "left": 1070.578125,
+            "right": 1104.78125,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "zoomOut",
+            "left": 1312.203125,
+            "right": 1334.9375,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "zoomValue",
+            "left": 1339.9375,
+            "right": 1387.9375,
+            "top": 165.5,
+            "bottom": 180.5,
+            "outside": false
+          },
+          {
+            "id": "zoomIn",
+            "left": 1392.9375,
+            "right": 1420.1875,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "zoomReset",
+            "left": 1425.1875,
+            "right": 1460.234375,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          }
+        ]
+      },
+      "issues": [],
+      "screenshot": "desktop_1600.png"
+    },
+    {
+      "case": {
+        "name": "desktop_1366",
+        "w": 1366,
+        "h": 768,
+        "font": 1.0,
+        "zoom": 1.0,
+        "tier": "normal"
+      },
+      "metrics": {
+        "vw": 1366,
+        "vh": 768,
+        "docHorizontal": false,
+        "boxes": {
+          ".app-shell": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 0,
+            "right": 1366,
+            "top": 0,
+            "bottom": 768,
+            "width": 1366,
+            "height": 768,
+            "clientWidth": 1366,
+            "scrollWidth": 1366,
+            "clientHeight": 768,
+            "scrollHeight": 768,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".topbar": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 173,
+            "right": 1356,
+            "top": 10,
+            "bottom": 200,
+            "width": 1183,
+            "height": 190,
+            "clientWidth": 1183,
+            "scrollWidth": 1183,
+            "clientHeight": 190,
+            "scrollHeight": 190,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".nav-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 10,
+            "right": 164,
+            "top": 10,
+            "bottom": 758,
+            "width": 154,
+            "height": 748,
+            "clientWidth": 152,
+            "scrollWidth": 152,
+            "clientHeight": 746,
+            "scrollHeight": 746,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".quickbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 173,
+            "right": 1129,
+            "top": 209,
+            "bottom": 263,
+            "width": 956,
+            "height": 54,
+            "clientWidth": 954,
+            "scrollWidth": 954,
+            "clientHeight": 52,
+            "scrollHeight": 52,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".workspace": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 173,
+            "right": 1129,
+            "top": 272,
+            "bottom": 709,
+            "width": 956,
+            "height": 437,
+            "clientWidth": 954,
+            "scrollWidth": 954,
+            "clientHeight": 435,
+            "scrollHeight": 435,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".display-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 412,
+            "right": 1356,
+            "top": 144,
+            "bottom": 200,
+            "width": 944,
+            "height": 56,
+            "clientWidth": 942,
+            "scrollWidth": 942,
+            "clientHeight": 54,
+            "scrollHeight": 56,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".status-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 1076,
+            "right": 1356,
+            "top": 83,
+            "bottom": 135,
+            "width": 280,
+            "height": 52,
+            "clientWidth": 278,
+            "scrollWidth": 278,
+            "clientHeight": 50,
+            "scrollHeight": 50,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".next-items": {
+            "display": "block",
+            "visibility": "visible",
+            "left": 412,
+            "right": 1067,
+            "top": 83,
+            "bottom": 135,
+            "width": 655,
+            "height": 52,
+            "clientWidth": 653,
+            "scrollWidth": 653,
+            "clientHeight": 50,
+            "scrollHeight": 50,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".side-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 1138,
+            "right": 1356,
+            "top": 209,
+            "bottom": 709,
+            "width": 218,
+            "height": 500,
+            "clientWidth": 218,
+            "scrollWidth": 218,
+            "clientHeight": 500,
+            "scrollHeight": 500,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".footerbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 173,
+            "right": 1356,
+            "top": 718,
+            "bottom": 758,
+            "width": 1183,
+            "height": 40,
+            "clientWidth": 1181,
+            "scrollWidth": 1181,
+            "clientHeight": 38,
+            "scrollHeight": 38,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          }
+        },
+        "navLabels": [
+          {
+            "text": "Dashboard",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Textmemos",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Todos",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Kalender",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Papierkorb",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Diagnose",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Sprachmemos",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Dokumente",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Audio",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Suche",
+            "width": 84,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Einstellungen",
+            "width": 85,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Hilfe",
+            "width": 85,
+            "height": 17.28125,
+            "lines": 1
+          }
+        ],
+        "displayControls": [
+          {
+            "id": "themeBtn",
+            "left": 627.140625,
+            "right": 704.6875,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "themeValue",
+            "left": 709.6875,
+            "right": 757.6875,
+            "top": 165.5,
+            "bottom": 180.5,
+            "outside": false
+          },
+          {
+            "id": "fontDown",
+            "left": 882.21875,
+            "right": 911.90625,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "fontValue",
+            "left": 916.90625,
+            "right": 964.90625,
+            "top": 165.5,
+            "bottom": 180.5,
+            "outside": false
+          },
+          {
+            "id": "fontUp",
+            "left": 969.90625,
+            "right": 1004.109375,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "zoomOut",
+            "left": 1144.875,
+            "right": 1167.609375,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "zoomValue",
+            "left": 1172.609375,
+            "right": 1220.609375,
+            "top": 165.5,
+            "bottom": 180.5,
+            "outside": false
+          },
+          {
+            "id": "zoomIn",
+            "left": 1225.609375,
+            "right": 1252.859375,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          },
+          {
+            "id": "zoomReset",
+            "left": 1257.859375,
+            "right": 1292.90625,
+            "top": 156,
+            "bottom": 190,
+            "outside": false
+          }
+        ]
+      },
+      "issues": [],
+      "screenshot": "desktop_1366.png"
+    },
+    {
+      "case": {
+        "name": "desktop_150",
+        "w": 1600,
+        "h": 900,
+        "font": 1.5,
+        "zoom": 1.5,
+        "tier": "large"
+      },
+      "metrics": {
+        "vw": 1600,
+        "vh": 900,
+        "docHorizontal": false,
+        "boxes": {
+          ".app-shell": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 0,
+            "right": 1600,
+            "top": 0,
+            "bottom": 900,
+            "width": 1600,
+            "height": 900,
+            "clientWidth": 1600,
+            "scrollWidth": 1600,
+            "clientHeight": 900,
+            "scrollHeight": 900,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".topbar": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 259,
+            "right": 1590,
+            "top": 10,
+            "bottom": 220,
+            "width": 1331,
+            "height": 210,
+            "clientWidth": 1331,
+            "scrollWidth": 1331,
+            "clientHeight": 210,
+            "scrollHeight": 210,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".nav-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 10,
+            "right": 250,
+            "top": 10,
+            "bottom": 890,
+            "width": 240,
+            "height": 880,
+            "clientWidth": 238,
+            "scrollWidth": 238,
+            "clientHeight": 878,
+            "scrollHeight": 878,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".quickbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 259,
+            "right": 1341,
+            "top": 229,
+            "bottom": 289,
+            "width": 1082,
+            "height": 60,
+            "clientWidth": 1080,
+            "scrollWidth": 1080,
+            "clientHeight": 58,
+            "scrollHeight": 58,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".workspace": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 259,
+            "right": 1341,
+            "top": 298,
+            "bottom": 841,
+            "width": 1082,
+            "height": 543,
+            "clientWidth": 1080,
+            "scrollWidth": 1080,
+            "clientHeight": 541,
+            "scrollHeight": 541,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".display-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 518,
+            "right": 1590,
+            "top": 152,
+            "bottom": 220,
+            "width": 1072,
+            "height": 68,
+            "clientWidth": 1070,
+            "scrollWidth": 1070,
+            "clientHeight": 66,
+            "scrollHeight": 66,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".status-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 1290,
+            "right": 1590,
+            "top": 87,
+            "bottom": 143,
+            "width": 300,
+            "height": 56,
+            "clientWidth": 298,
+            "scrollWidth": 298,
+            "clientHeight": 54,
+            "scrollHeight": 54,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".next-items": {
+            "display": "block",
+            "visibility": "visible",
+            "left": 518,
+            "right": 1281,
+            "top": 87,
+            "bottom": 143,
+            "width": 763,
+            "height": 56,
+            "clientWidth": 761,
+            "scrollWidth": 761,
+            "clientHeight": 54,
+            "scrollHeight": 54,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".side-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 1350,
+            "right": 1590,
+            "top": 229,
+            "bottom": 841,
+            "width": 240,
+            "height": 612,
+            "clientWidth": 240,
+            "scrollWidth": 240,
+            "clientHeight": 612,
+            "scrollHeight": 612,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".footerbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 259,
+            "right": 1590,
+            "top": 850,
+            "bottom": 890,
+            "width": 1331,
+            "height": 40,
+            "clientWidth": 1329,
+            "scrollWidth": 1329,
+            "clientHeight": 38,
+            "scrollHeight": 38,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          }
+        },
+        "navLabels": [
+          {
+            "text": "Dashboard",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Textmemos",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Todos",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Kalender",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Papierkorb",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Diagnose",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Sprachmemos",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Dokumente",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Audio",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Suche",
+            "width": 170,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Einstellungen",
+            "width": 171,
+            "height": 25.921875,
+            "lines": 1
+          },
+          {
+            "text": "Hilfe",
+            "width": 171,
+            "height": 25.921875,
+            "lines": 1
+          }
+        ],
+        "displayControls": [
+          {
+            "id": "themeBtn",
+            "left": 720.25,
+            "right": 835.59375,
+            "top": 169,
+            "bottom": 203,
+            "outside": false
+          },
+          {
+            "id": "themeValue",
+            "left": 840.59375,
+            "right": 888.59375,
+            "top": 175,
+            "bottom": 197,
+            "outside": false
+          },
+          {
+            "id": "fontDown",
+            "left": 1026.859375,
+            "right": 1070.40625,
+            "top": 169,
+            "bottom": 203,
+            "outside": false
+          },
+          {
+            "id": "fontValue",
+            "left": 1075.40625,
+            "right": 1123.40625,
+            "top": 175,
+            "bottom": 197,
+            "outside": false
+          },
+          {
+            "id": "fontUp",
+            "left": 1128.40625,
+            "right": 1178.75,
+            "top": 169,
+            "bottom": 203,
+            "outside": false
+          },
+          {
+            "id": "zoomOut",
+            "left": 1344.828125,
+            "right": 1377.953125,
+            "top": 169,
+            "bottom": 203,
+            "outside": false
+          },
+          {
+            "id": "zoomValue",
+            "left": 1382.953125,
+            "right": 1430.953125,
+            "top": 175,
+            "bottom": 197,
+            "outside": false
+          },
+          {
+            "id": "zoomIn",
+            "left": 1435.953125,
+            "right": 1475.859375,
+            "top": 169,
+            "bottom": 203,
+            "outside": false
+          },
+          {
+            "id": "zoomReset",
+            "left": 1480.859375,
+            "right": 1532.453125,
+            "top": 169,
+            "bottom": 203,
+            "outside": false
+          }
+        ]
+      },
+      "issues": [],
+      "screenshot": "desktop_150.png"
+    },
+    {
+      "case": {
+        "name": "desktop_200",
+        "w": 1920,
+        "h": 1080,
+        "font": 2.0,
+        "zoom": 2.0,
+        "tier": "xl"
+      },
+      "metrics": {
+        "vw": 1920,
+        "vh": 1080,
+        "docHorizontal": false,
+        "boxes": {
+          ".app-shell": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 0,
+            "right": 1920,
+            "top": 0,
+            "bottom": 1080,
+            "width": 1920,
+            "height": 1080,
+            "clientWidth": 1920,
+            "scrollWidth": 1920,
+            "clientHeight": 1080,
+            "scrollHeight": 1080,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".topbar": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 319,
+            "right": 1910,
+            "top": 10,
+            "bottom": 246,
+            "width": 1591,
+            "height": 236,
+            "clientWidth": 1591,
+            "scrollWidth": 1591,
+            "clientHeight": 236,
+            "scrollHeight": 236,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".nav-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 10,
+            "right": 310,
+            "top": 10,
+            "bottom": 1070,
+            "width": 300,
+            "height": 1060,
+            "clientWidth": 298,
+            "scrollWidth": 298,
+            "clientHeight": 1058,
+            "scrollHeight": 1058,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".quickbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 319,
+            "right": 1910,
+            "top": 255,
+            "bottom": 323,
+            "width": 1591,
+            "height": 68,
+            "clientWidth": 1589,
+            "scrollWidth": 1589,
+            "clientHeight": 66,
+            "scrollHeight": 66,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".workspace": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 319,
+            "right": 1910,
+            "top": 332,
+            "bottom": 1021,
+            "width": 1591,
+            "height": 689,
+            "clientWidth": 1589,
+            "scrollWidth": 1589,
+            "clientHeight": 687,
+            "scrollHeight": 687,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".display-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 578,
+            "right": 1910,
+            "top": 168,
+            "bottom": 246,
+            "width": 1332,
+            "height": 78,
+            "clientWidth": 1330,
+            "scrollWidth": 1330,
+            "clientHeight": 76,
+            "scrollHeight": 76,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".status-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 1610,
+            "right": 1910,
+            "top": 97,
+            "bottom": 159,
+            "width": 300,
+            "height": 62,
+            "clientWidth": 298,
+            "scrollWidth": 298,
+            "clientHeight": 60,
+            "scrollHeight": 73,
+            "horizontal": false,
+            "vertical": true,
+            "outside": false
+          },
+          ".next-items": {
+            "display": "block",
+            "visibility": "visible",
+            "left": 578,
+            "right": 1601,
+            "top": 97,
+            "bottom": 159,
+            "width": 1023,
+            "height": 62,
+            "clientWidth": 1021,
+            "scrollWidth": 1021,
+            "clientHeight": 60,
+            "scrollHeight": 60,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".side-panel": {
+            "display": "none",
+            "visibility": "visible",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "clientWidth": 0,
+            "scrollWidth": 0,
+            "clientHeight": 0,
+            "scrollHeight": 0,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".footerbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 319,
+            "right": 1910,
+            "top": 1030,
+            "bottom": 1070,
+            "width": 1591,
+            "height": 40,
+            "clientWidth": 1589,
+            "scrollWidth": 1589,
+            "clientHeight": 38,
+            "scrollHeight": 39,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          }
+        },
+        "navLabels": [
+          {
+            "text": "Dashboard",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Textmemos",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Todos",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Kalender",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Papierkorb",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Diagnose",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Sprachmemos",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Dokumente",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Audio",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Suche",
+            "width": 230,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Einstellungen",
+            "width": 231,
+            "height": 34.5625,
+            "lines": 1
+          },
+          {
+            "text": "Hilfe",
+            "width": 231,
+            "height": 34.5625,
+            "lines": 1
+          }
+        ],
+        "displayControls": [
+          {
+            "id": "themeBtn",
+            "left": 668.34375,
+            "right": 718.109375,
+            "top": 190,
+            "bottom": 224,
+            "outside": false
+          },
+          {
+            "id": "themeValue",
+            "left": 723.109375,
+            "right": 778.515625,
+            "top": 192.5,
+            "bottom": 221.5,
+            "outside": false
+          },
+          {
+            "id": "fontDown",
+            "left": 1103.484375,
+            "right": 1160.875,
+            "top": 190,
+            "bottom": 224,
+            "outside": false
+          },
+          {
+            "id": "fontValue",
+            "left": 1165.875,
+            "right": 1226.9375,
+            "top": 192.5,
+            "bottom": 221.5,
+            "outside": false
+          },
+          {
+            "id": "fontUp",
+            "left": 1231.9375,
+            "right": 1298.375,
+            "top": 190,
+            "bottom": 224,
+            "outside": false
+          },
+          {
+            "id": "zoomOut",
+            "left": 1553.78125,
+            "right": 1597.265625,
+            "top": 190,
+            "bottom": 224,
+            "outside": false
+          },
+          {
+            "id": "zoomValue",
+            "left": 1602.265625,
+            "right": 1663.328125,
+            "top": 192.5,
+            "bottom": 221.5,
+            "outside": false
+          },
+          {
+            "id": "zoomIn",
+            "left": 1668.328125,
+            "right": 1720.859375,
+            "top": 190,
+            "bottom": 224,
+            "outside": false
+          },
+          {
+            "id": "zoomReset",
+            "left": 1725.859375,
+            "right": 1793.96875,
+            "top": 190,
+            "bottom": 224,
+            "outside": false
+          }
+        ]
+      },
+      "issues": [],
+      "screenshot": "desktop_200.png"
+    },
+    {
+      "case": {
+        "name": "compact_1100",
+        "w": 1100,
+        "h": 800,
+        "font": 1.0,
+        "zoom": 1.0,
+        "tier": "normal"
+      },
+      "metrics": {
+        "vw": 1100,
+        "vh": 800,
+        "docHorizontal": false,
+        "boxes": {
+          ".app-shell": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 0,
+            "right": 1100,
+            "top": 0,
+            "bottom": 800,
+            "width": 1100,
+            "height": 800,
+            "clientWidth": 1100,
+            "scrollWidth": 1100,
+            "clientHeight": 800,
+            "scrollHeight": 800,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".topbar": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 157,
+            "right": 1090,
+            "top": 10,
+            "bottom": 246,
+            "width": 933,
+            "height": 236,
+            "clientWidth": 933,
+            "scrollWidth": 933,
+            "clientHeight": 236,
+            "scrollHeight": 239,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".nav-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 10,
+            "right": 148,
+            "top": 10,
+            "bottom": 790,
+            "width": 138,
+            "height": 780,
+            "clientWidth": 136,
+            "scrollWidth": 136,
+            "clientHeight": 778,
+            "scrollHeight": 778,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".quickbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 157,
+            "right": 1090,
+            "top": 255,
+            "bottom": 309,
+            "width": 933,
+            "height": 54,
+            "clientWidth": 931,
+            "scrollWidth": 931,
+            "clientHeight": 52,
+            "scrollHeight": 52,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".workspace": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 157,
+            "right": 1090,
+            "top": 318,
+            "bottom": 741,
+            "width": 933,
+            "height": 423,
+            "clientWidth": 931,
+            "scrollWidth": 931,
+            "clientHeight": 421,
+            "scrollHeight": 421,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".display-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 157,
+            "right": 1090,
+            "top": 199,
+            "bottom": 249,
+            "width": 933,
+            "height": 50,
+            "clientWidth": 931,
+            "scrollWidth": 931,
+            "clientHeight": 48,
+            "scrollHeight": 56,
+            "horizontal": false,
+            "vertical": true,
+            "outside": false
+          },
+          ".status-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 371,
+            "right": 1090,
+            "top": 81,
+            "bottom": 131,
+            "width": 719,
+            "height": 50,
+            "clientWidth": 717,
+            "scrollWidth": 717,
+            "clientHeight": 48,
+            "scrollHeight": 49,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".next-items": {
+            "display": "block",
+            "visibility": "visible",
+            "left": 157,
+            "right": 1090,
+            "top": 140,
+            "bottom": 190,
+            "width": 933,
+            "height": 50,
+            "clientWidth": 931,
+            "scrollWidth": 931,
+            "clientHeight": 48,
+            "scrollHeight": 48,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".side-panel": {
+            "display": "none",
+            "visibility": "visible",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "clientWidth": 0,
+            "scrollWidth": 0,
+            "clientHeight": 0,
+            "scrollHeight": 0,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".footerbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 157,
+            "right": 1090,
+            "top": 750,
+            "bottom": 790,
+            "width": 933,
+            "height": 40,
+            "clientWidth": 931,
+            "scrollWidth": 931,
+            "clientHeight": 38,
+            "scrollHeight": 38,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          }
+        },
+        "navLabels": [
+          {
+            "text": "Dashboard",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Textmemos",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Todos",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Kalender",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Papierkorb",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Diagnose",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Sprachmemos",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Dokumente",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Audio",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Suche",
+            "width": 68,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Einstellungen",
+            "width": 69,
+            "height": 17.28125,
+            "lines": 1
+          },
+          {
+            "text": "Hilfe",
+            "width": 69,
+            "height": 17.28125,
+            "lines": 1
+          }
+        ],
+        "displayControls": [
+          {
+            "id": "themeBtn",
+            "left": 332.140625,
+            "right": 409.6875,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "themeValue",
+            "left": 414.6875,
+            "right": 462.6875,
+            "top": 220.5,
+            "bottom": 235.5,
+            "outside": false
+          },
+          {
+            "id": "fontDown",
+            "left": 596.890625,
+            "right": 626.578125,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "fontValue",
+            "left": 631.578125,
+            "right": 679.578125,
+            "top": 220.5,
+            "bottom": 235.5,
+            "outside": false
+          },
+          {
+            "id": "fontUp",
+            "left": 684.578125,
+            "right": 718.78125,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "zoomOut",
+            "left": 869.203125,
+            "right": 891.9375,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "zoomValue",
+            "left": 896.9375,
+            "right": 944.9375,
+            "top": 220.5,
+            "bottom": 235.5,
+            "outside": false
+          },
+          {
+            "id": "zoomIn",
+            "left": 949.9375,
+            "right": 977.1875,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "zoomReset",
+            "left": 982.1875,
+            "right": 1017.234375,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          }
+        ]
+      },
+      "issues": [],
+      "screenshot": "compact_1100.png"
+    },
+    {
+      "case": {
+        "name": "compact_900",
+        "w": 900,
+        "h": 760,
+        "font": 1.0,
+        "zoom": 1.0,
+        "tier": "normal"
+      },
+      "metrics": {
+        "vw": 900,
+        "vh": 760,
+        "docHorizontal": false,
+        "boxes": {
+          ".app-shell": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 0,
+            "right": 900,
+            "top": 0,
+            "bottom": 760,
+            "width": 900,
+            "height": 760,
+            "clientWidth": 900,
+            "scrollWidth": 900,
+            "clientHeight": 760,
+            "scrollHeight": 760,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".topbar": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 91,
+            "right": 890,
+            "top": 10,
+            "bottom": 246,
+            "width": 799,
+            "height": 236,
+            "clientWidth": 799,
+            "scrollWidth": 799,
+            "clientHeight": 236,
+            "scrollHeight": 239,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".nav-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 10,
+            "right": 82,
+            "top": 10,
+            "bottom": 750,
+            "width": 72,
+            "height": 740,
+            "clientWidth": 70,
+            "scrollWidth": 70,
+            "clientHeight": 738,
+            "scrollHeight": 738,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".quickbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 91,
+            "right": 890,
+            "top": 255,
+            "bottom": 309,
+            "width": 799,
+            "height": 54,
+            "clientWidth": 797,
+            "scrollWidth": 797,
+            "clientHeight": 52,
+            "scrollHeight": 52,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".workspace": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 91,
+            "right": 890,
+            "top": 318,
+            "bottom": 701,
+            "width": 799,
+            "height": 383,
+            "clientWidth": 797,
+            "scrollWidth": 797,
+            "clientHeight": 381,
+            "scrollHeight": 381,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".display-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 91,
+            "right": 890,
+            "top": 199,
+            "bottom": 249,
+            "width": 799,
+            "height": 50,
+            "clientWidth": 797,
+            "scrollWidth": 797,
+            "clientHeight": 48,
+            "scrollHeight": 56,
+            "horizontal": false,
+            "vertical": true,
+            "outside": false
+          },
+          ".status-strip": {
+            "display": "none",
+            "visibility": "visible",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "clientWidth": 0,
+            "scrollWidth": 0,
+            "clientHeight": 0,
+            "scrollHeight": 0,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".next-items": {
+            "display": "block",
+            "visibility": "visible",
+            "left": 91,
+            "right": 890,
+            "top": 140,
+            "bottom": 190,
+            "width": 799,
+            "height": 50,
+            "clientWidth": 797,
+            "scrollWidth": 797,
+            "clientHeight": 48,
+            "scrollHeight": 48,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".side-panel": {
+            "display": "none",
+            "visibility": "visible",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "clientWidth": 0,
+            "scrollWidth": 0,
+            "clientHeight": 0,
+            "scrollHeight": 0,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".footerbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 91,
+            "right": 890,
+            "top": 710,
+            "bottom": 750,
+            "width": 799,
+            "height": 40,
+            "clientWidth": 797,
+            "scrollWidth": 797,
+            "clientHeight": 38,
+            "scrollHeight": 38,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          }
+        },
+        "navLabels": [
+          {
+            "text": "Dashboard",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Textmemos",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Todos",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Kalender",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Papierkorb",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Diagnose",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Sprachmemos",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Dokumente",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Audio",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Suche",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Einstellungen",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          },
+          {
+            "text": "Hilfe",
+            "width": 0,
+            "height": 0,
+            "lines": 0
+          }
+        ],
+        "displayControls": [
+          {
+            "id": "themeBtn",
+            "left": 266.140625,
+            "right": 343.6875,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "themeValue",
+            "left": 348.6875,
+            "right": 396.6875,
+            "top": 220.5,
+            "bottom": 235.5,
+            "outside": false
+          },
+          {
+            "id": "fontDown",
+            "left": 486.21875,
+            "right": 515.90625,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "fontValue",
+            "left": 520.90625,
+            "right": 568.90625,
+            "top": 220.5,
+            "bottom": 235.5,
+            "outside": false
+          },
+          {
+            "id": "fontUp",
+            "left": 573.90625,
+            "right": 608.109375,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "zoomOut",
+            "left": 713.875,
+            "right": 736.609375,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "zoomValue",
+            "left": 741.609375,
+            "right": 789.609375,
+            "top": 220.5,
+            "bottom": 235.5,
+            "outside": false
+          },
+          {
+            "id": "zoomIn",
+            "left": 794.609375,
+            "right": 821.859375,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          },
+          {
+            "id": "zoomReset",
+            "left": 826.859375,
+            "right": 861.90625,
+            "top": 211,
+            "bottom": 245,
+            "outside": false
+          }
+        ]
+      },
+      "issues": [],
+      "screenshot": "compact_900.png"
+    },
+    {
+      "case": {
+        "name": "mobile_390",
+        "w": 390,
+        "h": 844,
+        "font": 1.0,
+        "zoom": 1.0,
+        "tier": "normal"
+      },
+      "metrics": {
+        "vw": 390,
+        "vh": 844,
+        "docHorizontal": false,
+        "boxes": {
+          ".app-shell": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 0,
+            "right": 390,
+            "top": 0,
+            "bottom": 1206.578125,
+            "width": 390,
+            "height": 1206.578125,
+            "clientWidth": 390,
+            "scrollWidth": 390,
+            "clientHeight": 1207,
+            "scrollHeight": 1207,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".topbar": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 7,
+            "right": 383,
+            "top": 7,
+            "bottom": 580.1875,
+            "width": 376,
+            "height": 573.1875,
+            "clientWidth": 376,
+            "scrollWidth": 376,
+            "clientHeight": 573,
+            "scrollHeight": 573,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".nav-panel": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": -344,
+            "right": -24,
+            "top": 8,
+            "bottom": 836,
+            "width": 320,
+            "height": 828,
+            "clientWidth": 318,
+            "scrollWidth": 318,
+            "clientHeight": 826,
+            "scrollHeight": 826,
+            "horizontal": false,
+            "vertical": false,
+            "outside": true
+          },
+          ".quickbar": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 7,
+            "right": 383,
+            "top": 587.1875,
+            "bottom": 639.1875,
+            "width": 376,
+            "height": 52,
+            "clientWidth": 374,
+            "scrollWidth": 374,
+            "clientHeight": 50,
+            "scrollHeight": 50,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".workspace": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 7,
+            "right": 383,
+            "top": 646.1875,
+            "bottom": 1152.578125,
+            "width": 376,
+            "height": 506.390625,
+            "clientWidth": 374,
+            "scrollWidth": 374,
+            "clientHeight": 504,
+            "scrollHeight": 504,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".display-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 7,
+            "right": 383,
+            "top": 420.1875,
+            "bottom": 580.1875,
+            "width": 376,
+            "height": 160,
+            "clientWidth": 374,
+            "scrollWidth": 374,
+            "clientHeight": 158,
+            "scrollHeight": 158,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".status-strip": {
+            "display": "grid",
+            "visibility": "visible",
+            "left": 7,
+            "right": 383,
+            "top": 308.1875,
+            "bottom": 364.1875,
+            "width": 376,
+            "height": 56,
+            "clientWidth": 374,
+            "scrollWidth": 374,
+            "clientHeight": 54,
+            "scrollHeight": 54,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".next-items": {
+            "display": "block",
+            "visibility": "visible",
+            "left": 7,
+            "right": 383,
+            "top": 373.1875,
+            "bottom": 411.1875,
+            "width": 376,
+            "height": 38,
+            "clientWidth": 374,
+            "scrollWidth": 374,
+            "clientHeight": 36,
+            "scrollHeight": 36,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".side-panel": {
+            "display": "none",
+            "visibility": "visible",
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+            "width": 0,
+            "height": 0,
+            "clientWidth": 0,
+            "scrollWidth": 0,
+            "clientHeight": 0,
+            "scrollHeight": 0,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          },
+          ".footerbar": {
+            "display": "flex",
+            "visibility": "visible",
+            "left": 7,
+            "right": 383,
+            "top": 1159.578125,
+            "bottom": 1199.578125,
+            "width": 376,
+            "height": 40,
+            "clientWidth": 374,
+            "scrollWidth": 374,
+            "clientHeight": 38,
+            "scrollHeight": 38,
+            "horizontal": false,
+            "vertical": false,
+            "outside": false
+          }
+        },
+        "navLabels": [
+          {
+            "text": "Dashboard",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Textmemos",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Todos",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Kalender",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Papierkorb",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Diagnose",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Sprachmemos",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Dokumente",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Audio",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Suche",
+            "width": 244,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Einstellungen",
+            "width": 245,
+            "height": 17.59375,
+            "lines": 1
+          },
+          {
+            "text": "Hilfe",
+            "width": 245,
+            "height": 17.59375,
+            "lines": 1
+          }
+        ],
+        "displayControls": [
+          {
+            "id": "themeBtn",
+            "left": 63.140625,
+            "right": 89.015625,
+            "top": 432.1875,
+            "bottom": 466.1875,
+            "outside": false
+          },
+          {
+            "id": "themeValue",
+            "left": 94.015625,
+            "right": 142.015625,
+            "top": 441.6875,
+            "bottom": 456.6875,
+            "outside": false
+          },
+          {
+            "id": "fontDown",
+            "left": 60.890625,
+            "right": 90.578125,
+            "top": 483.1875,
+            "bottom": 517.1875,
+            "outside": false
+          },
+          {
+            "id": "fontValue",
+            "left": 95.578125,
+            "right": 143.578125,
+            "top": 492.6875,
+            "bottom": 507.6875,
+            "outside": false
+          },
+          {
+            "id": "fontUp",
+            "left": 148.578125,
+            "right": 182.78125,
+            "top": 483.1875,
+            "bottom": 517.1875,
+            "outside": false
+          },
+          {
+            "id": "zoomOut",
+            "left": 66.203125,
+            "right": 88.9375,
+            "top": 534.1875,
+            "bottom": 568.1875,
+            "outside": false
+          },
+          {
+            "id": "zoomValue",
+            "left": 93.9375,
+            "right": 141.9375,
+            "top": 543.6875,
+            "bottom": 558.6875,
+            "outside": false
+          },
+          {
+            "id": "zoomIn",
+            "left": 146.9375,
+            "right": 174.1875,
+            "top": 534.1875,
+            "bottom": 568.1875,
+            "outside": false
+          },
+          {
+            "id": "zoomReset",
+            "left": 179.1875,
+            "right": 214.234375,
+            "top": 534.1875,
+            "bottom": 568.1875,
+            "outside": false
+          }
+        ]
+      },
+      "issues": [],
+      "screenshot": "mobile_390.png"
+    }
+  ],
+  "failures": []
+}

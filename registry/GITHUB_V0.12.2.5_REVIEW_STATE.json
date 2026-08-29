@@ -1,0 +1,40 @@
+{
+  "format": "PROVOWARE_GITHUB_V01225_REVIEW_STATE",
+  "generated_at_utc": "2026-08-29T01:08:35.706647+00:00",
+  "repository": "provoware/naqya-memo",
+  "main": {
+    "sha": "de9f25f54bfbcecb008614402a0eb77745dcc1e7",
+    "state": "V0.12.2.3 full tree + CI bootstrap",
+    "quality_workflow": "PASS",
+    "quality_run_id": 33224679679
+  },
+  "main_ci_backup": {
+    "branch": "backup/pre-v0.12.2.5-main-ci-20260829",
+    "sha": "de9f25f54bfbcecb008614402a0eb77745dcc1e7"
+  },
+  "ci_bootstrap_pr": {
+    "number": 57,
+    "state": "MERGED",
+    "merge_sha": "de9f25f54bfbcecb008614402a0eb77745dcc1e7"
+  },
+  "v01224_review": {
+    "branch": "review/v0.12.2.4-release-ux-20260829",
+    "sha": "e3f63066e86325752ede2699082e9866d6847d83",
+    "pr": 56,
+    "pr_state": "OPEN_DRAFT",
+    "quality_ci": "PASS",
+    "quality_run_id": 33223216381
+  },
+  "pre_v01225_backup": {
+    "branch": "backup/pre-v0.12.2.5-20260829",
+    "sha": "e3f63066e86325752ede2699082e9866d6847d83"
+  },
+  "v01225_review": {
+    "branch": "review/v0.12.2.5-real-viewport-20260829",
+    "base_sha": "e3f63066e86325752ede2699082e9866d6847d83",
+    "sync": "PENDING"
+  },
+  "main_targeted": false,
+  "release_status": "NO-GO",
+  "release_gates": "1/7"
+}

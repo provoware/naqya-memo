@@ -45,3 +45,6 @@ Thumbs.db
 # Temporäre Pakete
 *.tmp
 *.part
+
+# Reproduzierbare visuelle Testbilder bleiben im vollständigen ZIP, nicht im Git-Quellbaum
+registry/evidence/**/offline-geometry/*.png

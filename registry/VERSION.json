@@ -1,8 +1,8 @@
 {
-  "version": "0.12.2.4-RELEASE-UX-CONTROL-PLANE",
+  "version": "0.12.2.5-REAL-VIEWPORT-UX-FIX",
   "schema_version": 2,
   "date": "2026-08-29",
-  "phase": "release-freeze-ux-hierarchy-github-control-plane",
+  "phase": "release-freeze-real-viewport-ux-fix",
   "feature_freeze": true,
   "release_status": "NO-GO"
 }
