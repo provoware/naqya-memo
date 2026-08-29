@@ -10,15 +10,25 @@ JSON_POST_MAX_BYTES = max(
     4096,
     min(int(os.environ.get('PROVOWARE_JSON_POST_MAX_BYTES', str(1024 * 1024))), 16 * 1024 * 1024),
 )
+REQUEST_IO_TIMEOUT_SECONDS = max(
+    1,
+    min(int(os.environ.get('PROVOWARE_REQUEST_IO_TIMEOUT_SECONDS', '30')), 120),
+)
 
 
 class ResponseHardenedHandler(secure.SecureHandler):
     """Final desktop response boundary for the official launch path.
 
     The lower secure_server owns authentication, rate limiting, cache policy and
-    loopback/origin trust. This final layer adds browser containment headers and
-    a bounded JSON request-body contract without duplicating product logic.
+    loopback/origin trust. This final layer adds browser containment headers,
+    bounded JSON request bodies and a bounded per-connection I/O wait without
+    duplicating product logic.
     """
+
+    def setup(self):
+        """Prevent stalled local clients from holding a request thread forever."""
+        super().setup()
+        self.connection.settimeout(REQUEST_IO_TIMEOUT_SECONDS)
 
     def end_headers(self):
         self.send_header('X-Frame-Options', 'DENY')
