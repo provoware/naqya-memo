@@ -56,7 +56,7 @@ def read_first_pin(project):
     assert path.is_file(), 'one-time first PIN file missing'
     lines=path.read_text(encoding='utf-8').splitlines()
     pin=next((line.split(':',1)[1].strip() for line in lines if line.startswith('PIN:')),None)
-    assert pin and len(pin)==12 and pin.isdigit(),pin
+    assert pin and len(pin)==4 and pin.isdigit() and pin!='0000',pin
     mode=stat.S_IMODE(path.stat().st_mode)
     assert mode==0o600,oct(mode)
     return path,pin
@@ -74,7 +74,7 @@ def main():
         try:
             wait(port,p)
             first_pin_file,first_pin=read_first_pin(project)
-            print('PASS first profile receives a 12-digit random PIN')
+            print('PASS first profile receives a random four-digit PIN other than 0000')
             print('PASS one-time PIN file is mode 0600')
 
             status,h,_=request(port,'/index.html')
@@ -86,7 +86,8 @@ def main():
             assert status==401,status
             print('PASS legacy fixed PIN 0000 is rejected on fresh project')
 
-            status,_,_=request(port,'/index.html',auth('999999999999'))
+            wrong='9999' if first_pin!='9999' else '9998'
+            status,_,_=request(port,'/index.html',auth(wrong))
             assert status==401,status
             print('PASS wrong PIN is rejected')
 
