@@ -148,9 +148,9 @@ def main():
 
             linux=(ROOT/'STARTEN_LINUX.sh').read_text(encoding='utf-8')
             headless=(ROOT/'STARTEN_OHNE_BROWSER.sh').read_text(encoding='utf-8')
-            assert 'app/secure_server.py' in linux and 'app/server.py' not in linux
-            assert 'app/secure_server.py' in headless and 'app/server.py' not in headless
-            print('PASS official Linux launchers enforce secure server')
+            assert 'app/secure_response_server.py' in linux and 'app/server.py' not in linux
+            assert 'app/secure_response_server.py' in headless and 'app/server.py' not in headless
+            print('PASS official Linux launchers enforce hardened production server chain')
             print('SUMMARY total=14 passed=14 failed=0')
         finally:
             p.terminate()
