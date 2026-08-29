@@ -69,6 +69,10 @@ jobs:
         run: |
           PYTHONPATH=core/reference_python python -S tests/security/test_desktop_pin_gate.py
 
+      - name: Desktop auth cache revision invalidation
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_auth_cache_revision.py
+
       - name: Desktop transport trust boundary
         run: |
           PYTHONPATH=core/reference_python python -S tests/security/test_desktop_transport_trust.py
@@ -111,5 +115,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates source contracts plus local desktop PIN, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
+          echo "CI validates source contracts plus local desktop PIN, auth-cache invalidation, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
