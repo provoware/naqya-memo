@@ -1,19 +1,32 @@
 {
   "format": "PROVOWARE_GITHUB_BACKUP_STATUS",
-  "version": 2,
-  "generated_at_utc": "2026-08-29T00:04:05.523511+00:00",
+  "version": 4,
+  "generated_at_utc": "2026-08-29T00:14:18.097697+00:00",
   "repository": "provoware/naqya-memo",
-  "project_version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE",
-  "historic_backup_branch": "backup/pre-v0.12.2.3-20260829",
-  "historic_main_commit": "334dd2923fc01a633946137d71fdbebae34364da",
-  "post_pr54_backup_branch": "backup/pre-full-tree-v0.12.2.3-20260829",
-  "post_pr54_main_commit": "a2e4767ea0017f5df38eeb72142005441b02ecb2",
-  "full_tree_branch": "sync/v0.12.2.3-full-tree-20260829",
-  "main_targeted": false,
+  "historic_backup": {
+    "branch": "backup/pre-v0.12.2.3-20260829",
+    "sha": "334dd2923fc01a633946137d71fdbebae34364da"
+  },
+  "post_pr54_backup": {
+    "branch": "backup/pre-full-tree-v0.12.2.3-20260829",
+    "sha": "a2e4767ea0017f5df38eeb72142005441b02ecb2"
+  },
+  "v01223_full_tree_main": {
+    "sha": "a05ea824499ca16c1b0bb5141853c19d8d7a035e",
+    "tree_sha": "9b1405c2a061a7c88109542830b30a129788bb4a",
+    "pr55": "MERGED"
+  },
+  "pre_v01224_backup": {
+    "branch": "backup/pre-v0.12.2.4-20260829",
+    "sha": "a05ea824499ca16c1b0bb5141853c19d8d7a035e"
+  },
+  "v01224_review_branch": {
+    "branch": "review/v0.12.2.4-release-ux-20260829",
+    "base_sha": "a05ea824499ca16c1b0bb5141853c19d8d7a035e"
+  },
+  "current_local_version": "0.12.2.4-RELEASE-UX-CONTROL-PLANE",
+  "main_targeted_by_v01224_sync": false,
   "force_push": false,
-  "full_source_tree_in_this_commit": true,
   "release_status": "NO-GO",
-  "passed_real_release_gates": 1,
-  "required_real_release_gates": 7,
-  "main_promotion_allowed": false
+  "release_gates": "1/7"
 }

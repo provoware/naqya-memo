@@ -1,0 +1,48 @@
+{
+  "format": "PROVOWARE_GITHUB_REMOTE_AUDIT",
+  "generated_at_utc": "2026-08-29T00:12:05.253743+00:00",
+  "repository": "provoware/naqya-memo",
+  "main": {
+    "sha": "a2e4767ea0017f5df38eeb72142005441b02ecb2",
+    "meaning": "PR #54 Safe-State metadata merge"
+  },
+  "backups": {
+    "historic": {
+      "branch": "backup/pre-v0.12.2.3-20260829",
+      "sha": "334dd2923fc01a633946137d71fdbebae34364da"
+    },
+    "post_pr54": {
+      "branch": "backup/pre-full-tree-v0.12.2.3-20260829",
+      "sha": "a2e4767ea0017f5df38eeb72142005441b02ecb2"
+    }
+  },
+  "full_tree": {
+    "branch": "sync/v0.12.2.3-full-tree-20260829",
+    "sha": "1cda3c3621a1ed6164d69554b431eef6625323fe",
+    "parent": "a2e4767ea0017f5df38eeb72142005441b02ecb2",
+    "tree_sha": "9b1405c2a061a7c88109542830b30a129788bb4a",
+    "recursive_tree_truncated": false,
+    "prepared_source_files": 388,
+    "prepared_source_bytes": 1675572,
+    "sha_manifest_lines": 390
+  },
+  "pull_request": {
+    "number": 55,
+    "state": "OPEN_DRAFT",
+    "merged": false,
+    "mergeable": true,
+    "changed_files": 464
+  },
+  "audit_result": {
+    "backup_state": "PASS",
+    "remote_tree": "PASS",
+    "sha_manifest_presence": "PASS",
+    "merge_readiness": "NO_GO",
+    "merge_blockers": [
+      "GitHub control-plane files absent in V0.12.2.3 full-tree branch",
+      "Architecture replacement removes prior CI/workflows and repo hygiene",
+      "Real release gates remain 1/7",
+      "Real visual/device/microphone evidence still pending"
+    ]
+  }
+}

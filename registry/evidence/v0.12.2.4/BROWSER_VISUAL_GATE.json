@@ -1,0 +1,29 @@
+{
+  "version": "0.12.2.4-RELEASE-UX-CONTROL-PLANE",
+  "timestamp_utc": "2026-08-29T00:12:42.524305+00:00",
+  "status": "BLOCKED",
+  "pass_claimed": false,
+  "attempted_in_current_build_runner": true,
+  "reason": "Chromium navigation to loopback was blocked by administrator policy (net::ERR_BLOCKED_BY_ADMINISTRATOR).",
+  "real_linux_runner": "RUN_VISUAL_ACCEPTANCE_LINUX.sh",
+  "required_views": [
+    "dashboard",
+    "memo",
+    "todo",
+    "calendar",
+    "trash",
+    "diagnostics",
+    "voice",
+    "docs",
+    "audio",
+    "settings"
+  ],
+  "required_layouts": [
+    "desktop100",
+    "desktop150",
+    "desktop200",
+    "compact",
+    "mobile"
+  ],
+  "release_gate_effect": "NONE"
+}

@@ -441,3 +441,28 @@ Ein TODO darf nur abgehakt werden, wenn:
 - [x] Android-/iOS-WebAssets synchronisiert
 - [x] realer All-Views-Visual-Runner erstellt
 - [ ] `RUN_VISUAL_ACCEPTANCE_LINUX.sh` auf realem Linux-Zielrechner ausführen
+
+## 🟢 V0.12.2.4 – Release UX + GitHub Control Plane
+- [x] Remote-Full-Tree als Backupzustand auditiert
+- [x] PR #55 Merge erkannt; V0.12.2.3-Main vor V0.12.2.4 erneut separat gesichert
+- [x] Navigation mit stabiler Icon-/Label-Hierarchie
+- [x] kontextspezifische Modulhinweise
+- [x] Feldhilfen abhängig vom Hilfemodus entdichtet
+- [x] Footer-Komplexität reduziert
+- [x] Primär-/Sekundär-/Gefahr-Aktionen deutlicher getrennt
+- [x] 44px Touch-/Fokusvertrag
+- [x] prefers-reduced-motion
+- [x] `.gitignore`, `.gitattributes`, `.editorconfig`
+- [x] Source-Contract GitHub Actions Workflow
+- [x] CONTRIBUTING + LAIENANLEITUNG
+- [x] historische 0.5.1-E7-Evidence referenziert
+- [ ] reale Visual-Acceptance auf Linux nach V0.12.2.4
+- [ ] PR für V0.12.2.4 erst nach lokalem Regression-Gate erzeugen
+- [ ] Branch Protection/Required Checks erst nach grünem Workflow aktivieren
+
+## 🟢 GitHub Post-PR55 Safety Correction
+- [x] PR #55 Merge auf `a05ea824…` erkannt
+- [x] vollständigen V0.12.2.3-main als `backup/pre-v0.12.2.4-20260829` eingefroren
+- [x] V0.12.2.4-Review-Branch auf `a05ea824…` ausgerichtet
+- [x] V0.12.2.4-Syncvertrag auf neuen Main-SHA korrigiert
+- [ ] V0.12.2.4 Review-Branch erst nach lokalem Gate pushen

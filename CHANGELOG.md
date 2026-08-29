@@ -364,3 +364,20 @@
 - gezielte Regression 57/57 PASS
 - Browser-Visual-PASS im aktuellen Build-Runner nicht behauptet
 
+
+## [0.12.2.4-RELEASE-UX-CONTROL-PLANE] – 2026-08-29
+### 🎛️ Release UX Hierarchy
+- Navigation in getrennte Icon-/Textzonen überführt
+- kontextspezifische Arbeitsbereich-Hinweise statt generischem Techniktext
+- Eingabehilfen abhängig vom Hilfemodus: knapp = bei Fokus, geführt/ausführlich = sichtbar
+- Footer auf sichtbaren SYSTEM-/A11Y-Status reduziert; Log/Debug in Technikbereich verschoben
+- Primär-/Sekundär-/Destruktiv-Aktionen visuell stärker getrennt
+- Touch-/Fokusziele und `prefers-reduced-motion` gehärtet
+- Header und Dashboard visuell kompakter
+
+### 🛡️ GitHub Control Plane Bridge
+- `.gitignore`, `.gitattributes`, `.editorconfig` wiederhergestellt
+- neue Source-Contract-CI unter `.github/workflows/quality.yml`
+- `CONTRIBUTING.md` und `LAIENANLEITUNG.md` an neue Architektur angepasst
+- historische 0.5.1-E7-GitHub-Evidence über History-Dokument + Backupbranches bewahrt
+- CI darf reale Device/Browser/Mikrofon-Gates ausdrücklich nicht simulieren

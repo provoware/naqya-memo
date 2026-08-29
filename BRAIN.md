@@ -278,3 +278,17 @@
 [2026-08-28] [BRAIN-0035] [ZOOM-LAYOUT] [AKTIV]
 - Bis 200 % darf Vergrößerung nicht durch Überdecken erkauft werden.
 - Priorität: Neuordnung → Zusatzinfo ausblenden → Scrollen innerhalb des Inhaltsbereichs; niemals primäre Bedienung überdecken.
+
+[2026-08-29] [BRAIN-0036] [UX-HIERARCHIE] [BEWIESEN]
+- Nutzerfreundlichkeit verbessert sich nicht durch mehr Hinweise, sondern durch bessere Priorisierung.
+- Knappmodus zeigt Feldhilfe bei Fokus; geführte Modi dürfen Hilfen dauerhaft zeigen.
+- Primär-, Sekundär- und Gefahraktionen müssen visuell unterscheidbar bleiben.
+
+[2026-08-29] [BRAIN-0037] [GITHUB-CONTROL-PLANE] [BEWIESEN]
+- Ein vollständiger Architekturwechsel ohne `.github/workflows`, `.gitignore` und Contribution-Vertrag ist nicht mergefähig.
+- Repository-Steuerung ist Teil der Produktsicherheit, nicht bloße Projektkosmetik.
+- Alte Evidence wird über unveränderte Backupbranches bewahrt, nicht still gelöscht.
+
+[2026-08-29] [BRAIN-0038] [CI-EVIDENCE-GRENZE] [BEWIESEN]
+- CI-Source-Checks dürfen reale Browser-, Mikrofon- oder Geräte-Gates niemals ersetzen.
+- Workflowtexte und Status müssen diese Grenze explizit ausweisen.

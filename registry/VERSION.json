@@ -1,8 +1,8 @@
 {
-  "version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE",
+  "version": "0.12.2.4-RELEASE-UX-CONTROL-PLANE",
   "schema_version": 2,
-  "date": "2026-08-28",
-  "phase": "release-freeze-ui-simplification-input-guidance",
+  "date": "2026-08-29",
+  "phase": "release-freeze-ux-hierarchy-github-control-plane",
   "feature_freeze": true,
   "release_status": "NO-GO"
 }

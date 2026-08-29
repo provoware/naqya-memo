@@ -115,3 +115,8 @@
 [2026-08-28] GPT-0056 — Eingabefarbe ist neutrales Silber/Graphit, getrennt von den Markenfarben.
 [2026-08-28] GPT-0057 — UI-Komplexität reduziert: 3 Statuskacheln, 4 Dashboardkarten, 1 Settings-Karte.
 [2026-08-28] GPT-0058 — Realer Linux-Visual-Runner prüft alle Kernansichten bei 100/150/200 %.
+
+[2026-08-29] GPT-0059 — V0.12.2.4 priorisiert UX-Hierarchie statt zusätzlicher Bedienelemente.
+[2026-08-29] GPT-0060 — Feldhilfen sind im Knappmodus fokusabhängig und bleiben in geführten Modi sichtbar.
+[2026-08-29] GPT-0061 — GitHub-Control-Plane-Dateien sind Merge-Voraussetzung für den Full-Tree-Architekturwechsel.
+[2026-08-29] GPT-0062 — CI validiert Source-Verträge, niemals reale Device-/Browser-/Mikrofon-Gates.

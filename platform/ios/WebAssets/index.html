@@ -25,8 +25,8 @@
       <label class="sr-only" for="quickInput">Schnellnotiz</label>
       <input id="quickInput" placeholder="z. B. Rückruf, Idee oder Einkauf …" autocomplete="off" data-guide="Optional: kurze Notiz; Enter speichert direkt">
       <button class="primary" id="quickSave">Speichern</button>
-      <button id="quickOpen">Datei</button>
-      <button id="quickShare">Teilen</button>
+      <button class="secondary" id="quickOpen">Datei</button>
+      <button class="secondary" id="quickShare">Teilen</button>
     </section>
     <section class="status-strip simplified" aria-label="Systemstatus">
       <div class="status-chip ok"><b>START</b><span id="startStatus">Prüfe …</span></div>
@@ -38,7 +38,7 @@
       <div class="next-grid" id="nextGrid"></div>
     </section>
     <section class="display-strip" aria-label="Darstellung">
-      <div class="display-strip-head"><b>DARSTELLUNG</b><span>direkt anpassen</span></div>
+      <div class="display-strip-head"><b>ANSICHT</b><span>Lesbarkeit direkt anpassen</span></div>
       <div class="display-groups">
         <div class="display-group theme-group">
           <span>Theme</span>
@@ -65,20 +65,20 @@
   <aside class="nav-panel" id="mainNav">
     <div class="nav-head"><b>MENÜ</b><button class="icon-btn mobile-only" id="closeMenuBtn">×</button></div>
     <nav>
-      <button class="nav-item active" data-view="dashboard"><span>⌂</span>Dashboard</button>
-      <button class="nav-item" data-view="memo"><span>▤</span>Textmemos</button>
-      <button class="nav-item" data-view="todo"><span>✓</span>Todos</button>
-      <button class="nav-item" data-view="calendar"><span>▦</span>Kalender</button>
-      <button class="nav-item" data-view="trash"><span>⌫</span>Papierkorb</button>
-      <button class="nav-item" data-view="diagnostics"><span>⌁</span>Diagnose</button>
-      <button class="nav-item" data-view="voice"><span>◉</span>Sprachmemos</button>
-      <button class="nav-item" data-view="docs"><span>▣</span>Dokument / PDF</button>
-      <button class="nav-item" data-view="audio"><span>♫</span>Audio</button>
-      <button class="nav-item" data-view="search"><span>⌕</span>Suche</button>
+      <button class="nav-item active" data-view="dashboard" aria-current="page"><span class="nav-icon">⌂</span><span class="nav-label">Dashboard</span></button>
+      <button class="nav-item" data-view="memo"><span class="nav-icon">▤</span><span class="nav-label">Textmemos</span></button>
+      <button class="nav-item" data-view="todo"><span class="nav-icon">✓</span><span class="nav-label">Todos</span></button>
+      <button class="nav-item" data-view="calendar"><span class="nav-icon">▦</span><span class="nav-label">Kalender</span></button>
+      <button class="nav-item" data-view="trash"><span class="nav-icon">⌫</span><span class="nav-label">Papierkorb</span></button>
+      <button class="nav-item" data-view="diagnostics"><span class="nav-icon">⌁</span><span class="nav-label">Diagnose</span></button>
+      <button class="nav-item" data-view="voice"><span class="nav-icon">◉</span><span class="nav-label">Sprachmemos</span></button>
+      <button class="nav-item" data-view="docs"><span class="nav-icon">▣</span><span class="nav-label">Dokument / PDF</span></button>
+      <button class="nav-item" data-view="audio"><span class="nav-icon">♫</span><span class="nav-label">Audio</span></button>
+      <button class="nav-item" data-view="search"><span class="nav-icon">⌕</span><span class="nav-label">Suche</span></button>
     </nav>
     <div class="nav-bottom">
-      <button class="nav-item" data-view="settings"><span>⚙</span>Einstellungen</button>
-      <button class="nav-item" data-view="help"><span>?</span>Hilfe</button>
+      <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span><span class="nav-label">Einstellungen</span></button>
+      <button class="nav-item" data-view="help"><span class="nav-icon">?</span><span class="nav-label">Hilfe</span></button>
     </div>
   </aside>
 
@@ -114,10 +114,14 @@
   </aside>
 
   <footer class="footerbar">
-    <span><b>LOG</b> <i id="logState">bereit</i></span><span><b>DEBUG</b> <i id="debugState">0 Fehler</i></span>
-    <span><b>CHECKPOINT</b> <i>bereit</i></span><span><b>A11Y</b> aktiv</span>
-    <button id="devToggle" aria-expanded="false" aria-controls="devPanel">Entwickler ▴</button>
-    <div class="dev-panel" id="devPanel" hidden><b>Entwicklerbereich</b><span>UI → Loopback API → Domain → Mutation Queue → SQLite → Recovery.</span></div>
+    <span class="footer-primary"><b>SYSTEM</b> <i id="systemState">bereit</i></span>
+    <span><b>A11Y</b> aktiv</span>
+    <button id="devToggle" aria-expanded="false" aria-controls="devPanel">Technik ▴</button>
+    <div class="dev-panel" id="devPanel" hidden>
+      <b>Technische Details</b>
+      <span>LOG: <i id="logState">bereit</i> · DEBUG: <i id="debugState">0 Fehler</i> · CHECKPOINT: bereit</span>
+      <span>UI → Loopback API → Domain → Mutation Queue → SQLite → Recovery.</span>
+    </div>
   </footer>
 </div>
 <div class="scrim" id="scrim" hidden></div>

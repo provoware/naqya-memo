@@ -1,15 +1,38 @@
-# 🧷 GITHUB FULL-TREE BACKUP-ZUSTAND
+# 🧷 GITHUB-BACKUP- UND REVIEW-ZUSTAND
 
 > **Repository:** `provoware/naqya-memo`  
-> **Projektstand:** `0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE`  
-> **Historischer 0.5.1-E7-Stand:** `backup/pre-v0.12.2.3-20260829` → `334dd292…`  
-> **Stand direkt nach PR #54:** `backup/pre-full-tree-v0.12.2.3-20260829` → `a2e4767…`  
-> **Vollständiger Projektbaum:** `sync/v0.12.2.3-full-tree-20260829`  
-> **Main-Push:** **NEIN**  
-> **Force-Push:** **NEIN**  
-> **Release:** 🔴 `NO-GO` · **1/7 reale Gates**
+> **Historischer 0.5.1-E7-Backup:** `backup/pre-v0.12.2.3-20260829` → `334dd292…`  
+> **Post-PR54-Backup:** `backup/pre-full-tree-v0.12.2.3-20260829` → `a2e4767…`  
+> **PR #55:** ✅ **gemergt**  
+> **Aktueller GitHub-main:** `a05ea824…` → vollständiger V0.12.2.3-Projektbaum  
+> **Pre-V0.12.2.4-Backup:** `backup/pre-v0.12.2.4-20260829` → `a05ea824…`  
+> **V0.12.2.4 Review-Branch:** `review/v0.12.2.4-release-ux-20260829` → Basis `a05ea824…`  
+> **Remote V0.12.2.3-Baum:** 🟢 vollständig auditiert  
+> **Aktueller lokaler Nachfolger:** `0.12.2.4-RELEASE-UX-CONTROL-PLANE`  
+> **Release:** 🔴 `NO-GO` · weiterhin **1/7 reale Gates**
 
-Dieser Branch ist der vollständige, isolierte GitHub-Backup-/Reviewstand von V0.12.2.3. `main` wird erst nach Hash-, Datei- und Architekturaudit weiter verändert.
+### Sicherheitsprinzip
+
+Der vollständige V0.12.2.3-Baum liegt inzwischen auf `main`. Vor V0.12.2.4 wurde dieser Zustand deshalb erneut unverändert auf `backup/pre-v0.12.2.4-20260829` eingefroren. Die neue UX-/Control-Plane-Härtung wird ausschließlich auf einem separaten Review-Branch gespiegelt; kein Force-Push und kein automatischer Main-Push.
+
+---
+
+
+# 🎯 **V0.12.2.4 – RELEASE UX + GITHUB CONTROL PLANE**
+> **Feature-Freeze:** 🔒 aktiv  
+> **gezielte Acceptance:** 🟢 **69/69 PASS**  
+> **Navigation:** 🟢 getrennte Icon-/Text-Hierarchie  
+> **Orientierung:** 🟢 pro Modul konkret statt generischem Techniktext  
+> **Hilfen:** 🟢 abhängig vom Hilfemodus entdichtet  
+> **Footer:** 🟢 normale Ansicht vereinfacht; Technik aufklappbar  
+> **Touch/Fokus:** 🟢 44px + sichtbarer Tastaturfokus  
+> **Reduced Motion:** 🟢  
+> **GitHub Control Plane:** 🟢 lokal wiederhergestellt  
+> **Android/iOS-WebAssets:** 🟢 bytegleich zur Referenzoberfläche  
+> **echtes Browser-Visual-Gate:** 🟡 auf realem Linux noch auszuführen  
+> **Release:** 🔴 NO-GO · weiterhin **1/7 reale Gates**
+
+**Leitlinie:** weniger Dauerrauschen, klarere Handlungshierarchie, kein Verlust der GitHub-Sicherheitssteuerung.
 
 ---
 

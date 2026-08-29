@@ -1,0 +1,40 @@
+{
+  "format": "PROVOWARE_GITHUB_POST_PR55_STATE",
+  "generated_at_utc": "2026-08-29T00:14:18.097194+00:00",
+  "repository": "provoware/naqya-memo",
+  "pr55": {
+    "number": 55,
+    "state": "MERGED",
+    "merge_commit": "a05ea824499ca16c1b0bb5141853c19d8d7a035e",
+    "full_tree_head": "1cda3c3621a1ed6164d69554b431eef6625323fe",
+    "changed_files": 464
+  },
+  "main": {
+    "sha": "a05ea824499ca16c1b0bb5141853c19d8d7a035e",
+    "tree_sha": "9b1405c2a061a7c88109542830b30a129788bb4a",
+    "meaning": "V0.12.2.3 full-tree is now on main"
+  },
+  "backup_layers": [
+    {
+      "branch": "backup/pre-v0.12.2.3-20260829",
+      "sha": "334dd2923fc01a633946137d71fdbebae34364da",
+      "meaning": "historic 0.5.1-E7"
+    },
+    {
+      "branch": "backup/pre-full-tree-v0.12.2.3-20260829",
+      "sha": "a2e4767ea0017f5df38eeb72142005441b02ecb2",
+      "meaning": "state after PR54, before full-tree merge"
+    },
+    {
+      "branch": "backup/pre-v0.12.2.4-20260829",
+      "sha": "a05ea824499ca16c1b0bb5141853c19d8d7a035e",
+      "meaning": "full V0.12.2.3 main before V0.12.2.4 review"
+    }
+  ],
+  "v01224_review_branch": {
+    "branch": "review/v0.12.2.4-release-ux-20260829",
+    "base_sha": "a05ea824499ca16c1b0bb5141853c19d8d7a035e"
+  },
+  "release_status": "NO-GO",
+  "release_gates": "1/7"
+}
