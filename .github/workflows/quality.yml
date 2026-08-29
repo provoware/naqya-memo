@@ -89,6 +89,10 @@ jobs:
         run: |
           PYTHONPATH=core/reference_python python -S tests/security/test_desktop_security_config_parse.py
 
+      - name: Desktop auth security config parsing
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_auth_config_parse.py
+
       - name: Mobile source contracts
         run: |
           if [ -f tests/mobile/test_mobile_sources.py ]; then
