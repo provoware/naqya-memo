@@ -1,0 +1,14 @@
+{
+  "optimization": "P0 Desktop Loopback Transport Trust Boundary",
+  "scope": "Host/Origin/Sec-Fetch-Site validation before authentication",
+  "expected_contracts": 5,
+  "test": "tests/security/test_desktop_transport_trust.py",
+  "ci_workflow": ".github/workflows/quality.yml",
+  "release_gate_promotion": false,
+  "release_status": "NO-GO",
+  "status": "CI_PENDING",
+  "limits": [
+    "No session/logout architecture change",
+    "No claim for real browser, microphone, Android-device or iPhone-device gates"
+  ]
+}
