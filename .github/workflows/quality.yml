@@ -69,6 +69,10 @@ jobs:
         run: |
           PYTHONPATH=core/reference_python python -S tests/security/test_desktop_pin_gate.py
 
+      - name: Desktop transport trust boundary
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_transport_trust.py
+
       - name: Mobile source contracts
         run: |
           if [ -f tests/mobile/test_mobile_sources.py ]; then
@@ -83,5 +87,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates source contracts and the local desktop PIN runtime gate only."
+          echo "CI validates source contracts plus local desktop PIN and transport-trust runtime gates only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
