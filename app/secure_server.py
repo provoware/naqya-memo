@@ -50,7 +50,7 @@ AUTH_CACHE_TTL_SECONDS = max(5, min(int(os.environ.get('PROVOWARE_AUTH_CACHE_TTL
 AUTH_MAX_DISTINCT_FAILURES = max(3, min(int(os.environ.get('PROVOWARE_AUTH_MAX_FAILURES','5')), 20))
 AUTH_FAILURE_WINDOW_SECONDS = max(5, min(int(os.environ.get('PROVOWARE_AUTH_FAILURE_WINDOW','120')), 3600))
 AUTH_LOCKOUT_SECONDS = max(1, min(int(os.environ.get('PROVOWARE_AUTH_LOCKOUT_SECONDS','30')), 3600))
-_AUTH_CACHE: dict[str, float] = {}
+_AUTH_CACHE: dict[str, tuple[float, int]] = {}
 _AUTH_FAILURES: dict[str, dict[str, float]] = {}
 _AUTH_LOCKED_UNTIL: dict[str, float] = {}
 _AUTH_LOCK = threading.Lock()
@@ -116,20 +116,37 @@ def _authorization_digest(header: str) -> str:
     return hashlib.sha256(header.encode('utf-8')).hexdigest()
 
 
+def _profile_revision() -> int | None:
+    """Return the active profile security revision, failing closed on DB errors."""
+    try:
+        row = base.store.conn.execute(
+            "SELECT revision FROM profiles WHERE id=? AND status='ACTIVE'",
+            (base.PROFILE_ID,),
+        ).fetchone()
+        return int(row[0]) if row is not None else None
+    except (sqlite3.Error, OSError, TypeError, ValueError):
+        return None
+
+
 def _cached(header: str) -> bool:
     now=time.monotonic(); key=_authorization_digest(header)
+    revision=_profile_revision()
+    if revision is None:
+        return False
     with _AUTH_LOCK:
-        expires=_AUTH_CACHE.get(key,0.0)
-        if expires>now:
-            return True
+        entry=_AUTH_CACHE.get(key)
+        if entry is not None:
+            expires,cached_revision=entry
+            if expires>now and cached_revision==revision:
+                return True
         _AUTH_CACHE.pop(key,None)
         return False
 
 
-def _remember(header: str) -> None:
+def _remember(header: str, revision: int) -> None:
     key=_authorization_digest(header)
     with _AUTH_LOCK:
-        _AUTH_CACHE[key]=time.monotonic()+AUTH_CACHE_TTL_SECONDS
+        _AUTH_CACHE[key]=(time.monotonic()+AUTH_CACHE_TTL_SECONDS,revision)
 
 
 def _decode_basic(header: str) -> tuple[str,str] | None:
@@ -280,15 +297,24 @@ class SecureHandler(base.Handler):
         user,pin=credentials
         if not hmac.compare_digest(user,AUTH_USER):
             return False,_record_failure(client,header)
+        revision_before=_profile_revision()
+        if revision_before is None:
+            return False,0
         try:
             ok=base.profile_service.verify_access(base.PROFILE_ID,pin,source='DESKTOP_HTTP_PIN_GATE')
         except Exception:
             return False,_record_failure(client,header)
-        if ok:
-            _remember(header)
+        revision_after=_profile_revision()
+        if ok and revision_after is not None and revision_after==revision_before:
+            _remember(header,revision_after)
             _clear_failures(client)
             _remove_first_pin_file()
             return True,0
+        if ok:
+            # The profile changed while this request was being authenticated.
+            # Fail closed and require the browser to authenticate against the new
+            # profile revision instead of caching a credential from stale state.
+            return False,0
         return False,_record_failure(client,header)
 
     def _require_auth(self) -> bool:
