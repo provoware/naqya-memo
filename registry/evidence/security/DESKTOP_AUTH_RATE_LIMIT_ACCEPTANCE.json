@@ -1,0 +1,22 @@
+{
+  "date": "2026-08-29",
+  "optimization": "Desktop PIN brute-force rate limiting",
+  "status": "PENDING_CI",
+  "contracts": [
+    "unauthenticated requests do not consume the failure budget",
+    "repeated requests with the same wrong Authorization value count once per window",
+    "three distinct wrong credentials trigger temporary HTTP 429 in regression configuration",
+    "active lockout also blocks a correct PIN",
+    "Retry-After is returned",
+    "correct authentication recovers automatically after expiry",
+    "successful authentication clears failure state"
+  ],
+  "production_defaults": {
+    "max_distinct_failures": 5,
+    "failure_window_seconds": 120,
+    "lockout_seconds": 30
+  },
+  "release_gate_promotion": false,
+  "release_status": "NO-GO",
+  "note": "CI must pass before this evidence is promoted from PENDING_CI. Real platform release gates remain separate."
+}
