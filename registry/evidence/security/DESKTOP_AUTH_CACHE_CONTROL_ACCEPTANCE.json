@@ -1,0 +1,17 @@
+{
+  "date": "2026-08-29",
+  "optimization": "Desktop authenticated response cache hardening",
+  "status": "SOURCE_CONTRACT_IMPLEMENTED_CI_PENDING",
+  "release_status": "NO-GO",
+  "release_gate_promotion": false,
+  "contracts": [
+    "401 authentication challenge carries no-store/no-cache/max-age=0",
+    "429 lockout response carries no-store/no-cache/max-age=0",
+    "authenticated UI response carries no-store/no-cache/max-age=0",
+    "authenticated API response carries no-store/no-cache/max-age=0",
+    "Pragma no-cache and Expires 0 are present",
+    "Vary Authorization prevents shared-cache credential mixing"
+  ],
+  "implementation": "SecureHandler.end_headers applies the cache contract to every desktop response",
+  "remaining_limit": "HTTP Basic Auth still cannot provide a reliable explicit logout without a session/authentication design change."
+}
