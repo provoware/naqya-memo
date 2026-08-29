@@ -1,0 +1,27 @@
+{
+  "schema": "PROVOWARE_SECURITY_EVIDENCE_V1",
+  "id": "DESKTOP_AUTH_CACHE_REVISION_ACCEPTANCE",
+  "status": "SOURCE_AND_LOOPBACK_ACCEPTANCE",
+  "release_gate_promotion": false,
+  "scope": "Desktop HTTP Basic Auth cache invalidation on profile revision change",
+  "optimization": "Bind cached Authorization digests to the active profile revision and fail closed on revision drift or revision lookup failure.",
+  "regression_test": "tests/security/test_desktop_auth_cache_revision.py",
+  "contracts": [
+    "initial PIN authentication warms cache",
+    "unchanged profile revision permits cached credential",
+    "PIN replacement increments profile revision",
+    "old cached credential is rejected immediately after revision change",
+    "replacement PIN authenticates immediately",
+    "replacement PIN may be cached under new profile revision"
+  ],
+  "expected_summary": "SUMMARY total=6 passed=6 failed=0",
+  "ci_step": "Desktop auth cache revision invalidation",
+  "boundaries": [
+    "no session or logout architecture added",
+    "no UI or product function added",
+    "real browser gate remains open",
+    "microphone gate remains open",
+    "Android device gate remains open",
+    "iPhone device gate remains open"
+  ]
+}
