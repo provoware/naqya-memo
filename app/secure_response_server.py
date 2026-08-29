@@ -6,13 +6,28 @@ import sys
 
 import secure_server as secure
 
-JSON_POST_MAX_BYTES = max(
-    4096,
-    min(int(os.environ.get('PROVOWARE_JSON_POST_MAX_BYTES', str(1024 * 1024))), 16 * 1024 * 1024),
+
+def _bounded_int_env(name: str, default: int, minimum: int, maximum: int) -> int:
+    """Read an integer security setting without letting malformed env break startup.
+
+    A missing, empty or non-integer value falls back to the documented safe
+    default. Valid numeric values are clamped to the accepted safety envelope.
+    """
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        value = int(raw.strip())
+    except (TypeError, ValueError):
+        return default
+    return max(minimum, min(value, maximum))
+
+
+JSON_POST_MAX_BYTES = _bounded_int_env(
+    'PROVOWARE_JSON_POST_MAX_BYTES', 1024 * 1024, 4096, 16 * 1024 * 1024
 )
-REQUEST_IO_TIMEOUT_SECONDS = max(
-    1,
-    min(int(os.environ.get('PROVOWARE_REQUEST_IO_TIMEOUT_SECONDS', '30')), 120),
+REQUEST_IO_TIMEOUT_SECONDS = _bounded_int_env(
+    'PROVOWARE_REQUEST_IO_TIMEOUT_SECONDS', 30, 1, 120
 )
 
 
