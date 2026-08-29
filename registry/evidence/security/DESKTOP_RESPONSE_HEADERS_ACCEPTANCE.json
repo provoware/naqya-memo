@@ -1,6 +1,6 @@
 {
   "gate": "DESKTOP_RESPONSE_SECURITY_HEADERS",
-  "status": "PASS_PENDING_REMOTE_CI",
+  "status": "PASS",
   "release_gate_promotion": false,
   "release_status": "NO-GO",
   "scope": "official Linux desktop HTTP response boundary",
@@ -14,7 +14,14 @@
     "existing Cache-Control no-store retained"
   ],
   "runtime_test": "tests/security/test_desktop_response_headers.py",
-  "expected_runtime_assertions": 4,
+  "runtime_assertions": "4/4 PASS",
+  "remote_ci": {
+    "workflow": "quality",
+    "run_number": 16,
+    "run_id": 33265595695,
+    "conclusion": "success",
+    "validated_head_sha": "315fdcb3e54773705df29aa894448a705f82764c"
+  },
   "remaining_real_gates": [
     "browser",
     "microphone",
