@@ -5,10 +5,41 @@ import base64
 import hashlib
 import hmac
 import os
+from pathlib import Path
+import secrets
+import sqlite3
 import sys
 import threading
 import time
-from urllib.parse import urlparse
+
+ROOT = Path(__file__).resolve().parents[1]
+PROJECT = Path(os.environ.get('PROVOWARE_PROJECT_PATH', str(ROOT / 'runtime' / 'projektordner'))).expanduser().resolve()
+DB = PROJECT / 'daten' / 'core.sqlite3'
+FIRST_PIN_FILE = PROJECT / 'nutzer-einstellungen' / 'ERSTSTART_PIN_EINMAL.txt'
+
+
+def _active_profile_exists_before_product_import() -> bool:
+    """Detect whether the project already owns an active profile.
+
+    This check intentionally runs before importing ``server`` because that module
+    creates the reference profile during import.  A missing/empty/old database is
+    therefore treated as a first-profile bootstrap and hardened immediately after
+    the product module has initialized its schema.
+    """
+    if not DB.is_file():
+        return False
+    try:
+        con = sqlite3.connect(f'file:{DB}?mode=ro', uri=True, timeout=2)
+        try:
+            row = con.execute("SELECT 1 FROM profiles WHERE status='ACTIVE' LIMIT 1").fetchone()
+            return row is not None
+        finally:
+            con.close()
+    except (sqlite3.Error, OSError):
+        return False
+
+
+_HAD_ACTIVE_PROFILE = _active_profile_exists_before_product_import()
 
 import server as base
 
@@ -17,6 +48,54 @@ AUTH_USER = 'provoware'
 AUTH_CACHE_TTL_SECONDS = max(5, min(int(os.environ.get('PROVOWARE_AUTH_CACHE_TTL','300')), 3600))
 _AUTH_CACHE: dict[str, float] = {}
 _AUTH_LOCK = threading.Lock()
+
+
+def _write_first_pin_file(pin: str) -> None:
+    FIRST_PIN_FILE.parent.mkdir(parents=True, exist_ok=True)
+    text = (
+        'PROVOWARE – EINMALIGE ERSTSTART-PIN\n'
+        '===================================\n\n'
+        f'PIN: {pin}\n\n'
+        'Diese Datei wurde nur für die erste Anmeldung angelegt.\n'
+        'Nach der ersten erfolgreichen Anmeldung löscht PROVOWARE sie automatisch.\n'
+        'Bitte die PIN nicht weitergeben.\n'
+    )
+    fd = os.open(FIRST_PIN_FILE, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        os.write(fd, text.encode('utf-8'))
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+    os.chmod(FIRST_PIN_FILE, 0o600)
+
+
+def _remove_first_pin_file() -> None:
+    try:
+        FIRST_PIN_FILE.unlink(missing_ok=True)
+    except OSError:
+        # Authentication must not become a false failure after the PIN itself was
+        # proven valid.  A leftover credential file is reported at next start.
+        pass
+
+
+def _harden_first_profile_if_needed() -> None:
+    if _HAD_ACTIVE_PROFILE:
+        return
+    # server.py currently bootstraps its development reference profile with 0000.
+    # If that upstream contract changes, fail closed instead of guessing.
+    if not base.profile_service.verify_access(base.PROFILE_ID, '0000', source='FIRST_PIN_BOOTSTRAP_CHECK'):
+        raise RuntimeError('FIRST_PIN_BOOTSTRAP_CONTRACT_CHANGED')
+    pin = ''.join(secrets.choice('0123456789') for _ in range(12))
+    _write_first_pin_file(pin)
+    try:
+        base.profile_service.change_pin(base.PROFILE_ID, '0000', pin)
+    except Exception:
+        _remove_first_pin_file()
+        raise
+    print(f'ERSTSTART_PIN_DATEI: {FIRST_PIN_FILE}', flush=True)
+
+
+_harden_first_profile_if_needed()
 
 
 def _authorization_digest(header: str) -> str:
@@ -52,19 +131,13 @@ def _decode_basic(header: str) -> tuple[str,str] | None:
 
 
 class SecureHandler(base.Handler):
-    """Fail-closed desktop transport guard around the existing product handler.
-
-    The browser authenticates once through HTTP Basic Auth. The username is fixed
-    to ``provoware``; the password is the active profile PIN. Only a SHA-256 digest
-    of the Authorization header is kept briefly in RAM to avoid expensive PIN
-    verification on every static asset request. No PIN or reusable session token
-    is persisted by this wrapper.
-    """
+    """Fail-closed desktop transport guard around the existing product handler."""
 
     def _challenge(self):
         body=(
             'PROVOWARE ist gesperrt. Im Browser-Benutzerfeld "provoware" '
-            'und als Passwort die Profil-PIN eingeben.\n'
+            'und als Passwort die Profil-PIN eingeben. Bei einem ganz neuen Projekt '
+            'steht die einmalige PIN in nutzer-einstellungen/ERSTSTART_PIN_EINMAL.txt.\n'
         ).encode('utf-8')
         self.send_response(401)
         self.send_header('WWW-Authenticate',f'Basic realm="{AUTH_REALM}", charset="UTF-8"')
@@ -93,6 +166,7 @@ class SecureHandler(base.Handler):
             return False
         if ok:
             _remember(header)
+            _remove_first_pin_file()
         return ok
 
     def _require_auth(self) -> bool:
