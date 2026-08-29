@@ -1,0 +1,11 @@
+{
+  "chromium": {
+    "status": "BLOCKED",
+    "reason": "Error('Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at file:///mnt/data/OI_PROVOWARE_IO_Multi_Memo_Modul_Tool_2026_V0.12_RC_HARDENING/ui/reference_web/index.html\\nCall log:\\n  - navigating to \"file:///mnt/data/OI_PROVOWARE_IO_Multi_Memo_Modul_Tool_2026_V0.12_RC_HARDENING/ui/reference_web/index.html\", waiting until \"domcontentloaded\"\\n')"
+  },
+  "firefox": {
+    "status": "BLOCKED",
+    "reason": "Error(\"BrowserType.launch: Executable doesn't exist at /home/oai/.cache/ms-playwright/firefox-1497/firefox/firefox\\n╔════════════════════════════════════════════════════════════╗\\n║ Looks like Playwright was just installed or updated.       ║\\n║ Please run the following command to download new browsers: ║\\n║                                                            ║\\n║     playwright install                                     ║\\n║                                                            ║\\n║ <3 Playwright Team                                         ║\\n╚════════════════════════════════════════════════════════════╝\")"
+  },
+  "viewports": []
+}

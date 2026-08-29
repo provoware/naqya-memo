@@ -1,0 +1,67 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "OI-PROVOWARE-IO-V0.12-SBOM",
+  "documentNamespace": "https://provoware.invalid/spdx/OI-PROVOWARE-IO-v0.12",
+  "creationInfo": {
+    "created": "2026-08-28T18:19:39.266487+00:00",
+    "creators": [
+      "Tool: OI-PROVOWARE-IO build process"
+    ]
+  },
+  "packages": [
+    {
+      "name": "OI - PROVOWARE - IO",
+      "SPDXID": "SPDXRef-App",
+      "versionInfo": "0.12.0-RC-HARDENING",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION"
+    },
+    {
+      "name": "Python Runtime",
+      "SPDXID": "SPDXRef-Python",
+      "versionInfo": "3.13.5",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION"
+    },
+    {
+      "name": "SQLite",
+      "SPDXID": "SPDXRef-SQLite",
+      "versionInfo": "3.46.1",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION"
+    },
+    {
+      "name": "FFmpeg",
+      "SPDXID": "SPDXRef-FFmpeg",
+      "versionInfo": "external-runtime-optional",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION"
+    },
+    {
+      "name": "xdg-utils",
+      "SPDXID": "SPDXRef-XDG",
+      "versionInfo": "external-runtime-optional",
+      "downloadLocation": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION"
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-App",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Python"
+    },
+    {
+      "spdxElementId": "SPDXRef-App",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-SQLite"
+    }
+  ]
+}

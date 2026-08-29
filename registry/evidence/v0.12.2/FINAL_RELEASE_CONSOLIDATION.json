@@ -1,0 +1,15 @@
+{
+  "version": "0.12.2-MOBILE-RUNTIME-COMPLETION",
+  "generated_at_utc": "2026-08-28T19:25:15.033467+00:00",
+  "consolidation_status": "PASS",
+  "mobile_runtime_acceptance": "PASS",
+  "cross_runtime_parity": "PASS",
+  "desktop_regression": "78/78 PASS",
+  "binary_backup_4_generations": "PASS",
+  "android_source_zip": "OI_PROVOWARE_IO_V0.12.2_ANDROID_RUNTIME_SOURCE.zip",
+  "ios_source_zip": "OI_PROVOWARE_IO_V0.12.2_IOS_XCODE_RUNTIME_SOURCE.zip",
+  "android_native_build": "BLOCKED",
+  "ios_native_build": "BLOCKED",
+  "real_release_gates": "1/7 PASS",
+  "release_status": "NO-GO"
+}

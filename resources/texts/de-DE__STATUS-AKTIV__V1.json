@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "locale": "de-DE",
+  "strings": {
+    "startup.system_scan": "System und verfügbare Fähigkeiten werden geprüft.",
+    "startup.permissions": "Berechtigungen werden nur sichtbar und bei Bedarf angefordert.",
+    "startup.project_folder": "Projektordner wird geprüft und bei Bedarf sicher vorbereitet.",
+    "startup.ready": "Grundprüfung abgeschlossen. Das Profil kann geöffnet werden.",
+    "pin.notice": "Der 4-stellige PIN schützt nur den direkten Profilzugang. Er verschlüsselt keine Dateien.",
+    "external_path.confirm": "Diese Aktion betrifft einen Ordner außerhalb des Projektordners. Bitte ausdrücklich bestätigen."
+  }
+}

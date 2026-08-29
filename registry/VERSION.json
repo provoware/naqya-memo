@@ -1,0 +1,8 @@
+{
+  "version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE",
+  "schema_version": 2,
+  "date": "2026-08-28",
+  "phase": "release-freeze-ui-simplification-input-guidance",
+  "feature_freeze": true,
+  "release_status": "NO-GO"
+}

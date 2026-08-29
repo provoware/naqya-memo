@@ -1,146 +1,121 @@
-# AGENTS.md – NAQYA Entwicklungsvertrag
+# 🧠 **AGENTS.md – Entwicklungs- und Agentenregeln**
+## OI - PROVOWARE - IO
 
-## Zweck
-Diese Datei ist die verbindliche Arbeitsanweisung für alle künftigen Entwicklungsänderungen an NAQYA. Sie wird bei jeder relevanten Änderung geprüft und nur dann geändert, wenn sich der Vertrag tatsächlich ändert.
+### 1. Oberste Regel
+Datenerhalt, Reproduzierbarkeit und klare Nutzerführung sind wichtiger als Feature-Geschwindigkeit.
 
-## Grundregeln
-- Nutzerseitige Benennungen, Statusangaben, Berichte und Dokumentation grundsätzlich auf Deutsch halten.
-- Änderungen klein, nachvollziehbar, rückrollbar und testbar umsetzen.
-- Kein Merge nach `main`, solange der exakte PR-Head nicht vollständig durch sein Qualitätsgate gelaufen ist.
-- Keine stillen Fallbacks, keine ungeprüften Runtime-Downloads, keine ungebundenen Releasebehauptungen.
-- Reproduzierbarkeit, SHA-256-Nachweis, Offline-Fähigkeit und Plattformbindung haben Vorrang vor Komfort-Abkürzungen.
+### 2. Patch-Disziplin
+Vor jedem nichttrivialen Patch:
+1. Ziel
+2. exakte betroffene Dateien/Codepositionen
+3. Grund
+4. erwartete Wirkung
+5. Risiko
+6. benötigte Tests
+7. Rollbackweg
 
-## Repository- und Merge-Pflicht je Iteration
-Vor Beginn und nach Abschluss jeder Iteration werden real geprüft:
-- aktueller `main`-Commit
-- Arbeitszweig und Head-SHA
-- Pull Request: offen/geschlossen, Draft/Ready, mergefähig
-- CI für den **exakten Head-SHA**
-- offene Review-Threads
-- veraltete Parallel-PRs oder widersprüchliche Branches
-- nach Merge der tatsächlich resultierende `main`
+Erst danach patchen. Kleine, lokal begrenzte Änderungen bevorzugen.
 
-Wenn Repository, PR, CI oder Dokumentation nicht synchron sind, wird zuerst dieser Zustand bereinigt.
+### 3. Jede Mutation erhält einen Contract
+`PRE → ACTION → POST → EVIDENCE → COMMIT`
+Bei Fehler:
+`FAIL → ROLLBACK/RECOVERY → VERIFY → REPORT`
 
-## Merge-Konflikt- und Textintegritätsregeln
-- Konflikte niemals durch bloßes Aneinanderhängen beider Varianten lösen.
-- Doppelte JSON-Schlüssel sind verboten.
-- README-, TODO- und Statusaussagen dürfen nicht konkurrierend doppelt vorkommen.
-- Merge-Marker `<<<<<<<`, `=======`, `>>>>>>>` dürfen nicht verbleiben.
-- `README.md` ist die kanonische menschenlesbare Gesamtübersicht.
-- `PROJEKTSTATUS.json` ist die kanonische maschinenlesbare Statusübersicht.
-- `TODO.md` ist die operative Restarbeitenliste und muss denselben Fortschrittsstand führen.
+### 4. Agentenbereiche
+- **ARCHITEKTUR** – Modulgrenzen, ADRs, Kopplung
+- **DATENSICHERHEIT** – Persistence, Backup, Restore, Kill-Tests
+- **PLATTFORM** – Android/Linux/iOS Adapter
+- **UX_A11Y** – Laienführung, Responsive, Kontrast, Touch, Screenreader
+- **QA_REGRESSION** – Tests, Evidence, Regression Registry
+- **DOCS_RELEASE** – README, TODO, CHANGELOG, Status, Manifeste, Releases
+- **SELFREPAIR_DIAGNOSE** – BRAIN, Fehlerklassen, Reparaturregeln
+- **PERFORMANCE** – Budgets, Stress, Speicher, Startzeit
 
-## Code- und Entwicklerdokumentationsregeln
-- `CONTRIBUTING.md` ist der kurze Einstieg.
-- `docs/ENTWICKLERDOKUMENTATION.md` ist die kanonische technische Übergabe.
-- `docs/DIAGNOSE_LOGGING.md` ist der fachliche Diagnose-/Privacy-/Evidence-Vertrag.
-- Codekommentare bleiben sparsam und erklären vor allem **warum** eine Invariante existiert.
-- Für schwer erkennbare Grenzen wird `ENTWICKLERHINWEIS` direkt an der betroffenen Stelle verwendet.
-- Produktversion und IndexedDB-Schema sind getrennte Verträge: **Produktversion ≠ Datenbankschema**.
+### 5. Triggerpunkte für Unteragenten
+Unteragent wird aktiv bei:
+- Änderung an Persistenz/Backup → DATENSICHERHEIT
+- Plattform-API/Berechtigung → PLATTFORM
+- Layout/Bedienlogik → UX_A11Y
+- Fix eines echten Fehlers → QA_REGRESSION + BRAIN
+- Release/Version → DOCS_RELEASE
+- Startfehler/Recovery → SELFREPAIR_DIAGNOSE
+- große Datenmenge/Timing → PERFORMANCE
 
-## Diagnose-, Logging- und Evidence-Regeln
-- `diagnostics/DIAGNOSTICS_CONTRACT.json` ist der kanonische Maschinenvertrag.
-- Aktuell validierte Identität:
-  - Schema: `1`
-  - Ereignisschema: `1`
-  - Format: `NAQYA-DIAGNOSTICS`
-  - SHA-256: `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
-- Fehlercodes werden niemals umgedeutet oder wiederverwendet.
-- Ein Code wie `NAQYA-STT-4002` hat auf Linux und Windows dieselbe Bedeutung.
-- Runtime-Diagnosen speichern standardmäßig keine Audioinhalte, Transkripte, Dokument-/Notiztexte, Secrets, Tokens oder vollständigen Benutzerpfade.
-- Der Puffer ist hart begrenzt; Wiederholungen werden dedupliziert.
-- `retry-once` darf pro Ereignis höchstens einmal als explizite Safe Action ausgeführt werden.
-- Logging arbeitet fail-safe und darf Produktfunktionen nicht zum Absturz bringen.
-- `RELEASE_EVIDENCE.json` bindet den exakten Diagnosevertrag über SHA-256.
+### 6. Dokumentationspflicht
+Bei relevanter Änderung mindestens aktualisieren:
+`CHANGELOG.md`, `TODO.md`, `README.md`, `registry/PROJECT_STATUS.json`.
+Bei Erkenntnis/Fehler zusätzlich `BRAIN.md`.
+Bei neuer Idee `UPGRADE_POTENZIAL.md`.
 
-### Plattforminvariante ab 0.5.1-D
-Linux und Windows verwenden denselben Diagnosevertrag und denselben fachlichen Evidence-Fingerprint. Aktuell validierter Fingerprint:
-`018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf`
+### 7. Kein Status ohne Evidence
+Statusfolge:
+`ENTWURF → IMPLEMENTIERT → GEPRÜFT → BEWIESEN → FREIGEGEBEN`
 
-Der Fingerprint bindet gemeinsame Software-/Diagnoseinvarianten, nicht plattformspezifische Paket- oder Sidecar-Binärhashes. Eine fachliche Änderung am Diagnosevertrag, Fehlercodekatalog oder Fingerprint-Schema erfolgt nur als eigener versionierter Vertragswechsel mit neuen Tests und neuer Evidence.
+### 8. Keine riskanten Automatismen
+Keine externe Datei löschen, überschreiben, versenden, ausführen oder verändern, ohne klare Berechtigung und geeigneten Schutzpfad.
 
-## Hardware-Abnahmeregeln ab 0.5.1-E
-- CI-Paketabnahme ist keine reale Hardwarefreigabe.
-- Hardwarefreigaben müssen an einen validierten Evidence-Fingerprint gebunden sein.
-- Plattform, OS-Version, Hardware, Mikrofon, Modell-SHA, Testdauer und Ergebnis müssen nachvollziehbar dokumentiert sein.
-- 30-/60-Minuten-Aussagen zu Stabilität, CPU, RAM oder Echtzeitfaktor dürfen nur aus realen Messungen stammen.
-- E3-Runtime-Metriken und E4-Ressourcenmetriken werden im Standardpfad über E5/E6 direkt und SHA-gebunden in den Hardware-Nachweis importiert; manuelles Abschreiben ist kein bevorzugter Freigabepfad.
-- `AudioWorklet` wird erst gegen eine dokumentierte Baseline bewertet; die bestehende Aufnahmeimplementierung wird nicht gleichzeitig mit der Baseline-Erhebung umgebaut.
+### 9. Codekommentare
+Kommentare erklären **warum**, Schutzbedingungen, Datenverträge und ungewöhnliche Randfälle. Keine Kommentarflut für offensichtlichen Code.
 
-## Pflichtdateien bei Änderungen
-Bei funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderungen sind mindestens zu prüfen:
-- `AGENTS.md`
-- `TODO.md`
-- `README.md`
-- `CONTRIBUTING.md`
-- `docs/ENTWICKLERDOKUMENTATION.md`
-- `CHANGELOG.md`
-- `PROJEKTSTATUS.json`
-- `VERSION.json`
-- `LAIENANLEITUNG.md`, wenn Bedienung oder Voraussetzungen betroffen sind
-- relevante `docs/`, `tests/` und Workflows
+### 10. Abschluss jeder Iteration
+Ausgeben und in Statusdateien pflegen:
+Toolname · Projekt · Version · Volumen · Besonderheiten · Fortschritt % · erledigt/offen · Tests · Risiken · nächster Schritt · übernächster Schritt.
 
-Unveränderte Dateien bleiben unverändert, wenn keine inhaltliche Änderung nötig ist.
+## 11. V0.12 Release-Candidate-Regel
+Ab V0.12 gilt Feature-Freeze für große neue Funktionen. Änderungen dürfen nur Release-Gates schließen, Fehler beheben, Robustheit/Accessibility/Portabilität verbessern oder Evidence erzeugen. `V1.0 RC` darf nur gesetzt werden, wenn `registry/evidence/v0.12/GO_NO_GO.json` den Zustand `GO` trägt.
 
-## TODO-Vertrag
-`TODO.md` ist die operative Restarbeitenliste. Erledigte Punkte werden nachvollziehbar in `Erledigt` verschoben. Fortschrittsangaben müssen mit README und `PROJEKTSTATUS.json` übereinstimmen. Diese Gleichheit wird automatisiert geprüft.
 
-## Qualitätsgate
-Je nach Änderungsumfang mindestens:
-1. JSON-Struktur + Duplicate-Key-Erkennung
-2. Text-/Merge-Integrität einschließlich README/TODO/Status-Gleichstand
-3. JavaScript-Syntax
-4. Diagnose-Laufzeitregression und Diagnosevertrag
-5. deterministisches Desktop-Staging
-6. Rust-Formatierung + `cargo check`
-7. Sidecar-Build + SHA-256
-8. statische Projektverträge
-9. Shell-Syntax
-10. vollständiger Plattform-Bundle-Test bei Releaseänderungen
-11. reale Hardwareabnahme, sobald sie Freigabeziel ist
+## 🔒 V0.12.1 RELEASE-GATE FEATURE FREEZE
+- Keine neuen Features bis V1.0-RC-GO.
+- Änderungen nur zur Gate-Schließung, Regression-Reparatur, Evidence oder Release-Dokumentation.
+- `GO` nur aus `tools/release_gate/evaluate_release_gate.py`, wenn 7/7 Evidence = PASS.
+- BLOCKED, PRECHECK_PASS und CONTRACT_ONLY sind **kein PASS**.
 
-## Sidecar- und Runtime-Regeln
-- whisper.cpp nur aus festgelegtem Upstream/Commit bauen.
-- Tauri-Sidecar vor PATH-Fallback.
-- Fallback darf einen gestarteten Sidecar mit Laufzeitfehler nicht still ersetzen.
-- Runtimequelle muss diagnostizierbar sein.
-- Linux und Windows sind getrennte Paket-/Hardware-Abnahmeziele, teilen aber denselben Diagnosecodevertrag.
-- Release-Artefakte benötigen Paket-/Sidecar-SHA-256 und Buildumgebungszuordnung.
+## 🔒 V0.12.2 – FEATURE-FREEZE-AUSNAHME: MOBILE PARITY ONLY
 
-## Versions- und Freigaberegeln
-- `main` enthält nur validierte Stände.
-- größere Schritte über eigenen Branch + Draft-PR.
-- Merge bevorzugt Squash + `expected_head_sha`.
-- nach jedem Merge resultierenden `main` erneut prüfen.
-- eine Iteration ist erst abgeschlossen, wenn Repository, PR, CI und Dokumentation übereinstimmen.
+Bis V1.0 RC gilt weiterhin Feature Freeze. Einzige Ausnahme ist die vom Projekt ausdrücklich gewählte **Variante 2: vollständige Android-/iOS-Plattformparität**.
 
-## Aktueller validierter Stand
-**0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence, 89 % / 8 von 9 Hauptpunkten**
+### Erlaubte Änderungen
+- bestehende Fachverträge auf Android/iOS portieren,
+- Native Bridges, Permissions, Reminder, Mikrofon, Share, Dateiauswahl,
+- Android-/Xcode-Buildstruktur,
+- Device-Acceptance und Cross-Runtime-Parity-Tests,
+- reine Release-/Recovery-Korrekturen.
 
-Validiert:
-- deterministisches Linux-DEB mit startbarem Sidecar
-- Windows-NSIS mit startbarem gepacktem Sidecar
-- Linux-/Windows-Release-Evidence und automatischer Paarvergleich
-- zentraler Diagnosevertrag mit unveränderter plattformübergreifender Semantik
-- Evidence-Fingerprint `018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf`
-- maschinenlesbarer Hardware-Abnahmevertrag und fail-closed Collector
-- Runtime-Metrikexport mit Segmentbilanz und RTF
-- Prozessfamilienmessung für CPU und Peak-RAM
-- direkter SHA-gebundener Import von Runtime- und Ressourcenmetriken in Hardware-Evidence
+### Verbotene Änderungen
+- neue Fachfunktionen,
+- neue Produktmodule,
+- kosmetisches Redesign ohne Release-Blocker,
+- Lockerung bestehender Daten-/Recovery-Gates.
 
-Nicht als reale Hardwarefreigabe validiert:
-- Mikrofon-/Endgerätebetrieb unter Linux und Windows
-- 30-/60-Minuten-Langzeitverhalten
-- CPU-/RAM-/Echtzeitfaktor-Baseline auf Referenzhardware
-- AudioWorklet als Ersatz für ScriptProcessor
+### Pflicht-Gates bei Mobile-Code
+1. `RUN_MOBILE_RUNTIME_ACCEPTANCE.sh`
+2. `tests/mobile/test_cross_runtime_parity.py`
+3. Desktop-Regressions-Sanity
+4. Release-Evaluator bleibt NO-GO, solange Android/iOS keine echte Device-Evidence besitzen.
 
-## Nächster Entwicklungsblock
-**0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme**
+### Native PASS-Regel
+`RUNTIME_SOURCE_COMPLETE`, `Swift parse`, `Kotlin compile` oder `BUILD READY` sind **kein** Device-PASS. Gate 06/07 dürfen ausschließlich mit realem gebauten Artefakt und physischem Gerät `PASS` werden.
 
-Reihenfolge:
-1. validiertes Linux-Paket auf realem Referenzgerät installieren und starten
-2. Mikrofon, geschützten Modellpfad und gebündelten Sidecar real verwenden
-3. E3/E4-Messdateien erzeugen und über E5/E6 in `HARDWARE_ACCEPTANCE.json` importieren
-4. Hardware-Nachweis validieren; kein PASS ohne 0 Segmentverluste und alle realen Bestätigungen
-5. danach Windows-Smoke, `long30`, `long60` und erst dann `AudioWorklet`.
+## V0.12.2 RELEASE CONSOLIDATION RULE
+- Feature-Freeze bleibt aktiv.
+- Source-Acceptance darf native Build-/Device-Evidence niemals ersetzen.
+- `evaluate_release_gate.py` ist die alleinige GO/NO-GO-Quelle.
+- Bis V1.0 RC nur Fehlerbehebung, Plattformparität, Evidence und Packaging.
+
+## RELEASE UI VISUAL CONTRACT
+- Globale Darstellungseinstellungen gehören in den dauerhaft sichtbaren Dashboard-Kopf.
+- Keine sichtbare Version darf hardcodiert werden.
+- Eingabefelder müssen sich durch eine separate Kontrastfarbe vom Hintergrund unterscheiden.
+- Bei Schrift-/Bereichszoom bis 200 % müssen Grid-/Flex-Kinder `min-width:0` respektieren und sich neu anordnen.
+- Kein UI-Element darf einen anderen primären Bedienknopf überdecken.
+- Browser-Screenshot-Evidence ist ein separates reales Gate und darf durch CSS-/Stringtests nicht ersetzt werden.
+
+## UI SIMPLIFICATION CONTRACT
+- Versionsinformation ist genau einmal sichtbar; kanonische Quelle bleibt `registry/VERSION.json`.
+- Benutzbare Eingabefelder besitzen hilfreiche, optionale Beispiele oder Vorgaben.
+- Placeholder/Hinweise dürfen keine Daten automatisch speichern.
+- Eingabefeldfarbe darf nicht mit den primären Markenfarben Türkis/Lila/Gelb identisch sein.
+- Bei 80–200 % Zoom muss Layout neu ordnen, bevor horizontaler Überlauf akzeptiert wird.
+- Linke Navigation darf keine horizontale Scrollleiste benötigen.
+- Redundante UI-Information wird entfernt statt an eine andere Stelle verschoben.

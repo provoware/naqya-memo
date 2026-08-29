@@ -1,0 +1,35 @@
+{
+  "tool": "OI - PROVOWARE - IO",
+  "project": "Multi-Memo-Modul-Tool 2026 / OI - Naqya - IO",
+  "version": "0.12.2-MOBILE-RUNTIME-COMPLETION",
+  "generated_at_utc": "2026-08-28T19:25:15.033188+00:00",
+  "schema_version": 2,
+  "feature_freeze": true,
+  "status": "SOURCE_CONSOLIDATED_RELEASE_NO_GO",
+  "desktop_regression": "78/78 PASS",
+  "mobile_runtime_source": "PASS",
+  "cross_runtime_parity": "PASS",
+  "mobile_binary_backup": "PASS",
+  "release_gate_status": "NO-GO",
+  "passed_real_gates": 1,
+  "required_real_gates": 7,
+  "artifacts": {
+    "android_runtime_source": {
+      "path": "dist/v0.12.2/OI_PROVOWARE_IO_V0.12.2_ANDROID_RUNTIME_SOURCE.zip",
+      "sha256": "511e78506757ddad91f02b23a87ecefccc31cbc05b16c454572b78b12ef5286c",
+      "bytes": 97084
+    },
+    "ios_xcode_runtime_source": {
+      "path": "dist/v0.12.2/OI_PROVOWARE_IO_V0.12.2_IOS_XCODE_RUNTIME_SOURCE.zip",
+      "sha256": "65caa68365ff7ba525cb48fd05a0227a4dc2df0738d6f7daa69d2f118d203956",
+      "bytes": 95282
+    }
+  },
+  "evidence": [
+    "registry/evidence/v0.12.2/MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json",
+    "registry/evidence/v0.12.2/CROSS_RUNTIME_PARITY.json",
+    "registry/evidence/v0.12.2/MOBILE_NATIVE_BUILD_PREFLIGHT.json",
+    "registry/evidence/v0.12.2/RELEASE_GATE_CLOSURE.json"
+  ],
+  "v1_rc_allowed": false
+}

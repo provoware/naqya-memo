@@ -1,0 +1,48 @@
+{
+  "version": "0.12.2.2-RELEASE-UI-CONSISTENCY",
+  "status": "BLOCKED",
+  "reason": "Headless Chromium/Playwright execution did not complete within the current artifact runner limit.",
+  "pass_claimed": false,
+  "real_target_required": true,
+  "required_matrix": [
+    {
+      "viewport": "1366x768",
+      "font": "100%",
+      "area_zoom": "100%"
+    },
+    {
+      "viewport": "1600x900",
+      "font": "100%",
+      "area_zoom": "100%"
+    },
+    {
+      "viewport": "1600x900",
+      "font": "150%",
+      "area_zoom": "150%"
+    },
+    {
+      "viewport": "1600x900",
+      "font": "200%",
+      "area_zoom": "200%"
+    },
+    {
+      "viewport": "1920x1080",
+      "font": "200%",
+      "area_zoom": "100%"
+    },
+    {
+      "viewport": "390x844",
+      "font": "100%",
+      "area_zoom": "100%"
+    }
+  ],
+  "acceptance_rules": [
+    "no control overlaps another control",
+    "no content crosses card/workspace boundaries",
+    "no page-level horizontal overflow on desktop",
+    "display controls remain reachable",
+    "left navigation labels remain readable",
+    "calendar cells stay inside calendar container",
+    "modal and toast remain inside viewport"
+  ]
+}

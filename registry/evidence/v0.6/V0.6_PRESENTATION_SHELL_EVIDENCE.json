@@ -1,0 +1,41 @@
+{
+  "version": "0.6.0-PRESENTATION-SHELL",
+  "static_tests_passed": true,
+  "static_output": "PASS test_accessibility_basics\nPASS test_area_zoom_range\nPASS test_disabled_quick_note_write\nPASS test_font_scale_range\nPASS test_four_themes\nPASS test_mobile_drawer\nPASS test_no_domain_imports\nPASS test_required_regions\nPASS test_responsive_breakpoints\nPASS test_text_contrast\nSUMMARY total=10 passed=10 failed=0\n",
+  "screenshots": [
+    {
+      "name": "desktop_1366x768",
+      "size": [
+        1366,
+        768
+      ],
+      "return_code": 124,
+      "exists": false,
+      "note": "BLOCKED_BY_CONTAINER_BROWSER_ENVIRONMENT"
+    },
+    {
+      "name": "mobile_390x844",
+      "size": [
+        390,
+        844
+      ],
+      "return_code": 124,
+      "exists": false,
+      "note": "BLOCKED_BY_CONTAINER_BROWSER_ENVIRONMENT"
+    },
+    {
+      "name": "compact_900x700",
+      "size": [
+        900,
+        700
+      ],
+      "return_code": 124,
+      "exists": false,
+      "note": "BLOCKED_BY_CONTAINER_BROWSER_ENVIRONMENT"
+    }
+  ],
+  "screenshot_evidence_optional_and_blocked": true,
+  "gate_green": true,
+  "gate_basis": "static shell contract; browser screenshots deferred to real browser runner",
+  "timestamp_utc": "2026-08-28T02:48:07.347151+00:00"
+}

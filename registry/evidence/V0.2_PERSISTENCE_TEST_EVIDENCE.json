@@ -1,0 +1,7 @@
+{
+  "version": "0.2.0-DATENKERN",
+  "command": "python test_persistence_contract.py",
+  "return_code": 0,
+  "output": "PASS test_atomic_write\nPASS test_backup_restore_verification\nPASS test_profile_entity_revision_and_checksum\nPASS test_revision_conflict_rolls_back\nPASS test_soft_delete_is_not_hard_delete\nPASS total=5\nSpreadsheet runtime warmup failed during python startup\nTraceback (most recent call last):\n  File \"/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/patches/warm_spreadsheet_runtime_on_startup.py\", line 26, in warm_spreadsheet_runtime_on_startup\n  File \"/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py\", line 772, in warm_spreadsheet_runtime\n  File \"/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/connection.py\", line 37, in get_or_create_client\n  File \"/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/daemon.py\", line 124, in start_daemon\nTimeoutError: Timed out waiting for artifact tool daemon socket. Set ARTIFACT_TOOL_RPC_DAEMON_STARTUP_TIMEOUT_S=<seconds> to increase the limit.\n",
+  "timestamp_utc": "2026-08-27T23:57:27.225410+00:00"
+}

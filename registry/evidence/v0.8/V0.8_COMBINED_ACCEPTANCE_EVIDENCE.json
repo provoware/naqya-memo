@@ -1,0 +1,30 @@
+{
+  "version": "0.8.0-INTERACTION-CALENDAR-ACCEPTANCE",
+  "timestamp_utc": "2026-08-28T10:35:04.993829+00:00",
+  "core_regression": {
+    "passed": 58,
+    "total": 58,
+    "failed": 0,
+    "suites": {
+      "persistence": "5/5 PASS",
+      "recovery": "14/14 PASS",
+      "domain": "4/4 PASS",
+      "startup_profile": "14/14 PASS",
+      "v07_ui_contract": "9/9 PASS",
+      "v07_service_e2e": "5/5 PASS",
+      "v08_interaction_calendar": "6/6 PASS",
+      "v08_service_e2e": "1/1 PASS"
+    }
+  },
+  "browser": {
+    "chromium": {
+      "status": "BLOCKED",
+      "reason": "Error('Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at http://127.0.0.1:60793/index.html\\nCall log:\\n  - navigating to \"http://127.0.0.1:60793/index.html\", waiting until \"networkidle\"\\n')"
+    },
+    "firefox": {
+      "status": "BLOCKED",
+      "reason": "Error(\"BrowserType.launch: Executable doesn't exist at /home/oai/.cache/ms-playwright/firefox-1497/firefox/firefox\\n╔════════════════════════════════════════════════════════════╗\\n║ Looks like Playwright was just installed or updated.       ║\\n║ Please run the following command to download new browsers: ║\\n║                                                            ║\\n║     playwright install                                     ║\\n║                                                            ║\\n║ <3 Playwright Team                                         ║\\n╚════════════════════════════════════════════════════════════╝\")"
+    },
+    "viewports": []
+  }
+}

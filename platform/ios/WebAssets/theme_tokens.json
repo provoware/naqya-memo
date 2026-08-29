@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "themes": {
+    "neon-core": {
+      "bg": "#070a12",
+      "surface": "#121a2b",
+      "text": "#f8fbff",
+      "muted": "#bac6d5",
+      "primary": "#28f7e8",
+      "secondary": "#b84cff",
+      "accent": "#ffe64a",
+      "contrast": "#ff7043"
+    },
+    "violet-night": {
+      "bg": "#0b0613",
+      "surface": "#1d1230",
+      "text": "#f8fbff",
+      "muted": "#bac6d5",
+      "primary": "#5ff7ef",
+      "secondary": "#d36cff",
+      "accent": "#ffd84f",
+      "contrast": "#58ff88"
+    },
+    "turquoise-industrial": {
+      "bg": "#041010",
+      "surface": "#102828",
+      "text": "#f8fbff",
+      "muted": "#bac6d5",
+      "primary": "#29ffe3",
+      "secondary": "#d45dff",
+      "accent": "#ffe74f",
+      "contrast": "#ff7c45"
+    },
+    "high-contrast": {
+      "bg": "#000000",
+      "surface": "#101010",
+      "text": "#ffffff",
+      "muted": "#eeeeee",
+      "primary": "#00fff2",
+      "secondary": "#df78ff",
+      "accent": "#fff200",
+      "contrast": "#ff7a00"
+    }
+  },
+  "spacing": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16
+  },
+  "radius": {
+    "control": 10,
+    "card": 14
+  },
+  "touch_target_min_css_px": 44,
+  "font_scale_range": [
+    0.8,
+    2.0
+  ],
+  "area_zoom_range": [
+    0.8,
+    1.5
+  ]
+}

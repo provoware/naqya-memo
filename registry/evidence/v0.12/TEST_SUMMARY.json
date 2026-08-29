@@ -1,0 +1,98 @@
+{
+  "version": "0.12.0-RC-HARDENING",
+  "baseline_regression": {
+    "test_persistence_contract.py": [
+      5,
+      5
+    ],
+    "test_recovery_acceptance.py": [
+      14,
+      14
+    ],
+    "test_domain_modules.py": [
+      4,
+      4
+    ],
+    "test_v05_startup_profile.py": [
+      14,
+      14
+    ],
+    "test_v07_ui_contract.py": [
+      9,
+      9
+    ],
+    "test_v07_service_e2e.py": [
+      5,
+      5
+    ],
+    "test_v08_interaction_calendar.py": [
+      6,
+      6
+    ],
+    "test_v08_service_e2e.py": [
+      1,
+      1
+    ],
+    "test_v09_asset_safety.py": [
+      6,
+      6
+    ],
+    "test_v010_reminder_acceptance.py": [
+      2,
+      2
+    ],
+    "test_v010_platform_evidence.py": [
+      2,
+      2
+    ],
+    "test_v010_calendar_ui_contract.py": [
+      2,
+      2
+    ],
+    "test_v011_native_media.py": [
+      2,
+      2
+    ],
+    "test_v011_document_revisions.py": [
+      2,
+      2
+    ],
+    "test_v011_packaging_contracts.py": [
+      3,
+      3
+    ],
+    "test_v011_service_e2e.py": [
+      1,
+      1
+    ]
+  },
+  "hardening_tests": {
+    "failure_matrix": [
+      6,
+      6
+    ],
+    "100k_stress": [
+      1,
+      1
+    ],
+    "large_assets": [
+      1,
+      1
+    ],
+    "upgrade_compatibility": [
+      1,
+      1
+    ],
+    "startup_budget": [
+      1,
+      1
+    ],
+    "bounded_soak": [
+      1,
+      1
+    ]
+  },
+  "tests_passed": 89,
+  "tests_total": 89,
+  "automated_core_gate": "PASS"
+}

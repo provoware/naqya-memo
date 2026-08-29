@@ -1,0 +1,10 @@
+{
+  "gate": "GATE_02_CHROMIUM",
+  "status": "BLOCKED",
+  "browser": "/usr/bin/chromium",
+  "started_at": "2026-08-28T18:56:11.734006+00:00",
+  "service_ready": true,
+  "reason": "Chromium headless timed out in this execution environment",
+  "timeout_seconds": 12,
+  "finished_at": "2026-08-28T18:56:23.985645+00:00"
+}

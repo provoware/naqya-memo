@@ -1,0 +1,19 @@
+{
+  "format": "PROVOWARE_GITHUB_FULL_TREE_PREPARED",
+  "generated_at_utc": "2026-08-29T00:04:05.643925+00:00",
+  "project_version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE",
+  "repository": "provoware/naqya-memo",
+  "base_main": "a2e4767ea0017f5df38eeb72142005441b02ecb2",
+  "target_branch": "sync/v0.12.2.3-full-tree-20260829",
+  "main_targeted": false,
+  "included_source_file_count": 388,
+  "included_source_bytes": 1675572,
+  "excluded": [
+    "runtime/",
+    "__pycache__/",
+    "*.pyc",
+    ".git/"
+  ],
+  "release_status": "NO-GO",
+  "release_gates": "1/7 PASS"
+}

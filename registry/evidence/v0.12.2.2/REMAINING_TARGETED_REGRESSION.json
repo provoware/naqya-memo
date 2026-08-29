@@ -1,0 +1,71 @@
+{
+  "version": "0.12.2.2-RELEASE-UI-CONSISTENCY",
+  "suites": [
+    {
+      "suite": "test_v08_service_e2e.py",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "seconds": 0.4
+    },
+    {
+      "suite": "test_v09_asset_safety.py",
+      "status": "PASS",
+      "passed": 6,
+      "total": 6,
+      "seconds": 0.13
+    },
+    {
+      "suite": "test_v010_reminder_acceptance.py",
+      "status": "PASS",
+      "passed": 2,
+      "total": 2,
+      "seconds": 0.13
+    },
+    {
+      "suite": "test_v010_platform_evidence.py",
+      "status": "PASS",
+      "passed": 2,
+      "total": 2,
+      "seconds": 0.05
+    },
+    {
+      "suite": "test_v010_calendar_ui_contract.py",
+      "status": "PASS",
+      "passed": 2,
+      "total": 2,
+      "seconds": 0.02
+    },
+    {
+      "suite": "test_v011_native_media.py",
+      "status": "PASS",
+      "passed": 2,
+      "total": 2,
+      "seconds": 0.23
+    },
+    {
+      "suite": "test_v011_document_revisions.py",
+      "status": "PASS",
+      "passed": 2,
+      "total": 2,
+      "seconds": 0.07
+    },
+    {
+      "suite": "test_v011_packaging_contracts.py",
+      "status": "PASS",
+      "passed": 3,
+      "total": 3,
+      "seconds": 0.06
+    },
+    {
+      "suite": "test_v011_service_e2e.py",
+      "status": "PASS",
+      "passed": 1,
+      "total": 1,
+      "seconds": 0.32
+    }
+  ],
+  "passed": 21,
+  "total": 21,
+  "status": "PASS"
+}

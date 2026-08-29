@@ -1,0 +1,23 @@
+{
+  "format": "PROVOWARE_GITHUB_SYNC_REPORT",
+  "generated_at_utc": "2026-08-28T22:26:13.573743+00:00",
+  "repository": "provoware/naqya-memo",
+  "main_commit_unchanged": "334dd2923fc01a633946137d71fdbebae34364da",
+  "backup_branch": "backup/pre-v0.12.2.3-20260829",
+  "safe_state_branch": "sync/v0.12.2.3-safe-state-20260829",
+  "safe_state_head": "5bf654a9c1ef69c7fff6225a9db0efac10c039a4",
+  "draft_pr": {
+    "number": 54,
+    "url": "https://github.com/provoware/naqya-memo/pull/54",
+    "draft": true,
+    "merged": false
+  },
+  "github_changed_files": [
+    "README.md",
+    "registry/GITHUB_BACKUP_STATUS.json",
+    "registry/SAFE_SNAPSHOT_MANIFEST.json"
+  ],
+  "full_source_tree_status": "PENDING",
+  "main_promotion": "BLOCKED",
+  "reason": "Existing GitHub main is a divergent 0.5.1-E7 architecture; safe-state is staged before any destructive replacement."
+}

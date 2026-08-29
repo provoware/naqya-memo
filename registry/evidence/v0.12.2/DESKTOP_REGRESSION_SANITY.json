@@ -1,0 +1,153 @@
+{
+  "version": "0.12.2-MOBILE-RUNTIME-COMPLETION",
+  "generated_at": "2026-08-28T19:06:02.357548+00:00",
+  "passed": 78,
+  "total": 78,
+  "failed": 0,
+  "suites": [
+    {
+      "suite": "test_persistence_contract.py",
+      "return_code": 0,
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "seconds": 0.149,
+      "tail": "PASS test_atomic_write\nPASS test_backup_restore_verification\nPASS test_profile_entity_revision_and_checksum\nPASS test_revision_conflict_rolls_back\nPASS test_soft_delete_is_not_hard_delete\nPASS total=5\n"
+    },
+    {
+      "suite": "test_recovery_acceptance.py",
+      "return_code": 0,
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "seconds": 2.128,
+      "tail": "PASS test_corrupted_backup_rejected\nPASS test_corrupted_entity_checksum_detected\nPASS test_database_locked_fails_without_corruption\nPASS test_disk_full_is_classifiable\nPASS test_kill_after_begin_rolls_back\nPASS test_kill_after_commit_preserves_committed_write\nPASS test_kill_after_write_before_commit_rolls_back\nPASS test_kill_before_begin_leaves_no_write\nPASS test_mutation_queue_serializes_writes\nPASS test_permission_denied_is_classifiable\nPASS test_project_lock_rejects_second_owner\nPASS test_read_only_guard_detected_preflight\nPASS test_restore_to_fresh_project_preserves_data\nPASS test_undo_redo_semantics\nSUMMARY total=14 passed=14 failed=0\n"
+    },
+    {
+      "suite": "test_domain_modules.py",
+      "return_code": 0,
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "seconds": 0.402,
+      "tail": "PASS test_calendar_colors_day_and_next10\nPASS test_memo_crud_undo_redo\nPASS test_revision_conflict_domain\nPASS test_todo_complete_and_rule\nSUMMARY total=4 passed=4 failed=0\n"
+    },
+    {
+      "suite": "test_v05_startup_profile.py",
+      "return_code": 0,
+      "total": 14,
+      "passed": 14,
+      "failed": 0,
+      "seconds": 0.865,
+      "tail": "PASS test_external_path_confirmation_cannot_be_disabled\nPASS test_guided_first_start_creates_checkpoint_and_settings\nPASS test_guided_first_start_without_profile_leads_to_profile_selection\nPASS test_pin_change_requires_current_pin\nPASS test_pin_hash_is_salted_and_verifiable\nPASS test_pin_requires_exactly_four_ascii_digits\nPASS test_platform_capability_contracts_are_conservative\nPASS test_platform_permissions_require_visible_user_action_on_mobile\nPASS test_profile_create_verify_and_access_log\nPASS test_project_preflight_creates_safe_tree\nPASS test_project_preflight_low_disk_is_red_deterministically\nPASS test_project_preflight_rejects_file_as_project_folder\nPASS test_settings_defaults_and_persistence\nPASS test_v1_to_v2_migration_preserves_existing_entity\nSUMMARY total=14 passed=14 failed=0\n"
+    },
+    {
+      "suite": "test_v07_ui_contract.py",
+      "return_code": 0,
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "seconds": 0.021,
+      "tail": "PASS api binding\nPASS memo\nPASS todo\nPASS calendar\nPASS quick note\nPASS undo redo\nPASS responsive\nPASS accessibility\nPASS no sqlite in UI\nSUMMARY total=9 passed=9 failed=0\n"
+    },
+    {
+      "suite": "test_v07_service_e2e.py",
+      "return_code": 0,
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "seconds": 0.764,
+      "tail": "PASS api_state\nPASS memo_ui_service_path\nPASS todo_ui_service_path\nPASS calendar_ui_service_path\nPASS quick_note_file_path\nSUMMARY total=5 passed=5 failed=0\n"
+    },
+    {
+      "suite": "test_v08_interaction_calendar.py",
+      "return_code": 0,
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "seconds": 0.29,
+      "tail": "PASS test_calendar_day_color_update_is_revision_safe\nPASS test_diagnostic_privacy_contract_static\nPASS test_edit_memo_todo_event_and_revisions\nPASS test_no_direct_sqlite_from_ui\nPASS test_restore_entity_after_trash\nPASS test_ui_contains_real_month_calendar_and_edit_controls\nSUMMARY total=6 passed=6 failed=0\n"
+    },
+    {
+      "suite": "test_v08_service_e2e.py",
+      "return_code": 0,
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "seconds": 0.789,
+      "tail": "PASS service_edit_restore_calendar_diagnostics\n"
+    },
+    {
+      "suite": "test_v09_asset_safety.py",
+      "return_code": 0,
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "seconds": 0.141,
+      "tail": "PASS test_asset_backup_verifies_hash\nPASS test_audio_import_manifest_hash_and_quota\nPASS test_corrupt_asset_moves_to_quarantine\nPASS test_document_extension_guard\nPASS test_playlist_persistent\nPASS test_quota_guard\nSUMMARY total=6 passed=6 failed=0\n"
+    },
+    {
+      "suite": "test_v010_reminder_acceptance.py",
+      "return_code": 0,
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "seconds": 0.15,
+      "tail": "PASS test_due_reminder_and_dedup\nPASS test_future_reminder_not_due\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "suite": "test_v010_platform_evidence.py",
+      "return_code": 0,
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "seconds": 0.046,
+      "tail": "PASS test_linux_probe_native\nPASS test_mobile_contracts_not_falsely_native\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "suite": "test_v010_calendar_ui_contract.py",
+      "return_code": 0,
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "seconds": 0.018,
+      "tail": "PASS test_accessibility_and_responsive_css\nPASS test_calendar_modes_present\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "suite": "test_v011_native_media.py",
+      "return_code": 0,
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "seconds": 0.112,
+      "tail": "PASS test_linux_recorder_command_is_native_capture_contract\nPASS test_synthetic_ffmpeg_recording_commits_asset\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "suite": "test_v011_document_revisions.py",
+      "return_code": 0,
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "seconds": 0.066,
+      "tail": "PASS test_pdf_is_read_only_for_internal_editor\nPASS test_text_revision_history_and_conflict\nSUMMARY total=2 passed=2 failed=0\n"
+    },
+    {
+      "suite": "test_v011_packaging_contracts.py",
+      "return_code": 0,
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "seconds": 0.05,
+      "tail": "PASS test_android_structure_has_runtime_permissions\nPASS test_ios_contract_has_microphone_usage_text\nPASS test_linux_portable_archive_contains_launcher\nSUMMARY total=3 passed=3 failed=0\n"
+    },
+    {
+      "suite": "test_v011_service_e2e.py",
+      "return_code": 0,
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "seconds": 0.698,
+      "tail": "PASS service_pdf_view_text_revision\n"
+    }
+  ]
+}

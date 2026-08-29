@@ -1,0 +1,34 @@
+{
+  "linux": {
+    "platform": "linux",
+    "runtime": "linux",
+    "kernel": "6.18.35",
+    "xdg_open": true,
+    "xdg_email": true,
+    "notify_send": false,
+    "ffmpeg": true,
+    "ffprobe": true,
+    "filesystem_write_test": true,
+    "evidence_type": "NATIVE_RUNTIME_PROBE"
+  },
+  "android": {
+    "platform": "android",
+    "notifications": "RUNTIME_PERMISSION_REQUIRED",
+    "storage": "SCOPED_STORAGE",
+    "background": "OS_RESTRICTED",
+    "microphone": "RUNTIME_PERMISSION_REQUIRED",
+    "share": "INTENT_ADAPTER",
+    "evidence_type": "CONTRACT_ONLY",
+    "native_device_tested": false
+  },
+  "ios": {
+    "platform": "ios",
+    "notifications": "USER_AUTHORIZATION_REQUIRED",
+    "storage": "APP_SANDBOX_DOCUMENT_PICKER",
+    "background": "STRICTLY_RESTRICTED",
+    "microphone": "USER_AUTHORIZATION_REQUIRED",
+    "share": "SHARE_SHEET",
+    "evidence_type": "CONTRACT_ONLY",
+    "native_device_tested": false
+  }
+}

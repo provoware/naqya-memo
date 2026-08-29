@@ -1,183 +1,443 @@
-# TODO – NAQYA
+# ✅ **TODO – OI - PROVOWARE - IO**
+## **Priorisierte Entwicklungsroadmap**
 
-Stand: 2026-08-23
-Validierter Basisstand: **0.5.0 – Tauri-Sidecar-Integration & Repository-Konsolidierung**
-Aktueller Arbeitsstand: **0.5.1-E7 – Geführte reale Linux-Smoke-Hardwareabnahme vorbereitet**
-Fortschritt 0.5.1: **89 % – 8 von 9 Hauptpunkten erledigt**
-Nächster Entwicklungsblock: **0.5.1-E7 – Reale Linux-Smoke-Hardwareabnahme**
+> Legende: 🔴 P0 kritisch · 🟠 P1 sehr wichtig · 🟡 P2 wichtig · 🔵 P3 Ausbau  
+> Regel: Ein Punkt ist erst **[x]**, wenn Implementierung **und Evidence** vorhanden sind.
 
-## P0 – Freigabekritisch
+---
 
-### [offen] Reale Linux- und Windows-Desktop-Abnahme durchführen
-Komponente: Hardware / Mikrofon / STT / Release
+## 🔴 **P0 – Fundament / Schutz / Datenintegrität**
 
-Abnahmekriterien:
-- validierte Linux- und Windows-Pakete auf realen Referenzgeräten installieren und starten
-- geführten E7-Linux-Hardware-Smoke-Harness interaktiv ausführen; nicht-interaktive oder unbestätigte Prüfschritte bleiben fail-closed
-- gebündelter `naqya-whisper` wird real von NAQYA verwendet
-- echtes Modell aus dem geschützten NAQYA-Modellpfad funktioniert
-- Mikrofonaufnahme und segmentiertes Live-Diktat funktionieren
-- temporäre WAV-Dateien werden zuverlässig bereinigt
-- Providerdiagnose zeigt `whisper.cpp-sidecar`
-- absichtlich provozierte Diagnose-/Fehlercodes entsprechen dem unveränderten Diagnosevertrag
-- Evidence-Fingerprint der getesteten Software wird in `HARDWARE_ACCEPTANCE.json` gebunden
-- E3-Runtime-Metriken und E4-Ressourcenmessung werden ohne manuelles Abschreiben über E5/E6 importiert
-- kurze sowie mindestens 30-minütige Sitzung ohne Datenverlust
-- keine Hardware-Freigabe ohne real gemessenen und validierten Nachweis
+- [x] V0.1 Anforderungen konsolidieren
+- [x] V0.1 Architekturgrenzen festlegen
+- [x] V0.1 Plattformadapter definieren
+- [x] V0.1 Datenmodell entwerfen
+- [x] V0.1 Gate-State-Machine definieren
+- [x] V0.1 Entwicklungsdokumentation definieren
+- [x] V0.1 Manifeststruktur definieren
+- [x] V0.2 kanonische IDs und Schema-Versionierung implementieren
+- [x] V0.2 atomare Datei-Schreibschicht implementieren
+- [x] V0.3 zentrale Mutation Queue implementieren und Reihenfolge beweisen
+- [x] V0.3 Mehrfachinstanz-/Lock-Schutz implementieren
+- [x] V0.2 Prüfsummen für kritische Daten integrieren
+- [ ] V0.2 4-Generationen-Rotation vollständig implementieren (Snapshot + Verify-Grundlage ist fertig)
+- [x] V0.2 Backup separat öffnen + Integrity-Check automatisieren
+- [x] V0.3 vollständigen Restore in frischen Projektordner + Inhaltsvergleich beweisen
+- [x] V0.2 Soft-Delete/Papierkorb-Datenzustand implementieren
+- [x] V0.3 Undo/Redo-Semantik implementieren und beweisen
+- [ ] V0.4 Undo/Redo-Journal persistent an Domainmutationen anbinden
+- [x] V0.3 Crash-/Transaction-Kill-Matrix aufbauen und Kernphasen beweisen
+- [x] V0.3 Disk-full/Permission-denied klassifizieren + Read-only Preflight beweisen
+- [ ] Plattform-Gate: echte OS-native Disk-full/Read-only/Permission-Injection auf Linux/Android/iOS
+- [ ] V0.2 Import-/Export-Paket mit Version und Integritätsmanifest definieren
+- [ ] V0.2 Privacy-Filter für Debugpakete implementieren
+- [ ] V0.2 PIN-Hinweis und PIN-Recovery-Konzept implementieren
+- [ ] V0.2 Zeit-/Zeitzonen-/DST-Verträge festlegen
 
-## P1 – Hohe Priorität
+## 🟠 **P1 – Produktkern**
 
-### [offen] Langzeit- und Lasttests für Live-STT durchführen
-Komponente: Performance / Stabilität
+- [ ] Textmemo CRUD
+- [ ] feste Titel-Textdatei im Projektordner mit Append über Enter/Button
+- [ ] Sprung zur Textdatei / Standardeditor-Adapter
+- [ ] Sprachmemo-Aufnahme + sichere Dateiverwaltung
+- [ ] Todo + Termin + Erinnerung + Archiv
+- [ ] Kalender Tag/Woche/Monat/Jahr
+- [ ] 5 editierbare Kalenderfarben + Legende
+- [ ] persistente Tagfärbung in Monatsansicht
+- [ ] nächste 10 Aufgaben/Termine im Header-Dashboard
+- [ ] globale Suche + Filter + Tags + Favoriten
+- [ ] unterminierte Notizen
+- [ ] PDF-/Dokumentenbetrachter
+- [ ] kontrollierter Dokumenteditor
+- [ ] Textdokument erstellen + PDF exportieren
+- [ ] Audio-Player + persistente Playlist
+- [ ] Zitatverwaltung + 10-Minuten-Rotation
+- [ ] Profile + PIN
+- [ ] Einstellungen persistent
+- [ ] 4 Themes
+- [ ] Schriftgrößen + Bereichszoom
+- [ ] 3 Hilfs-/Konfigurationsmodi
 
-Abnahmekriterien:
-- 30- und 60-Minuten-Diktatsitzungen ohne Segmentverlust
-- CPU-/RAM-Verhalten dokumentiert
-- Echtzeitfaktor pro Referenzmodell dokumentiert
-- kontrolliertes Verhalten bei langsamer Transkription
-- Diagnose-Ringpuffer bleibt begrenzt und performant
-- Messwerte werden im Hardware-Abnahmevertrag erfasst
+## 🟡 **P2 – Laienführung / Qualität / Accessibility**
 
-## P2 – Qualitätsausbau
+- [ ] Guided First Start
+- [ ] Berechtigungs-Preflight
+- [ ] Projektordner prüfen/erstellen/reparieren
+- [ ] System-/Display-/Capability-Scan
+- [ ] automatische Adapterauswahl
+- [ ] kontrastgesicherte UI-Tokens
+- [ ] Tooltips außerhalb von Bedienelementen
+- [ ] leere Zustände mit nächster Aktion
+- [ ] Accessibility-Gate
+- [ ] Keyboard-/Touch-/Maus-Matrix
+- [ ] Screenreader-Beschriftungen
+- [ ] Responsive-Acceptance-Matrix
+- [ ] 200-%-Zoom-Tests
+- [ ] Performance-Budgets
+- [ ] 1k/10k/100k Datensatz-Stresstest
+- [ ] Belohnungssystem mit echten Statistiken
+- [ ] Level-/Fleiß-Punkte + ironische Level-Sprüche
 
-### [offen] `ScriptProcessor` durch `AudioWorklet` ersetzen
-Komponente: Web Audio / Live-STT
+## 🔵 **P3 – Entwickler-, Diagnose- und Ausbauplattform**
 
-Abnahmekriterien:
-- bestehende Hardware-/Performance-Baseline zuerst dokumentieren
-- gleiche oder bessere 16-kHz-Mono-Normalisierung
-- stabile Segmentbildung
-- keine Regression bei Live-Diktat und Recovery
-- Firefox- und Chrome-Kompatibilität geprüft
-- Diagnosemetriken und Fehlercodes bleiben erhalten
+- [ ] versteckbarer Entwicklerbereich
+- [ ] Diagnose-Center
+- [ ] detaillierter Crash-/Exit-Bericht als TXT im Standardeditor
+- [ ] Lösungshinweise im Bericht
+- [ ] Self-Repair-Regelwerk
+- [ ] BRAIN-Einlesung + Konsolidierung
+- [ ] Regression Registry
+- [ ] Golden-Screenshot-/Layout-Regression
+- [ ] Testdaten-Generator
+- [ ] reproduzierbarer Release Builder
+- [ ] SBOM + Lizenzbericht
+- [ ] Release-Prüfsummen
+- [ ] Autoformatter/Linter
+- [ ] Dokumentations-Drift-Gate
+- [ ] Manifest-Drift-Gate
+- [ ] File-Status-Registry-Gate
+- [ ] plattformspezifische Reminder-Acceptance
+- [ ] später optional echte Profilverschlüsselung
 
-## P3 – Wartbarkeit
+---
 
-### [offen] Alte erledigte Entwicklungszweige bereinigen
-Komponente: Repository-Hygiene
+## 📌 **Definition of Done**
 
-Abnahmekriterien:
-- nur Zweige löschen, deren Inhalt nachweislich in `main` enthalten oder bewusst verworfen ist
-- keine aktive oder ungeprüfte Arbeit entfernen
-- offene PRs und Branchliste danach erneut prüfen
+Ein TODO darf nur abgehakt werden, wenn:
 
-### [offen] Historischen Modulnamen `services/release-04.js` bewerten
-Komponente: Wartbarkeit
+- [ ] Code/Artefakt vorhanden
+- [ ] PRE- und POST-Bedingungen geprüft
+- [ ] Fehlerpfad geprüft
+- [ ] automatischer Regressionstest vorhanden
+- [ ] Evidence referenziert
+- [ ] README/TODO/CHANGELOG/PROJECT_STATUS synchronisiert
+- [ ] Auswirkungen auf Datenschutz, Recovery und Accessibility geprüft
 
-Abnahmekriterien:
-- feststellen, ob der Name nur historisch oder technisch störend ist
-- keine reine Umbenennung ohne Nutzen
-- bei Änderung HTML-, Service-Worker-, Staging-Allowlist, Tests und Modulreferenzen atomar anpassen
 
-## Entwickler-Übergabecheckliste
+## 🟢 V0.4 Domain Gate
+- [x] Memo CRUD Domainkern
+- [x] Todo Domainkern mit Termin-/Reminder-Regeln
+- [x] Kalender-Datenkern
+- [x] exakt fünf editierbare Kalenderfarben
+- [x] persistente Tagesfärbung
+- [x] nächste-10-Aggregation
+- [x] persistentes Undo/Redo an Domainmutationen
+- [ ] UI Tag/Woche/Monat/Jahr
+- [ ] UI Header-Darstellung nächste 10
 
-### Aktuelle Übergabebereitschaft 0.5.1-E7
 
-- [x] professioneller Entwickler-Einstieg und technische Übergabedokumentation
-- [x] PWA-/Backup-Produktversion gegen `VERSION.json` abgesichert
-- [x] deterministisches Desktop-Frontend-`dist/`
-- [x] Linux-DEB mit enthaltenem und startbarem Sidecar im CI nachgewiesen
-- [x] Windows-NSIS mit enthaltenem und startbarem Sidecar im CI nachgewiesen
-- [x] Sidecar-Laufzeitabhängigkeiten und Bytegleichheit geprüft
-- [x] deterministisches DEB-Repacking nachgewiesen
-- [x] maschinen- und menschenlesbarer Release-Nachweis erzeugt
-- [x] Diagnosevertrag über SHA-256 mit Release Evidence verbunden
-- [x] Linux-/Windows-Evidence automatisiert verglichen
-- [x] plattformübergreifender Evidence-Fingerprint validiert: `018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf`
-- [x] Diagnose-Contract-SHA: `fa160ea4cb259406ecd057ebfb225d862b4484f10dba4e83948755c6fda65425`
-- [x] maschinenlesbares Hardware-Abnahmeschema und Validator vorhanden
-- [x] Hardware-Collector, Runtime-Metrikexport und Prozessressourcenmessung vorhanden
-- [x] Runtime- und Ressourcenmesswerte werden direkt und SHA-gebunden in Hardware-Evidence importiert
-- [x] geführter E7-Linux-Hardware-Smoke-Harness vorhanden und fail-closed abgesichert
-- [ ] reale Linux-/Windows-Hardware-, Mikrofon- und Langzeitabnahme abschließen
+---
+## 🟢 V0.5 – ABGESCHLOSSEN
+- [x] Schema V2 und Migration V1→V2
+- [x] Profile anlegen
+- [x] 4-stelligen PIN validieren und gesalzen hashen
+- [x] PIN prüfen und Zugriffsversuche protokollieren
+- [x] PIN-Wechsel nur nach aktuellem PIN
+- [x] persistente 4 Themes
+- [x] persistente Schrift-Skalierung 80–200 %
+- [x] persistenter Hilfemodus 1/2/3
+- [x] externe Pfadbestätigung als nicht abschaltbare Schutzregel
+- [x] Projektordner prüfen/erstellen + Schreibprobe + Speicherprüfung
+- [x] Guided First Start State Machine
+- [x] Start-Checkpoint im Projektordner
+- [x] Capability-/Permission-Verträge Linux/Android/iOS
+- [x] deutsche UI-/Hilfetexte als versionierte JSON-Ressource
+- [x] kombinierte Regression V0.1–V0.5
 
-### Vor jeder künftigen Entwicklerübergabe
+## 🔵 V0.6 – NÄCHSTER SCHRITT
+- [ ] responsive Presentation Shell
+- [ ] Header-Dashboard
+- [ ] Menü-/Schnellstartleiste
+- [ ] Footer mit Tool/Debug/Log-Status
+- [ ] leere Arbeitsfläche
+- [ ] linke/rechte adaptive Bereiche bzw. Drawer für Mobile
+- [ ] Theme-Tokens und Kontrast-Gate
+- [ ] Schrift-/Bereichszoom darstellen
+- [ ] noch keine direkte Fachlogik in Views
 
-- [ ] realen `main`-Commit, offene PRs und CI-Stand geprüft
-- [ ] README, TODO, CHANGELOG, AGENTS und maschinenlesbare Statusdateien gegen den Code geprüft
-- [ ] Qualitätsgate für den exakten Übergabe-Head vollständig grün
-- [ ] paketbezogene Evidence bei Release-relevanten Änderungen geprüft
-- [ ] Diagnose-Contract-SHA und Evidence-Fingerprint zwischen Plattformen geprüft
-- [ ] reale Hardwarefreigaben nur mit validiertem `HARDWARE_ACCEPTANCE.json`
-- [ ] nach Merge resultierenden `main` erneut geprüft
 
-## Erledigt
+## 🟢 V0.6 – Presentation Shell
+- [x] responsives Dashboard-Grundgerüst
+- [x] Header-Dashboard
+- [x] Hauptmenü
+- [x] Schnellstartleiste
+- [x] leerer modularer Arbeitsbereich
+- [x] Kontext-/Infoleiste
+- [x] kleiner Debug-/Logging-Footer
+- [x] Mobile Drawer
+- [x] Desktop-/Kompakt-/Mobil-Breakpoints
+- [x] 4 Theme-Tokens
+- [x] Kontrast-Acceptance
+- [x] Schrift 80–200 %
+- [x] Bereichszoom 80–150 %
+- [x] Reduced-Motion/Fokus/Skip-Link
+- [x] UI enthält keine Domain-/SQLite-Schreiblogik
+- [ ] Browser-Runner: Desktop/Mobil/Kompakt Screenshot-Evidence (Container-Browser hier blockiert)
+- [x] statische Desktop/Mobil/Kompakt Responsive-Contracts
+- [ ] V0.7 Memo-Service anbinden
+- [ ] V0.7 Todo-Service anbinden
+- [ ] V0.7 Kalender-Service anbinden
+- [ ] V0.7 Reminder-/Share-/Standardeditor-Adapter in UI-Flows
 
-### [erledigt] 0.5.1-E6 – Runtime-Metriken direkt in Hardware-Evidence
-Ergebnis:
-- kanonischer `NAQYA-LIVE-STT-RUNTIME`-Export aus der echten Live-STT-Sitzung
-- direkte Übernahme von Dauer, Segmentbilanz und RTF in den Hardware-Collector
-- Runtime-Quelldatei per SHA-256 an `HARDWARE_ACCEPTANCE.json` gebunden
-- inkonsistente Segment-/Audio-/RTF-Werte werden fail-closed abgelehnt
-- manuelles Abschreiben von Segment- und RTF-Werten ist für den Standardpfad entfallen
 
-### [erledigt] 0.5.1-E5 – Ressourcenmetriken direkt importieren
-Ergebnis:
-- `RESOURCE_METRICS.json` wird direkt in Hardware-Evidence importiert
-- Peak-RAM, CPU-Durchschnitt/-Maximum und Messdauer werden übernommen
-- Ressourcenquelle wird per SHA-256 gebunden
+## 🟢 V0.7 SERVICE-UI-BINDING
+- [x] lokaler Application API Service
+- [x] Memo-UI anbinden
+- [x] Todo-UI anbinden
+- [x] Kalender-UI anbinden
+- [x] Header-Schnelleingabe in feste TXT
+- [x] nächste 10 echte Todo-/Termin-Daten
+- [x] Papierkorb-Fluss
+- [x] Undo/Redo-Fluss
+- [x] Linux Standardeditor-/Öffnen-Adapter
+- [x] Linux Share-Adapter ohne Auto-Versand
+- [x] Linux Reminder-Referenzadapter
+- [ ] V0.8 Memo/Todo/Termin Edit-UI
+- [ ] V0.8 Monatskalender Tag-Klick-Färbung
+- [ ] V0.8 echte Browser-E2E Firefox + Chromium
+- [ ] V0.8 Debug-/Diagnosepaket mit Privacy-Vorschau
 
-### [erledigt] 0.5.1-E4 – Prozess-Ressourcenmessung
-Ergebnis:
-- Linux-/Windows-Messer für NAQYA-Prozessfamilie und Sidecar
-- Peak-RAM, CPU und Prozessanzahl werden maschinenlesbar erfasst
+## 🟢 V0.8 – abgeschlossen
+- [x] Memo bearbeiten
+- [x] Todo bearbeiten
+- [x] Termin bearbeiten
+- [x] echter Monatskalender
+- [x] Tag per Klick persistent einfärben
+- [x] fünf Kalenderfarben/Titel editierbar
+- [x] Papierkorb-Wiederherstellung
+- [x] persistentes Undo/Redo weitergeführt
+- [x] Diagnose-Privacy-Vorschau
+- [x] lokale Diagnose-TXT nur nach Bestätigung
+- [x] Browser-Acceptance-Skript für 390/768/1366/1920
+- [ ] Chromium Visual Gate auf uneingeschränktem lokalen Runner wiederholen
+- [ ] Firefox-E2E auf Runner mit installierter Firefox-Engine
 
-### [erledigt] 0.5.1-E3 – Runtime-Messadapter
-Ergebnis:
-- Segmente gesamt/erfolgreich/verloren sowie RTF Ø/Maximum werden in Live-STT erfasst
-- Segmentverlust ist Bestandteil der realen Sitzungsmessung
+## 🔵 Nächster Slice V0.9
+- [ ] Sprachmemo-Aufnahmeadapter
+- [ ] Audio-Asset-Manifest + Recovery
+- [ ] PDF-/Dokumentenbetrachter
+- [ ] sichere Dokumentbearbeitung
+- [ ] persistente Audio-Playlist
+- [ ] Asset-Quota/Storage-Dashboard
 
-### [erledigt] 0.5.1-E2 – Hardware-Evidence-Collector
-Ergebnis:
-- plattformübergreifender Collector erzeugt `HARDWARE_ACCEPTANCE.json`
-- Paket-/Modell-SHA, Hardwaredaten und reale Messwerte werden fail-closed geprüft
+## 🟢 V0.9 – Asset Safety
+- [x] Audio-Asset-Manifest
+- [x] Dokument-Asset-Manifest
+- [x] sichere Temp→Commit-Pipeline
+- [x] SHA-256 Asset-Prüfung
+- [x] Asset-Quota
+- [x] beschädigte Asset-Quarantäne
+- [x] Asset-Backup mit Hash-Nachprüfung
+- [x] persistente Playlist-Grundlage
+- [x] UI-Grundbindung für Audio/Dokumente
+- [ ] Native Sprachaufnahme Android/Linux/iOS Capability Gate
+- [ ] eingebetteter PDF-/Dokumentenviewer
+- [ ] kontrollierter Dokumenteditor
 
-### [erledigt] 0.5.1-E1 – Maschinenlesbarer Hardware-Abnahmevertrag
-Ergebnis:
-- `hardware/HARDWARE_ACCEPTANCE.schema.json` als versionierter Vertrag eingeführt
-- Hardware-Nachweise an den aktuell validierten Evidence-Fingerprint und Diagnosevertrag gebunden
-- Linux/Windows, OS-Version, CPU/RAM, Mikrofon, Paket-/Modell-SHA und geschützten Modellpfad erfassbar
-- Testdauer, Segmentzahl/-verlust, Echtzeitfaktor, Peak-RAM und beobachtete Diagnosecodes erfassbar
-- Profile `long30` / `long60` erzwingen mindestens 1800 / 3600 Sekunden reale Messdauer
-- `PASS` verlangt gestartete App, gebündelten Sidecar, geschützten Modellpfad, funktionierende Mikrofon-/Live-Diktat-/WAV-Bereinigung und 0 Segmentverluste
-- `tests/validate_hardware_acceptance.py` prüft Schema und reale Nachweise; CI-Paketdaten allein erzeugen ausdrücklich keine Hardwarefreigabe
-- Hauptfortschritt bleibt korrekt bei 8 von 9 / 89 %, da reale Hardwaremessungen noch fehlen
+## 🔵 V0.10
+- [ ] Tagesansicht
+- [ ] Wochenansicht
+- [ ] Jahresansicht
+- [ ] echte Reminder-Acceptance
+- [ ] Accessibility Browser Gate
+- [ ] Linux/Android/iOS Evidence
 
-### [erledigt] 0.5.1-D – Windows-Bundle & Plattform-Evidence
-Ergebnis:
-- whisper.cpp `v1.9.2` aus Commit `306c88f4d1286aec1bf96e544632897886af5501` für Windows x86_64/MSVC gebaut
-- echtes Tauri-NSIS-Bundle erzeugt
-- gepackten Windows-Sidecar extrahiert, gestartet und per SHA-256 gegen den Build-Sidecar geprüft
-- Linux- und Windows-Release-Evidence automatisiert verglichen
-- Diagnosevertrag plattformübergreifend identisch gebunden
-- Evidence-Fingerprint `018452a4b7683cba40dbce2a2c221aa6b31e55c846470baef35e4baa13081aaf` als gemeinsame Software-/Diagnoseidentität validiert
-- Projektfortschritt auf 8 von 9 Hauptpunkten beziehungsweise 89 % angehoben
+## 🟢 V0.10 – Kalender / Reminder / Plattform
+- [x] Tagesansicht
+- [x] Wochenansicht
+- [x] Monatsansicht
+- [x] Jahresansicht
+- [x] Reminder-Fälligkeit
+- [x] Reminder-Dedup
+- [x] Linux Capability Runtime Probe
+- [x] Android Capability Contract
+- [x] iOS Capability Contract
+- [x] Accessibility Browser Gate automatisiert
+- [ ] Chromium Visual/A11y Evidence
+- [ ] Firefox Visual/A11y Evidence
+- [ ] Android echte Device-Evidence
+- [ ] iOS echte Device-Evidence
 
-### [erledigt] 0.5.1-C – Diagnose, Logging & Evidence-Bindung
-Ergebnis:
-- kanonischer `diagnostics/DIAGNOSTICS_CONTRACT.json`
-- stabile Fehlercodes, Ringpuffer, Deduplizierung, Privacy-Redaktion und Safe Actions
-- Diagnose-/Release-Evidence-Vertrag über SHA-256, Schema und Ereignisformat gekoppelt
+## 🔵 V0.11
+- [ ] native Sprachaufnahme
+- [ ] echter PDF-/Dokumentenviewer
+- [ ] kontrollierter Dokumenteditor
+- [ ] Linux-Paket/portable Start
+- [ ] Android Packaging
+- [ ] iOS Packaging-Konzept und Build-Gate
 
-### [erledigt] 0.5.1-B1 – Deterministische DEB-Reproduzierbarkeit
-Ergebnis:
-- Zeit-/Archivmetadaten normalisiert
-- festes `SOURCE_DATE_EPOCH`
-- deterministisches `dpkg-deb`-Profil mit Bytegleichheitsprüfung
+## 🟢 V0.11 – Native Media & Packaging
+- [x] Linux Audio-Aufnahmestaging
+- [x] Audio Temp→Commit über AssetManager
+- [x] synthetische FFmpeg-Aufnahme-Acceptance
+- [ ] reales Mikrofon auf Ziel-Linux-System nachweisen
+- [x] PDF read-only Viewer-Endpunkt
+- [x] TXT/MD revisionsgesicherter Editor
+- [x] Asset-Revisionshistorie
+- [x] HTML5-Audioplayer
+- [x] Linux Portable TAR.GZ
+- [ ] Linux Portable Health-Start
+- [x] Android Buildstruktur + Permission Manifest
+- [ ] Android SDK-Build + Device Acceptance
+- [x] iOS Info.plist + Packaging-/Permission-Konzept
+- [ ] Xcode-Build + iPhone-X/iOS-16.7.x Acceptance
 
-### [erledigt] 0.5.1-B – Linux-Bundle & Release-Nachweis
-Ergebnis:
-- deterministisches `dist/`
-- reales Linux-DEB mit startbarem Sidecar
-- Laufzeitabhängigkeiten und Bytegleichheit geprüft
-- `RELEASE_EVIDENCE.json` und menschenlesbarer Nachweis
+## 🔴 V0.12 Release Candidate Hardening
+- [ ] vollständige Failure-Matrix erneut gegen RC
+- [ ] 100k-Datensatz-/Performance-Test
+- [ ] große Asset-/Quota-/Backup-Stresstests
+- [ ] Restore aus vollständigem Releaseprojekt
+- [ ] Cross-Platform Acceptance Matrix
+- [ ] Release Manifest + SBOM + Prüfsummen
+- [ ] GO/NO-GO Gate
 
-### [erledigt] 0.5.1-A – Produktversions-Konsistenz
-Ergebnis:
-- Produktversion 0.5.0 konsistent gebunden
-- Backup-Metadaten synchronisiert
-- IndexedDB-Schema bewusst getrennt gehalten
+## 🟢 V0.12 – RC HARDENING KERN
+- [x] vollständige Kern-Regression 89/89
+- [x] 100.000-Datensatz-Stresstest
+- [x] 40 große Audio/PDF-Assets / ca. 80 MiB
+- [x] Disk-full Failure-Injection
+- [x] Permission-denied Failure-Injection
+- [x] Asset-Kill an vier Commit-Phasen
+- [x] beschädigtes DB-Backup ablehnen
+- [x] beschädigtes Asset quarantänisieren
+- [x] vollständiger DB+Asset-Restore in frischen Projektordner
+- [x] V0.10-kompatibles Schema-v2-Upgrade-Fixture
+- [x] Startup-/Memory-/Query-Budgets
+- [x] Linux Portable E2E
+- [x] SBOM
+- [x] Release-/Evidence-Manifeste
+- [x] GO/NO-GO Dashboard
 
-## Pflegevertrag
+## 🔴 Pflicht vor V1.0 RC
+- [ ] 8h+ Langzeit-/Endurance-Test
+- [ ] Chromium Visual/A11y auf uneingeschränktem Runner
+- [ ] Firefox Visual/A11y
+- [ ] Android natives Build + reales Gerät
+- [ ] iOS Xcode Build + reales iPhone X / iOS 16.7.x
+- [ ] physische Mikrofonaufnahme auf Zielsystem
+- [ ] native Disk-full-/Read-only-Tests auf Zielsystemen
 
-Diese Datei wird bei jeder relevanten funktionalen, technischen, sicherheitsrelevanten, Build-, CI-, Release- oder Architekturänderung geprüft und aktualisiert. Fortschritt und aktueller Arbeitsstand müssen mit `README.md` und `PROJEKTSTATUS.json` übereinstimmen.
+
+## 🔒 V0.12.1 – RELEASE-GATE CLOSURE
+- [x] Feature Freeze technisch/dokumentarisch aktivieren
+- [x] automatischen 7/7-GO-Evaluator erstellen
+- [x] 8h-Soak-Runner + Preflight erzeugen
+- [x] Soak-Preflight: 5,02 s / 414 Operationen / Integrity OK
+- [ ] **Gate 01:** vollständiger 8h-Soak
+- [ ] **Gate 02:** Chromium echtes App-E2E
+- [ ] **Gate 03:** Firefox echtes App-E2E
+- [ ] **Gate 04:** Linux physische Mikrofonaufnahme
+- [x] **Gate 05:** echter Linux Storage-Failure: ENOSPC + EROFS + App-Recovery
+- [ ] **Gate 06:** Android echtes APK + Gerät
+- [ ] **Gate 07:** signiertes iOS-App + iPhone X / iOS 16.7.x
+- [x] 29/29 Regression-Sanity auf V0.12.1
+- [ ] V1.0 RC erst nach 7/7 PASS
+
+### Blocker mit Architekturwirkung
+- [x] Historischer Blocker `BUILD_STRUCTURE_ONLY` in V0.12.2 beseitigt: echte Android-Runtime-Quelle vorhanden; APK/Device-Evidence bleibt offen.
+- [x] Historischer Blocker `BUILD_CONCEPT_ONLY` in V0.12.2 beseitigt: echtes Xcode-App-Target vorhanden; Build/Signing/Device-Evidence bleibt offen.
+
+
+## 📱 V0.12.2 – MOBILE RUNTIME COMPLETION · Variante 2
+- [x] Feature-Freeze-Ausnahme strikt auf Plattform-Parität begrenzen
+- [x] gemeinsame UI in Android/iOS Bundle synchronisieren
+- [x] Mobile API Adapter statt localhost-Python-Abhängigkeit
+- [x] persistente IndexedDB-Domainruntime
+- [x] Memo/Todo/Kalender/Papierkorb/Undo/Redo mobil
+- [x] profilgetrennte Mobile-Daten
+- [x] Profilwahl und Profilerstellung
+- [x] 4-stelliger PIN mit PBKDF2-SHA256 + Salt
+- [x] erneute PIN-Abfrage pro App-Session
+- [x] fünf Kalenderfarben + Tagesfärbung mobil
+- [x] Reminder Scheduling/Cancel Native Bridge
+- [x] Android MediaRecorder Bridge
+- [x] iOS AVAudioRecorder Bridge
+- [x] Android Share Intent + Dateiauswahl
+- [x] iOS Activity Share + WKWebView-Dateiauswahl
+- [x] mobile Asset-SHA-256 + Quota + TXT/MD Revisionen
+- [x] Mobile Diagnose-Privacy
+- [x] bis zu vier strukturierte Mobile-Backupgenerationen
+- [x] Cross-Runtime-Parity-Test Python ↔ Mobile
+- [x] Android Device-Acceptance-Harness für Mikrofon/Reminder/Persistenz
+- [x] iPhone Device-Acceptance-Harness für Mikrofon/Reminder/Persistenz
+- [x] Android Buildskript
+- [x] iOS Xcode-Projekt + Buildskript
+- [x] Desktop Regression nach Mobile-Port: 78/78
+- [ ] Android SDK Release-APK bauen
+- [ ] Gate 06 auf echtem Android-Gerät PASS
+- [ ] Xcode Release-App bauen und signieren
+- [ ] Gate 07 auf echtem iPhone X / iOS 16.7.16 PASS
+- [x] vierfache Binär-Asset-Backupstrategie auf Mobile final abgenommen: 4 Generationen + SHA-256 + Restore
+- [ ] übrige Release-Gates 01–04 schließen
+- [ ] V1.0 RC ausschließlich nach 7/7 realen Gates + Mobile-Backup-Abnahme
+
+## 🟢 V0.12.2 – Release-Konsolidierung
+- [x] Statusregistry auf V0.12.2 synchronisiert
+- [x] Versionsregistry auf V0.12.2 synchronisiert
+- [x] Mobile Source Acceptance erneut grün
+- [x] Cross-Runtime-Parität erneut grün
+- [x] vier vollständige Mobile-Backupgenerationen mit Binär-Assets geprüft
+- [x] Android Runtime Source ZIP erzeugt
+- [x] iOS Xcode Source ZIP erzeugt
+- [x] Release-Manifeste aktualisiert
+- [x] SHA-256-Artefaktmanifest erzeugt
+- [ ] Android APK auf echtem Android-SDK bauen
+- [ ] Android-Gerät Acceptance Gate 06
+- [ ] iOS .app auf macOS/Xcode bauen und signieren
+- [ ] iPhone X / iOS 16.7.16 Acceptance Gate 07
+- [ ] Gate 01 echter 8h-Soak
+- [ ] Gate 02 Chromium auf uneingeschränktem Runner
+- [ ] Gate 03 Firefox
+- [ ] Gate 04 physisches Linux-Mikrofon
+
+## 🟢 V0.12.2.1 – Startup-Port-Hotfix
+- [x] Portkollision vor Serverstart erkennen
+- [x] keine fremden Prozesse automatisch beenden
+- [x] freien Ersatzport automatisch wählen
+- [x] strikten Portmodus anbieten
+- [x] Startup-Evidence schreiben
+- [x] API-Version aus kanonischer Versionsregistry lesen
+- [x] Collision-Smoke gegen tatsächlich belegten Socket
+
+## 🟢 V0.12.2.2 – Release UI Consistency
+- [x] alle sichtbaren Versionsfelder an eine kanonische Quelle binden
+- [x] `0.8.0`-Drift entfernen
+- [x] Statuskacheln vollständig lesbar machen
+- [x] Backupstatus aus realem Zustand ableiten
+- [x] Quickbar vertikale Scrollbar verhindern
+- [x] Bereichszoom 80–200 % responsiv staffeln
+- [x] Sprachmemo-Technikdaten einklappen
+- [x] Desktop-Dateiauswahl als Primärworkflow
+- [x] manuellen Dateipfad auf Profi-Fallback reduzieren
+- [ ] reale Screenshot-Acceptance auf Linux-Zielrechner nach Einspielen des Hotfix
+
+## 🟢 V0.12.2.2 – Entwicklungs-info UI
+- [x] Kontrastfarbe in Eingabefeldern
+- [x] Größen und Lesbarkeit der linken Schnellnavigation optimiert
+- [x] Darstellungseinstellungen oben ins Dashboard verschoben
+- [x] Darstellungseinstellungen visuell hervorgehoben
+- [x] Theme und Schrift profilpersistent angebunden
+- [x] Arbeitsbereich-Zoom 80–200 % mit Layout-Tiers
+- [x] horizontales Überlaufen im Arbeitsbereich hart verhindert
+- [x] Grid-/Flex-Kinder gegen Randüberlauf gehärtet
+- [x] Kalender-/Formular-/Listenansichten für hohe Zoomstufen angepasst
+- [x] Android-/iOS-WebAssets auf finalen UI-Stand synchronisiert
+- [ ] reale Chromium-/Firefox-Screenshotmatrix auf Zielrechner
+
+## 🟢 V0.12.2.3 – UI Simplification & Input Guidance
+- [x] Eingabefelder auf neutrale Nicht-Markenfarbe umgestellt
+- [x] sichtbaren Fokuszustand neutral und kontrastreich gestaltet
+- [x] optionale Beispiele/Vorgaben für alle benutzbaren Eingabefeld-Kategorien
+- [x] Datum-/Zeit-/Select-/Checkbox-Felder mit sichtbaren optionalen Hilfen
+- [x] Versionsinformation auf genau eine sichtbare Stelle reduziert
+- [x] Statuskacheln von vier auf drei reduziert
+- [x] Dashboard von sechs auf vier Hauptkarten reduziert
+- [x] Einstellungen auf Hilfemodus vereinfacht
+- [x] linke Schnellnavigation ohne horizontale Mini-Scrollbar
+- [x] Navigation für große Schriftstufen proportional verbreitert
+- [x] Darstellungseinstellungen oben im Dashboard belassen und kompakter hervorgehoben
+- [x] Grid/Flex/Listen/Kalender gegen Randüberlauf gehärtet
+- [x] Zoom 80–200 % mit Neuordnung statt bloßer Skalierung
+- [x] Android-/iOS-WebAssets synchronisiert
+- [x] realer All-Views-Visual-Runner erstellt
+- [ ] `RUN_VISUAL_ACCEPTANCE_LINUX.sh` auf realem Linux-Zielrechner ausführen

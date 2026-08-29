@@ -1,0 +1,56 @@
+{
+  "version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE",
+  "generated_at": "2026-08-28T22:00:43.757301+00:00",
+  "source": "ui/reference_web",
+  "targets": [
+    "platform/android/app/src/main/assets/www",
+    "platform/ios/WebAssets"
+  ],
+  "files": [
+    {
+      "file": "app.js",
+      "sha256": "676216c5a923a71280183381798e6d55d6cd7902234a3ff7f28930b88a7d3477",
+      "bytes": 38660
+    },
+    {
+      "file": "build_info.js",
+      "sha256": "6fda8b5c9e5971a03722cfac85a22405b82bbf96c395c62b73b0881646b9d195",
+      "bytes": 186
+    },
+    {
+      "file": "index.html",
+      "sha256": "b34f5b3f6ebf60dcda114d37f7950fea1387523a1d18134832dfa695f0716afa",
+      "bytes": 6952
+    },
+    {
+      "file": "mobile/mobile_acceptance.js",
+      "sha256": "a0bfbba4327213bb7d4133925f62eed1cb75d7e28d46ada0cb6e54ce636754a2",
+      "bytes": 3214
+    },
+    {
+      "file": "mobile/mobile_bootstrap.js",
+      "sha256": "b5d7f3660c3a29f956d7ea8369dd645315896a6bad835a24c9c509e46cd44c2e",
+      "bytes": 7161
+    },
+    {
+      "file": "mobile/mobile_core.js",
+      "sha256": "8a6b3cab82ef3ec78e1ca3feba63e5d7aa86c79b57b49df4bdb0698992ef476b",
+      "bytes": 32056
+    },
+    {
+      "file": "styles.css",
+      "sha256": "6ccec1897c098202a3929efa0e34a2071554847de6cb04738ac8e4b4a2ea8bef",
+      "bytes": 34749
+    },
+    {
+      "file": "tests/test_shell_contract.py",
+      "sha256": "6b2519685ffb89b0f95253bbdc36039436e5d40908d9defb92467731c634e4ff",
+      "bytes": 2188
+    },
+    {
+      "file": "theme_tokens.json",
+      "sha256": "2443f5bcaf0fe55f81cadcf827fe54c03573e91e1c460da55eb96c436c1d47c4",
+      "bytes": 1269
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "gate": "GATE_03_FIREFOX",
+  "status": "BLOCKED",
+  "executable": null,
+  "timestamp": "2026-08-28T18:56:24.018541+00:00",
+  "reason": "Firefox executable is not installed in this runner."
+}

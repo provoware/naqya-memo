@@ -1,0 +1,1658 @@
+[
+  {
+    "path": "AGENTS.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "BRAIN.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "CHANGELOG.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "GPT_TAGE_UND_WISSENSBUCH.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "README.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "RUN_8H_SOAK_ONLY.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "RUN_ANDROID_BUILD_GATE.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "RUN_GATE_PREFLIGHT.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "RUN_IOS_BUILD_GATE.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "RUN_MOBILE_RUNTIME_ACCEPTANCE.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "RUN_RELEASE_GATE_CLOSURE.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "RUN_VISUAL_ACCEPTANCE_LINUX.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "STARTEN_LINUX.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "STARTEN_OHNE_BROWSER.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "TODO.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "UPGRADE_POTENZIAL.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "agents/AGENT_DATENSICHERHEIT__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "agents/AGENT_DOCS_RELEASE__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "agents/AGENT_PERFORMANCE__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "agents/AGENT_PLATTFORM__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "agents/AGENT_QA_REGRESSION__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "agents/AGENT_SELFREPAIR__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "agents/AGENT_UX_A11Y__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "app/server.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/__init__.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/atomic.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/contracts.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/locking.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/migrations.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/mutation_queue.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/pin.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/profile.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/project_folder.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/recovery.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/settings.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/startup.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/store.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/__pycache__/undo.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/assets/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/assets/__pycache__/__init__.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/assets/__pycache__/manager.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/assets/__pycache__/manager_base.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/assets/backup.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/assets/manager.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/assets/manager_base.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/atomic.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/backup.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/contracts.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/locking.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/media/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/media/__pycache__/__init__.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/media/__pycache__/recorder.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/media/contracts.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/media/recorder.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/migrations.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/__pycache__/__init__.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/__pycache__/calendar.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/__pycache__/common.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/__pycache__/memo.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/__pycache__/playlist.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/__pycache__/todo.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/calendar.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/common.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/memo.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/playlist.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/modules/todo.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/mutation_queue.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/pin.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/__pycache__/__init__.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/__pycache__/android.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/__pycache__/base.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/__pycache__/capabilities.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/__pycache__/factory.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/__pycache__/ios.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/__pycache__/linux.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/android.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/base.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/capabilities.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/factory.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/ios.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/platform/linux.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/profile.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/project_checkpoint.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/project_folder.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/recovery.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/reminders/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/reminders/__pycache__/__init__.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/reminders/__pycache__/engine.cpython-313.pyc",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/reminders/engine.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/settings.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/startup.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/store.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/provoware_core/undo.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/run_tests.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_domain_modules.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_persistence_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_recovery_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v010_browser_accessibility.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v010_calendar_ui_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v010_platform_evidence.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v010_reminder_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v011_document_revisions.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v011_native_media.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v011_packaging_contracts.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v011_service_e2e.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v012_100k_stress.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v012_bounded_soak.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v012_failure_matrix.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v012_large_assets.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v012_startup_budget.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v012_upgrade_compatibility.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v05_startup_profile.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v07_service_e2e.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v07_ui_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v08_browser_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v08_interaction_calendar.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v08_service_e2e.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tests/test_v09_asset_safety.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tools/asset_kill_worker.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "core/reference_python/tools/kill_worker.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/OI_PROVOWARE_IO_V0.11_ANDROID_BUILD_STRUCTURE.zip",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/OI_PROVOWARE_IO_V0.11_IOS_PACKAGING_CONCEPT.zip",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/OI_PROVOWARE_IO_V0.11_LINUX_PORTABLE.tar.gz",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/README_START.txt",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/START_OI_PROVOWARE_IO.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/START_OI_PROVOWARE_IO_OHNE_BROWSER.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/app/server.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/assets/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/assets/backup.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/assets/manager.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/assets/manager_base.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/atomic.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/backup.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/contracts.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/locking.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/media/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/media/contracts.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/media/recorder.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/migrations.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/modules/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/modules/calendar.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/modules/common.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/modules/memo.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/modules/playlist.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/modules/todo.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/mutation_queue.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/pin.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/platform/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/platform/android.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/platform/base.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/platform/capabilities.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/platform/factory.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/platform/ios.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/platform/linux.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/profile.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/project_checkpoint.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/project_folder.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/recovery.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/reminders/__init__.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/reminders/engine.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/settings.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/startup.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/store.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/provoware_core/undo.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/run_tests.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_domain_modules.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_persistence_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_recovery_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v010_browser_accessibility.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v010_calendar_ui_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v010_platform_evidence.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v010_reminder_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v011_document_revisions.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v011_native_media.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v011_packaging_contracts.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v011_service_e2e.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v012_100k_stress.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v012_bounded_soak.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v012_failure_matrix.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v012_large_assets.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v012_startup_budget.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v012_upgrade_compatibility.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v05_startup_profile.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v07_service_e2e.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v07_ui_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v08_browser_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v08_interaction_calendar.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v08_service_e2e.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tests/test_v09_asset_safety.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tools/asset_kill_worker.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/core/reference_python/tools/kill_worker.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/schemas/core_schema_v1.sql",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/schemas/core_schema_v2.sql",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/schemas/migrations/0001__V1_TO_V2__STATUS-FREIGEGEBEN.sql",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/ui/reference_web/app.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/ui/reference_web/index.html",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/ui/reference_web/styles.css",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/ui/reference_web/tests/test_shell_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE/ui/reference_web/theme_tokens.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12/OI_PROVOWARE_IO_V0.12_LINUX_PORTABLE.tar.gz",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12.2/OI_PROVOWARE_IO_V0.12.2_ANDROID_RUNTIME_SOURCE.zip",
+    "status": "AKTIV"
+  },
+  {
+    "path": "dist/v0.12.2/OI_PROVOWARE_IO_V0.12.2_IOS_XCODE_RUNTIME_SOURCE.zip",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/ARCHITEKTUR__STATUS-FREIGEGEBEN__V0.1.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/DATENMODELL__STATUS-FREIGEGEBEN__V0.1.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSDOKUMENTATION__STATUS-AKTIV__V0.1.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.10.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.11.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.2.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.3.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.4.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.5.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.6.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.7.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.8.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ENTWICKLUNGSITERATION__STATUS-BEWIESEN__V0.9.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/GATE_STATE_MACHINE__STATUS-FREIGEGEBEN__V0.1.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/NEUANALYSE__STATUS-FREIGEGEBEN__V0.1.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/PLATTFORM_ADAPTER__STATUS-ENTWURF__V0.1.md",
+    "status": "ENTWURF"
+  },
+  {
+    "path": "docs/SICHERHEIT_UND_DATENVERTRAEGE__STATUS-FREIGEGEBEN__V0.1.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/accessibility/V0.10_ACCESSIBILITY_BROWSER_GATE__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/adr/ADR-0001__SQLITE_HYBRID_PERSISTENZ__AKZEPTIERT.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/adr/ADR-0002__IDS_REVISIONEN_KONFLIKTE__AKZEPTIERT.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/adr/ADR-0003__REFERENZKERN_KEIN_UI_STACK_LOCKIN__AKZEPTIERT.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/adr/ADR-0004__PIN_KEINE_VERSCHLUESSELUNG__AKZEPTIERT.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/adr/ADR-0005__CAPABILITY_STATT_OS_ANNAHME__AKZEPTIERT.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/assets/V0.9_ASSET_FORMATS__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/calendar/V0.10_KALENDERANSICHTEN__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/BACKUP_RESTORE_CONTRACT__STATUS-FREIGEGEBEN__V0.2.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/DATA_MUTATION_CONTRACT__STATUS-FREIGEGEBEN__V0.2.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/DOMAIN_VALIDATION_CONTRACT__STATUS-FREIGEGEBEN__V0.4.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/MUTATION_QUEUE_LOCKING_CONTRACT__STATUS-BEWIESEN__V0.3.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/PIN_PROFILE_CONTRACT__STATUS-BEWIESEN__V0.5.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/PROJECT_FOLDER_PREFLIGHT__STATUS-BEWIESEN__V0.5.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/PROJEKTORDNER_CONTRACT__STATUS-FREIGEGEBEN__V0.2.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/RECOVERY_ACCEPTANCE_CONTRACT__STATUS-BEWIESEN__V0.3.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/SETTINGS_CONTRACT__STATUS-BEWIESEN__V0.5.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/STARTUP_CONTRACT__STATUS-BEWIESEN__V0.5.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/UNDO_REDO_CONTRACT__STATUS-GEPRUEFT__V0.3.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/contracts/V0.7_PRESENTATION_SERVICE_CONTRACT__STATUS-FREIGEGEBEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/V0.8_INTERACTION_RECOVERY_CONTRACT__STATUS-FREIGEGEBEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/contracts/V0.9_ASSET_CONTRACT__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/diagnose/V0.8_PRIVACY_DIAGNOSE__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/documents/V0.11_DOKUMENTE__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/domain/DOMAINMODULE_KALENDER__STATUS-BEWIESEN__V0.4.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/domain/DOMAINMODULE_MEMO__STATUS-BEWIESEN__V0.4.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/domain/DOMAINMODULE_TODO__STATUS-BEWIESEN__V0.4.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/failure_matrix/FAILURE_MATRIX__STATUS-BEWIESEN__V0.3.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/failure_matrix/FAILURE_MATRIX__STATUS-GEPLANT__V0.2.md",
+    "status": "ENTWURF"
+  },
+  {
+    "path": "docs/media/V0.11_SPRACHAUFNAHME__STATUS-GEPRUEFT.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/mobile/ANDROID_DEVICE_ACCEPTANCE__STATUS-BEREIT__V0.12.2.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/mobile/FEATURE_FREEZE_EXCEPTION__STATUS-FREIGEGEBEN__V0.12.2.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/mobile/IOS_IPHONE_X_ACCEPTANCE__STATUS-BEREIT__V0.12.2.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/mobile/MOBILE_PARITAETSMATRIX__STATUS-AKTIV__V0.12.2.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/mobile/MOBILE_RUNTIME_ARCHITEKTUR__STATUS-SOURCE-GREEN__V0.12.2.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/mobile/V0.12.2_RELEASE_KONSOLIDIERUNG__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/packaging/V0.11_PACKAGING_MATRIX__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/performance/V0.12_PERFORMANCE_REPORT__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/platform/PLATFORM_CAPABILITY_MATRIX__STATUS-FREIGEGEBEN__V0.5.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/platform/V0.10_PLATFORM_EVIDENCE__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/platform/V0.11_START_UND_BERECHTIGUNGEN__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/rc/GO_NO_GO_DASHBOARD__STATUS-NO-GO.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/rc/V0.12_FAILURE_MATRIX__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/release/MOBILE_RUNTIME_RELEASE_MANIFEST.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/release/RELEASE_GATE_CLOSURE_MANIFEST.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/release/RELEASE_MANIFEST.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/release/SBOM.spdx.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/release_gate/FEATURE_FREEZE__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/release_gate/MOBILE_RELEASE_REALITY__STATUS-BLOCKED.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/release_gate/RELEASE_GATE_CLOSURE_DASHBOARD__STATUS-NO-GO.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/release_gate/V0.12.2_MOBILE_RUNTIME_DASHBOARD__STATUS-NO-GO.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/reminders/V0.10_REMINDER_ACCEPTANCE__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/startup/STARTPHASEN__STATUS-BEWIESEN__V0.5.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ui/PRESENTATION_SHELL_CONTRACT__STATUS-BEWIESEN__V0.6.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ui/V0.12.2.2_RELEASE_UI_CONSISTENCY__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ui/V0.12.2.2_VISUAL_ACCEPTANCE_MATRIX__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/ui/V0.12.2.3_UI_SIMPLIFICATION_INPUT_GUIDANCE__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ui/V0.7_SERVICE_BINDING__STATUS-BEWIESEN.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "docs/ui/V0.8_RESPONSIVE_LAYOUT_GATE__STATUS-AKTIV.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "manifeste/MANIFEST_ENTWICKLUNGSDISZIPLIN__STATUS-AKTIV__V0.1.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "manifeste/MANIFEST_ERSCHEINUNGSBILD__STATUS-AKTIV__V0.1.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "manifeste/MANIFEST_PHILOSOPHIE__STATUS-AKTIV__V0.1.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "manifeste/MANIFEST_RESPONSIVE_DESIGN__STATUS-AKTIV__V0.1.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "manifeste/MANIFEST_UI_TOKENS__STATUS-BEWIESEN__V0.6.md",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "platform/android/BUILD_ANDROID.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/README.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/build.gradle.kts",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/AndroidManifest.xml",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/assets/www/app.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/assets/www/build_info.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/assets/www/index.html",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/assets/www/mobile/mobile_acceptance.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/assets/www/mobile/mobile_bootstrap.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/assets/www/mobile/mobile_core.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/assets/www/styles.css",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/assets/www/tests/test_shell_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/assets/www/theme_tokens.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/java/de/provoware/naqya/BridgeEnvelope.kt",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/java/de/provoware/naqya/MainActivity.kt",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/java/de/provoware/naqya/NativeBridge.kt",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/java/de/provoware/naqya/ReminderReceiver.kt",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/app/src/main/res/drawable/ic_notification.xml",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/build.gradle.kts",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/android/settings.gradle.kts",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/BUILD_IOS.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/Info.plist",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/OIProvowareIO/AppDelegate.swift",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/OIProvowareIO/BridgeContract.swift",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/OIProvowareIO/NativeBridge.swift",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/OIProvowareIO.xcodeproj/project.pbxproj",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/README.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/WebAssets/app.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/WebAssets/build_info.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/WebAssets/index.html",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/WebAssets/mobile/mobile_acceptance.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/WebAssets/mobile/mobile_bootstrap.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/WebAssets/mobile/mobile_core.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/WebAssets/styles.css",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/WebAssets/tests/test_shell_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/ios/WebAssets/theme_tokens.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/linux/README.md",
+    "status": "AKTIV"
+  },
+  {
+    "path": "platform/linux/START_OI_PROVOWARE_IO.sh",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/PROJECT_STATUS.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/VERSION.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/V0.2_PERSISTENCE_TEST_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.10/BROWSER_ACCESSIBILITY_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.10/PLATFORM_CAPABILITY_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.10/V0.10_COMBINED_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.11/V0.11_COMBINED_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12/BROWSER_ACCESSIBILITY_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12/FAILURE_MATRIX_RESULTS.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12/GO_NO_GO.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12/PERFORMANCE_AND_SOAK_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12/PLATFORM_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12/TEST_SUMMARY.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.1/REGRESSION_SANITY.txt",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.1/RELEASE_GATE_CLOSURE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.1/gates/GATE_01_8H_SOAK.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.1/gates/GATE_02_CHROMIUM.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.1/gates/GATE_03_FIREFOX.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.1/gates/GATE_04_LINUX_MICROPHONE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.1/gates/GATE_05_STORAGE_FAILURE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.1/gates/GATE_06_ANDROID_DEVICE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.1/gates/GATE_07_IOS_IPHONE_X.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/CROSS_RUNTIME_PARITY.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/DESKTOP_REGRESSION_SANITY.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/FINAL_RELEASE_CONSOLIDATION.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/MOBILE_NATIVE_BUILD_PREFLIGHT.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/MOBILE_WEB_BUNDLE_SYNC.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/RELEASE_GATE_CLOSURE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/gates/GATE_01_8H_SOAK.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/gates/GATE_02_CHROMIUM.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/gates/GATE_03_FIREFOX.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/gates/GATE_04_LINUX_MICROPHONE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/gates/GATE_05_STORAGE_FAILURE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/gates/GATE_06_ANDROID_DEVICE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2/gates/GATE_07_IOS_IPHONE_X.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.1/STARTUP_PORT_COLLISION_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.2/BROWSER_VISUAL_LAYOUT_GATE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.2/MOBILE_WEB_BUNDLE_SYNC.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.2/REMAINING_TARGETED_REGRESSION.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.2/TARGETED_REGRESSION.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.2/V0.12.2.2_UI_TARGETED_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.2/browser/VISUAL_LAYOUT_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.3/BROWSER_VISUAL_GATE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.3/MOBILE_WEB_BUNDLE_SYNC.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.12.2.3/UI_SIMPLIFICATION_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.3/RECOVERY_ACCEPTANCE_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.4/DOMAINMODULE_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.5/V0.5_COMBINED_ACCEPTANCE_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.6/V0.6_PRESENTATION_SHELL_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.7/TESTS_V0.7.txt",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.7/V0.7_ACCEPTANCE_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.8/BROWSER_ACCEPTANCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.8/V0.8_COMBINED_ACCEPTANCE_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "registry/evidence/v0.9/V0.9_ASSET_EVIDENCE.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "resources/texts/de-DE__STATUS-AKTIV__V1.json",
+    "status": "AKTIV"
+  },
+  {
+    "path": "schemas/core_schema_v1.sql",
+    "status": "AKTIV"
+  },
+  {
+    "path": "schemas/core_schema_v2.sql",
+    "status": "AKTIV"
+  },
+  {
+    "path": "schemas/migrations/0001__V1_TO_V2__STATUS-FREIGEGEBEN.sql",
+    "status": "FREIGEGEBEN"
+  },
+  {
+    "path": "tests/mobile/mobile_parity_node.mjs",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/mobile/test_cross_runtime_parity.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/mobile/test_mobile_core.mjs",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/mobile/test_mobile_sources.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/startup/test_startup_collision_smoke.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/startup/test_startup_port_guard.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/ui_consistency/run_browser_layout_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/ui_consistency/run_v01223_all_views_visual_acceptance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/ui_consistency/test_v01222_service_upload_e2e.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/ui_consistency/test_v01222_static_ui_consistency.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/ui_consistency/test_v01223_simplification_guidance.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/mobile/sync_web_assets.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/release_gate/evaluate_release_gate.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/release_gate/gate_01_8h_soak.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/release_gate/gate_02_chromium.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/release_gate/gate_03_firefox.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/release_gate/gate_04_linux_microphone.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/release_gate/gate_05_storage_failure.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/release_gate/gate_06_android_device.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/release_gate/gate_07_ios_iphone_x.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tools/startup_port_guard.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "ui/reference_web/app.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "ui/reference_web/build_info.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "ui/reference_web/index.html",
+    "status": "AKTIV"
+  },
+  {
+    "path": "ui/reference_web/mobile/mobile_acceptance.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "ui/reference_web/mobile/mobile_bootstrap.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "ui/reference_web/mobile/mobile_core.js",
+    "status": "AKTIV"
+  },
+  {
+    "path": "ui/reference_web/styles.css",
+    "status": "AKTIV"
+  },
+  {
+    "path": "ui/reference_web/tests/test_shell_contract.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "ui/reference_web/theme_tokens.json",
+    "status": "AKTIV"
+  }
+]

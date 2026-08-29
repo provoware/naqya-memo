@@ -1,0 +1,23 @@
+{
+  "version": "0.12.2-MOBILE-RUNTIME-COMPLETION",
+  "timestamp_utc": "2026-08-28T19:25:14.978642+00:00",
+  "status": "PASS",
+  "runner": "RUN_MOBILE_RUNTIME_ACCEPTANCE.sh",
+  "mobile_core_contract": "PASS",
+  "mobile_source_contract": "4/4 PASS",
+  "javascript_syntax": "PASS",
+  "android_bridge_kotlin_compile": "PASS",
+  "ios_bridge_swift_parse": "PASS",
+  "ios_plist_lint": "PASS",
+  "binary_asset_backup": {
+    "status": "PASS",
+    "generations_retained": 4,
+    "full_binary_copy_per_generation": true,
+    "sha256_validation": true,
+    "restore_test": true,
+    "evidence": "tests/mobile/test_mobile_core.mjs"
+  },
+  "desktop_regression": "78/78 PASS",
+  "latest_runner_output": "{\"status\":\"PASS\",\"memos\":1,\"todos\":1,\"events\":1,\"assets\":2,\"backups\":4,\"profiles\":2,\"pin_guard\":\"PASS\"}\nPASS test_android_runtime_source\nPASS test_ios_runtime_source\nPASS test_mobile_api_parity_surface\nPASS test_ui_uses_mobile_adapter\nSUMMARY total=4 passed=4 failed=0\n/mnt/data/OI_PROVOWARE_IO_Multi_Memo_Modul_Tool_2026_V0.12.2_MOBILE_RUNTIME_COMPLETION/platform/ios/Info.plist: OK\nMOBILE_RUNTIME_SOURCE_ACCEPTANCE=PASS",
+  "qualification": "SOURCE_AND_CONTRACT_ACCEPTANCE_ONLY_NOT_DEVICE_PASS"
+}

@@ -1,0 +1,20 @@
+{
+  "gate": "GATE_05_STORAGE_FAILURE",
+  "status": "PASS",
+  "timestamp": "2026-08-28T18:56:24.093396+00:00",
+  "tests": {
+    "dev_full": {
+      "status": "PASS",
+      "errno": 28,
+      "message": "[Errno 28] No space left on device"
+    },
+    "read_only_mount": {
+      "status": "PASS",
+      "errno": 30,
+      "message": "[Errno 30] Read-only file system: '/sys/provoware_rc_write_probe'"
+    }
+  },
+  "application_failure_matrix_evidence_present": true,
+  "application_failure_matrix_pass": true,
+  "scope": "REAL_LINUX_KERNEL_STORAGE_SIGNALS + V0.12_APPLICATION_RECOVERY_MATRIX"
+}

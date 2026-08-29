@@ -1,0 +1,63 @@
+===== test_persistence_contract.py =====
+PASS test_atomic_write
+PASS test_backup_restore_verification
+PASS test_profile_entity_revision_and_checksum
+PASS test_revision_conflict_rolls_back
+PASS test_soft_delete_is_not_hard_delete
+PASS total=5
+===== test_recovery_acceptance.py =====
+PASS test_corrupted_backup_rejected
+PASS test_corrupted_entity_checksum_detected
+PASS test_database_locked_fails_without_corruption
+PASS test_disk_full_is_classifiable
+PASS test_kill_after_begin_rolls_back
+PASS test_kill_after_commit_preserves_committed_write
+PASS test_kill_after_write_before_commit_rolls_back
+PASS test_kill_before_begin_leaves_no_write
+PASS test_mutation_queue_serializes_writes
+PASS test_permission_denied_is_classifiable
+PASS test_project_lock_rejects_second_owner
+PASS test_read_only_guard_detected_preflight
+PASS test_restore_to_fresh_project_preserves_data
+PASS test_undo_redo_semantics
+SUMMARY total=14 passed=14 failed=0
+===== test_domain_modules.py =====
+PASS test_calendar_colors_day_and_next10
+PASS test_memo_crud_undo_redo
+PASS test_revision_conflict_domain
+PASS test_todo_complete_and_rule
+SUMMARY total=4 passed=4 failed=0
+===== test_v05_startup_profile.py =====
+PASS test_external_path_confirmation_cannot_be_disabled
+PASS test_guided_first_start_creates_checkpoint_and_settings
+PASS test_guided_first_start_without_profile_leads_to_profile_selection
+PASS test_pin_change_requires_current_pin
+PASS test_pin_hash_is_salted_and_verifiable
+PASS test_pin_requires_exactly_four_ascii_digits
+PASS test_platform_capability_contracts_are_conservative
+PASS test_platform_permissions_require_visible_user_action_on_mobile
+PASS test_profile_create_verify_and_access_log
+PASS test_project_preflight_creates_safe_tree
+PASS test_project_preflight_low_disk_is_red_deterministically
+PASS test_project_preflight_rejects_file_as_project_folder
+PASS test_settings_defaults_and_persistence
+PASS test_v1_to_v2_migration_preserves_existing_entity
+SUMMARY total=14 passed=14 failed=0
+===== test_v07_ui_contract.py =====
+PASS api binding
+PASS memo
+PASS todo
+PASS calendar
+PASS quick note
+PASS undo redo
+PASS responsive
+PASS accessibility
+PASS no sqlite in UI
+SUMMARY total=9 passed=9 failed=0
+===== test_v07_service_e2e.py =====
+PASS api_state
+PASS memo_ui_service_path
+PASS todo_ui_service_path
+PASS calendar_ui_service_path
+PASS quick_note_file_path
+SUMMARY total=5 passed=5 failed=0

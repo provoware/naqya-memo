@@ -1,0 +1,13 @@
+{
+  "version": "0.12.1-RELEASE-GATE-CLOSURE",
+  "feature_freeze": true,
+  "generated_at": "2026-08-28T18:34:43.985290+00:00",
+  "release_status": "NO-GO",
+  "passed_gates": 1,
+  "required_gates": 7,
+  "core_baseline": "89/89 PASS",
+  "sanity_regression": "29/29 PASS",
+  "gate_evidence": "registry/evidence/v0.12.1/RELEASE_GATE_CLOSURE.json",
+  "dashboard": "docs/release_gate/RELEASE_GATE_CLOSURE_DASHBOARD__STATUS-NO-GO.md",
+  "runner": "RUN_RELEASE_GATE_CLOSURE.sh"
+}
