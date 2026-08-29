@@ -25,7 +25,7 @@ def _normalize_int_env(name: str, default: int, minimum: int, maximum: int) -> i
     """Normalize an upstream security env before importing the auth layer.
 
     ``secure_server`` reads its auth limits during module import. Normalizing the
-    four existing integer settings here keeps the official production entrypoint
+    existing integer settings here keeps the official production entrypoint
     fail-safe without changing the established defaults or safety envelopes.
     """
     value = _bounded_int_env(name, default, minimum, maximum)
@@ -33,12 +33,36 @@ def _normalize_int_env(name: str, default: int, minimum: int, maximum: int) -> i
     return value
 
 
-# These four settings are consumed while importing secure_server. Normalize them
-# first so malformed operator/environment values cannot abort the official start.
+def _normalize_positive_int_env(name: str, default: int) -> int:
+    """Normalize a positive upstream integer while preserving valid overrides.
+
+    The base upload handler converts ``PROVOWARE_UPLOAD_MAX_BYTES`` with a raw
+    ``int(...)`` on every upload request. Missing, empty, malformed, zero or
+    negative values are configuration errors and fall back to the established
+    512 MiB default. Every valid positive integer remains unchanged, so this
+    robustness guard does not silently redefine an operator's existing limit.
+    """
+    raw = os.environ.get(name)
+    if raw is None or not raw.strip():
+        value = default
+    else:
+        try:
+            parsed = int(raw.strip())
+        except (TypeError, ValueError):
+            parsed = default
+        value = parsed if parsed > 0 else default
+    os.environ[name] = str(value)
+    return value
+
+
+# These settings are consumed while importing secure_server/base server. Normalize
+# them first so malformed operator/environment values cannot break the official
+# production path later during authentication or a file upload.
 AUTH_CACHE_TTL_SECONDS = _normalize_int_env('PROVOWARE_AUTH_CACHE_TTL', 300, 5, 3600)
 AUTH_MAX_DISTINCT_FAILURES = _normalize_int_env('PROVOWARE_AUTH_MAX_FAILURES', 5, 3, 20)
 AUTH_FAILURE_WINDOW_SECONDS = _normalize_int_env('PROVOWARE_AUTH_FAILURE_WINDOW', 120, 5, 3600)
 AUTH_LOCKOUT_SECONDS = _normalize_int_env('PROVOWARE_AUTH_LOCKOUT_SECONDS', 30, 1, 3600)
+UPLOAD_MAX_BYTES = _normalize_positive_int_env('PROVOWARE_UPLOAD_MAX_BYTES', 512 * 1024 * 1024)
 
 import secure_server as secure
 
