@@ -1,0 +1,30 @@
+{
+  "evidence_id": "DESKTOP_AUTH_CONFIG_PARSE_ACCEPTANCE",
+  "scope": "desktop-release-hardening",
+  "status": "SOURCE_AND_RUNTIME_CONTRACT",
+  "release_promotion": false,
+  "change": "Fail-safe parsing for existing desktop authentication integer environment settings",
+  "contracts": [
+    "missing auth values use documented safe defaults",
+    "malformed non-integer auth values use documented safe defaults instead of aborting official desktop startup",
+    "empty auth values use documented safe defaults",
+    "below-minimum numeric auth values clamp upward",
+    "above-maximum numeric auth values clamp downward",
+    "valid in-range auth values remain unchanged"
+  ],
+  "test": "tests/security/test_desktop_auth_config_parse.py",
+  "ci_step": "Desktop auth security config parsing",
+  "unchanged_security_envelopes": {
+    "PROVOWARE_AUTH_CACHE_TTL": {"default": 300, "minimum": 5, "maximum": 3600},
+    "PROVOWARE_AUTH_MAX_FAILURES": {"default": 5, "minimum": 3, "maximum": 20},
+    "PROVOWARE_AUTH_FAILURE_WINDOW": {"default": 120, "minimum": 5, "maximum": 3600},
+    "PROVOWARE_AUTH_LOCKOUT_SECONDS": {"default": 30, "minimum": 1, "maximum": 3600}
+  },
+  "explicit_non_evidence": [
+    "real browser acceptance",
+    "microphone acceptance",
+    "Android device acceptance",
+    "iPhone device acceptance",
+    "session lock/logout acceptance"
+  ]
+}
