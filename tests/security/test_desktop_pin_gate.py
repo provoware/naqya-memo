@@ -62,6 +62,16 @@ def read_first_pin(project):
     return path,pin
 
 
+def distinct_wrong_pins(first_pin):
+    out=[]
+    for pin in ('1111','2222','3333','4444'):
+        if pin not in (first_pin,'0000'):
+            out.append(pin)
+        if len(out)==2:
+            return out
+    raise AssertionError('could not choose distinct wrong PINs')
+
+
 def main():
     port=free_port()
     with tempfile.TemporaryDirectory(prefix='provoware-pin-gate-') as td:
@@ -70,6 +80,9 @@ def main():
         env['PROVOWARE_PROJECT_PATH']=str(project)
         env['PROVOWARE_PORT']=str(port)
         env['PYTHONPATH']=str(ROOT/'core'/'reference_python')
+        env['PROVOWARE_AUTH_MAX_FAILURES']='3'
+        env['PROVOWARE_AUTH_FAILURE_WINDOW']='30'
+        env['PROVOWARE_AUTH_LOCKOUT_SECONDS']='1'
         p=subprocess.Popen([sys.executable,'-S',str(SERVER),'--no-browser'],cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
         try:
             wait(port,p)
@@ -80,20 +93,32 @@ def main():
             status,h,_=request(port,'/index.html')
             assert status==401,status
             assert 'Basic realm="PROVOWARE Desktop PIN"' in h.get('WWW-Authenticate','')
-            print('PASS unauthenticated UI is blocked')
+            print('PASS unauthenticated UI is blocked without consuming failure budget')
 
-            status,_,_=request(port,'/index.html',auth('0000'))
+            for _ in range(4):
+                status,_,_=request(port,'/index.html',auth('0000'))
+                assert status==401,status
+            print('PASS repeated requests with the same wrong PIN count only once')
+
+            wrong1,wrong2=distinct_wrong_pins(first_pin)
+            status,_,_=request(port,'/index.html',auth(wrong1))
             assert status==401,status
-            print('PASS legacy fixed PIN 0000 is rejected on fresh project')
+            print('PASS second distinct wrong PIN is rejected without premature lockout')
 
-            wrong='9999' if first_pin!='9999' else '9998'
-            status,_,_=request(port,'/index.html',auth(wrong))
-            assert status==401,status
-            print('PASS wrong PIN is rejected')
+            status,h,_=request(port,'/index.html',auth(wrong2))
+            assert status==429,status
+            assert int(h.get('Retry-After','0'))>=1,h
+            print('PASS third distinct wrong PIN triggers temporary HTTP 429 lockout')
 
+            status,h,_=request(port,'/index.html',auth(first_pin))
+            assert status==429,status
+            assert int(h.get('Retry-After','0'))>=1,h
+            print('PASS correct PIN cannot bypass an active temporary lockout')
+
+            time.sleep(1.15)
             status,_,body=request(port,'/index.html',auth(first_pin))
             assert status==200,(status,body[:120])
-            print('PASS generated first PIN unlocks UI')
+            print('PASS correct PIN works again automatically after lockout expiry')
 
             deadline=time.time()+2
             while time.time()<deadline and first_pin_file.exists():
@@ -104,14 +129,14 @@ def main():
             status,_,body=request(port,'/api/state',auth(first_pin))
             assert status==200,(status,body[:160])
             assert b'"ok": true' in body
-            print('PASS authenticated API access works')
+            print('PASS authenticated API access works after rate-limit recovery')
 
             linux=(ROOT/'STARTEN_LINUX.sh').read_text(encoding='utf-8')
             headless=(ROOT/'STARTEN_OHNE_BROWSER.sh').read_text(encoding='utf-8')
             assert 'app/secure_server.py' in linux and 'app/server.py' not in linux
             assert 'app/secure_server.py' in headless and 'app/server.py' not in headless
             print('PASS official Linux launchers enforce secure server')
-            print('SUMMARY total=9 passed=9 failed=0')
+            print('SUMMARY total=11 passed=11 failed=0')
         finally:
             p.terminate()
             try:p.wait(timeout=5)
