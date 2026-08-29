@@ -4,6 +4,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import hmac
+import math
 import os
 from pathlib import Path
 import secrets
@@ -46,7 +47,12 @@ import server as base
 AUTH_REALM = 'PROVOWARE Desktop PIN'
 AUTH_USER = 'provoware'
 AUTH_CACHE_TTL_SECONDS = max(5, min(int(os.environ.get('PROVOWARE_AUTH_CACHE_TTL','300')), 3600))
+AUTH_MAX_DISTINCT_FAILURES = max(3, min(int(os.environ.get('PROVOWARE_AUTH_MAX_FAILURES','5')), 20))
+AUTH_FAILURE_WINDOW_SECONDS = max(5, min(int(os.environ.get('PROVOWARE_AUTH_FAILURE_WINDOW','120')), 3600))
+AUTH_LOCKOUT_SECONDS = max(1, min(int(os.environ.get('PROVOWARE_AUTH_LOCKOUT_SECONDS','30')), 3600))
 _AUTH_CACHE: dict[str, float] = {}
+_AUTH_FAILURES: dict[str, dict[str, float]] = {}
+_AUTH_LOCKED_UNTIL: dict[str, float] = {}
 _AUTH_LOCK = threading.Lock()
 
 
@@ -138,6 +144,54 @@ def _decode_basic(header: str) -> tuple[str,str] | None:
         return None
 
 
+def _prune_failures_locked(client: str, now: float) -> dict[str, float]:
+    failures=_AUTH_FAILURES.setdefault(client,{})
+    cutoff=now-AUTH_FAILURE_WINDOW_SECONDS
+    stale=[digest for digest,seen in failures.items() if seen<cutoff]
+    for digest in stale:
+        failures.pop(digest,None)
+    if not failures:
+        _AUTH_FAILURES.pop(client,None)
+        return {}
+    return failures
+
+
+def _retry_after(client: str) -> int:
+    now=time.monotonic()
+    with _AUTH_LOCK:
+        until=_AUTH_LOCKED_UNTIL.get(client,0.0)
+        if until<=now:
+            _AUTH_LOCKED_UNTIL.pop(client,None)
+            return 0
+        return max(1,math.ceil(until-now))
+
+
+def _record_failure(client: str, header: str) -> int:
+    """Count distinct wrong credentials, not parallel retries of the same PIN.
+
+    Browsers can fan one Basic-Auth attempt out to many asset requests. Counting
+    the Authorization digest once per window avoids locking a user after a single
+    typo while still bounding automated PIN enumeration.
+    """
+    now=time.monotonic(); digest=_authorization_digest(header)
+    with _AUTH_LOCK:
+        failures=_prune_failures_locked(client,now)
+        failures=_AUTH_FAILURES.setdefault(client,failures)
+        failures.setdefault(digest,now)
+        if len(failures)>=AUTH_MAX_DISTINCT_FAILURES:
+            until=now+AUTH_LOCKOUT_SECONDS
+            _AUTH_LOCKED_UNTIL[client]=until
+            _AUTH_FAILURES.pop(client,None)
+            return AUTH_LOCKOUT_SECONDS
+        return 0
+
+
+def _clear_failures(client: str) -> None:
+    with _AUTH_LOCK:
+        _AUTH_FAILURES.pop(client,None)
+        _AUTH_LOCKED_UNTIL.pop(client,None)
+
+
 class SecureHandler(base.Handler):
     """Fail-closed desktop transport guard around the existing product handler."""
 
@@ -156,31 +210,55 @@ class SecureHandler(base.Handler):
         self.end_headers()
         self.wfile.write(body)
 
-    def _authorized(self) -> bool:
+    def _rate_limited(self,retry_after: int):
+        body=(
+            'Zu viele unterschiedliche falsche PIN-Versuche. '
+            f'Bitte {retry_after} Sekunden warten und dann erneut versuchen.\n'
+        ).encode('utf-8')
+        self.send_response(429)
+        self.send_header('Retry-After',str(retry_after))
+        self.send_header('Content-Type','text/plain; charset=utf-8')
+        self.send_header('Cache-Control','no-store')
+        self.send_header('X-Content-Type-Options','nosniff')
+        self.send_header('Content-Length',str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _authorized(self) -> tuple[bool,int]:
         header=self.headers.get('Authorization','').strip()
         if not header:
-            return False
+            return False,0
+        client=self.client_address[0] if self.client_address else 'unknown'
+        retry_after=_retry_after(client)
+        if retry_after:
+            return False,retry_after
         if _cached(header):
-            return True
+            return True,0
         credentials=_decode_basic(header)
         if credentials is None:
-            return False
+            return False,_record_failure(client,header)
         user,pin=credentials
         if not hmac.compare_digest(user,AUTH_USER):
-            return False
+            return False,_record_failure(client,header)
         try:
             ok=base.profile_service.verify_access(base.PROFILE_ID,pin,source='DESKTOP_HTTP_PIN_GATE')
         except Exception:
-            return False
+            return False,_record_failure(client,header)
         if ok:
             _remember(header)
+            _clear_failures(client)
             _remove_first_pin_file()
-        return ok
+            return True,0
+        return False,_record_failure(client,header)
 
     def _require_auth(self) -> bool:
-        if self._authorized():
+        authorized,retry_after=self._authorized()
+        if authorized:
             return True
-        self._challenge()
+        if retry_after:
+            self._rate_limited(retry_after)
+        else:
+            self._challenge()
         return False
 
     def do_GET(self):
