@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import sqlite3
 import sys
 
 
@@ -73,6 +74,37 @@ JSON_POST_MAX_BYTES = _bounded_int_env(
 REQUEST_IO_TIMEOUT_SECONDS = _bounded_int_env(
     'PROVOWARE_REQUEST_IO_TIMEOUT_SECONDS', 30, 1, 120
 )
+
+
+def _profile_revision_from_readonly_db() -> int | None:
+    """Read auth state on a short-lived, read-only SQLite connection.
+
+    The product server intentionally uses one check_same_thread=False connection
+    for application work. Authentication runs in ThreadingHTTPServer request
+    threads, so sharing that mutable connection for the security preflight adds
+    avoidable coupling and contention. This read path observes committed profile
+    state independently and fails closed on any database/read error.
+    """
+    try:
+        con = sqlite3.connect(f'file:{secure.DB}?mode=ro', uri=True, timeout=2)
+        try:
+            con.execute('PRAGMA query_only=ON')
+            row = con.execute(
+                "SELECT revision FROM profiles WHERE id=? AND status='ACTIVE'",
+                (secure.base.PROFILE_ID,),
+            ).fetchone()
+            return int(row[0]) if row is not None else None
+        finally:
+            con.close()
+    except (sqlite3.Error, OSError, TypeError, ValueError):
+        return None
+
+
+# The official production entrypoint owns the final runtime boundary. Keep the
+# lower auth implementation intact but route its security-state read through an
+# independent read-only connection so application mutations cannot corrupt or
+# serialize the auth preflight through the shared product connection.
+secure._profile_revision = _profile_revision_from_readonly_db
 
 
 class ResponseHardenedHandler(secure.SecureHandler):
