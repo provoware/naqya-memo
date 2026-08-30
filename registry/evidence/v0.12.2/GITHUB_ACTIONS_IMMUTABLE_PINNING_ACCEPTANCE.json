@@ -2,12 +2,13 @@
   "schema": "provoware.release-ci-supply-chain.v1",
   "status": "PASS",
   "scope": "quality-workflow-external-actions",
-  "contract": "all external GitHub Actions used by .github/workflows/quality.yml are pinned to immutable 40-character commit SHAs",
+  "contract": "all external GitHub Actions used by .github/workflows/quality.yml are pinned to immutable 40-character commit SHAs and actions/checkout does not persist repository credentials",
   "actions": [
     {
       "action": "actions/checkout",
       "declared_major": "v4",
-      "commit_sha": "11d5960a326750d5838078e36cf38b85af677262"
+      "commit_sha": "11d5960a326750d5838078e36cf38b85af677262",
+      "persist_credentials": false
     },
     {
       "action": "actions/setup-python",
@@ -26,7 +27,8 @@
     "malformed commit ref",
     "unexpected new external action without explicit contract update",
     "missing expected external action",
-    "duplicate external action"
+    "duplicate external action",
+    "missing or re-enabled actions/checkout credential persistence"
   ],
-  "boundary": "No new workflow permissions, no OIDC, no signing key, no product feature and no promotion of real device/browser gates."
+  "boundary": "No new workflow permissions, no OIDC, no signing key, no product feature and no promotion of real device/browser gates. Checkout credentials are explicitly non-persistent."
 }
