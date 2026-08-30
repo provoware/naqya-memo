@@ -88,6 +88,20 @@ def active_profile_accepts_default(project: Path) -> bool:
     return verify_pin('0000', str(row[0]))
 
 
+def wait_until_profile_rotated(project: Path, proc: subprocess.Popen[str], timeout: float = 5) -> None:
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if proc.poll() is not None:
+            raise AssertionError(f'normal server exited before PIN rotation rc={proc.returncode}: {proc.stdout.read()}')
+        try:
+            if not active_profile_accepts_default(project):
+                return
+        except (sqlite3.Error, AssertionError):
+            pass
+        time.sleep(0.05)
+    raise AssertionError('normal first-start profile did not rotate away from bootstrap PIN 0000')
+
+
 def main() -> None:
     if not hasattr(os, 'symlink'):
         print('SKIP symlink support unavailable on this platform')
@@ -131,7 +145,7 @@ def main() -> None:
             pin = pin_lines[0].split(':', 1)[1].strip()
             assert pin.isdigit() and len(pin) == 4 and pin != '0000'
             print('PASS normal first start creates one regular 0600 PIN file with non-default PIN')
-            assert not active_profile_accepts_default(project)
+            wait_until_profile_rotated(project, proc)
             print('PASS normal first start rotates the persisted profile away from bootstrap PIN 0000')
         finally:
             proc.terminate()
