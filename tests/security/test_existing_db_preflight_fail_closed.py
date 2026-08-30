@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 import os
 import socket
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -33,6 +34,22 @@ def run_until_exit(project: Path, timeout: float = 8) -> tuple[int, str]:
         timeout=timeout,
     )
     return proc.returncode, proc.stdout
+
+
+def create_header_readable_but_structurally_invalid_db(db: Path) -> None:
+    """Create a real SQLite DB whose header is readable but schema rootpage is invalid."""
+    con = sqlite3.connect(db)
+    try:
+        con.execute('CREATE TABLE sample(id INTEGER PRIMARY KEY, value TEXT NOT NULL)')
+        con.execute('CREATE INDEX idx_sample_value ON sample(value)')
+        con.execute("INSERT INTO sample(value) VALUES ('evidence')")
+        con.commit()
+        con.execute('PRAGMA writable_schema=ON')
+        con.execute("UPDATE sqlite_schema SET rootpage=999999 WHERE name='idx_sample_value'")
+        con.execute('PRAGMA writable_schema=OFF')
+        con.commit()
+    finally:
+        con.close()
 
 
 def main() -> None:
@@ -69,7 +86,33 @@ def main() -> None:
         assert not pin.exists(), 'wrong-type DB path must not trigger first-start credential creation'
         print('PASS wrong-type database path causes no bootstrap-side credential mutation')
 
-    print('SUMMARY total=5 passed=5 failed=0')
+    with tempfile.TemporaryDirectory(prefix='provoware-existing-db-quick-check-') as td:
+        project = Path(td) / 'project'
+        db = project / 'daten' / 'core.sqlite3'
+        db.parent.mkdir(parents=True)
+        create_header_readable_but_structurally_invalid_db(db)
+        original = db.read_bytes()
+
+        probe = sqlite3.connect(f'file:{db}?mode=ro', uri=True)
+        try:
+            assert probe.execute('PRAGMA schema_version').fetchone() is not None
+        finally:
+            probe.close()
+        print('PASS structured-corruption fixture remains readable at schema_version level')
+
+        rc, out = run_until_exit(project)
+        assert rc != 0, out
+        assert 'EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED' in out, out[-1600:]
+        print('PASS quick_check rejects header-readable structural database corruption')
+
+        assert db.read_bytes() == original
+        print('PASS integrity-failed database remains byte-for-byte unchanged')
+
+        pin = project / 'nutzer-einstellungen' / 'ERSTSTART_PIN_EINMAL.txt'
+        assert not pin.exists(), 'integrity failure must not trigger first-start credential creation'
+        print('PASS integrity failure creates no first-start credential file')
+
+    print('SUMMARY total=9 passed=9 failed=0')
 
 
 if __name__ == '__main__':
