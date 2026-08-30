@@ -75,6 +75,25 @@ def source_tree_identity(expected_tree_sha, current_tree_sha):
     return True, 'SOURCE_TREE_IDENTITY_MATCH'
 
 
+def select_gate_evidence(directory, no, name):
+    """Bind one release gate to exactly one canonical evidence filename.
+
+    A similarly numbered file must never substitute for or shadow the canonical
+    gate evidence. Extra same-number JSON files are treated as ambiguity and fail
+    closed so operators cannot accidentally qualify the wrong artifact.
+    """
+    canonical = directory / f'GATE_{no}_{name}.json'
+    if not canonical.is_file():
+        return None, 'CANONICAL_GATE_EVIDENCE_MISSING'
+    extras = sorted(
+        path for path in directory.glob(f'GATE_{no}_*.json')
+        if path != canonical
+    )
+    if extras:
+        return None, 'AMBIGUOUS_GATE_EVIDENCE_FILES'
+    return canonical, 'CANONICAL_GATE_EVIDENCE_BOUND'
+
+
 def _git_rev_parse(expression):
     try:
         result = subprocess.run(
@@ -133,12 +152,22 @@ def evaluate_release_gate(
 
     items = []
     for no, name in GATES:
-        matches = sorted(GD.glob(f'GATE_{no}_*.json'))
         fallback_gate = f'GATE_{no}_{name}'
-        if not matches:
-            items.append({'gate': fallback_gate, 'status': 'NOT_RUN'})
+        path, binding_reason = select_gate_evidence(GD, no, name)
+        if path is None:
+            items.append({
+                'gate': fallback_gate,
+                'status': 'INVALID_EVIDENCE_BINDING',
+                'evidence_binding': {'status': 'FAIL', 'reason': binding_reason},
+            })
             continue
-        items.append(_load_gate(matches[-1], fallback_gate, run_started_at))
+        item = _load_gate(path, fallback_gate, run_started_at)
+        item['evidence_binding'] = {
+            'status': 'PASS',
+            'reason': binding_reason,
+            'path': str(path.relative_to(ROOT)),
+        }
+        items.append(item)
 
     pass_count = sum(item.get('status') == 'PASS' for item in items)
     all_pass = pass_count == len(GATES)
@@ -163,6 +192,7 @@ def evaluate_release_gate(
         'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
         'feature_freeze': True,
         'freeze_exception': 'platform parity completion only',
+        'canonical_gate_evidence_required': True,
         'evidence_freshness_required': True,
         'freshness_context_status': 'PASS' if freshness_context_valid else 'FAIL',
         'gate_run_started_at': run_started_at,
