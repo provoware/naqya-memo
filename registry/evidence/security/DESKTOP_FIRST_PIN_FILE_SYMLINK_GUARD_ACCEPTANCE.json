@@ -1,7 +1,7 @@
 {
   "evidence_id": "DESKTOP_FIRST_PIN_FILE_SYMLINK_GUARD_ACCEPTANCE",
   "status": "SOURCE_AND_RUNTIME_CONTRACT",
-  "scope": "desktop-first-pin-file-parent-symlink-and-retry-guard",
+  "scope": "desktop-first-pin-file-path-parent-retry-and-cleanup-guard",
   "release_gate_promoted": false,
   "product_feature_added": false,
   "production_entrypoint": "app/secure_response_server.py",
@@ -17,13 +17,18 @@
     "symlink target content remains unchanged when bootstrap PIN-file creation is blocked",
     "a persisted active profile still accepting bootstrap PIN 0000 causes secure startup to fail closed",
     "normal first start creates a regular mode-0600 PIN file with a non-default PIN",
-    "normal first start rotates the persisted profile away from bootstrap PIN 0000"
+    "normal first start rotates the persisted profile away from bootstrap PIN 0000",
+    "successful PIN verification does not authorize while one-time PIN cleanup cannot be proven",
+    "cleanup failure returns 503 FIRST_PIN_CLEANUP_FAILED rather than silently authenticating",
+    "authorization is cached only after successful one-time PIN cleanup",
+    "retry after removal of the cleanup blocker succeeds and leaves the one-time PIN path absent"
   ],
-  "expected_summary": "SUMMARY total=7 passed=7 failed=0",
+  "expected_summary": "SUMMARY total=10 passed=10 failed=0",
   "known_limits": [
     "HTTP Basic Auth remains in use",
     "no explicit invalidatable desktop logout/lock session exists yet",
     "platforms without dir_fd use an explicit parent symlink/type check rather than descriptor-relative creation",
-    "real browser, microphone, Android-device and iPhone-device gates remain open"
+    "real browser, microphone, Android-device and iPhone-device gates remain open",
+    "backup/recovery, disk-full and device-loss failure matrices remain open"
   ]
 }
