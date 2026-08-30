@@ -65,6 +65,10 @@ jobs:
             PYTHONPATH=core/reference_python python -S tests/startup/test_startup_port_guard.py
           fi
 
+      - name: Existing project DB preflight fail-closed
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_existing_db_preflight_fail_closed.py
+
       - name: Desktop PIN gate
         run: |
           PYTHONPATH=core/reference_python python -S tests/security/test_desktop_pin_gate.py
@@ -135,5 +139,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates source contracts plus local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
+          echo "CI validates source contracts plus fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
