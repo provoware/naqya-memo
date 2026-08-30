@@ -1,9 +1,15 @@
 from pathlib import Path
 import hashlib
+import importlib.util
 import json
 import tempfile
 
-from tools.release_gate.evaluate_release_gate import release_artifact_integrity
+ROOT = Path(__file__).resolve().parents[2]
+MODULE_PATH = ROOT / 'tools/release_gate/evaluate_release_gate.py'
+SPEC = importlib.util.spec_from_file_location('evaluate_release_gate', MODULE_PATH)
+MODULE = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(MODULE)
+release_artifact_integrity = MODULE.release_artifact_integrity
 
 
 def _sha256(path):
