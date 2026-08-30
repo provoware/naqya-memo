@@ -3,6 +3,10 @@ set -u
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 PY="${PYTHON:-python3}"
 export PROVOWARE_RELEASE_GATE_STARTED_AT="$("$PY" -S -c 'import datetime; print(datetime.datetime.now(datetime.timezone.utc).isoformat())')"
+if ! "$PY" -S "$ROOT/tools/release_gate/require_clean_worktree.py" --root "$ROOT"; then
+  echo "RELEASE_GATE_WORKTREE_NOT_CLEAN"
+  exit 2
+fi
 if ! PROVOWARE_RELEASE_GATE_SOURCE_SHA="$(git -C "$ROOT" rev-parse --verify HEAD 2>/dev/null)"; then
   echo "RELEASE_GATE_SOURCE_IDENTITY_UNAVAILABLE"
   exit 2
