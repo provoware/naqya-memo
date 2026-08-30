@@ -85,6 +85,10 @@ jobs:
         run: |
           python -S tests/release_gate/test_release_closure_provenance_verifier.py
 
+      - name: Release closure verifier enforcement
+        run: |
+          python -S tests/release_gate/test_release_closure_runner_verifier_enforcement.py
+
       - name: Existing project DB preflight fail-closed
         run: |
           PYTHONPATH=core/reference_python python -S tests/security/test_existing_db_preflight_fail_closed.py
@@ -159,5 +163,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates source contracts plus release-gate evidence freshness/clean-worktree/artifact-integrity/closure-provenance/provenance-verification, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
+          echo "CI validates source contracts plus release-gate evidence freshness/clean-worktree/artifact-integrity/closure-provenance/provenance-verification/verifier-enforcement, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
