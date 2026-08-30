@@ -69,6 +69,10 @@ jobs:
         run: |
           PYTHONPATH=core/reference_python python -S tests/security/test_desktop_pin_gate.py
 
+      - name: Desktop first-PIN file symlink guard
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_first_pin_file_symlink_guard.py
+
       - name: Desktop auth cache revision invalidation
         run: |
           PYTHONPATH=core/reference_python python -S tests/security/test_desktop_auth_cache_revision.py
@@ -131,5 +135,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates source contracts plus local desktop PIN, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
+          echo "CI validates source contracts plus local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
