@@ -23,6 +23,7 @@ GATES = [
 FRESHNESS_ENV = 'PROVOWARE_RELEASE_GATE_STARTED_AT'
 SOURCE_SHA_ENV = 'PROVOWARE_RELEASE_GATE_SOURCE_SHA'
 SOURCE_TREE_SHA_ENV = 'PROVOWARE_RELEASE_GATE_SOURCE_TREE_SHA'
+MANIFEST_SHA256_ENV = 'PROVOWARE_RELEASE_GATE_MANIFEST_SHA256'
 
 
 def _parse_utc(value):
@@ -57,6 +58,27 @@ def _sha256_file(path):
         for chunk in iter(lambda: handle.read(1024 * 1024), b''):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _current_release_manifest_sha256(manifest_path=ARTIFACT_MANIFEST):
+    path = Path(manifest_path)
+    if path.is_symlink() or not path.is_file():
+        return None
+    try:
+        return _sha256_file(path)
+    except OSError:
+        return None
+
+
+def release_manifest_identity(expected_sha256, current_sha256):
+    """Fail closed unless the exact release manifest stays unchanged for the gate run."""
+    if not _is_sha256(expected_sha256):
+        return False, 'RELEASE_MANIFEST_IDENTITY_CONTEXT_MISSING_OR_INVALID'
+    if not _is_sha256(current_sha256):
+        return False, 'CURRENT_RELEASE_MANIFEST_IDENTITY_UNAVAILABLE'
+    if expected_sha256.strip().lower() != current_sha256.strip().lower():
+        return False, 'RELEASE_MANIFEST_CHANGED_DURING_GATE_RUN'
+    return True, 'RELEASE_MANIFEST_IDENTITY_MATCH'
 
 
 def release_artifact_integrity(manifest_path=ARTIFACT_MANIFEST, artifact_root=ARTIFACT_ROOT):
@@ -224,6 +246,8 @@ def evaluate_release_gate(
     current_source_sha=None,
     expected_source_tree_sha=None,
     current_source_tree_sha=None,
+    expected_manifest_sha256=None,
+    current_manifest_sha256=None,
 ):
     if run_started_at is None:
         run_started_at = os.environ.get(FRESHNESS_ENV)
@@ -235,6 +259,10 @@ def evaluate_release_gate(
         expected_source_tree_sha = os.environ.get(SOURCE_TREE_SHA_ENV)
     if current_source_tree_sha is None:
         current_source_tree_sha = _current_source_tree_sha()
+    if expected_manifest_sha256 is None:
+        expected_manifest_sha256 = os.environ.get(MANIFEST_SHA256_ENV)
+    if current_manifest_sha256 is None:
+        current_manifest_sha256 = _current_release_manifest_sha256()
 
     items = []
     for no, name in GATES:
@@ -271,12 +299,17 @@ def evaluate_release_gate(
         expected_source_tree_sha,
         current_source_tree_sha,
     )
+    manifest_identity_pass, manifest_identity_reason = release_manifest_identity(
+        expected_manifest_sha256,
+        current_manifest_sha256,
+    )
     artifact_integrity_pass, artifact_integrity_reason, artifact_integrity_items = release_artifact_integrity()
     release_allowed = bool(
         all_pass
         and source_pass
         and identity_pass
         and tree_identity_pass
+        and manifest_identity_pass
         and artifact_integrity_pass
     )
 
@@ -299,6 +332,11 @@ def evaluate_release_gate(
         'source_tree_identity_reason': tree_identity_reason,
         'gate_run_source_tree_sha': expected_source_tree_sha,
         'evaluated_source_tree_sha': current_source_tree_sha,
+        'release_manifest_identity_required': True,
+        'release_manifest_identity_status': 'PASS' if manifest_identity_pass else 'FAIL',
+        'release_manifest_identity_reason': manifest_identity_reason,
+        'gate_run_release_manifest_sha256': expected_manifest_sha256,
+        'evaluated_release_manifest_sha256': current_manifest_sha256,
         'release_artifact_integrity_required': True,
         'release_artifact_integrity_status': 'PASS' if artifact_integrity_pass else 'FAIL',
         'release_artifact_integrity_reason': artifact_integrity_reason,
