@@ -1,0 +1,22 @@
+{
+  "evidence_id": "DESKTOP_AUTH_CACHE_PROFILE_INCARNATION_ACCEPTANCE",
+  "status": "SOURCE_AND_RUNTIME_CONTRACT",
+  "scope": "desktop-auth-cache-profile-incarnation",
+  "release_gate_promoted": false,
+  "product_feature_added": false,
+  "production_entrypoint": "app/secure_response_server.py",
+  "test": "tests/security/test_desktop_auth_cache_profile_incarnation.py",
+  "ci_step": "Desktop auth cache profile incarnation invalidation",
+  "contracts": [
+    "cache security epoch is bound to active profile revision and created_at",
+    "security state is read on the isolated read-only SQLite path",
+    "replacement profile with same id and revision does not inherit predecessor auth cache",
+    "stale predecessor credential is rejected immediately",
+    "replacement profile credential authenticates normally"
+  ],
+  "known_limits": [
+    "HTTP Basic Auth remains in use",
+    "no explicit invalidatable desktop logout/lock session exists yet",
+    "real browser, microphone, Android-device and iPhone-device gates remain open"
+  ]
+}
