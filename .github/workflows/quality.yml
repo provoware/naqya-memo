@@ -38,6 +38,10 @@ jobs:
         run: |
           python -S tests/release_gate/test_github_actions_immutable_pins.py
 
+      - name: CI dependency execution boundary
+        run: |
+          python -S tests/release_gate/test_ci_dependency_execution_boundary.py
+
       - name: Python syntax
         run: |
           python -m py_compile app/server.py app/secure_server.py app/secure_response_server.py tools/startup_port_guard.py tools/release_gate/evaluate_release_gate.py tools/release_gate/require_clean_worktree.py tools/release_gate/attest_release_closure.py tools/release_gate/verify_release_closure_provenance.py
@@ -169,5 +173,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates immutable GitHub Action identities plus source contracts and release-gate evidence freshness/clean-worktree/artifact-integrity/closure-provenance/provenance-verification/verifier-enforcement, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
+          echo "CI validates immutable GitHub Action identities, non-persistent checkout credentials, a no-implicit-dependency-install/download boundary, source contracts and release-gate evidence freshness/clean-worktree/artifact-integrity/closure-provenance/provenance-verification/verifier-enforcement, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
