@@ -59,13 +59,13 @@ def _normalize_positive_int_env(name: str, default: int) -> int:
 
 
 def _preflight_existing_project_db() -> None:
-    """Refuse an existing project database that cannot be safely trusted as SQLite.
+    """Refuse an existing project database that cannot be safely trusted.
 
     The lower server may initialize schema and bootstrap data during import. An
-    already-existing but corrupt, unreadable or wrong-type database must therefore
-    never be mistaken for a first-start project. Missing databases remain valid
-    first-start input; readable databases must additionally pass SQLite's read-only
-    quick integrity check before any product module is imported.
+    already-existing database must therefore be both structurally valid SQLite
+    and recognizable as the current PROVOWARE core contract before any product
+    module may import and mutate it. Missing databases remain valid first-start
+    input; existing files are inspected read-only only.
     """
     project = Path(
         os.environ.get(
@@ -94,6 +94,26 @@ def _preflight_existing_project_db() -> None:
                 raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED') from exc
             if not integrity_rows or any(str(item[0]).strip().lower() != 'ok' for item in integrity_rows):
                 raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED')
+
+            # A healthy SQLite file is not automatically a PROVOWARE project DB.
+            # The lower server treats a missing active profile as bootstrap input;
+            # therefore an existing but foreign/empty schema must be rejected here
+            # before CREATE TABLE / reference-profile initialization can mutate it.
+            profile_table = con.execute(
+                "SELECT 1 FROM sqlite_schema WHERE type='table' AND name='profiles' LIMIT 1"
+            ).fetchone()
+            if profile_table is None:
+                raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_CONTRACT_MISMATCH')
+            profile_columns = {
+                str(item[1]).strip().lower()
+                for item in con.execute('PRAGMA table_info(profiles)').fetchall()
+                if len(item) > 1 and str(item[1]).strip()
+            }
+            required_profile_columns = {
+                'id', 'display_name', 'pin_hash', 'created_at', 'updated_at', 'revision', 'status'
+            }
+            if not required_profile_columns.issubset(profile_columns):
+                raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_CONTRACT_MISMATCH')
         finally:
             con.close()
     except RuntimeError:
