@@ -124,13 +124,21 @@ def _write_first_pin_file(pin: str) -> None:
             os.close(parent_fd)
 
 
-def _remove_first_pin_file() -> None:
+def _remove_first_pin_file() -> bool:
+    """Remove the one-time credential and prove the path is absent.
+
+    Authentication must not become successful while a credential file that was
+    promised to be one-time remains at the known path. Any unlink/stat failure is
+    therefore an operational security failure rather than a condition to ignore.
+    """
     try:
         FIRST_PIN_FILE.unlink(missing_ok=True)
     except OSError:
-        # Authentication must not become a false failure after the PIN itself was
-        # proven valid. A leftover credential file is reported at next start.
-        pass
+        return False
+    try:
+        return not FIRST_PIN_FILE.exists() and not FIRST_PIN_FILE.is_symlink()
+    except OSError:
+        return False
 
 
 def _generate_first_pin() -> str:
@@ -321,6 +329,20 @@ class SecureHandler(base.Handler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _auth_unavailable(self, code: str):
+        body=(
+            'PROVOWARE konnte die einmalige Erststart-PIN-Datei nicht sicher entfernen. '
+            'Der Zugriff bleibt deshalb gesperrt. Bitte Dateirechte bzw. den Pfad prüfen '
+            f'und danach erneut anmelden ({code}).\n'
+        ).encode('utf-8')
+        self.send_response(503)
+        self.send_header('Retry-After','1')
+        self.send_header('Content-Type','text/plain; charset=utf-8')
+        self.send_header('X-Content-Type-Options','nosniff')
+        self.send_header('Content-Length',str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def _rate_limited(self,retry_after: int):
         body=(
             'Zu viele unterschiedliche falsche PIN-Versuche. '
@@ -335,6 +357,7 @@ class SecureHandler(base.Handler):
         self.wfile.write(body)
 
     def _authorized(self) -> tuple[bool,int]:
+        self._auth_operational_error = None
         header=self.headers.get('Authorization','').strip()
         if not header:
             return False,0
@@ -359,9 +382,11 @@ class SecureHandler(base.Handler):
             return False,_record_failure(client,header)
         revision_after=_profile_revision()
         if ok and revision_after is not None and revision_after==revision_before:
+            if not _remove_first_pin_file():
+                self._auth_operational_error = 'FIRST_PIN_CLEANUP_FAILED'
+                return False,0
             _remember(header,revision_after)
             _clear_failures(client)
-            _remove_first_pin_file()
             return True,0
         if ok:
             return False,0
@@ -371,7 +396,10 @@ class SecureHandler(base.Handler):
         authorized,retry_after=self._authorized()
         if authorized:
             return True
-        if retry_after:
+        operational_error=getattr(self,'_auth_operational_error',None)
+        if operational_error:
+            self._auth_unavailable(operational_error)
+        elif retry_after:
             self._rate_limited(retry_after)
         else:
             self._challenge()
