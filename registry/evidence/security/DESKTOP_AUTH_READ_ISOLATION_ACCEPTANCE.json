@@ -1,0 +1,22 @@
+{
+  "evidence_id": "DESKTOP_AUTH_READ_ISOLATION_ACCEPTANCE",
+  "status": "SOURCE_AND_RUNTIME_CONTRACT",
+  "scope": "desktop-auth-security-read-isolation",
+  "release_gate_promoted": false,
+  "product_feature_added": false,
+  "production_entrypoint": "app/secure_response_server.py",
+  "test": "tests/security/test_desktop_auth_read_connection.py",
+  "ci_step": "Desktop auth security read isolation",
+  "contracts": [
+    "auth revision read uses an independent SQLite connection",
+    "connection is opened read-only and query-only",
+    "shared product connection is not required for auth security-state lookup",
+    "inactive profile fails closed",
+    "missing or unreadable auth database fails closed"
+  ],
+  "known_limits": [
+    "HTTP Basic Auth remains in use",
+    "no explicit invalidatable desktop logout/lock session exists yet",
+    "real browser, microphone, Android-device and iPhone-device gates remain open"
+  ]
+}
