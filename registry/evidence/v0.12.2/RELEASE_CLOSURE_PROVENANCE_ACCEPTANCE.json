@@ -1,0 +1,25 @@
+{
+  "version": "0.12.2",
+  "scope": "release-closure-provenance",
+  "status": "PASS",
+  "feature_freeze": true,
+  "product_feature_added": false,
+  "contract": "Deterministically bind evaluated source commit, source tree, mobile release manifest and verified Android/iOS source artifacts into RELEASE_GATE_CLOSURE.json.",
+  "implementation": {
+    "attester": "tools/release_gate/attest_release_closure.py",
+    "closure": "registry/evidence/v0.12.2/RELEASE_GATE_CLOSURE.json",
+    "schema": "provoware.release-provenance.v1",
+    "hash": "sha256",
+    "canonical_json": "sort_keys=true,separators=(',',':')",
+    "official_runner_fail_closed": true
+  },
+  "regression_contracts": [
+    "deterministic across artifact input order",
+    "fingerprint changes when a bound artifact hash changes",
+    "invalid source identity fails closed",
+    "missing required artifact fails closed",
+    "attestation is persisted into closure evidence",
+    "artifact integrity FAIL cannot receive PASS provenance"
+  ],
+  "security_boundary": "Integrity fingerprint only; not a digital signature or trusted-builder attestation. Real browser, microphone, storage, Android-device and iPhone-device gates remain authoritative."
+}
