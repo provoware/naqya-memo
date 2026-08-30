@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import base64
 import os
 import socket
 import sqlite3
@@ -10,6 +11,8 @@ import subprocess
 import sys
 import tempfile
 import time
+import urllib.error
+import urllib.request
 
 ROOT = Path(__file__).resolve().parents[2]
 SERVER = ROOT / 'app' / 'secure_response_server.py'
@@ -51,7 +54,7 @@ def run_until_exit(project: Path, timeout: float = 8) -> tuple[int, str]:
     return proc.returncode, out
 
 
-def wait_ready(project: Path) -> tuple[subprocess.Popen[str], Path]:
+def wait_ready(project: Path) -> tuple[subprocess.Popen[str], Path, int]:
     port = free_port()
     proc = subprocess.Popen(
         [sys.executable, '-S', str(SERVER), '--no-browser'],
@@ -67,7 +70,7 @@ def wait_ready(project: Path) -> tuple[subprocess.Popen[str], Path]:
         if proc.poll() is not None:
             raise AssertionError(f'normal server exited rc={proc.returncode}: {proc.stdout.read()}')
         if pin_file.is_file():
-            return proc, pin_file
+            return proc, pin_file, port
         time.sleep(0.05)
     proc.terminate()
     raise AssertionError('normal first-start PIN file was not created')
@@ -100,6 +103,37 @@ def wait_until_profile_rotated(project: Path, proc: subprocess.Popen[str], timeo
             pass
         time.sleep(0.05)
     raise AssertionError('normal first-start profile did not rotate away from bootstrap PIN 0000')
+
+
+def read_pin(pin_file: Path) -> str:
+    text = pin_file.read_text(encoding='utf-8')
+    pin_lines = [line for line in text.splitlines() if line.startswith('PIN:')]
+    assert len(pin_lines) == 1
+    pin = pin_lines[0].split(':', 1)[1].strip()
+    assert pin.isdigit() and len(pin) == 4 and pin != '0000'
+    return pin
+
+
+def request_status(port: int, pin: str) -> tuple[int, str]:
+    token = base64.b64encode(f'provoware:{pin}'.encode('utf-8')).decode('ascii')
+    request = urllib.request.Request(
+        f'http://127.0.0.1:{port}/',
+        headers={'Authorization': f'Basic {token}'},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=3) as response:
+            return response.status, response.read().decode('utf-8', errors='replace')
+    except urllib.error.HTTPError as exc:
+        return exc.code, exc.read().decode('utf-8', errors='replace')
+
+
+def stop(proc: subprocess.Popen[str]) -> None:
+    proc.terminate()
+    try:
+        proc.wait(timeout=3)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.wait(timeout=2)
 
 
 def main() -> None:
@@ -153,28 +187,49 @@ def main() -> None:
 
     with tempfile.TemporaryDirectory(prefix='provoware-first-pin-normal-') as td:
         project = Path(td) / 'project'
-        proc, pin_file = wait_ready(project)
+        proc, pin_file, _port = wait_ready(project)
         try:
             assert pin_file.is_file() and not pin_file.is_symlink()
             mode = stat.S_IMODE(pin_file.stat().st_mode)
             assert mode == 0o600, oct(mode)
-            text = pin_file.read_text(encoding='utf-8')
-            pin_lines = [line for line in text.splitlines() if line.startswith('PIN:')]
-            assert len(pin_lines) == 1
-            pin = pin_lines[0].split(':', 1)[1].strip()
-            assert pin.isdigit() and len(pin) == 4 and pin != '0000'
+            read_pin(pin_file)
             print('PASS normal first start creates one regular 0600 PIN file with non-default PIN')
             wait_until_profile_rotated(project, proc)
             print('PASS normal first start rotates the persisted profile away from bootstrap PIN 0000')
         finally:
-            proc.terminate()
-            try:
-                proc.wait(timeout=3)
-            except subprocess.TimeoutExpired:
-                proc.kill()
-                proc.wait(timeout=2)
+            stop(proc)
 
-    print('SUMMARY total=7 passed=7 failed=0')
+    with tempfile.TemporaryDirectory(prefix='provoware-first-pin-cleanup-') as td:
+        project = Path(td) / 'project'
+        proc, pin_file, port = wait_ready(project)
+        try:
+            pin = read_pin(pin_file)
+            wait_until_profile_rotated(project, proc)
+
+            # Force a deterministic unlink failure without relying on platform
+            # permission semantics: replace the credential file path with a
+            # directory after retaining the valid PIN in memory.
+            pin_file.unlink()
+            pin_file.mkdir()
+            status, body = request_status(port, pin)
+            assert status == 503, (status, body[-1200:])
+            assert 'FIRST_PIN_CLEANUP_FAILED' in body, body[-1200:]
+            print('PASS valid PIN is not authorized when one-time credential cleanup cannot be proven')
+
+            assert pin_file.is_dir(), 'failed cleanup path was unexpectedly removed'
+            print('PASS cleanup failure remains explicit instead of being silently ignored')
+
+            pin_file.rmdir()
+            status2, body2 = request_status(port, pin)
+            assert status2 == 200, (status2, body2[-1200:])
+            assert not pin_file.exists() and not pin_file.is_symlink()
+            print('PASS retry succeeds only after cleanup is possible and leaves no one-time PIN path')
+        finally:
+            if pin_file.is_dir():
+                pin_file.rmdir()
+            stop(proc)
+
+    print('SUMMARY total=10 passed=10 failed=0')
 
 
 if __name__ == '__main__':
