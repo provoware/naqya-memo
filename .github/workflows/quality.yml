@@ -34,7 +34,7 @@ jobs:
 
       - name: Python syntax
         run: |
-          python -m py_compile app/server.py app/secure_server.py app/secure_response_server.py tools/startup_port_guard.py tools/release_gate/evaluate_release_gate.py
+          python -m py_compile app/server.py app/secure_server.py app/secure_response_server.py tools/startup_port_guard.py tools/release_gate/evaluate_release_gate.py tools/release_gate/require_clean_worktree.py
 
       - name: JavaScript syntax
         run: |
@@ -68,6 +68,10 @@ jobs:
       - name: Release gate evidence freshness
         run: |
           python -S tests/release_gate/test_release_gate_evidence_freshness.py
+
+      - name: Release gate clean worktree
+        run: |
+          python -S tests/release_gate/test_release_gate_clean_worktree.py
 
       - name: Existing project DB preflight fail-closed
         run: |
@@ -143,5 +147,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates source contracts plus release-gate evidence freshness, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
+          echo "CI validates source contracts plus release-gate evidence freshness/clean-worktree, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
