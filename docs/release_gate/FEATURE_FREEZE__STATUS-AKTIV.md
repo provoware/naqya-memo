@@ -11,7 +11,10 @@ Erlaubt sind ausschließlich:
 Jeder neue Feature-Wunsch wandert unverändert in `UPGRADE_POTENZIAL.md` bzw. die Post-V1.0-Roadmap.
 
 ## Automatischer Statuswechsel
-`NO-GO -> GO -> V1.0 RC` ist nur erlaubt, wenn **alle sieben** Gate-Evidence-Dateien `PASS` melden, keine Gate-Evidence älter als der aktuelle Abschlusslauf ist, der Abschlusslauf aus einem sauberen Git-Arbeitsbaum gestartet wurde und sowohl Git-Commit als auch Git-Source-Tree während des gesamten Abschlusslaufs unverändert bleiben.
+`NO-GO -> GO -> V1.0 RC` ist nur erlaubt, wenn **alle sieben kanonisch benannten Gate-Evidence-Dateien** `PASS` melden, pro Gate-Nummer keine konkurrierende JSON-Evidence existiert, keine Gate-Evidence älter als der aktuelle Abschlusslauf ist, der Abschlusslauf aus einem sauberen Git-Arbeitsbaum gestartet wurde und sowohl Git-Commit als auch Git-Source-Tree während des gesamten Abschlusslaufs unverändert bleiben.
+
+## Canonical-Evidence-Binding-Vertrag
+Jedes reale Release-Gate ist genau an seinen kanonischen Dateinamen gebunden: `GATE_01_8H_SOAK.json`, `GATE_02_CHROMIUM.json`, `GATE_03_FIREFOX.json`, `GATE_04_LINUX_MICROPHONE.json`, `GATE_05_STORAGE_FAILURE.json`, `GATE_06_ANDROID_DEVICE.json` und `GATE_07_IOS_IPHONE_X.json`. `evaluate_release_gate.py` darf keine wildcard-basierte Ersatzdatei als Gate-Evidence auswählen. Fehlt die kanonische Datei, wird das Gate als `INVALID_EVIDENCE_BINDING` mit `CANONICAL_GATE_EVIDENCE_MISSING` behandelt. Existiert zusätzlich eine weitere `GATE_<Nr>_*.json`, wird die Gate-Nummer wegen Mehrdeutigkeit mit `AMBIGUOUS_GATE_EVIDENCE_FILES` fail-closed blockiert. Damit kann weder eine falsch benannte noch eine lexikographisch spätere Zusatzdatei die für das Release festgelegte Evidence überschatten.
 
 ## Evidence-Freshness-Vertrag
 Der offizielle `RUN_RELEASE_GATE_CLOSURE.sh` setzt vor Gate 01 einen UTC-Startzeitpunkt für den gesamten Abschlusslauf. `evaluate_release_gate.py` akzeptiert ein Gate-`PASS` nur, wenn dessen timezone-aware `timestamp`/`timestamp_utc` mindestens diesem Startzeitpunkt entspricht. Fehlender/ungültiger Freshness-Kontext, fehlender/ungültiger Evidence-Zeitstempel oder Evidence aus einem früheren Lauf wird fail-closed als `STALE_EVIDENCE` behandelt und kann keinen `GO`-Status erzeugen.
