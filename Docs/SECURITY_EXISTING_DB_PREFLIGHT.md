@@ -6,7 +6,7 @@ Status: Release-Freeze-Härtung, kein neues Produktfeature.
 
 Der offizielle Desktop-Entry-Point importiert anschließend `secure_server` und den Basisserver. Diese unteren Module dürfen beim Erststart Schema und Bootstrap-Daten anlegen. Eine bereits vorhandene, aber beschädigte, unlesbare oder als falscher Pfadtyp vorliegende `daten/core.sqlite3` darf deshalb nicht still wie eine fehlende Datenbank behandelt werden.
 
-Der erste gehärtete Preflight öffnete Bestandsdaten bereits read-only und verlangte ein lesbares `PRAGMA schema_version`. Das beweist jedoch nur, dass SQLite die Datei und zentrale Metadaten lesen kann. Strukturelle Schäden in B-Tree-/Indexreferenzen können dabei unentdeckt bleiben und erst nach Beginn der Produktlogik auffallen.
+Der gehärtete Preflight prüfte bereits read-only `PRAGMA schema_version` und `PRAGMA quick_check`. Damit wird SQLite-Dateiintegrität deutlich besser belegt. Ein noch offener Klassifikationsfehler blieb jedoch: Eine technisch vollkommen gesunde SQLite-Datei kann zu einer anderen Anwendung gehören oder nur ein unvollständiges `profiles`-Schema enthalten. Der untere Server interpretiert fehlende aktive Profildaten als Bootstrap-Situation und könnte eine solche Bestandsdatei anschließend verändern.
 
 ## Release-Freeze-Optimierung
 
@@ -16,16 +16,19 @@ Der erste gehärtete Preflight öffnete Bestandsdaten bereits read-only und verl
 - existiert der Pfad, muss er eine regulär lesbare Datei sein,
 - die Datei wird ausschließlich read-only mit `mode=ro` und `PRAGMA query_only=ON` geöffnet,
 - `PRAGMA schema_version` muss lesbar sein,
-- anschließend muss `PRAGMA quick_check` ausschließlich `ok` liefern,
+- `PRAGMA quick_check` muss ausschließlich `ok` liefern,
+- anschließend muss die bestehende Datei als PROVOWARE-Core-DB erkennbar sein,
+- dafür muss die Tabelle `profiles` existieren und mindestens die bereits produktiv benötigten Spalten `id`, `display_name`, `pin_hash`, `created_at`, `updated_at`, `revision` und `status` besitzen,
+- fremde oder unvollständige, aber technisch gesunde SQLite-Dateien -> `EXISTING_PROJECT_DB_PREFLIGHT_CONTRACT_MISMATCH`,
 - beschädigte/unlesbare SQLite-Datei -> `EXISTING_PROJECT_DB_PREFLIGHT_UNREADABLE`,
 - strukturell inkonsistente SQLite-Datei -> `EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED`,
 - falscher Pfadtyp -> `EXISTING_PROJECT_DB_PREFLIGHT_UNSAFE`.
 
-Der Preflight verändert die Bestandsdatei nicht. `quick_check` ist bewusst der leichtere SQLite-Integritätscheck für den Startpfad; er prüft wesentliche Seiten-/B-Tree-/Schema-Invarianten, ohne den deutlich teureren vollständigen `integrity_check` als dauerhafte Startlast einzuführen.
+Die Prüfung erzeugt kein Schema, führt keine Migration aus und schreibt keine Daten. Sie dient nur dazu, eine vorhandene Datei vor dem mutierenden Produktimport eindeutig als bekannten Projektvertrag zu klassifizieren.
 
 ## Regression
 
-`tests/security/test_existing_db_preflight_fail_closed.py` beweist neun Verträge:
+`tests/security/test_existing_db_preflight_fail_closed.py` beweist vierzehn Verträge:
 
 1. eine komplett unlesbare vorhandene SQLite-Datei stoppt den offiziellen Produktionsstart vor dem Bootstrap,
 2. ihre Bytes bleiben exakt unverändert,
@@ -35,14 +38,19 @@ Der Preflight verändert die Bestandsdatei nicht. `quick_check` ist bewusst der 
 6. eine speziell erzeugte strukturell beschädigte SQLite-Datei bleibt auf `schema_version`-Ebene lesbar,
 7. `quick_check` erkennt diesen tieferen Schaden und stoppt mit `EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED`,
 8. auch diese Datei bleibt bytegenau unverändert,
-9. auch der Integritätsfehler erzeugt keine Erststart-PIN-Datei.
+9. auch der Integritätsfehler erzeugt keine Erststart-PIN-Datei,
+10. eine technisch gesunde fremde SQLite-Datei wird als Nicht-PROVOWARE-Vertrag erkannt,
+11. auch diese fremde Datei bleibt bytegenau unverändert,
+12. auch der Vertragsfehler erzeugt keine Erststart-PIN-Datei,
+13. eine vorhandene `profiles`-Tabelle mit unvollständigem produktiv benötigtem Spaltensatz wird fail-closed abgewiesen,
+14. auch dieser Teilvertrag löst keine Bootstrap-Credentialmutation aus.
 
-Erwartete Zusammenfassung: `SUMMARY total=9 passed=9 failed=0`.
+Erwartete Zusammenfassung: `SUMMARY total=14 passed=14 failed=0`.
 
 ## Wirkung
 
-Der Produktionsstart beweist jetzt nicht nur „SQLite lässt sich öffnen“, sondern auch einen grundlegenden konsistenten Datenbankzustand **vor jeder möglichen Produktmutation**. Damit sinkt das Risiko, dass versteckte Bestandskorruption erst während Bootstrap, Migration oder normalem Startschreiben sichtbar wird.
+Der Produktionsstart beweist jetzt drei getrennte Eigenschaften, bevor Bestandsdaten in einen potenziell mutierenden Pfad gelangen: **lesbar**, **strukturell konsistent** und **als PROVOWARE-Projektvertrag erkennbar**. Damit kann eine fremde, leere oder nur teilweise passende SQLite-Datei nicht mehr allein aufgrund technischer SQLite-Gesundheit als legitime Bootstrap-Basis behandelt werden.
 
 ## Release-Grenze
 
-Dieser Slice ersetzt weder Backup-/Recovery-Tests noch einen vollständigen Offline-`integrity_check`, Datenträgerausfall-, Disk-full-, Browser-, Mikrofon-, Android- oder iPhone-Abnahmen. HTTP Basic Auth und der fehlende explizit invalidierbare Lock-/Logout-Zustand bleiben ebenfalls offen. Release bleibt NO-GO.
+Der Check ersetzt keine vollständige Schema-Migrationsprüfung und keinen vollständigen Offline-`integrity_check`. Falls künftig ältere unterstützte Datenbankverträge automatisch migriert werden sollen, muss dafür ein expliziter versionsgebundener Migrationsvertrag vor diesem Gate definiert werden. Backup-/Recovery-, Datenträgerausfall-, Disk-full-, Browser-, Mikrofon-, Android- und iPhone-Abnahmen bleiben offen. HTTP Basic Auth und der fehlende explizit invalidierbare Lock-/Logout-Zustand bleiben ebenfalls offen. Release bleibt NO-GO.
