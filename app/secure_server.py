@@ -59,10 +59,10 @@ _AUTH_LOCK = threading.Lock()
 def _write_first_pin_file(pin: str) -> None:
     """Create the one-time PIN file without following or replacing filesystem entries.
 
-    The path is predictable by design so the user can find it. Therefore creation
-    must be exclusive and, where supported by the platform, explicitly reject a
-    symlink in the final path component. Any pre-existing entry fails closed rather
-    than truncating or replacing an unknown target.
+    The path is predictable by design so the user can find it. Creation is
+    therefore exclusive and, where supported, explicitly refuses a symlink in the
+    final path component. A pre-existing entry fails closed instead of truncating
+    or replacing an unknown target.
     """
     FIRST_PIN_FILE.parent.mkdir(parents=True, exist_ok=True)
     text = (
@@ -104,6 +104,15 @@ def _generate_first_pin() -> str:
 
 def _harden_first_profile_if_needed() -> None:
     if _HAD_ACTIVE_PROFILE:
+        # The reference product shell uses 0000 only as a bootstrap credential.
+        # If a prior first-start attempt failed after the profile was created but
+        # before rotation completed, never expose that bootstrap credential on a
+        # later secure-server start. This also keeps the new exclusive PIN-file
+        # creation fail-closed across retries.
+        if base.profile_service.verify_access(
+            base.PROFILE_ID, '0000', source='FIRST_PIN_EXISTING_PROFILE_GUARD'
+        ):
+            raise RuntimeError('INSECURE_DEFAULT_PIN_DETECTED')
         return
     # server.py currently bootstraps its development reference profile with 0000.
     # If that upstream contract changes, fail closed instead of guessing.
@@ -142,8 +151,6 @@ def _cached(header: str) -> bool:
     now=time.monotonic(); key=_authorization_digest(header)
     revision=_profile_revision()
     if revision is None:
-        # The security state is global. If it cannot be proven, no credential
-        # cached under a previously known state may survive and later resurrect.
         with _AUTH_LOCK:
             _AUTH_CACHE.clear()
         return False
@@ -198,12 +205,7 @@ def _retry_after(client: str) -> int:
 
 
 def _record_failure(client: str, header: str) -> int:
-    """Count distinct wrong credentials, not parallel retries of the same PIN.
-
-    Browsers can fan one Basic-Auth attempt out to many asset requests. Counting
-    the Authorization digest once per window avoids locking a user after a single
-    typo while still bounding automated PIN enumeration.
-    """
+    """Count distinct wrong credentials, not parallel retries of the same PIN."""
     now=time.monotonic(); digest=_authorization_digest(header)
     with _AUTH_LOCK:
         failures=_prune_failures_locked(client,now)
@@ -227,7 +229,6 @@ class SecureHandler(base.Handler):
     """Fail-closed desktop transport guard around the existing product handler."""
 
     def end_headers(self):
-        """Prevent authenticated memo/profile responses from surviving in caches."""
         self.send_header('Cache-Control','no-store, no-cache, must-revalidate, max-age=0')
         self.send_header('Pragma','no-cache')
         self.send_header('Expires','0')
@@ -239,7 +240,6 @@ class SecureHandler(base.Handler):
         return {f'127.0.0.1:{port}',f'localhost:{port}'}
 
     def _transport_trust_error(self) -> tuple[int,str] | None:
-        """Reject DNS-rebinding and cross-site use of the loopback HTTP service."""
         allowed=self._allowed_local_authorities()
         host=self.headers.get('Host','').strip().lower()
         if host not in allowed:
@@ -325,9 +325,6 @@ class SecureHandler(base.Handler):
             _remove_first_pin_file()
             return True,0
         if ok:
-            # The profile changed while this request was being authenticated.
-            # Fail closed and require the browser to authenticate against the new
-            # profile revision instead of caching a credential from stale state.
             return False,0
         return False,_record_failure(client,header)
 
