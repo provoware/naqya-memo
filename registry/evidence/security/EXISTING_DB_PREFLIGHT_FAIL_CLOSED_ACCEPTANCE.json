@@ -1,0 +1,26 @@
+{
+  "evidence_id": "EXISTING_DB_PREFLIGHT_FAIL_CLOSED_ACCEPTANCE",
+  "status": "SOURCE_AND_RUNTIME_CONTRACT",
+  "scope": "official-desktop-existing-project-db-preflight",
+  "release_gate_promoted": false,
+  "product_feature_added": false,
+  "production_entrypoint": "app/secure_response_server.py",
+  "test": "tests/security/test_existing_db_preflight_fail_closed.py",
+  "ci_step": "Existing project DB preflight fail-closed",
+  "contracts": [
+    "missing database remains valid first-start input",
+    "existing database is checked read-only before importing mutating server modules",
+    "corrupt or unreadable SQLite database fails closed",
+    "non-file database path fails closed",
+    "failed preflight leaves existing database bytes unchanged",
+    "failed preflight creates no first-start PIN credential file"
+  ],
+  "expected_summary": "SUMMARY total=5 passed=5 failed=0",
+  "known_limits": [
+    "does not replace backup or recovery acceptance",
+    "does not prove disk-full or storage-removal recovery",
+    "HTTP Basic Auth remains in use",
+    "no explicit invalidatable desktop logout/lock session exists yet",
+    "real browser, microphone, Android-device and iPhone-device gates remain open"
+  ]
+}
