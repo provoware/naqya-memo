@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
 MODULE_PATH = ROOT / "tools" / "release_gate" / "evaluate_release_gate.py"
@@ -114,6 +115,40 @@ def test_invalid_current_source_tree_identity_fails_closed():
     valid, reason = module.source_tree_identity(SHA_A, "g" * 40)
     assert valid is False
     assert reason == "CURRENT_SOURCE_TREE_IDENTITY_UNAVAILABLE"
+
+
+def test_canonical_gate_evidence_file_is_bound():
+    with tempfile.TemporaryDirectory(prefix="naqya-gate-evidence-canonical-") as td:
+        directory = Path(td)
+        canonical = directory / "GATE_02_CHROMIUM.json"
+        canonical.write_text("{}\n", encoding="utf-8")
+        selected, reason = module.select_gate_evidence(directory, "02", "CHROMIUM")
+        assert selected == canonical
+        assert reason == "CANONICAL_GATE_EVIDENCE_BOUND"
+
+
+def test_similarly_numbered_extra_evidence_fails_closed():
+    with tempfile.TemporaryDirectory(prefix="naqya-gate-evidence-ambiguous-") as td:
+        directory = Path(td)
+        canonical = directory / "GATE_02_CHROMIUM.json"
+        canonical.write_text("{}\n", encoding="utf-8")
+        (directory / "GATE_02_ZZZ_OVERRIDE.json").write_text(
+            '{"status":"PASS"}\n', encoding="utf-8"
+        )
+        selected, reason = module.select_gate_evidence(directory, "02", "CHROMIUM")
+        assert selected is None
+        assert reason == "AMBIGUOUS_GATE_EVIDENCE_FILES"
+
+
+def test_noncanonical_alias_cannot_replace_missing_canonical_evidence():
+    with tempfile.TemporaryDirectory(prefix="naqya-gate-evidence-missing-") as td:
+        directory = Path(td)
+        (directory / "GATE_02_ZZZ_OVERRIDE.json").write_text(
+            '{"status":"PASS"}\n', encoding="utf-8"
+        )
+        selected, reason = module.select_gate_evidence(directory, "02", "CHROMIUM")
+        assert selected is None
+        assert reason == "CANONICAL_GATE_EVIDENCE_MISSING"
 
 
 if __name__ == "__main__":
