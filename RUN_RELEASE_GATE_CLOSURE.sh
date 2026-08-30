@@ -2,6 +2,7 @@
 set -u
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 PY="${PYTHON:-python3}"
+export PROVOWARE_RELEASE_GATE_STARTED_AT="$("$PY" -S -c 'import datetime; print(datetime.datetime.now(datetime.timezone.utc).isoformat())')"
 run(){ echo; echo "===== $1 ====="; shift; "$@"; rc=$?; echo "RC=$rc"; return 0; }
 run "01 8H SOAK" "$PY" -S "$ROOT/tools/release_gate/gate_01_8h_soak.py" --hours 8
 run "02 CHROMIUM" "$PY" -S "$ROOT/tools/release_gate/gate_02_chromium.py"
