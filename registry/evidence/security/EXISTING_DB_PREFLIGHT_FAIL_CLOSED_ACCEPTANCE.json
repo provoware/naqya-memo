@@ -10,13 +10,17 @@
   "contracts": [
     "missing database remains valid first-start input",
     "existing database is checked read-only before importing mutating server modules",
+    "schema_version must be readable before bootstrap",
+    "PRAGMA quick_check must return only ok before bootstrap",
     "corrupt or unreadable SQLite database fails closed",
+    "header-readable structural SQLite corruption fails closed",
     "non-file database path fails closed",
     "failed preflight leaves existing database bytes unchanged",
     "failed preflight creates no first-start PIN credential file"
   ],
-  "expected_summary": "SUMMARY total=5 passed=5 failed=0",
+  "expected_summary": "SUMMARY total=9 passed=9 failed=0",
   "known_limits": [
+    "quick_check is not a replacement for a full offline integrity_check acceptance",
     "does not replace backup or recovery acceptance",
     "does not prove disk-full or storage-removal recovery",
     "HTTP Basic Auth remains in use",
