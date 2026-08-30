@@ -229,7 +229,48 @@ def main() -> None:
                 pin_file.rmdir()
             stop(proc)
 
-    print('SUMMARY total=10 passed=10 failed=0')
+    with tempfile.TemporaryDirectory(prefix='provoware-first-pin-cleanup-parent-substitution-') as td:
+        root = Path(td)
+        project = root / 'project'
+        proc, pin_file, port = wait_ready(project)
+        settings = pin_file.parent
+        original_settings = project / 'nutzer-einstellungen-original'
+        outside = root / 'outside-settings'
+        outside.mkdir()
+        external_sentinel = outside / pin_file.name
+        external_sentinel.write_text('DO_NOT_DELETE\n', encoding='utf-8')
+        try:
+            pin = read_pin(pin_file)
+            wait_until_profile_rotated(project, proc)
+
+            settings.rename(original_settings)
+            settings.symlink_to(outside, target_is_directory=True)
+            status, body = request_status(port, pin)
+            assert status == 503, (status, body[-1200:])
+            assert 'FIRST_PIN_CLEANUP_FAILED' in body, body[-1200:]
+            print('PASS cleanup rejects a substituted parent symlink instead of authorizing')
+
+            assert external_sentinel.read_text(encoding='utf-8') == 'DO_NOT_DELETE\n'
+            print('PASS substituted parent cannot redirect cleanup to an external same-named file')
+
+            retained_pin = original_settings / pin_file.name
+            assert retained_pin.is_file() and not retained_pin.is_symlink()
+            print('PASS failed parent cleanup leaves the real one-time credential available for safe retry')
+
+            settings.unlink()
+            original_settings.rename(settings)
+            status2, body2 = request_status(port, pin)
+            assert status2 == 200, (status2, body2[-1200:])
+            assert not pin_file.exists() and external_sentinel.read_text(encoding='utf-8') == 'DO_NOT_DELETE\n'
+            print('PASS retry after restoring the trusted parent cleans only the real PIN file')
+        finally:
+            if settings.is_symlink():
+                settings.unlink()
+            if original_settings.exists() and not settings.exists():
+                original_settings.rename(settings)
+            stop(proc)
+
+    print('SUMMARY total=14 passed=14 failed=0')
 
 
 if __name__ == '__main__':
