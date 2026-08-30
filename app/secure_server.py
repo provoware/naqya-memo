@@ -56,15 +56,44 @@ _AUTH_LOCKED_UNTIL: dict[str, float] = {}
 _AUTH_LOCK = threading.Lock()
 
 
-def _write_first_pin_file(pin: str) -> None:
-    """Create the one-time PIN file without following or replacing filesystem entries.
+def _open_first_pin_parent() -> tuple[int | None, Path]:
+    """Open the PIN parent directory without following a substituted symlink.
 
-    The path is predictable by design so the user can find it. Creation is
-    therefore exclusive and, where supported, explicitly refuses a symlink in the
-    final path component. A pre-existing entry fails closed instead of truncating
-    or replacing an unknown target.
+    On platforms with ``dir_fd`` support the returned directory descriptor pins
+    the actual directory object, so replacing the pathname after this check cannot
+    redirect the subsequent PIN-file creation. Platforms without ``dir_fd`` still
+    reject an already-present parent symlink before using the normal path API.
     """
-    FIRST_PIN_FILE.parent.mkdir(parents=True, exist_ok=True)
+    parent = FIRST_PIN_FILE.parent
+    try:
+        parent.mkdir(parents=True, exist_ok=False)
+    except FileExistsError:
+        pass
+
+    try:
+        if parent.is_symlink() or not parent.is_dir():
+            raise RuntimeError('FIRST_PIN_PARENT_UNSAFE')
+    except OSError as exc:
+        raise RuntimeError('FIRST_PIN_PARENT_UNSAFE') from exc
+
+    supports_dir_fd = os.open in getattr(os, 'supports_dir_fd', set())
+    if not supports_dir_fd:
+        return None, parent
+
+    flags = os.O_RDONLY
+    if hasattr(os, 'O_DIRECTORY'):
+        flags |= os.O_DIRECTORY
+    if hasattr(os, 'O_NOFOLLOW'):
+        flags |= os.O_NOFOLLOW
+    try:
+        return os.open(parent, flags), parent
+    except OSError as exc:
+        raise RuntimeError('FIRST_PIN_PARENT_UNSAFE') from exc
+
+
+def _write_first_pin_file(pin: str) -> None:
+    """Create the one-time PIN file without following or replacing filesystem entries."""
+    parent_fd, parent = _open_first_pin_parent()
     text = (
         'PROVOWARE – EINMALIGE ERSTSTART-PIN\n'
         '===================================\n\n'
@@ -76,13 +105,23 @@ def _write_first_pin_file(pin: str) -> None:
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
     if hasattr(os, 'O_NOFOLLOW'):
         flags |= os.O_NOFOLLOW
-    fd = os.open(FIRST_PIN_FILE, flags, 0o600)
     try:
-        os.write(fd, text.encode('utf-8'))
-        os.fsync(fd)
+        if parent_fd is None:
+            fd = os.open(parent / FIRST_PIN_FILE.name, flags, 0o600)
+        else:
+            fd = os.open(FIRST_PIN_FILE.name, flags, 0o600, dir_fd=parent_fd)
+        try:
+            os.write(fd, text.encode('utf-8'))
+            if hasattr(os, 'fchmod'):
+                os.fchmod(fd, 0o600)
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+        if parent_fd is None:
+            os.chmod(parent / FIRST_PIN_FILE.name, 0o600)
     finally:
-        os.close(fd)
-    os.chmod(FIRST_PIN_FILE, 0o600)
+        if parent_fd is not None:
+            os.close(parent_fd)
 
 
 def _remove_first_pin_file() -> None:
