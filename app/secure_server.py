@@ -57,6 +57,13 @@ _AUTH_LOCK = threading.Lock()
 
 
 def _write_first_pin_file(pin: str) -> None:
+    """Create the one-time PIN file without following or replacing filesystem entries.
+
+    The path is predictable by design so the user can find it. Therefore creation
+    must be exclusive and, where supported by the platform, explicitly reject a
+    symlink in the final path component. Any pre-existing entry fails closed rather
+    than truncating or replacing an unknown target.
+    """
     FIRST_PIN_FILE.parent.mkdir(parents=True, exist_ok=True)
     text = (
         'PROVOWARE – EINMALIGE ERSTSTART-PIN\n'
@@ -66,7 +73,10 @@ def _write_first_pin_file(pin: str) -> None:
         'Nach der ersten erfolgreichen Anmeldung löscht PROVOWARE sie automatisch.\n'
         'Bitte die PIN nicht weitergeben.\n'
     )
-    fd = os.open(FIRST_PIN_FILE, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    if hasattr(os, 'O_NOFOLLOW'):
+        flags |= os.O_NOFOLLOW
+    fd = os.open(FIRST_PIN_FILE, flags, 0o600)
     try:
         os.write(fd, text.encode('utf-8'))
         os.fsync(fd)
