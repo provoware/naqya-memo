@@ -112,7 +112,54 @@ def main() -> None:
         assert not pin.exists(), 'integrity failure must not trigger first-start credential creation'
         print('PASS integrity failure creates no first-start credential file')
 
-    print('SUMMARY total=9 passed=9 failed=0')
+    with tempfile.TemporaryDirectory(prefix='provoware-existing-db-foreign-contract-') as td:
+        project = Path(td) / 'project'
+        db = project / 'daten' / 'core.sqlite3'
+        db.parent.mkdir(parents=True)
+        con = sqlite3.connect(db)
+        try:
+            con.execute('CREATE TABLE foreign_app(id INTEGER PRIMARY KEY, note TEXT NOT NULL)')
+            con.execute("INSERT INTO foreign_app(note) VALUES ('healthy but not provoware')")
+            con.commit()
+            assert con.execute('PRAGMA quick_check').fetchone()[0] == 'ok'
+        finally:
+            con.close()
+        original = db.read_bytes()
+
+        rc, out = run_until_exit(project)
+        assert rc != 0, out
+        assert 'EXISTING_PROJECT_DB_PREFLIGHT_CONTRACT_MISMATCH' in out, out[-1600:]
+        print('PASS healthy foreign SQLite database is rejected as non-PROVOWARE contract')
+
+        assert db.read_bytes() == original
+        print('PASS contract-mismatched foreign database remains byte-for-byte unchanged')
+
+        pin = project / 'nutzer-einstellungen' / 'ERSTSTART_PIN_EINMAL.txt'
+        assert not pin.exists(), 'foreign DB contract must not trigger bootstrap credential creation'
+        print('PASS foreign database contract creates no first-start credential file')
+
+    with tempfile.TemporaryDirectory(prefix='provoware-existing-db-partial-profile-') as td:
+        project = Path(td) / 'project'
+        db = project / 'daten' / 'core.sqlite3'
+        db.parent.mkdir(parents=True)
+        con = sqlite3.connect(db)
+        try:
+            con.execute('CREATE TABLE profiles(id TEXT PRIMARY KEY, status TEXT NOT NULL)')
+            con.commit()
+            assert con.execute('PRAGMA quick_check').fetchone()[0] == 'ok'
+        finally:
+            con.close()
+
+        rc, out = run_until_exit(project)
+        assert rc != 0, out
+        assert 'EXISTING_PROJECT_DB_PREFLIGHT_CONTRACT_MISMATCH' in out, out[-1600:]
+        print('PASS incomplete profiles schema is rejected before product bootstrap')
+
+        pin = project / 'nutzer-einstellungen' / 'ERSTSTART_PIN_EINMAL.txt'
+        assert not pin.exists(), 'partial profile schema must not trigger bootstrap credential creation'
+        print('PASS partial profile schema causes no first-start credential mutation')
+
+    print('SUMMARY total=14 passed=14 failed=0')
 
 
 if __name__ == '__main__':
