@@ -39,7 +39,9 @@ run "07 IOS IPHONE X" "$PY" -S "$ROOT/tools/release_gate/gate_07_ios_iphone_x.py
 evaluation_rc=$?
 "$PY" -S "$ROOT/tools/release_gate/attest_release_closure.py"
 provenance_rc=$?
-if [ "$evaluation_rc" -ne 0 ] || [ "$provenance_rc" -ne 0 ]; then
+"$PY" -S "$ROOT/tools/release_gate/verify_release_closure_provenance.py"
+verification_rc=$?
+if [ "$evaluation_rc" -ne 0 ] || [ "$provenance_rc" -ne 0 ] || [ "$verification_rc" -ne 0 ]; then
   exit 2
 fi
 exit 0
