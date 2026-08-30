@@ -82,10 +82,16 @@ def _preflight_existing_project_db() -> None:
         con = sqlite3.connect(f'file:{db}?mode=ro', uri=True, timeout=2)
         try:
             con.execute('PRAGMA query_only=ON')
-            row = con.execute('PRAGMA schema_version').fetchone()
+            try:
+                row = con.execute('PRAGMA schema_version').fetchone()
+            except sqlite3.Error as exc:
+                raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_UNREADABLE') from exc
             if row is None:
                 raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_UNREADABLE')
-            integrity_rows = con.execute('PRAGMA quick_check').fetchall()
+            try:
+                integrity_rows = con.execute('PRAGMA quick_check').fetchall()
+            except sqlite3.Error as exc:
+                raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED') from exc
             if not integrity_rows or any(str(item[0]).strip().lower() != 'ok' for item in integrity_rows):
                 raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED')
         finally:
@@ -93,7 +99,7 @@ def _preflight_existing_project_db() -> None:
     except RuntimeError:
         raise
     except (sqlite3.Error, OSError, TypeError, ValueError) as exc:
-        raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED') from exc
+        raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_UNREADABLE') from exc
 
 
 # These settings are consumed while importing secure_server/base server. Normalize
