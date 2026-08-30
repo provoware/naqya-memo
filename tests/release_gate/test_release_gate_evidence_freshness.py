@@ -92,6 +92,30 @@ def test_invalid_current_source_identity_fails_closed():
     assert reason == "CURRENT_SOURCE_IDENTITY_UNAVAILABLE"
 
 
+def test_matching_source_tree_identity_passes():
+    valid, reason = module.source_tree_identity(SHA_A, SHA_A)
+    assert valid is True
+    assert reason == "SOURCE_TREE_IDENTITY_MATCH"
+
+
+def test_source_tree_identity_change_fails_closed():
+    valid, reason = module.source_tree_identity(SHA_A, SHA_B)
+    assert valid is False
+    assert reason == "SOURCE_TREE_IDENTITY_CHANGED_DURING_GATE_RUN"
+
+
+def test_missing_source_tree_identity_context_fails_closed():
+    valid, reason = module.source_tree_identity(None, SHA_A)
+    assert valid is False
+    assert reason == "SOURCE_TREE_IDENTITY_CONTEXT_MISSING_OR_INVALID"
+
+
+def test_invalid_current_source_tree_identity_fails_closed():
+    valid, reason = module.source_tree_identity(SHA_A, "g" * 40)
+    assert valid is False
+    assert reason == "CURRENT_SOURCE_TREE_IDENTITY_UNAVAILABLE"
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for test in tests:
