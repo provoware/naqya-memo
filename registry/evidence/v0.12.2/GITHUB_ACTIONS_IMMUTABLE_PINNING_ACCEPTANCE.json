@@ -1,0 +1,32 @@
+{
+  "schema": "provoware.release-ci-supply-chain.v1",
+  "status": "PASS",
+  "scope": "quality-workflow-external-actions",
+  "contract": "all external GitHub Actions used by .github/workflows/quality.yml are pinned to immutable 40-character commit SHAs",
+  "actions": [
+    {
+      "action": "actions/checkout",
+      "declared_major": "v4",
+      "commit_sha": "11d5960a326750d5838078e36cf38b85af677262"
+    },
+    {
+      "action": "actions/setup-python",
+      "declared_major": "v5",
+      "commit_sha": "a26af69be951a213d495a4c3e4e4022e16d87065"
+    },
+    {
+      "action": "actions/setup-node",
+      "declared_major": "v4",
+      "commit_sha": "49933ea5288caeca8642d1e84afbd3f7d6820020"
+    }
+  ],
+  "regression_test": "tests/release_gate/test_github_actions_immutable_pins.py",
+  "fail_closed": [
+    "mutable tag or branch ref",
+    "malformed commit ref",
+    "unexpected new external action without explicit contract update",
+    "missing expected external action",
+    "duplicate external action"
+  ],
+  "boundary": "No new workflow permissions, no OIDC, no signing key, no product feature and no promotion of real device/browser gates."
+}
