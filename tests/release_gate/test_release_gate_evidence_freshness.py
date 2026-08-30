@@ -10,6 +10,9 @@ module = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
 spec.loader.exec_module(module)
 
+SHA_A = "a" * 40
+SHA_B = "b" * 40
+
 
 def test_current_run_evidence_passes():
     fresh, reason = module.evidence_freshness(
@@ -63,6 +66,30 @@ def test_naive_timestamp_fails_closed():
     )
     assert fresh is False
     assert reason == "EVIDENCE_TIMESTAMP_MISSING_OR_INVALID"
+
+
+def test_matching_source_identity_passes():
+    valid, reason = module.source_identity(SHA_A, SHA_A)
+    assert valid is True
+    assert reason == "SOURCE_IDENTITY_MATCH"
+
+
+def test_source_identity_change_fails_closed():
+    valid, reason = module.source_identity(SHA_A, SHA_B)
+    assert valid is False
+    assert reason == "SOURCE_IDENTITY_CHANGED_DURING_GATE_RUN"
+
+
+def test_missing_source_identity_context_fails_closed():
+    valid, reason = module.source_identity(None, SHA_A)
+    assert valid is False
+    assert reason == "SOURCE_IDENTITY_CONTEXT_MISSING_OR_INVALID"
+
+
+def test_invalid_current_source_identity_fails_closed():
+    valid, reason = module.source_identity(SHA_A, "not-a-sha")
+    assert valid is False
+    assert reason == "CURRENT_SOURCE_IDENTITY_UNAVAILABLE"
 
 
 if __name__ == "__main__":
