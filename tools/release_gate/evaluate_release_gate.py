@@ -1,5 +1,6 @@
 from pathlib import Path
 import datetime
+import hashlib
 import json
 import os
 import subprocess
@@ -7,6 +8,9 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[2]
 GD = ROOT / 'registry/evidence/v0.12.2/gates'
 OUT = ROOT / 'registry/evidence/v0.12.2/RELEASE_GATE_CLOSURE.json'
+ARTIFACT_MANIFEST = ROOT / 'docs/release/MOBILE_RUNTIME_RELEASE_MANIFEST.json'
+ARTIFACT_ROOT = ROOT / 'dist/v0.12.2'
+REQUIRED_SOURCE_ARTIFACTS = ('android', 'ios')
 GATES = [
     ('01', '8H_SOAK'),
     ('02', 'CHROMIUM'),
@@ -38,6 +42,88 @@ def _is_git_object_id(value):
         return False
     value = value.strip().lower()
     return len(value) == 40 and all(ch in '0123456789abcdef' for ch in value)
+
+
+def _is_sha256(value):
+    if not isinstance(value, str):
+        return False
+    value = value.strip().lower()
+    return len(value) == 64 and all(ch in '0123456789abcdef' for ch in value)
+
+
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with path.open('rb') as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def release_artifact_integrity(manifest_path=ARTIFACT_MANIFEST, artifact_root=ARTIFACT_ROOT):
+    """Verify the exact mobile source artifacts declared by the release manifest.
+
+    This is deliberately manifest-driven: the release gate does not invent new
+    package names and cannot turn unavailable APK/IPA builds into release evidence.
+    Existing source ZIPs must be regular, local files whose byte length and SHA-256
+    exactly match the committed release manifest before GO can be considered.
+    """
+    try:
+        manifest = json.loads(Path(manifest_path).read_text(encoding='utf-8'))
+    except (OSError, ValueError, TypeError) as exc:
+        return False, 'RELEASE_ARTIFACT_MANIFEST_MISSING_OR_INVALID', [{'error': repr(exc)}]
+
+    root = Path(artifact_root)
+    items = []
+    for platform in REQUIRED_SOURCE_ARTIFACTS:
+        entry = manifest.get(platform)
+        if not isinstance(entry, dict):
+            return False, 'RELEASE_ARTIFACT_METADATA_MISSING_OR_INVALID', items + [{'platform': platform}]
+
+        artifact_name = entry.get('source_artifact')
+        declared_sha256 = entry.get('sha256')
+        declared_bytes = entry.get('bytes')
+        if (
+            not isinstance(artifact_name, str)
+            or not artifact_name
+            or artifact_name in {'.', '..'}
+            or '/' in artifact_name
+            or '\\' in artifact_name
+            or Path(artifact_name).name != artifact_name
+        ):
+            return False, 'RELEASE_ARTIFACT_PATH_UNSAFE', items + [{'platform': platform, 'artifact': artifact_name}]
+        if not _is_sha256(declared_sha256) or not isinstance(declared_bytes, int) or isinstance(declared_bytes, bool) or declared_bytes < 0:
+            return False, 'RELEASE_ARTIFACT_METADATA_MISSING_OR_INVALID', items + [{'platform': platform, 'artifact': artifact_name}]
+
+        artifact = root / artifact_name
+        if artifact.is_symlink() or not artifact.is_file():
+            return False, 'RELEASE_ARTIFACT_MISSING_OR_UNSAFE', items + [{'platform': platform, 'artifact': artifact_name}]
+
+        try:
+            actual_bytes = artifact.stat().st_size
+            actual_sha256 = _sha256_file(artifact)
+        except OSError as exc:
+            return False, 'RELEASE_ARTIFACT_UNREADABLE', items + [{'platform': platform, 'artifact': artifact_name, 'error': repr(exc)}]
+
+        item = {
+            'platform': platform,
+            'artifact': str(artifact.relative_to(ROOT)) if artifact.is_relative_to(ROOT) else artifact_name,
+            'declared_bytes': declared_bytes,
+            'actual_bytes': actual_bytes,
+            'declared_sha256': declared_sha256.lower(),
+            'actual_sha256': actual_sha256,
+        }
+        if actual_bytes != declared_bytes:
+            item['status'] = 'FAIL'
+            items.append(item)
+            return False, 'RELEASE_ARTIFACT_SIZE_MISMATCH', items
+        if actual_sha256 != declared_sha256.lower():
+            item['status'] = 'FAIL'
+            items.append(item)
+            return False, 'RELEASE_ARTIFACT_SHA256_MISMATCH', items
+        item['status'] = 'PASS'
+        items.append(item)
+
+    return True, 'RELEASE_ARTIFACT_INTEGRITY_MATCH', items
 
 
 def evidence_freshness(evidence, run_started_at):
@@ -185,7 +271,14 @@ def evaluate_release_gate(
         expected_source_tree_sha,
         current_source_tree_sha,
     )
-    release_allowed = bool(all_pass and source_pass and identity_pass and tree_identity_pass)
+    artifact_integrity_pass, artifact_integrity_reason, artifact_integrity_items = release_artifact_integrity()
+    release_allowed = bool(
+        all_pass
+        and source_pass
+        and identity_pass
+        and tree_identity_pass
+        and artifact_integrity_pass
+    )
 
     out = {
         'version': '0.12.2-MOBILE-RUNTIME-COMPLETION',
@@ -206,6 +299,10 @@ def evaluate_release_gate(
         'source_tree_identity_reason': tree_identity_reason,
         'gate_run_source_tree_sha': expected_source_tree_sha,
         'evaluated_source_tree_sha': current_source_tree_sha,
+        'release_artifact_integrity_required': True,
+        'release_artifact_integrity_status': 'PASS' if artifact_integrity_pass else 'FAIL',
+        'release_artifact_integrity_reason': artifact_integrity_reason,
+        'release_artifact_integrity': artifact_integrity_items,
         'mobile_runtime_source_status': mobile_source.get('status'),
         'required_real_gates': len(GATES),
         'passed_real_gates': pass_count,
