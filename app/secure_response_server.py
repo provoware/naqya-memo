@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+from pathlib import Path
 import sqlite3
 import sys
 
@@ -57,6 +58,41 @@ def _normalize_positive_int_env(name: str, default: int) -> int:
     return value
 
 
+def _preflight_existing_project_db() -> None:
+    """Refuse an existing project database that cannot be safely read as SQLite.
+
+    The lower server may initialize schema and bootstrap data during import. An
+    already-existing but corrupt, unreadable or wrong-type database must therefore
+    never be mistaken for a first-start project. Missing databases remain valid
+    first-start input; valid empty/older SQLite files remain available to the
+    existing bootstrap/migration path.
+    """
+    project = Path(
+        os.environ.get(
+            'PROVOWARE_PROJECT_PATH',
+            str(Path(__file__).resolve().parents[1] / 'runtime' / 'projektordner'),
+        )
+    ).expanduser().resolve()
+    db = project / 'daten' / 'core.sqlite3'
+    if not db.exists():
+        return
+    if not db.is_file():
+        raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_UNSAFE')
+    try:
+        con = sqlite3.connect(f'file:{db}?mode=ro', uri=True, timeout=2)
+        try:
+            con.execute('PRAGMA query_only=ON')
+            row = con.execute('PRAGMA schema_version').fetchone()
+            if row is None:
+                raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_UNREADABLE')
+        finally:
+            con.close()
+    except RuntimeError:
+        raise
+    except (sqlite3.Error, OSError, TypeError, ValueError) as exc:
+        raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_UNREADABLE') from exc
+
+
 # These settings are consumed while importing secure_server/base server. Normalize
 # them first so malformed operator/environment values cannot break the official
 # production path later during authentication or a file upload.
@@ -65,6 +101,10 @@ AUTH_MAX_DISTINCT_FAILURES = _normalize_int_env('PROVOWARE_AUTH_MAX_FAILURES', 5
 AUTH_FAILURE_WINDOW_SECONDS = _normalize_int_env('PROVOWARE_AUTH_FAILURE_WINDOW', 120, 5, 3600)
 AUTH_LOCKOUT_SECONDS = _normalize_int_env('PROVOWARE_AUTH_LOCKOUT_SECONDS', 30, 1, 3600)
 UPLOAD_MAX_BYTES = _normalize_positive_int_env('PROVOWARE_UPLOAD_MAX_BYTES', 512 * 1024 * 1024)
+
+# This must run before importing secure_server/server because those modules may
+# create or mutate the project database as part of their bootstrap contract.
+_preflight_existing_project_db()
 
 import secure_server as secure
 
