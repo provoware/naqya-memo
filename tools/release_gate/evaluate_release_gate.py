@@ -18,6 +18,7 @@ GATES = [
 ]
 FRESHNESS_ENV = 'PROVOWARE_RELEASE_GATE_STARTED_AT'
 SOURCE_SHA_ENV = 'PROVOWARE_RELEASE_GATE_SOURCE_SHA'
+SOURCE_TREE_SHA_ENV = 'PROVOWARE_RELEASE_GATE_SOURCE_TREE_SHA'
 
 
 def _parse_utc(value):
@@ -30,6 +31,13 @@ def _parse_utc(value):
     if parsed.tzinfo is None:
         return None
     return parsed.astimezone(datetime.timezone.utc)
+
+
+def _is_git_object_id(value):
+    if not isinstance(value, str):
+        return False
+    value = value.strip().lower()
+    return len(value) == 40 and all(ch in '0123456789abcdef' for ch in value)
 
 
 def evidence_freshness(evidence, run_started_at):
@@ -47,19 +55,30 @@ def evidence_freshness(evidence, run_started_at):
 
 def source_identity(expected_sha, current_sha):
     """Fail closed unless closure start and evaluation use the exact same Git commit."""
-    if not isinstance(expected_sha, str) or len(expected_sha.strip()) != 40:
+    if not _is_git_object_id(expected_sha):
         return False, 'SOURCE_IDENTITY_CONTEXT_MISSING_OR_INVALID'
-    if not isinstance(current_sha, str) or len(current_sha.strip()) != 40:
+    if not _is_git_object_id(current_sha):
         return False, 'CURRENT_SOURCE_IDENTITY_UNAVAILABLE'
     if expected_sha.strip().lower() != current_sha.strip().lower():
         return False, 'SOURCE_IDENTITY_CHANGED_DURING_GATE_RUN'
     return True, 'SOURCE_IDENTITY_MATCH'
 
 
-def _current_source_sha():
+def source_tree_identity(expected_tree_sha, current_tree_sha):
+    """Fail closed unless closure start and evaluation use the exact same Git tree object."""
+    if not _is_git_object_id(expected_tree_sha):
+        return False, 'SOURCE_TREE_IDENTITY_CONTEXT_MISSING_OR_INVALID'
+    if not _is_git_object_id(current_tree_sha):
+        return False, 'CURRENT_SOURCE_TREE_IDENTITY_UNAVAILABLE'
+    if expected_tree_sha.strip().lower() != current_tree_sha.strip().lower():
+        return False, 'SOURCE_TREE_IDENTITY_CHANGED_DURING_GATE_RUN'
+    return True, 'SOURCE_TREE_IDENTITY_MATCH'
+
+
+def _git_rev_parse(expression):
     try:
         result = subprocess.run(
-            ['git', '-C', str(ROOT), 'rev-parse', '--verify', 'HEAD'],
+            ['git', '-C', str(ROOT), 'rev-parse', '--verify', expression],
             check=True,
             capture_output=True,
             text=True,
@@ -68,7 +87,15 @@ def _current_source_sha():
     except (OSError, subprocess.SubprocessError):
         return None
     value = result.stdout.strip()
-    return value if len(value) == 40 else None
+    return value if _is_git_object_id(value) else None
+
+
+def _current_source_sha():
+    return _git_rev_parse('HEAD')
+
+
+def _current_source_tree_sha():
+    return _git_rev_parse('HEAD^{tree}')
 
 
 def _load_gate(path, fallback_gate, run_started_at):
@@ -86,13 +113,23 @@ def _load_gate(path, fallback_gate, run_started_at):
     return data
 
 
-def evaluate_release_gate(run_started_at=None, expected_source_sha=None, current_source_sha=None):
+def evaluate_release_gate(
+    run_started_at=None,
+    expected_source_sha=None,
+    current_source_sha=None,
+    expected_source_tree_sha=None,
+    current_source_tree_sha=None,
+):
     if run_started_at is None:
         run_started_at = os.environ.get(FRESHNESS_ENV)
     if expected_source_sha is None:
         expected_source_sha = os.environ.get(SOURCE_SHA_ENV)
     if current_source_sha is None:
         current_source_sha = _current_source_sha()
+    if expected_source_tree_sha is None:
+        expected_source_tree_sha = os.environ.get(SOURCE_TREE_SHA_ENV)
+    if current_source_tree_sha is None:
+        current_source_tree_sha = _current_source_tree_sha()
 
     items = []
     for no, name in GATES:
@@ -115,7 +152,11 @@ def evaluate_release_gate(run_started_at=None, expected_source_sha=None, current
     source_pass = mobile_source.get('status') == 'PASS'
     freshness_context_valid = _parse_utc(run_started_at) is not None
     identity_pass, identity_reason = source_identity(expected_source_sha, current_source_sha)
-    release_allowed = bool(all_pass and source_pass and identity_pass)
+    tree_identity_pass, tree_identity_reason = source_tree_identity(
+        expected_source_tree_sha,
+        current_source_tree_sha,
+    )
+    release_allowed = bool(all_pass and source_pass and identity_pass and tree_identity_pass)
 
     out = {
         'version': '0.12.2-MOBILE-RUNTIME-COMPLETION',
@@ -130,6 +171,11 @@ def evaluate_release_gate(run_started_at=None, expected_source_sha=None, current
         'source_identity_reason': identity_reason,
         'gate_run_source_sha': expected_source_sha,
         'evaluated_source_sha': current_source_sha,
+        'source_tree_identity_required': True,
+        'source_tree_identity_status': 'PASS' if tree_identity_pass else 'FAIL',
+        'source_tree_identity_reason': tree_identity_reason,
+        'gate_run_source_tree_sha': expected_source_tree_sha,
+        'evaluated_source_tree_sha': current_source_tree_sha,
         'mobile_runtime_source_status': mobile_source.get('status'),
         'required_real_gates': len(GATES),
         'passed_real_gates': pass_count,
