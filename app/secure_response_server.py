@@ -59,13 +59,13 @@ def _normalize_positive_int_env(name: str, default: int) -> int:
 
 
 def _preflight_existing_project_db() -> None:
-    """Refuse an existing project database that cannot be safely read as SQLite.
+    """Refuse an existing project database that cannot be safely trusted as SQLite.
 
     The lower server may initialize schema and bootstrap data during import. An
     already-existing but corrupt, unreadable or wrong-type database must therefore
     never be mistaken for a first-start project. Missing databases remain valid
-    first-start input; valid empty/older SQLite files remain available to the
-    existing bootstrap/migration path.
+    first-start input; readable databases must additionally pass SQLite's read-only
+    quick integrity check before any product module is imported.
     """
     project = Path(
         os.environ.get(
@@ -85,12 +85,15 @@ def _preflight_existing_project_db() -> None:
             row = con.execute('PRAGMA schema_version').fetchone()
             if row is None:
                 raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_UNREADABLE')
+            integrity_rows = con.execute('PRAGMA quick_check').fetchall()
+            if not integrity_rows or any(str(item[0]).strip().lower() != 'ok' for item in integrity_rows):
+                raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED')
         finally:
             con.close()
     except RuntimeError:
         raise
     except (sqlite3.Error, OSError, TypeError, ValueError) as exc:
-        raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_UNREADABLE') from exc
+        raise RuntimeError('EXISTING_PROJECT_DB_PREFLIGHT_INTEGRITY_FAILED') from exc
 
 
 # These settings are consumed while importing secure_server/base server. Normalize
