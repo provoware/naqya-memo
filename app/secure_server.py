@@ -132,6 +132,10 @@ def _cached(header: str) -> bool:
     now=time.monotonic(); key=_authorization_digest(header)
     revision=_profile_revision()
     if revision is None:
+        # The security state is global. If it cannot be proven, no credential
+        # cached under a previously known state may survive and later resurrect.
+        with _AUTH_LOCK:
+            _AUTH_CACHE.clear()
         return False
     with _AUTH_LOCK:
         entry=_AUTH_CACHE.get(key)
