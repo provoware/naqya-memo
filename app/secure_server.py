@@ -125,18 +125,65 @@ def _write_first_pin_file(pin: str) -> None:
 
 
 def _remove_first_pin_file() -> bool:
-    """Remove the one-time credential and prove the path is absent.
+    """Remove the one-time credential without following a substituted parent.
 
-    Authentication must not become successful while a credential file that was
-    promised to be one-time remains at the known path. Any unlink/stat failure is
-    therefore an operational security failure rather than a condition to ignore.
+    On ``dir_fd`` capable platforms both unlink and the absence proof are relative
+    to one opened, no-follow parent descriptor. A symlinked/unsafe parent therefore
+    fails closed instead of redirecting deletion to an external same-named file.
+    Platforms without descriptor-relative unlink/stat keep a conservative parent
+    symlink/type check before and after the path-based fallback.
     """
+    parent = FIRST_PIN_FILE.parent
     try:
-        FIRST_PIN_FILE.unlink(missing_ok=True)
+        if parent.is_symlink():
+            return False
+        if not parent.exists():
+            return True
+        if not parent.is_dir():
+            return False
     except OSError:
         return False
+
+    supports_dir_fd = getattr(os, 'supports_dir_fd', set())
+    descriptor_relative = os.unlink in supports_dir_fd and os.stat in supports_dir_fd
+    if descriptor_relative:
+        flags = os.O_RDONLY
+        if hasattr(os, 'O_DIRECTORY'):
+            flags |= os.O_DIRECTORY
+        if hasattr(os, 'O_NOFOLLOW'):
+            flags |= os.O_NOFOLLOW
+        try:
+            parent_fd = os.open(parent, flags)
+        except OSError:
+            return False
+        try:
+            try:
+                os.unlink(FIRST_PIN_FILE.name, dir_fd=parent_fd)
+            except FileNotFoundError:
+                pass
+            except OSError:
+                return False
+            try:
+                os.stat(FIRST_PIN_FILE.name, dir_fd=parent_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                return True
+            except (OSError, TypeError, NotImplementedError):
+                return False
+            return False
+        finally:
+            os.close(parent_fd)
+
     try:
-        return not FIRST_PIN_FILE.exists() and not FIRST_PIN_FILE.is_symlink()
+        if parent.is_symlink() or not parent.is_dir():
+            return False
+        FIRST_PIN_FILE.unlink(missing_ok=True)
+        if parent.is_symlink() or not parent.is_dir():
+            return False
+        try:
+            FIRST_PIN_FILE.lstat()
+        except FileNotFoundError:
+            return True
+        return False
     except OSError:
         return False
 
