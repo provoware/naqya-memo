@@ -77,12 +77,14 @@ REQUEST_IO_TIMEOUT_SECONDS = _bounded_int_env(
 )
 
 
-def _profile_security_state_from_readonly_db() -> tuple[int, str] | None:
-    """Read the active profile incarnation on an isolated read-only connection.
+def _profile_security_state_from_readonly_db() -> tuple[int, str, str] | None:
+    """Read the active profile security identity on an isolated read-only connection.
 
     ``revision`` invalidates cached credentials after normal security mutations.
-    ``created_at`` additionally distinguishes a replacement profile that happens
-    to reuse the same profile id and revision. Both values are read from one
+    ``created_at`` distinguishes profile incarnations. ``pin_hash`` additionally
+    binds the cache epoch to the credential material itself, so a replacement or
+    externally repaired profile cannot inherit predecessor trust even if id,
+    revision and timestamp happen to be reused. All values are read from one
     committed SQLite snapshot; any read/shape/conversion error fails closed.
     """
     try:
@@ -90,16 +92,17 @@ def _profile_security_state_from_readonly_db() -> tuple[int, str] | None:
         try:
             con.execute('PRAGMA query_only=ON')
             row = con.execute(
-                "SELECT revision, created_at FROM profiles WHERE id=? AND status='ACTIVE'",
+                "SELECT revision, created_at, pin_hash FROM profiles WHERE id=? AND status='ACTIVE'",
                 (secure.base.PROFILE_ID,),
             ).fetchone()
             if row is None:
                 return None
             revision = int(row[0])
             created_at = str(row[1]).strip()
-            if revision < 1 or not created_at:
+            pin_hash = str(row[2]).strip()
+            if revision < 1 or not created_at or not pin_hash:
                 return None
-            return revision, created_at
+            return revision, created_at, pin_hash
         finally:
             con.close()
     except (sqlite3.Error, OSError, TypeError, ValueError):
@@ -113,20 +116,20 @@ def _profile_revision_from_readonly_db() -> int | None:
 
 
 def _profile_cache_epoch_from_readonly_db() -> int | None:
-    """Return an opaque integer cache epoch bound to revision and incarnation."""
+    """Return an opaque cache epoch bound to revision, incarnation and PIN hash."""
     state = _profile_security_state_from_readonly_db()
     if state is None:
         return None
-    revision, created_at = state
-    material = f'{revision}\x00{created_at}'.encode('utf-8')
+    revision, created_at, pin_hash = state
+    material = f'{revision}\x00{created_at}\x00{pin_hash}'.encode('utf-8')
     return int.from_bytes(hashlib.sha256(material).digest(), 'big')
 
 
 # The official production entrypoint owns the final runtime boundary. Keep the
 # lower auth implementation intact but route its security-state token through an
 # independent read-only lookup. The token preserves the lower layer's integer
-# equality contract while binding cache validity to both revision and profile
-# incarnation, so a replacement profile cannot inherit a predecessor's cache.
+# equality contract while binding cache validity to revision, profile incarnation
+# and current credential material.
 secure._profile_revision = _profile_cache_epoch_from_readonly_db
 
 
