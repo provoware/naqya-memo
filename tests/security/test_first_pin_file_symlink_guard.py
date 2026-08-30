@@ -107,6 +107,25 @@ def main() -> None:
         print('SKIP symlink support unavailable on this platform')
         return
 
+    with tempfile.TemporaryDirectory(prefix='provoware-first-pin-parent-symlink-') as td:
+        root = Path(td)
+        project = root / 'project'
+        project.mkdir()
+        outside = root / 'outside-settings'
+        outside.mkdir()
+        settings = project / 'nutzer-einstellungen'
+        settings.symlink_to(outside, target_is_directory=True)
+
+        rc, out = run_until_exit(project)
+        assert rc != 0, out
+        assert 'FIRST_PIN_PARENT_UNSAFE' in out, out[-1200:]
+        assert settings.is_symlink(), 'parent symlink was replaced instead of rejected'
+        print('PASS symlinked first-PIN parent directory is rejected fail-closed')
+
+        escaped_pin = outside / 'ERSTSTART_PIN_EINMAL.txt'
+        assert not escaped_pin.exists(), 'PIN escaped the project through the parent symlink'
+        print('PASS rejected parent symlink cannot redirect PIN creation outside the project')
+
     with tempfile.TemporaryDirectory(prefix='provoware-first-pin-symlink-') as td:
         root = Path(td)
         project = root / 'project'
@@ -154,6 +173,8 @@ def main() -> None:
             except subprocess.TimeoutExpired:
                 proc.kill()
                 proc.wait(timeout=2)
+
+    print('SUMMARY total=7 passed=7 failed=0')
 
 
 if __name__ == '__main__':
