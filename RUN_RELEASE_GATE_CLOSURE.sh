@@ -11,7 +11,12 @@ if ! PROVOWARE_RELEASE_GATE_SOURCE_SHA="$(git -C "$ROOT" rev-parse --verify HEAD
   echo "RELEASE_GATE_SOURCE_IDENTITY_UNAVAILABLE"
   exit 2
 fi
+if ! PROVOWARE_RELEASE_GATE_SOURCE_TREE_SHA="$(git -C "$ROOT" rev-parse --verify 'HEAD^{tree}' 2>/dev/null)"; then
+  echo "RELEASE_GATE_SOURCE_TREE_IDENTITY_UNAVAILABLE"
+  exit 2
+fi
 export PROVOWARE_RELEASE_GATE_SOURCE_SHA
+export PROVOWARE_RELEASE_GATE_SOURCE_TREE_SHA
 run(){ echo; echo "===== $1 ====="; shift; "$@"; rc=$?; echo "RC=$rc"; return 0; }
 run "01 8H SOAK" "$PY" -S "$ROOT/tools/release_gate/gate_01_8h_soak.py" --hours 8
 run "02 CHROMIUM" "$PY" -S "$ROOT/tools/release_gate/gate_02_chromium.py"
