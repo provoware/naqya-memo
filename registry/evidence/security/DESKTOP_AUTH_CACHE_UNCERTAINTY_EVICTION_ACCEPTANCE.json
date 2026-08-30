@@ -1,0 +1,22 @@
+{
+  "evidence_id": "DESKTOP_AUTH_CACHE_UNCERTAINTY_EVICTION_ACCEPTANCE",
+  "status": "SOURCE_AND_RUNTIME_CONTRACT",
+  "scope": "desktop-auth-cache-fail-closed-uncertainty",
+  "release_gate_promoted": false,
+  "product_feature_added": false,
+  "production_path": "app/secure_server.py via app/secure_response_server.py",
+  "test": "tests/security/test_desktop_auth_cache_uncertainty_eviction.py",
+  "ci_step": "Desktop auth cache uncertainty eviction",
+  "contracts": [
+    "proven security state permits normal auth-cache use",
+    "unknown security state rejects the triggering cache lookup",
+    "unknown global security state clears the complete auth cache",
+    "restored identical security epoch does not resurrect prior cache entries",
+    "credentials may be cached again only after a new successful authentication path"
+  ],
+  "known_limits": [
+    "HTTP Basic Auth remains in use",
+    "no explicit invalidatable desktop logout/lock session exists yet",
+    "real browser, microphone, Android-device and iPhone-device gates remain open"
+  ]
+}
