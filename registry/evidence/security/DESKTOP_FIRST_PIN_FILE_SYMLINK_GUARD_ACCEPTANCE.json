@@ -1,7 +1,7 @@
 {
   "evidence_id": "DESKTOP_FIRST_PIN_FILE_SYMLINK_GUARD_ACCEPTANCE",
   "status": "SOURCE_AND_RUNTIME_CONTRACT",
-  "scope": "desktop-first-pin-file-symlink-and-retry-guard",
+  "scope": "desktop-first-pin-file-parent-symlink-and-retry-guard",
   "release_gate_promoted": false,
   "product_feature_added": false,
   "production_entrypoint": "app/secure_response_server.py",
@@ -9,16 +9,21 @@
   "test": "tests/security/test_first_pin_file_symlink_guard.py",
   "ci_step": "Desktop first-PIN file symlink guard",
   "contracts": [
-    "predictable first-start PIN path is created exclusively rather than truncating an existing entry",
+    "first-start PIN parent path must be a real directory rather than a symlink",
+    "dir_fd-capable platforms create the PIN relative to an opened parent directory descriptor",
+    "parent symlink cannot redirect PIN creation outside the project",
+    "predictable first-start PIN file path is created exclusively rather than truncating an existing entry",
     "O_NOFOLLOW is used when available to reject a symlink in the final path component",
     "symlink target content remains unchanged when bootstrap PIN-file creation is blocked",
     "a persisted active profile still accepting bootstrap PIN 0000 causes secure startup to fail closed",
     "normal first start creates a regular mode-0600 PIN file with a non-default PIN",
     "normal first start rotates the persisted profile away from bootstrap PIN 0000"
   ],
+  "expected_summary": "SUMMARY total=7 passed=7 failed=0",
   "known_limits": [
     "HTTP Basic Auth remains in use",
     "no explicit invalidatable desktop logout/lock session exists yet",
+    "platforms without dir_fd use an explicit parent symlink/type check rather than descriptor-relative creation",
     "real browser, microphone, Android-device and iPhone-device gates remain open"
   ]
 }
