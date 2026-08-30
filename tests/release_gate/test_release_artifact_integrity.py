@@ -10,6 +10,7 @@ SPEC = importlib.util.spec_from_file_location('evaluate_release_gate', MODULE_PA
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 release_artifact_integrity = MODULE.release_artifact_integrity
+release_manifest_identity = MODULE.release_manifest_identity
 
 
 def _sha256(path):
@@ -117,6 +118,31 @@ def test_symlink_artifact_is_rejected():
         assert reason == 'RELEASE_ARTIFACT_MISSING_OR_UNSAFE'
 
 
+def test_release_manifest_identity_match_passes():
+    sha = 'a' * 64
+    passed, reason = release_manifest_identity(sha, sha)
+    assert passed is True
+    assert reason == 'RELEASE_MANIFEST_IDENTITY_MATCH'
+
+
+def test_release_manifest_change_fails_closed():
+    passed, reason = release_manifest_identity('a' * 64, 'b' * 64)
+    assert passed is False
+    assert reason == 'RELEASE_MANIFEST_CHANGED_DURING_GATE_RUN'
+
+
+def test_missing_release_manifest_start_identity_fails_closed():
+    passed, reason = release_manifest_identity(None, 'a' * 64)
+    assert passed is False
+    assert reason == 'RELEASE_MANIFEST_IDENTITY_CONTEXT_MISSING_OR_INVALID'
+
+
+def test_invalid_current_release_manifest_identity_fails_closed():
+    passed, reason = release_manifest_identity('a' * 64, 'not-a-sha256')
+    assert passed is False
+    assert reason == 'CURRENT_RELEASE_MANIFEST_IDENTITY_UNAVAILABLE'
+
+
 def main():
     tests = [
         test_matching_manifest_hashes_and_sizes_pass,
@@ -126,10 +152,14 @@ def main():
         test_path_traversal_is_rejected,
         test_invalid_declared_sha256_is_rejected,
         test_symlink_artifact_is_rejected,
+        test_release_manifest_identity_match_passes,
+        test_release_manifest_change_fails_closed,
+        test_missing_release_manifest_start_identity_fails_closed,
+        test_invalid_current_release_manifest_identity_fails_closed,
     ]
     for test in tests:
         test()
-    print(f'release artifact integrity contracts: {len(tests)}/{len(tests)} PASS')
+    print(f'release artifact/manifest integrity contracts: {len(tests)}/{len(tests)} PASS')
 
 
 if __name__ == '__main__':
