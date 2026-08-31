@@ -100,7 +100,15 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `f4d9b4d89e7f00fa61289669a2aca18caa7bc488`.
 - GitHub-Compare: `status=ahead`, `ahead_by=73`, `behind_by=0`; Merge-Base ist exakt der PR-#87-Head.
 - Quality Run #84 / Workflow-Run-ID `33419290854` auf diesem Rollup-Head: `completed/success`.
-- Ergebnis: PR #87 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
+- Ergebnis: PR #87 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen.
+
+### PR #86
+- PR #86 (`Release gate: bind each gate to canonical evidence file`) wurde als elfter Vorgänger einzeln geprüft.
+- Geprüfter PR-#86-Head: `1d0546cb16affa7e48dc23e716711f16ca677f0f`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `e2bc72bdd52baa092e53037f265feda4faf87daa`.
+- GitHub-Compare: `status=ahead`, `ahead_by=80`, `behind_by=0`; Merge-Base ist exakt der PR-#86-Head.
+- Quality Run #85 / Workflow-Run-ID `33424684304` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #86 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
