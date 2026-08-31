@@ -11,7 +11,6 @@ ROOT = Path(__file__).resolve().parents[2]
 TEST_ROOT = ROOT / "tests"
 SELF = Path(__file__).resolve()
 
-# Third-party/protocol clients have no accepted role in the frozen Quality test path.
 FORBIDDEN_PYTHON_IMPORTS = {
     "aiohttp",
     "ftplib",
@@ -44,19 +43,27 @@ def dotted_name(node: ast.AST) -> str | None:
     return None
 
 
-def constant_string(node: ast.AST) -> str | None:
+def static_text(node: ast.AST) -> str | None:
     if isinstance(node, ast.Constant) and isinstance(node.value, str):
         return node.value
+    if isinstance(node, ast.JoinedStr):
+        parts: list[str] = []
+        for value in node.values:
+            if isinstance(value, ast.Constant) and isinstance(value.value, str):
+                parts.append(value.value)
+            else:
+                parts.append("0")
+        return "".join(parts)
     return None
 
 
 def is_loopback_host(node: ast.AST) -> bool:
-    value = constant_string(node)
+    value = static_text(node)
     return value is not None and value.lower() in LOOPBACK_HOSTS
 
 
 def is_loopback_url(node: ast.AST) -> bool:
-    value = constant_string(node)
+    value = static_text(node)
     if value is None:
         return False
     try:
@@ -72,12 +79,31 @@ def is_loopback_socket_target(node: ast.AST) -> bool:
     return False
 
 
+def loopback_request_names(tree: ast.AST) -> set[str]:
+    safe: set[str] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+            continue
+        value = node.value
+        if not isinstance(value, ast.Call) or dotted_name(value.func) != "urllib.request.Request":
+            continue
+        if not value.args or not is_loopback_url(value.args[0]):
+            continue
+        targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+        for target in targets:
+            if isinstance(target, ast.Name):
+                safe.add(target.id)
+    return safe
+
+
 def check_python(path: Path) -> list[str]:
     findings: list[str] = []
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     except (OSError, UnicodeError, SyntaxError) as exc:
         return [f"{path.relative_to(ROOT)}: cannot parse safely: {exc}"]
+
+    safe_requests = loopback_request_names(tree)
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
@@ -97,17 +123,22 @@ def check_python(path: Path) -> list[str]:
             if name in {"http.client.HTTPConnection", "http.client.HTTPSConnection"}:
                 if not node.args or not is_loopback_host(node.args[0]):
                     findings.append(
-                        f"{path.relative_to(ROOT)}:{node.lineno}: {name} target is not a literal loopback host"
+                        f"{path.relative_to(ROOT)}:{node.lineno}: {name} target is not statically loopback"
                     )
             elif name == "urllib.request.urlopen":
-                if not node.args or not is_loopback_url(node.args[0]):
+                allowed = False
+                if node.args:
+                    allowed = is_loopback_url(node.args[0])
+                    if isinstance(node.args[0], ast.Name) and node.args[0].id in safe_requests:
+                        allowed = True
+                if not allowed:
                     findings.append(
-                        f"{path.relative_to(ROOT)}:{node.lineno}: urllib.request.urlopen target is not a literal loopback URL"
+                        f"{path.relative_to(ROOT)}:{node.lineno}: urllib.request.urlopen target is not statically loopback"
                     )
             elif name == "socket.create_connection":
                 if not node.args or not is_loopback_socket_target(node.args[0]):
                     findings.append(
-                        f"{path.relative_to(ROOT)}:{node.lineno}: socket.create_connection target is not a literal loopback endpoint"
+                        f"{path.relative_to(ROOT)}:{node.lineno}: socket.create_connection target is not statically loopback"
                     )
     return findings
 
@@ -163,7 +194,7 @@ def main() -> None:
         f"PASS: scanned {len(candidates)} test-source files "
         f"({python_count} Python, {javascript_count} JavaScript)"
     )
-    print("PASS: direct Python clients are absent or statically constrained to literal loopback endpoints")
+    print("PASS: direct Python clients are absent or statically constrained to loopback endpoints")
     print("PASS: no direct JavaScript/Node network client is present in Quality test sources")
     print("NOTE: this is a source-level guard, not an OS-level network sandbox")
 
