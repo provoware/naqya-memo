@@ -36,7 +36,15 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `1ba51e2ee5cf48b47b045b69ca33d8cd8b068d78`.
 - GitHub-Compare: `status=ahead`, `ahead_by=26`, `behind_by=0`; Merge-Base ist exakt der PR-#95-Head.
 - Quality Run #75 / Workflow-Run-ID `33372770532` auf diesem Rollup-Head: `completed/success`.
-- Ergebnis: PR #95 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
+- Ergebnis: PR #95 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen.
+
+### PR #94
+- PR #94 (`CI: block implicit dependency installs and downloads`) wurde als dritter Vorgänger einzeln geprüft.
+- Geprüfter PR-#94-Head: `73c52a42603830ecbb4ca5955c2de468a7145e77`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `be7851d80f26b12fbfe1be04f0ba351cbe5b8843`.
+- GitHub-Compare: `status=ahead`, `ahead_by=32`, `behind_by=0`; Merge-Base ist exakt der PR-#94-Head.
+- Quality Run #76 / Workflow-Run-ID `33377272682` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #94 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
