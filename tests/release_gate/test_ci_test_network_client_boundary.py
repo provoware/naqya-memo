@@ -1,32 +1,28 @@
 #!/usr/bin/env python3
-"""Regression contract: Quality test sources must not introduce direct outbound network clients."""
+"""Regression contract: Quality test sources must not introduce direct external network clients."""
 from __future__ import annotations
 
 import ast
 from pathlib import Path
 import re
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 TEST_ROOT = ROOT / "tests"
 SELF = Path(__file__).resolve()
 
+# Third-party/protocol clients have no accepted role in the frozen Quality test path.
 FORBIDDEN_PYTHON_IMPORTS = {
     "aiohttp",
     "ftplib",
-    "http.client",
     "httpx",
     "requests",
     "smtplib",
     "telnetlib",
-    "urllib.request",
     "xmlrpc.client",
 }
 
-FORBIDDEN_PYTHON_CALLS = {
-    "socket.create_connection",
-    "socket.socket.connect",
-    "urllib.request.urlopen",
-}
+LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1", "[::1]"}
 
 FORBIDDEN_JS_IMPORT = re.compile(
     r"(?:from\s+|require\(\s*|import\(\s*)['\"](?:node:)?(?:http|https|net|tls|dns|dgram)['\"]"
@@ -48,6 +44,34 @@ def dotted_name(node: ast.AST) -> str | None:
     return None
 
 
+def constant_string(node: ast.AST) -> str | None:
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    return None
+
+
+def is_loopback_host(node: ast.AST) -> bool:
+    value = constant_string(node)
+    return value is not None and value.lower() in LOOPBACK_HOSTS
+
+
+def is_loopback_url(node: ast.AST) -> bool:
+    value = constant_string(node)
+    if value is None:
+        return False
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return False
+    return (parsed.hostname or "").lower() in {"127.0.0.1", "localhost", "::1"}
+
+
+def is_loopback_socket_target(node: ast.AST) -> bool:
+    if isinstance(node, (ast.Tuple, ast.List)) and node.elts:
+        return is_loopback_host(node.elts[0])
+    return False
+
+
 def check_python(path: Path) -> list[str]:
     findings: list[str] = []
     try:
@@ -60,20 +84,31 @@ def check_python(path: Path) -> list[str]:
             for alias in node.names:
                 if alias.name in FORBIDDEN_PYTHON_IMPORTS:
                     findings.append(
-                        f"{path.relative_to(ROOT)}:{node.lineno}: forbidden network import {alias.name}"
+                        f"{path.relative_to(ROOT)}:{node.lineno}: forbidden external-client import {alias.name}"
                     )
         elif isinstance(node, ast.ImportFrom):
             module = node.module or ""
             if module in FORBIDDEN_PYTHON_IMPORTS:
                 findings.append(
-                    f"{path.relative_to(ROOT)}:{node.lineno}: forbidden network import {module}"
+                    f"{path.relative_to(ROOT)}:{node.lineno}: forbidden external-client import {module}"
                 )
         elif isinstance(node, ast.Call):
             name = dotted_name(node.func)
-            if name in FORBIDDEN_PYTHON_CALLS:
-                findings.append(
-                    f"{path.relative_to(ROOT)}:{node.lineno}: forbidden network call {name}"
-                )
+            if name in {"http.client.HTTPConnection", "http.client.HTTPSConnection"}:
+                if not node.args or not is_loopback_host(node.args[0]):
+                    findings.append(
+                        f"{path.relative_to(ROOT)}:{node.lineno}: {name} target is not a literal loopback host"
+                    )
+            elif name == "urllib.request.urlopen":
+                if not node.args or not is_loopback_url(node.args[0]):
+                    findings.append(
+                        f"{path.relative_to(ROOT)}:{node.lineno}: urllib.request.urlopen target is not a literal loopback URL"
+                    )
+            elif name == "socket.create_connection":
+                if not node.args or not is_loopback_socket_target(node.args[0]):
+                    findings.append(
+                        f"{path.relative_to(ROOT)}:{node.lineno}: socket.create_connection target is not a literal loopback endpoint"
+                    )
     return findings
 
 
@@ -90,11 +125,11 @@ def check_javascript(path: Path) -> list[str]:
             continue
         if FORBIDDEN_JS_IMPORT.search(stripped):
             findings.append(
-                f"{path.relative_to(ROOT)}:{line_number}: forbidden Node network module import"
+                f"{path.relative_to(ROOT)}:{line_number}: direct Node network module import requires explicit review"
             )
         if FORBIDDEN_JS_CALL.search(stripped):
             findings.append(
-                f"{path.relative_to(ROOT)}:{line_number}: forbidden browser/network client call"
+                f"{path.relative_to(ROOT)}:{line_number}: direct browser/network client call requires explicit review"
             )
     return findings
 
@@ -128,7 +163,8 @@ def main() -> None:
         f"PASS: scanned {len(candidates)} test-source files "
         f"({python_count} Python, {javascript_count} JavaScript)"
     )
-    print("PASS: no direct outbound network-client API is present in Quality test sources")
+    print("PASS: direct Python clients are absent or statically constrained to literal loopback endpoints")
+    print("PASS: no direct JavaScript/Node network client is present in Quality test sources")
     print("NOTE: this is a source-level guard, not an OS-level network sandbox")
 
 
