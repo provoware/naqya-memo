@@ -108,7 +108,15 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `e2bc72bdd52baa092e53037f265feda4faf87daa`.
 - GitHub-Compare: `status=ahead`, `ahead_by=80`, `behind_by=0`; Merge-Base ist exakt der PR-#86-Head.
 - Quality Run #85 / Workflow-Run-ID `33424684304` auf diesem Rollup-Head: `completed/success`.
-- Ergebnis: PR #86 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
+- Ergebnis: PR #86 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen.
+
+### PR #85
+- PR #85 (`Release gate: bind closure to exact Git source tree`) wurde als zwölfter Vorgänger einzeln geprüft.
+- Geprüfter PR-#85-Head: `7503a94b4341b8081da32e3dc5ea4cd15482afe6`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `0616b33e903553337772090a23162e902aa64df0`.
+- GitHub-Compare: `status=ahead`, `ahead_by=85`, `behind_by=0`; Merge-Base ist exakt der PR-#85-Head.
+- Quality Run #86 / Workflow-Run-ID `33430133728` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #85 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
