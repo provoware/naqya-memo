@@ -52,7 +52,15 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `643ffcf74302c01eaf14a08e80ea06f35d5a1155`.
 - GitHub-Compare: `status=ahead`, `ahead_by=37`, `behind_by=0`; Merge-Base ist exakt der PR-#93-Head.
 - Quality Run #77 / Workflow-Run-ID `33381796980` auf diesem Rollup-Head: `completed/success`.
-- Ergebnis: PR #93 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
+- Ergebnis: PR #93 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen.
+
+### PR #92
+- PR #92 (`CI: pin external GitHub Actions to immutable commits`) wurde als fünfter Vorgänger einzeln geprüft.
+- Geprüfter PR-#92-Head: `89ee5b130f4916c950727298e12313563391b980`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `6e22f4bbff31a8acd9c7d761d2577460c2622f40`.
+- GitHub-Compare: `status=ahead`, `ahead_by=42`, `behind_by=0`; Merge-Base ist exakt der PR-#92-Head.
+- Quality Run #78 / Workflow-Run-ID `33386696227` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #92 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
