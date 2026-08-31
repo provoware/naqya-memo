@@ -44,7 +44,15 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `be7851d80f26b12fbfe1be04f0ba351cbe5b8843`.
 - GitHub-Compare: `status=ahead`, `ahead_by=32`, `behind_by=0`; Merge-Base ist exakt der PR-#94-Head.
 - Quality Run #76 / Workflow-Run-ID `33377272682` auf diesem Rollup-Head: `completed/success`.
-- Ergebnis: PR #94 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
+- Ergebnis: PR #94 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen.
+
+### PR #93
+- PR #93 (`CI: disable persistent checkout credentials`) wurde als vierter Vorgänger einzeln geprüft.
+- Geprüfter PR-#93-Head: `a4c96829e517c4c1b3b6ab8a252b4e1ddb13e258`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `643ffcf74302c01eaf14a08e80ea06f35d5a1155`.
+- GitHub-Compare: `status=ahead`, `ahead_by=37`, `behind_by=0`; Merge-Base ist exakt der PR-#93-Head.
+- Quality Run #77 / Workflow-Run-ID `33381796980` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #93 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
