@@ -84,7 +84,15 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `2c66bc41cd7153b0b31fe55c46409234f73c1fbc`.
 - GitHub-Compare: `status=ahead`, `ahead_by=59`, `behind_by=0`; Merge-Base ist exakt der PR-#89-Head.
 - Quality Run #81 / Workflow-Run-ID `33404574385` auf diesem Rollup-Head: `completed/success`.
-- Ergebnis: PR #89 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
+- Ergebnis: PR #89 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen.
+
+### PR #88
+- PR #88 (`Release gate: bind closure to exact mobile release manifest`) wurde als neunter Vorgänger einzeln geprüft.
+- Geprüfter PR-#88-Head: `ede3b7dbb3a47347c35ec40ba6f62741d200f8b4`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `39b1bceb4ceb07af41c6fe8e1c175e3604f80f13`.
+- GitHub-Compare: `status=ahead`, `ahead_by=67`, `behind_by=0`; Merge-Base ist exakt der PR-#88-Head.
+- Quality Run #83 / Workflow-Run-ID `33414305714` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #88 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
