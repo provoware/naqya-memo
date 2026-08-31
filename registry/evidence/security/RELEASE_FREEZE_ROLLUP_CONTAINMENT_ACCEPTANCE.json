@@ -1,0 +1,31 @@
+{
+  "schema": "provoware.release-freeze-rollup-containment.v1",
+  "status": "PENDING_CI",
+  "repository": "provoware/naqya-memo",
+  "canonical_pr": 97,
+  "qualified_source_head": "052a396cd7581de1a0a92dbe152c44b9276ea9d3",
+  "initial_rollup_head": "25b9107d7d07f6a6eb8cc86dce93bbe1852ab973",
+  "initial_compare": {
+    "status": "ahead",
+    "ahead_by": 1,
+    "behind_by": 0,
+    "merge_base": "052a396cd7581de1a0a92dbe152c44b9276ea9d3",
+    "changed_paths": [
+      "docs/release_gate/RELEASE_FREEZE_ROLLUP__STATUS-AKTIV.md"
+    ]
+  },
+  "runtime_contract": {
+    "test": "tests/release_gate/test_release_freeze_rollup_containment.py",
+    "requires_full_git_history": true,
+    "qualified_head_must_be_ancestor_of_head": true,
+    "post_qualification_delta_allowlist": [
+      ".github/workflows/quality.yml",
+      "docs/release_gate/RELEASE_FREEZE_ROLLUP__STATUS-AKTIV.md",
+      "registry/evidence/security/RELEASE_FREEZE_ROLLUP_CONTAINMENT_ACCEPTANCE.json",
+      "tests/release_gate/test_release_freeze_rollup_containment.py"
+    ],
+    "rejects_delete_rename_copy": true
+  },
+  "ci": null,
+  "release_effect": "NO_GO_UNCHANGED"
+}
