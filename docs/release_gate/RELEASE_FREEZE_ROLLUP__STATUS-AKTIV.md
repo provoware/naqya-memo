@@ -68,7 +68,15 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `e789f65421f453a8b224c711e3497b7d0700164c`.
 - GitHub-Compare: `status=ahead`, `ahead_by=47`, `behind_by=0`; Merge-Base ist exakt der PR-#91-Head.
 - Quality Run #79 / Workflow-Run-ID `33391510794` auf diesem Rollup-Head: `completed/success`.
-- Ergebnis: PR #91 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
+- Ergebnis: PR #91 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen.
+
+### PR #90
+- PR #90 (`Release gate: verify persisted closure provenance read-only`) wurde als siebter Vorgänger einzeln geprüft.
+- Geprüfter PR-#90-Head: `1731517422b1ddb610a9273bf94e7dca94d625c3`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `9a7e2f31926b0675c2a460f826b77b7bf680e0fb`.
+- GitHub-Compare: `status=ahead`, `ahead_by=53`, `behind_by=0`; Merge-Base ist exakt der PR-#90-Head.
+- Quality Run #80 / Workflow-Run-ID `33397153956` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #90 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
