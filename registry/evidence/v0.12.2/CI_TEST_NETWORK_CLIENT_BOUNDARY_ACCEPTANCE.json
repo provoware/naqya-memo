@@ -6,15 +6,15 @@
   "product_feature_added": false,
   "workflow": ".github/workflows/quality.yml",
   "regression_test": "tests/release_gate/test_ci_test_network_client_boundary.py",
-  "contract": "Quality CI must not silently expand direct network capability in test sources actually referenced by the canonical Quality workflow.",
+  "contract": "Quality CI must not silently expand direct network capability in test sources actually executable in the canonical Quality workflow checkout.",
   "reviewed_network_baseline_files": 16,
   "baseline_groups": ["tests/security", "tests/startup"],
   "baseline_identity": "exact Git blob SHA per reviewed Quality-executed loopback source file",
-  "source_discovery": "test-source paths are derived from .github/workflows/quality.yml; non-executed test harnesses are outside this CI contract",
-  "latest_quality_run": 64,
-  "latest_quality_head": "f00752907783dcd431181cd77631b30696e16463",
-  "latest_result": "CI test-source network client boundary failed; all prior early CI trust-boundary checks passed and subsequent checks were skipped",
-  "acceptance_blocker": "The connector exposes the failing step but not its stdout/stderr, so the remaining classified source cannot be identified safely without weakening the fail-closed contract. The PR remains Draft and this Evidence is not accepted as PASS.",
+  "source_discovery": "test-source paths are derived from .github/workflows/quality.yml; only references resolving to existing files in the current checkout are scanned, because quality.yml intentionally contains version-tolerant optional file references guarded by existence checks",
+  "latest_quality_run": 65,
+  "latest_quality_head": "b1f9bd3ea19b47995dab38836eaffa1dff712f08",
+  "latest_result": "BLOCKED pending CI rerun after correcting source discovery for absent version-tolerant workflow references",
+  "acceptance_blocker": "The concrete false positive was identified: quality.yml contains optional version-tolerant references that are intentionally absent in this checkout, while the first guard treated every textual reference as mandatory and failed before candidate scanning. Commit 9d504993ab0b12179e072448e38616ce9f03db98 now scans only references resolving to executable files, keeps the 16-file reviewed loopback baseline fail-closed, and reports absent optional references as diagnostics. Acceptance remains BLOCKED until the real Quality workflow proves the repaired guard and subsequent gates.",
   "outside_baseline_blocked": [
     "socket import or direct socket calls",
     "http.client import or direct calls",
@@ -33,13 +33,17 @@
   ],
   "fail_closed": [
     "Quality workflow unreadable or contains no test references",
-    "Quality-referenced test source missing",
+    "Quality workflow resolves no existing test sources",
     "reviewed baseline no longer Quality-executed",
     "reviewed baseline Git blob SHA drift",
     "unparseable Python Quality test source",
     "unreadable JavaScript Quality test source",
     "direct network-capable import or call outside reviewed baseline",
     "empty non-baseline Quality source set"
+  ],
+  "diagnostics": [
+    "absent version-tolerant workflow references are reported but not classified as executable sources",
+    "direct network findings include repository-relative file and source line"
   ],
   "limitations": "Source-level expansion guard only. Existing reviewed Quality security/startup tests intentionally use local loopback networking. This does not prove an OS-level egress sandbox and does not fully exclude indirect networking through imported application modules.",
   "boundary": "No product/UI/schema/domain behavior, no sudo, no new workflow permission, no secret, no OIDC, no dependency installation and no browser/device gate promotion."
