@@ -1,6 +1,6 @@
 {
   "schema": "provoware.release-ci-test-network-client-boundary.v1",
-  "status": "BLOCKED",
+  "status": "PASS",
   "scope": "quality-executed-test-source-direct-network-capability-expansion-boundary",
   "feature_freeze": true,
   "product_feature_added": false,
@@ -11,10 +11,18 @@
   "baseline_groups": ["tests/security", "tests/startup"],
   "baseline_identity": "exact Git blob SHA per reviewed Quality-executed loopback source file",
   "source_discovery": "test-source paths are derived from .github/workflows/quality.yml; only references resolving to existing files in the current checkout are scanned, because quality.yml intentionally contains version-tolerant optional file references guarded by existence checks",
-  "latest_quality_run": 65,
-  "latest_quality_head": "b1f9bd3ea19b47995dab38836eaffa1dff712f08",
-  "latest_result": "BLOCKED pending CI rerun after correcting source discovery for absent version-tolerant workflow references",
-  "acceptance_blocker": "The concrete false positive was identified: quality.yml contains optional version-tolerant references that are intentionally absent in this checkout, while the first guard treated every textual reference as mandatory and failed before candidate scanning. Commit 9d504993ab0b12179e072448e38616ce9f03db98 now scans only references resolving to executable files, keeps the 16-file reviewed loopback baseline fail-closed, and reports absent optional references as diagnostics. Acceptance remains BLOCKED until the real Quality workflow proves the repaired guard and subsequent gates.",
+  "latest_quality_run": 67,
+  "latest_quality_head": "a153e183e15880d2da5f9f1fc8983c57c6369e26",
+  "latest_result": "PASS: Quality Run #67 completed successfully on the exact PR head; CI test-source network client boundary and all subsequent Quality gates passed.",
+  "acceptance_blocker": null,
+  "acceptance_proof": {
+    "workflow_run_id": 33356828102,
+    "job": "source-contracts",
+    "job_conclusion": "success",
+    "network_boundary_step": "CI test-source network client boundary",
+    "network_boundary_step_conclusion": "success",
+    "completed_at_utc": "2026-08-31T04:22:35Z"
+  },
   "outside_baseline_blocked": [
     "socket import or direct socket calls",
     "http.client import or direct calls",
