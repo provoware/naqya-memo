@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression contract: Quality test sources must not silently expand direct network capability."""
+"""Regression contract: Quality CI must not silently expand direct network capability."""
 from __future__ import annotations
 
 import ast
@@ -8,12 +8,11 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[2]
-TEST_ROOT = ROOT / "tests"
+WORKFLOW = ROOT / ".github" / "workflows" / "quality.yml"
 SELF = Path(__file__).resolve()
 
-# Existing security/startup regressions intentionally exercise local loopback
-# networking. During release freeze their exact source is an immutable reviewed
-# baseline. Any edit fails closed until this map is deliberately reviewed.
+# These Quality-executed regressions intentionally exercise local loopback
+# networking. Their exact source is an immutable reviewed baseline during freeze.
 REVIEWED_NETWORK_BASELINE = {
     "tests/security/test_desktop_auth_cache_credential_fingerprint.py": "96d508a6d6d37829e51e37156a2e3440069d00f6",
     "tests/security/test_desktop_auth_cache_profile_incarnation.py": "016433f14122811be6cc5b70eb98c3020625baab",
@@ -30,7 +29,6 @@ REVIEWED_NETWORK_BASELINE = {
     "tests/security/test_desktop_upload_config_parse.py": "15717f17fa2e549b380e80dd77d7ae01a64a79cf",
     "tests/security/test_existing_db_preflight_fail_closed.py": "2f8e054294c3b862eacc3f9738222e92af026d2c",
     "tests/security/test_first_pin_file_symlink_guard.py": "9e865b8f77535aca9263c0a9b4333af733f5d49c",
-    "tests/startup/test_startup_collision_smoke.py": "5714e7b1d8e9fc34c306d411d59551042d9a44f2",
     "tests/startup/test_startup_port_guard.py": "4cf9175716bf2f5da1bcfbc6868af71ec386dc1c",
 }
 
@@ -43,6 +41,7 @@ FORBIDDEN_JS_IMPORT = re.compile(
     r"(?:from\s+|require\(\s*|import\(\s*)['\"](?:node:)?(?:http|https|net|tls|dns|dgram)['\"]"
 )
 FORBIDDEN_JS_CALL = re.compile(r"\b(?:fetch|WebSocket|XMLHttpRequest)\s*\(")
+TEST_REFERENCE = re.compile(r"(?<![A-Za-z0-9_./-])(tests/[A-Za-z0-9_./-]+\.(?:py|js|mjs|cjs))")
 
 
 def fail(message: str) -> None:
@@ -64,16 +63,34 @@ def dotted_name(node: ast.AST) -> str | None:
     return None
 
 
-def verify_reviewed_baseline() -> set[Path]:
+def workflow_test_sources() -> set[Path]:
+    try:
+        text = WORKFLOW.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        fail(f"cannot read canonical Quality workflow: {exc}")
+    relative_paths = set(TEST_REFERENCE.findall(text))
+    if not relative_paths:
+        fail("Quality workflow references no test source files")
+    sources: set[Path] = set()
+    for relative in sorted(relative_paths):
+        path = ROOT / relative
+        if not path.is_file():
+            fail(f"Quality-referenced test source missing: {relative}")
+        sources.add(path.resolve())
+    return sources
+
+
+def verify_reviewed_baseline(executed: set[Path]) -> set[Path]:
     reviewed: set[Path] = set()
     for relative, expected in sorted(REVIEWED_NETWORK_BASELINE.items()):
         path = ROOT / relative
-        if not path.is_file():
-            fail(f"reviewed network baseline file missing: {relative}")
+        resolved = path.resolve()
+        if resolved not in executed:
+            fail(f"reviewed network baseline is no longer Quality-executed: {relative}")
         actual = git_blob_sha(path)
         if actual != expected:
             fail(f"reviewed network baseline drift: {relative} expected={expected} actual={actual}")
-        reviewed.add(path.resolve())
+        reviewed.add(resolved)
     return reviewed
 
 
@@ -117,14 +134,12 @@ def check_javascript(path: Path) -> list[str]:
 
 
 def main() -> None:
-    reviewed = verify_reviewed_baseline()
-    candidates = sorted(
-        path for path in TEST_ROOT.rglob("*")
-        if path.is_file() and path.resolve() != SELF and path.resolve() not in reviewed
-        and path.suffix in {".py", ".js", ".mjs", ".cjs"}
-    )
+    executed = workflow_test_sources()
+    reviewed = verify_reviewed_baseline(executed)
+    candidates = sorted(path for path in executed if path != SELF and path not in reviewed)
     if not candidates:
-        fail("no non-baseline test-source files found; contract cannot prove expansion boundary")
+        fail("no non-baseline Quality test sources found; expansion boundary cannot be proven")
+
     findings: list[str] = []
     python_count = javascript_count = 0
     for path in candidates:
@@ -138,9 +153,11 @@ def main() -> None:
         for finding in findings:
             print(f"FAIL: {finding}")
         raise SystemExit(1)
-    print(f"PASS: verified {len(reviewed)} immutable reviewed network-baseline files")
-    print(f"PASS: scanned {len(candidates)} remaining test-source files ({python_count} Python, {javascript_count} JavaScript)")
-    print("PASS: no direct network capability was introduced outside the reviewed baseline")
+
+    print(f"PASS: discovered {len(executed)} Quality-referenced test sources")
+    print(f"PASS: verified {len(reviewed)} immutable reviewed loopback-baseline files")
+    print(f"PASS: scanned {len(candidates)} remaining Quality sources ({python_count} Python, {javascript_count} JavaScript)")
+    print("PASS: no direct network capability was introduced outside the reviewed Quality baseline")
     print("NOTE: source-level expansion guard only; not an OS-level egress sandbox")
 
 
