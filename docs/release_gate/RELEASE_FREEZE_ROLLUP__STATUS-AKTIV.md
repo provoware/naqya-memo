@@ -118,6 +118,14 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Quality Run #86 / Workflow-Run-ID `33430133728` auf diesem Rollup-Head: `completed/success`.
 - Ergebnis: PR #85 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
+### PR #84
+- PR #84 (`Release gate: fail closed on dirty worktree`) wurde als dreizehnter Vorgänger einzeln geprüft.
+- Geprüfter PR-#84-Head: `7f0a381063036f8387ee58187fe40b9d2096df54`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `427278c5b7eacc7cb6e1d7cf08f13a96a9c25baf`.
+- GitHub-Compare: `status=ahead`, `ahead_by=90`, `behind_by=0`; Merge-Base ist exakt der PR-#84-Head.
+- Quality Run #87 / Workflow-Run-ID `33435680921` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #84 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen; er wurde nicht gemergt und Branch/History bleiben erhalten.
+
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
 - vollständige Git-Historie,
