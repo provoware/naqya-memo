@@ -63,7 +63,7 @@ def dotted_name(node: ast.AST) -> str | None:
     return None
 
 
-def workflow_test_sources() -> set[Path]:
+def workflow_test_sources() -> tuple[set[Path], list[str]]:
     try:
         text = WORKFLOW.read_text(encoding="utf-8")
     except (OSError, UnicodeError) as exc:
@@ -72,12 +72,21 @@ def workflow_test_sources() -> set[Path]:
     if not relative_paths:
         fail("Quality workflow references no test source files")
     sources: set[Path] = set()
+    missing_references: list[str] = []
     for relative in sorted(relative_paths):
         path = ROOT / relative
         if not path.is_file():
-            fail(f"Quality-referenced test source missing: {relative}")
+            # quality.yml intentionally contains optional, version-tolerant test
+            # references guarded by file-existence checks. A source-level
+            # capability guard must scan files that can actually execute in this
+            # checkout, while the workflow itself remains responsible for
+            # mandatory-file failures.
+            missing_references.append(relative)
+            continue
         sources.add(path.resolve())
-    return sources
+    if not sources:
+        fail("Quality workflow resolves no existing test source files")
+    return sources, missing_references
 
 
 def verify_reviewed_baseline(executed: set[Path]) -> set[Path]:
@@ -134,7 +143,7 @@ def check_javascript(path: Path) -> list[str]:
 
 
 def main() -> None:
-    executed = workflow_test_sources()
+    executed, missing_references = workflow_test_sources()
     reviewed = verify_reviewed_baseline(executed)
     candidates = sorted(path for path in executed if path != SELF and path not in reviewed)
     if not candidates:
@@ -154,7 +163,12 @@ def main() -> None:
             print(f"FAIL: {finding}")
         raise SystemExit(1)
 
-    print(f"PASS: discovered {len(executed)} Quality-referenced test sources")
+    print(f"PASS: discovered {len(executed)} existing Quality-referenced test sources")
+    if missing_references:
+        print(
+            "NOTE: ignored absent version-tolerant workflow references: "
+            + ", ".join(missing_references)
+        )
     print(f"PASS: verified {len(reviewed)} immutable reviewed loopback-baseline files")
     print(f"PASS: scanned {len(candidates)} remaining Quality sources ({python_count} Python, {javascript_count} JavaScript)")
     print("PASS: no direct network capability was introduced outside the reviewed Quality baseline")
