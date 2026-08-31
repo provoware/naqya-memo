@@ -1,0 +1,43 @@
+{
+  "schema": "provoware.release-ci-test-network-client-boundary.v1",
+  "status": "PASS",
+  "scope": "quality-test-source-direct-network-client-boundary",
+  "feature_freeze": true,
+  "product_feature_added": false,
+  "workflow": ".github/workflows/quality.yml",
+  "regression_test": "tests/release_gate/test_ci_test_network_client_boundary.py",
+  "contract": "Repository test sources executed by Quality CI must not silently introduce direct outbound network-client APIs without an explicit contract review.",
+  "python_blocked": [
+    "requests",
+    "httpx",
+    "aiohttp",
+    "urllib.request",
+    "http.client",
+    "ftplib",
+    "smtplib",
+    "telnetlib",
+    "xmlrpc.client",
+    "socket.create_connection",
+    "socket.socket.connect"
+  ],
+  "javascript_blocked": [
+    "node:http",
+    "node:https",
+    "node:net",
+    "node:tls",
+    "node:dns",
+    "node:dgram",
+    "fetch",
+    "WebSocket",
+    "XMLHttpRequest"
+  ],
+  "fail_closed": [
+    "unparseable Python test source",
+    "unreadable JavaScript test source",
+    "direct blocked network-client import",
+    "direct blocked network-client call",
+    "empty test-source scan set"
+  ],
+  "limitations": "Source-level guard only. It does not prove an OS-level egress sandbox and does not fully exclude indirect networking through imported application modules.",
+  "boundary": "No product/UI/schema/domain behavior, no sudo, no new workflow permission, no secret, no OIDC, no dependency installation and no browser/device gate promotion."
+}
