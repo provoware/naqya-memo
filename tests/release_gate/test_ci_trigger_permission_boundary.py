@@ -61,7 +61,12 @@ def _top_level_block(text: str, key: str) -> str | None:
         if lines[index].strip() and not lines[index].startswith((" ", "\t")):
             end = index
             break
-    return "".join(lines[start:end]).replace("\r\n", "\n")
+
+    # A blank separator line before the next top-level YAML key is formatting,
+    # not part of the semantic block. Normalize CRLF and trailing separators so
+    # the contract fails only on actual trigger/permission drift.
+    block = "".join(lines[start:end]).replace("\r\n", "\n")
+    return block.rstrip("\n") + "\n"
 
 
 def main() -> None:
