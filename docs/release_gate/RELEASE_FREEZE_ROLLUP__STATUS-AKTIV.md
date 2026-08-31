@@ -7,7 +7,7 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Rollup-Start-Head: `052a396cd7581de1a0a92dbe152c44b9276ea9d3`
 - Ausgangsbasis `main`: `de9f25f54bfbcecb008614402a0eb77745dcc1e7`
 - Abstand zur Basis beim Rollup-Start: 205 Commits voraus, 0 Commits zurück
-- Letzter vollständig erfolgreicher Quality-Nachweis des gebundenen Ausgangsstands: Run #68, Workflow-Run-ID `33360352303`, Ergebnis `success`
+- Letzter vollständig erfolgreicher Quality-Nachweis des gebundene Ausgangsstands: Run #68, Workflow-Run-ID `33360352303`, Ergebnis `success`
 - Initialer Rollup-Head: `25b9107d7d07f6a6eb8cc86dce93bbe1852ab973`
 - GitHub-Compare-Nachweis: Ausgangsstand ist Merge-Base des initialen Rollup-Heads; `ahead_by=1`, `behind_by=0`; der einzige damalige Delta-Pfad war diese Rollup-Dokumentation.
 
@@ -60,7 +60,15 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `6e22f4bbff31a8acd9c7d761d2577460c2622f40`.
 - GitHub-Compare: `status=ahead`, `ahead_by=42`, `behind_by=0`; Merge-Base ist exakt der PR-#92-Head.
 - Quality Run #78 / Workflow-Run-ID `33386696227` auf diesem Rollup-Head: `completed/success`.
-- Ergebnis: PR #92 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
+- Ergebnis: PR #92 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen.
+
+### PR #91
+- PR #91 (`Release gate: enforce provenance verifier in official closure path`) wurde als sechster Vorgänger einzeln geprüft.
+- Geprüfter PR-#91-Head: `e55b49a16da84fdd80eaf1d788ac9be5b6bfe164`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `e789f65421f453a8b224c711e3497b7d0700164c`.
+- GitHub-Compare: `status=ahead`, `ahead_by=47`, `behind_by=0`; Merge-Base ist exakt der PR-#91-Head.
+- Quality Run #79 / Workflow-Run-ID `33391510794` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #91 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
