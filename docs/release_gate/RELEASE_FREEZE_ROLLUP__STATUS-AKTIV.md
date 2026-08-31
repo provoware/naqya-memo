@@ -92,7 +92,15 @@ Dieser Integrationszweig konsolidiert den bereits einzeln gehärteten und geprü
 - Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `39b1bceb4ceb07af41c6fe8e1c175e3604f80f13`.
 - GitHub-Compare: `status=ahead`, `ahead_by=67`, `behind_by=0`; Merge-Base ist exakt der PR-#88-Head.
 - Quality Run #83 / Workflow-Run-ID `33414305714` auf diesem Rollup-Head: `completed/success`.
-- Ergebnis: PR #88 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
+- Ergebnis: PR #88 ist vollständig im kanonischen Rollup enthalten und wurde als `superseded by #97` geschlossen.
+
+### PR #87
+- PR #87 (`Release gate: bind declared mobile source artifacts by SHA-256`) wurde als zehnter Vorgänger einzeln geprüft.
+- Geprüfter PR-#87-Head: `75a7b85cac29d7e9b5beeaa981892b085b4d836c`.
+- Geprüfter Rollup-Head vor dieser Dokumentationsaktualisierung: `f4d9b4d89e7f00fa61289669a2aca18caa7bc488`.
+- GitHub-Compare: `status=ahead`, `ahead_by=73`, `behind_by=0`; Merge-Base ist exakt der PR-#87-Head.
+- Quality Run #84 / Workflow-Run-ID `33419290854` auf diesem Rollup-Head: `completed/success`.
+- Ergebnis: PR #87 ist vollständig im kanonischen Rollup enthalten und darf als `superseded by #97` geschlossen werden. Kein weiterer Vorgänger-PR wird durch diesen Schritt freigegeben oder geschlossen.
 
 ## Automatischer Nachweis
 `tests/release_gate/test_release_freeze_rollup_containment.py` prüft im Quality-Lauf:
