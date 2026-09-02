@@ -38,6 +38,11 @@ def test_technical_details_are_drawer_not_footer_overlay():
     final=C[C.index("V0.12.2.5 REAL VIEWPORT UX FIX"):]
     assert ".tech-drawer{" in final and "position:fixed" in final
 
+def test_technical_toggle_opens_drawer():
+    assert "function setTechOpen(open)" in J
+    assert "$('devToggle').onclick=()=>setTechOpen(true)" in J
+    assert "$('devToggle').setAttribute('aria-expanded',String(open))" in J
+
 def test_right_info_panel_is_compact_and_collapsible():
     assert H.count('class="panel-card')==1
     assert 'id="sideToggle"' in H
