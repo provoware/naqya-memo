@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 QUALIFIED_SOURCE_HEAD = "052a396cd7581de1a0a92dbe152c44b9276ea9d3"
 ALLOWED_POST_QUALIFICATION_PATHS = {
+    ".editorconfig",
     ".gitattributes",
     ".gitignore",
     ".github/workflows/quality.yml",
