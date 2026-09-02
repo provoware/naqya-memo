@@ -69,6 +69,15 @@ def test_scrim_coordinates_all_drawers():
     assert "navOpen" in J and "sideOverlay" in J and "techOpen" in J
     assert "scrim.onclick" in J
 
+def test_xl_side_overlay_scrim_and_escape_close_contract():
+    """XL/high-magnification uses an overlay even above 1280px; both close paths must honor it."""
+    close_block=J[J.index("scrim.onclick"):J.index("function clamp")]
+    xl_close=re.compile(
+        r"if\s*\(\s*innerWidth\s*<\s*1280\s*\|\|\s*root\.dataset\.fontTier\s*===\s*'xl'\s*\)\s*setSideVisible\(false,false\)"
+    )
+    matches=xl_close.findall(close_block)
+    assert len(matches)==2, "Scrim und Escape müssen den XL-Overlay-Info-Bereich auch oberhalb 1280px schließen"
+
 def test_removed_sidebar_fields_are_guarded():
     assert "if($('integrity'))" in J
     assert "$('layoutMode').textContent" not in J
