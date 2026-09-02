@@ -7,6 +7,7 @@
     "branch": "review/v0.12.2.5-real-viewport-20260829",
     "pr": 58,
     "head_before_evidence": "1ec9d1a952032a005f90ed4ad37588d1c149cfb9",
+    "head_verified_2026_09_02": "be845d36cd0a03c2581d768db1099dc6065580d0",
     "reference_app_blob": "d3af0e1319cc17bd246152d68f7a414c9e949116"
   },
   "finding": {
@@ -33,13 +34,14 @@
     ]
   },
   "execution_blocker": {
-    "reason": "Available repository write action replaces an existing UTF-8 file as a complete payload; no atomic patch/hunk write is available in this run.",
-    "risk": "Rewriting the large app.js payload only to change two guards creates avoidable accidental-diff risk under release freeze.",
-    "decision": "Fail closed: do not rewrite product assets until an atomic patch-capable checkout/write path is available."
+    "reason": "The connector can create an atomic Git tree/commit, but it cannot apply a verified hunk transformation to an existing blob. Existing-file writes still require supplying complete replacement content.",
+    "risk": "Reconstructing and replacing the large app.js payload merely to alter two guards creates avoidable accidental-diff risk under release freeze, even if the resulting commit itself is atomic.",
+    "decision": "Fail closed: do not rewrite product assets until a patch-capable checkout/write path can transform the current blob and prove an exact two-guard diff."
   },
   "release_gate": "NO-GO",
   "release_condition": [
-    "Apply exactly two guard changes atomically",
+    "Apply exactly two guard changes against the current app.js blob",
+    "Prove the resulting diff contains no unrelated product change",
     "Run test_v01225_real_viewport_ux.py successfully",
     "Verify JavaScript syntax",
     "Verify reference/Android/iOS app.js parity",
