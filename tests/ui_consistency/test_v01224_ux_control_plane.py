@@ -40,12 +40,13 @@ def test_accessibility_and_motion_contract():
     assert ".workspace-toolbar{" in C and "position:sticky" in C
 
 def test_repo_control_plane_present():
-    for rel in (
+    required=(
         ".gitignore",".gitattributes",".editorconfig",
         ".github/workflows/quality.yml","CONTRIBUTING.md","LAIENANLEITUNG.md",
         "docs/history/GITHUB_MAIN_0.5.1_E7_PRESERVATION.md",
-    ):
-        assert (ROOT/rel).exists(), rel
+    )
+    missing=[rel for rel in required if not (ROOT/rel).exists()]
+    assert not missing, f"missing repo control-plane files: {', '.join(missing)}"
 
 def test_workflow_does_not_fake_real_release_gates():
     w=(ROOT/".github/workflows/quality.yml").read_text(encoding="utf-8")
