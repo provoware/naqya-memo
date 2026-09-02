@@ -270,6 +270,7 @@ function setTechOpen(open){
  document.body.classList.toggle('tech-open',open);
  updateScrim();
 }
+$('devToggle').onclick=()=>setTechOpen(true);
 $('devCloseBtn').onclick=()=>setTechOpen(false);
 
 scrim.onclick=()=>{
