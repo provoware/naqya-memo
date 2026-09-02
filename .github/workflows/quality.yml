@@ -66,20 +66,27 @@ jobs:
           if [ -f ui/reference_web/mobile/mobile_bootstrap.js ]; then node --check ui/reference_web/mobile/mobile_bootstrap.js; fi
           if [ -f ui/reference_web/mobile/mobile_acceptance.js ]; then node --check ui/reference_web/mobile/mobile_acceptance.js; fi
 
-      - name: UI contracts
+      - name: UI contracts (required, fail-closed)
         run: |
-          for test in \
-            tests/ui_consistency/test_v01222_static_ui_consistency.py \
-            tests/ui_consistency/test_v01223_simplification_guidance.py \
-            tests/ui_consistency/test_v01224_ux_control_plane.py \
+          tests=(
+            tests/ui_consistency/test_v01222_static_ui_consistency.py
+            tests/ui_consistency/test_v01223_simplification_guidance.py
+            tests/ui_consistency/test_v01224_ux_control_plane.py
             tests/ui_consistency/test_v01225_real_viewport_ux.py
-          do
-            if [ -f "$test" ]; then
-              echo "RUN $test"
-              python -S "$test"
-            else
-              echo "SKIP $test (not present in this version)"
+          )
+          missing=0
+          for test in "${tests[@]}"; do
+            if [ ! -f "$test" ]; then
+              echo "MISSING REQUIRED UI CONTRACT: $test"
+              missing=1
             fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+          for test in "${tests[@]}"; do
+            echo "RUN $test"
+            python -S "$test"
           done
 
       - name: Startup contracts
@@ -186,5 +193,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates immutable GitHub Action identities, non-persistent checkout credentials, a no-implicit-dependency-install/download boundary, a minimal trigger/permission trust boundary, a test-source direct-network-client boundary, release-freeze rollup containment, source contracts and release-gate evidence freshness/clean-worktree/artifact-integrity/closure-provenance/provenance-verification/verifier-enforcement, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
+          echo "CI validates immutable GitHub Action identities, non-persistent checkout credentials, a no-implicit-dependency-install/download boundary, a minimal trigger/permission trust boundary, a test-source direct-network-client boundary, release-freeze rollup containment, required fail-closed UI-contract presence, source contracts and release-gate evidence freshness/clean-worktree/artifact-integrity/closure-provenance/provenance-verification/verifier-enforcement, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green, and the test-source guard is not an OS-level network sandbox."
