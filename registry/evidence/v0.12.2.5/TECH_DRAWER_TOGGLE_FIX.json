@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "evidence_type": "release_freeze_ux_fix",
+  "scope": "technik_drawer_toggle",
+  "status": "IMPLEMENTED_STATIC_VERIFIED_CI_PENDING",
+  "code_commit": "c05c83773b797174b837bd755ede7d391d3a30ee",
+  "bundle_sync_commit": "02981e0c3439d43fef21663d8facf9aca5a1f4ee",
+  "regression_contract": "tests/ui_consistency/test_v01225_real_viewport_ux.py::test_technical_toggle_opens_drawer",
+  "verified_contract": {
+    "setTechOpen_exists": true,
+    "devToggle_opens_drawer": true,
+    "aria_expanded_tracks_state": true
+  },
+  "webasset_parity": {
+    "ui/reference_web/app.js": "d3af0e1319cc17bd246152d68f7a414c9e949116",
+    "platform/android/app/src/main/assets/www/app.js": "d3af0e1319cc17bd246152d68f7a414c9e949116",
+    "platform/ios/WebAssets/app.js": "d3af0e1319cc17bd246152d68f7a414c9e949116",
+    "status": "PASS"
+  },
+  "ci": {
+    "status": "PENDING",
+    "note": "No pull-request workflow run was registered for the new head at evidence creation time; do not treat this file as CI success."
+  },
+  "release_decision": "NO_GO",
+  "remaining_known_blocker": "XL/200%-Modus: Scrim/Escape schließt die Info-Schublade auf breiten Displays nicht zuverlässig."
+}
