@@ -84,10 +84,17 @@ jobs:
           if [ "$missing" -ne 0 ]; then
             exit 1
           fi
+          failed=0
           for test in "${tests[@]}"; do
             echo "RUN $test"
-            python -S "$test"
+            if ! python -S "$test"; then
+              echo "FAILED UI CONTRACT: $test"
+              failed=1
+            fi
           done
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
 
       - name: Startup contracts
         run: |
