@@ -11,6 +11,8 @@ ALLOWED_POST_QUALIFICATION_PATHS = {
     "docs/release_gate/RELEASE_FREEZE_ROLLUP__STATUS-AKTIV.md",
     "registry/evidence/security/RELEASE_FREEZE_ROLLUP_CONTAINMENT_ACCEPTANCE.json",
     "tests/release_gate/test_release_freeze_rollup_containment.py",
+    "tests/ui_consistency/test_v01224_ux_control_plane.py",
+    "tests/ui_consistency/test_v01225_real_viewport_ux.py",
 }
 
 
