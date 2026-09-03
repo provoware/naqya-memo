@@ -3,7 +3,7 @@
   "product_id": "naqya-memo",
   "product_name": "OI - PROVOWARE - IO Multi-Memo 2026 / OI - Naqya - IO",
   "product_version": "0.12.2.5",
-  "product_revision": "LINEAGE-RECOVERY-001",
+  "product_revision": "LINEAGE-RECOVERY-001+XL-SCRIM-001",
   "ui_contract_version": "0.12.2.5",
   "acceptance": {
     "track": "PRE-AUTOSAVE-R3",
@@ -22,27 +22,34 @@
       "id": "V0.12.2.2",
       "path": "tests/ui_consistency/test_v01222_static_ui_consistency.py",
       "blob_sha": "b2ff2d47c1464ff812e0dc5db78317d8d7c993a9",
-      "qualified_result": "13/13"
+      "current_required_result": "13/13"
     },
     {
       "id": "V0.12.2.3",
       "path": "tests/ui_consistency/test_v01223_simplification_guidance.py",
       "blob_sha": "ba79b845ecc17e81c4a790583a2015b9473cd097",
-      "qualified_result": "7/7"
+      "current_required_result": "7/7"
     },
     {
       "id": "V0.12.2.4",
       "path": "tests/ui_consistency/test_v01224_ux_control_plane.py",
       "blob_sha": "f7edd4f17a7ff967a00baa221fbbf150e9d66d55",
-      "qualified_result": "9/9",
+      "current_required_result": "9/9",
       "superseded_contract_note": "V0.12.2.5 moves technical details from footer to drawer; this is the qualified consolidated PR #58 contract."
     },
     {
       "id": "V0.12.2.5",
       "path": "tests/ui_consistency/test_v01225_real_viewport_ux.py",
       "blob_sha": "a927ef6e10f889350dd151295ffd1cb4d9dd0ddd",
-      "qualified_result": "13/14",
-      "known_blocker": "XL_SCRIM_ESCAPE_CLOSE"
+      "historical_source_result": "13/14",
+      "current_required_result": "14/14",
+      "historical_known_blocker": "XL_SCRIM_ESCAPE_CLOSE",
+      "resolution": {
+        "status": "RESOLVED",
+        "slice": "XL-SCRIM-001",
+        "resolved_app_blob_sha": "b566373cd42605a7397692f199077701d0b3c276",
+        "scope": "exactly two close guards in reference, Android and iOS app.js"
+      }
     }
   ],
   "release_status": "NO-GO"
