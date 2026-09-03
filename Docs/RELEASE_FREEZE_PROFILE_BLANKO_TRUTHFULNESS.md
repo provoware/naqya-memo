@@ -12,6 +12,8 @@ Der Core-Startvertrag kann bereits `BLANCO` mit `profile_id = null` modellieren.
 
 Eine rein optische Änderung der Profilanzeige auf „Blanco“ wäre deshalb sachlich falsch und könnte Nutzer über den tatsächlich aktiven Datenkontext täuschen.
 
+Zusätzlich ist der geschützte Desktop-Start noch an ein konkretes aktives Profil gekoppelt: `app/secure_server.py` verwendet `base.PROFILE_ID` für PIN-Prüfung, Erststart-Härtung und Sicherheitszustand. Ein Entfernen des Server-Fallbacks ohne vorherige Auth-Entkopplung könnte daher den Desktop-Zugriff beschädigen oder einen inkonsistenten Sicherheitszustand erzeugen.
+
 ## Nutzerseitiger Zwischenzustand
 
 Bis der echte Runtime-Blanco-Vertrag umgesetzt ist, zeigt die Tool-Info beim Laden nicht mehr nur ein bedeutungsloses Auslassungszeichen. Das sichtbare Profilelement meldet jetzt **„wird geprüft …“**.
@@ -29,12 +31,15 @@ Damit wird bewusst **nicht** vorgetäuscht, dass bereits ein Blanco-Profil aktiv
 - Der initiale Profilstatus muss verständlich als laufende Prüfung erkennbar sein.
 - Das Profilelement muss als höflicher, atomarer Live-Status für Screenreader ausgezeichnet bleiben.
 - Solange der historische Fallback noch vorhanden ist, darf die Oberfläche keinen neutralen Blanco-Zustand behaupten.
+- Sobald `app/server.py` keinen impliziten Profilfallback mehr besitzt, muss `app/secure_server.py` bereits von der zwingenden `base.PROFILE_ID`-Kopplung für PIN-/Erststart-Authentifizierung entkoppelt sein. Andernfalls blockiert das Gate den Übergang.
+
+Damit ist die Reihenfolge des späteren Runtime-Umbaus technisch abgesichert: **zuerst Auth-Vertrag profiloptional machen, danach realen Server auf Blanco umstellen**.
 
 ## CI-Durchsetzung
 
 Der Vertrag wird zusätzlich durch `.github/workflows/profile-blanco-truthfulness.yml` bei Pull Requests und Pushes auf `main` automatisch ausgeführt. Der Workflow verwendet ausschließlich fest auf Commit-SHAs gepinnte GitHub Actions, persistiert keine Checkout-Zugangsdaten und führt genau den vorhandenen Truthfulness-Test aus.
 
-Damit ist der Test nicht mehr nur vorhandene lokale Evidence, sondern ein eigenständiges fail-closed CI-Gate gegen spätere UI-/Backend-Drift.
+Damit ist der Test nicht mehr nur vorhandene lokale Evidence, sondern ein eigenständiges fail-closed CI-Gate gegen spätere UI-/Backend-/Auth-Drift.
 
 ## Freigabebedingung für den späteren Runtime-Blanco-Slice
 
@@ -42,12 +47,13 @@ Erst wenn der Server nachweisbar:
 
 1. ohne ausdrückliche Profilauswahl kein bestehendes Profil aktiviert,
 2. ohne ausdrückliche Profilerstellung kein Standardprofil erzeugt,
-3. im Blanco-Zustand keine profilgebundenen Lese- oder Schreibzugriffe auf fremde Daten zulässt,
-4. `/api/state` den neutralen Zustand konsistent ausgibt,
-5. Auswahl oder Neuanlage anschließend eindeutig in genau dieses Profil wechselt,
+3. der Desktop-PIN-/Erststart-Schutz auch ohne bereits aktives `PROFILE_ID` einen definierten fail-closed Zustand besitzt,
+4. im Blanco-Zustand keine profilgebundenen Lese- oder Schreibzugriffe auf fremde Daten zulässt,
+5. `/api/state` den neutralen Zustand konsistent ausgibt,
+6. Auswahl oder Neuanlage anschließend eindeutig in genau dieses Profil wechselt,
 
 kann die sichtbare Profilanzeige auf `Blanco` umgestellt und dieser Übergang mit Runtime-/Browser-Evidence qualifiziert werden.
 
 ## Release-Status
 
-Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der Truthfulness-Test, seine CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
+Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der Truthfulness-Test, das Profil/Auth-Kopplungs-Gate, seine CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
