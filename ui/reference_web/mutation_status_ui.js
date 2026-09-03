@@ -45,6 +45,23 @@ function bodyDescriptor(body){
 function requestKey(meta,init){
  return `${meta.method}|${meta.href}|${bodyDescriptor(init?.body)}`;
 }
+function mutationLocked(){
+ return document.documentElement.dataset.mutationMode==='degraded';
+}
+function blockedMutation(meta){
+ const payload={
+  ok:false,
+  code:'MUTATION_DEGRADED_MODE',
+  message:'Schreibzugriffe sind nach einem internen Fehler vorsorglich gesperrt.',
+  recovery_hint:'Lesen bleibt möglich. Bitte aktuellen Stand prüfen und das Tool anschließend über SCHNELLSTART.sh sauber neu starten.',
+  degraded_mode:true
+ };
+ window.dispatchEvent(new CustomEvent('provoware:api-error',{detail:{payload,status:503,path:meta.path,method:meta.method}}));
+ return Promise.resolve(new Response(JSON.stringify(payload),{
+  status:503,
+  headers:{'content-type':'application/json','x-provoware-client-block':'read-only'}
+ }));
+}
 function rememberTrigger(trigger){
  if(!trigger)return;
  lastTrigger=trigger;
@@ -124,6 +141,7 @@ ensureStyles();
 window.fetch=function(input,init){
  const meta=localApiMeta(input,init);
  if(!meta||meta.method!=='POST')return previousFetch(input,init);
+ if(mutationLocked())return blockedMutation(meta);
  const key=requestKey(meta,init);
  const existing=inFlight.get(key);
 

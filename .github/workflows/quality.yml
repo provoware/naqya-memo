@@ -39,7 +39,7 @@ jobs:
 
       - name: Python syntax
         run: |
-          python -m py_compile app/server.py app/http_security.py app/error_contract.py tools/startup_port_guard.py tools/build_basisprojekt.py tools/verify_basisprojekt_artifact.py tests/release_gate/test_basisprojekt_standard.py tests/security/test_error_ux_contract.py tests/ui_consistency/test_visual_error_status.py tests/ui_consistency/test_visual_form_feedback.py tests/ui_consistency/test_visual_mutation_status.py
+          python -m py_compile app/server.py app/http_security.py app/error_contract.py tools/startup_port_guard.py tools/build_basisprojekt.py tools/verify_basisprojekt_artifact.py tests/release_gate/test_basisprojekt_standard.py tests/security/test_error_ux_contract.py tests/ui_consistency/test_visual_error_status.py tests/ui_consistency/test_visual_form_feedback.py tests/ui_consistency/test_visual_mutation_status.py tests/ui_consistency/test_visual_read_only_mode.py
 
       - name: JavaScript syntax
         run: |
@@ -47,7 +47,9 @@ jobs:
           node --check ui/reference_web/error_status_ui.js
           node --check ui/reference_web/form_feedback_ui.js
           node --check ui/reference_web/mutation_status_ui.js
+          node --check ui/reference_web/read_only_ui.js
           node --check tests/ui_consistency/test_visual_mutation_status_runtime.mjs
+          node --check tests/ui_consistency/test_visual_read_only_mode_runtime.mjs
           if [ -f ui/reference_web/mobile/mobile_core.js ]; then node --check ui/reference_web/mobile/mobile_core.js; fi
           if [ -f ui/reference_web/mobile/mobile_bootstrap.js ]; then node --check ui/reference_web/mobile/mobile_bootstrap.js; fi
           if [ -f ui/reference_web/mobile/mobile_acceptance.js ]; then node --check ui/reference_web/mobile/mobile_acceptance.js; fi
@@ -80,6 +82,11 @@ jobs:
         run: |
           python -S tests/ui_consistency/test_visual_mutation_status.py
           node tests/ui_consistency/test_visual_mutation_status_runtime.mjs
+
+      - name: Visual read-only mode contract
+        run: |
+          python -S tests/ui_consistency/test_visual_read_only_mode.py
+          node tests/ui_consistency/test_visual_read_only_mode_runtime.mjs
 
       - name: Startup contracts
         run: |

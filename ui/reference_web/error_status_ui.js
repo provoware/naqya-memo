@@ -35,6 +35,8 @@ function setMutationUi(degraded){
  const dataStatus=$('dataStatus'),chip=dataStatus?.closest('.status-chip');
  chip?.classList.toggle('degraded',degraded);
  if(degraded&&dataStatus)dataStatus.textContent='Nur Lesen';
+ if(!degraded&&dataStatus?.textContent==='Nur Lesen')dataStatus.textContent='Prüfe …';
+ window.dispatchEvent(new CustomEvent('provoware:mutation-mode',{detail:{degraded:Boolean(degraded),mode:degraded?'DEGRADED':'READY'}}));
 }
 function renderError(payload){
  const notice=$('statusNotice');if(!notice)return;
@@ -50,6 +52,9 @@ function renderError(payload){
  if(degraded)setMutationUi(true);
 }
 function fallbackFromToast(message){
+ if(document.documentElement.dataset.mutationMode==='degraded'){
+  return {code:'MUTATION_DEGRADED_MODE',message:'Schreibzugriffe sind nach einem internen Fehler vorsorglich gesperrt.',recovery_hint:'Lesen bleibt möglich. Bitte aktuellen Stand prüfen und das Tool anschließend über SCHNELLSTART.sh sauber neu starten.',degraded_mode:true};
+ }
  return {code:'CLIENT_ERROR',message:message||'Die Aktion konnte nicht abgeschlossen werden.',recovery_hint:'Bitte Eingabe prüfen. Wenn der Fehler wiederkehrt, die Ansicht neu laden und das Tool über SCHNELLSTART.sh neu starten.',degraded_mode:false};
 }
 
@@ -88,12 +93,17 @@ $('statusNoticeClose')?.addEventListener('click',()=>{
 
 import('./form_feedback_ui.js').catch(()=>{});
 import('./mutation_status_ui.js').catch(()=>{});
+import('./read_only_ui.js').catch(()=>{});
 
 nativeFetch('/api/health',{headers:{Accept:'application/json'},cache:'no-store'})
  .then(r=>r.json())
  .then(payload=>{
-  if(payload?.ok&&payload?.data?.mutation_mode==='DEGRADED'){
-   renderError({code:'MUTATION_DEGRADED_MODE',message:'Schreibzugriffe sind nach einem internen Fehler vorsorglich gesperrt.',recovery_hint:'Lesen bleibt möglich. Bitte aktuellen Stand prüfen und das Tool anschließend über SCHNELLSTART.sh sauber neu starten.',degraded_mode:true});
+  if(payload?.ok){
+   const degraded=payload?.data?.mutation_mode==='DEGRADED';
+   setMutationUi(degraded);
+   if(degraded){
+    renderError({code:'MUTATION_DEGRADED_MODE',message:'Schreibzugriffe sind nach einem internen Fehler vorsorglich gesperrt.',recovery_hint:'Lesen bleibt möglich. Bitte aktuellen Stand prüfen und das Tool anschließend über SCHNELLSTART.sh sauber neu starten.',degraded_mode:true});
+   }
   }
  })
  .catch(()=>{});
