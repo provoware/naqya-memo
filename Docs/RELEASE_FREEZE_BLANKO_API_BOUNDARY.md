@@ -59,13 +59,27 @@ Die aktuelle Härtung schließt zusätzlich eine semantische False-Green-Lücke:
 
 Beide Release-Gates werden im spezialisierten Workflow `.github/workflows/profile-blanco-truthfulness.yml` direkt mit Python ausgeführt und benötigen keine zusätzliche Testbibliothek.
 
+### Scope des kanonischen Rollup-Containments
+
+Das allgemeine Quality-Workflow ruft `tests/release_gate/test_release_freeze_rollup_containment.py` bei jedem Pull Request und bei Pushes auf `main` auf. Der eigentliche Containment-Vertrag gehört jedoch ausschließlich zum kanonischen Rollup `integration/release-freeze-rollup-20260831 -> main` (PR #97).
+
+Der Test unterscheidet deshalb jetzt explizit zwischen Anwendbarkeit und Prüfung:
+
+- Im kanonischen Rollup-PR bleibt die bestehende Vorfahren-, Allowlist- und Destruktivitätsprüfung vollständig fail-closed aktiv.
+- Andere GitHub-Actions-PRs, einschließlich PR #99, werden nicht gegen die Rollup-spezifische Post-Qualification-Allowlist beurteilt und melden sichtbar `NOT_APPLICABLE`.
+- `push(main)` meldet ebenfalls `NOT_APPLICABLE`, weil dort kein Rollup-PR-Kontext vorliegt.
+- Lokale/direct Aufrufe bleiben absichtlich streng und führen weiterhin die vollständige Containment-Prüfung aus.
+- Eingebaute Scope-Regressionen beweisen den kanonischen Positivfall sowie falschen Head, falsche Base, `push(main)` und lokalen Direktlauf.
+
+Damit wird keine Rollup-Allowlist erweitert und keine Produktdatei nachträglich als qualifiziert erklärt. PR #97 behält seine bisherige Sicherheitsgrenze unverändert; andere Produkt-PRs können dagegen ihre tatsächlich relevanten Quality-Gates erreichen.
+
 ## Wirkung
 
 Der gefährliche nächste Übergang ist enger abgesichert: Der historische Profilfallback kann später nicht entfernt werden, ohne dass eine reale HTTP-Sicherheitsgrenze vorhanden ist. Zusätzlich kann `/api/state` weder als profilfreier Vollzustandskanal noch über ein formal neutrales, aber inhaltlich überladenes `readiness`-Objekt geöffnet werden.
 
-Die Test-Evidence ist belastbarer: Synthetische Mutationen müssen gültigen Python-Code darstellen und der Minimalvertrag ist jetzt bis auf die verschachtelte Readiness-Struktur geschlossen.
+Die Test-Evidence ist belastbarer: Synthetische Mutationen müssen gültigen Python-Code darstellen und der Minimalvertrag ist jetzt bis auf die verschachtelte Readiness-Struktur geschlossen. Zusätzlich verhindert die CI-Scope-Trennung, dass ein Rollup-spezifisches Gate fachfremde Produkt-PRs blockiert, ohne den kanonischen Rollup selbst zu lockern.
 
-Dieser Slice verändert keinen Produkt-, UI-, Runtime- oder Schema-Code. Er ist ausschließlich eine Release-Sicherheits-, Datenschutz-, Testabdeckungs- und Evidence-Härtung innerhalb des Freeze.
+Dieser Slice verändert keinen Produkt-, UI-, Runtime- oder Schema-Code. Er ist ausschließlich eine Release-Sicherheits-, CI-Scope-, Testabdeckungs- und Evidence-Härtung innerhalb des Freeze.
 
 ## Release-Grenze
 
@@ -73,4 +87,4 @@ PR #99 bleibt Draft / NO-GO. Der reale Server startet weiterhin nicht wirklich B
 
 ## Nächster zulässiger Slice
 
-Nach vollständig grüner SHA-genauer Regression dieses verschärften Gates kann `_blanco_api_state()` als nächster einzelner Runtime-Slice implementiert werden. Ohne Profil darf dieser Zustand ausschließlich `APP_VERSION`, `profile: null` und `readiness: {state: "PROFILE_REQUIRED", profile_required: true}` liefern; alle Memo-, Todo-, Kalender-, Settings-, Asset-, Diagnose-, Backup- und Mutationsdaten bleiben weiterhin strikt hinter `_require_profile_context()`. Erst nach grüner Regression dieses Zustands sollte der historische Auto-Profil-Fallback entfernt werden.
+Erst wenn der allgemeine Quality-Lauf und der spezialisierte Blanco-Workflow auf demselben neuen PR-#99-Head vollständig grün sind, kann `_blanco_api_state()` als nächster einzelner Runtime-Slice implementiert werden. Ohne Profil darf dieser Zustand ausschließlich `APP_VERSION`, `profile: null` und `readiness: {state: "PROFILE_REQUIRED", profile_required: true}` liefern; alle Memo-, Todo-, Kalender-, Settings-, Asset-, Diagnose-, Backup- und Mutationsdaten bleiben weiterhin strikt hinter `_require_profile_context()`. Erst nach grüner Regression dieses Zustands sollte der historische Auto-Profil-Fallback entfernt werden.
