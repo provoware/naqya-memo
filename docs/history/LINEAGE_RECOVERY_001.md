@@ -72,12 +72,12 @@ Qualifizierter Export-Vorlauf auf `e6ac013dde221e9766f901851d2c7a709f2da249`:
 - `profile-blanco-truthfulness` #62 / Run `33818854782`: SUCCESS
 - `quality` #221 / Run `33818854705`: SUCCESS
 
-Finaler Repository-Head `282ac3cc34e93e03594cc6f7595b7e9f7d18a6f9`:
-- `project-snapshot` #4 / Run `33818932158`: SUCCESS
-- `product-lineage-guard` #28 / Run `33818932037`: SUCCESS
-- `profile-blanco-truthfulness` #63 / Run `33818932179`: SUCCESS
-- `quality` #222 / Run `33818932018`: SUCCESS
+Finaler Repository-Head `19a5776ed3f16160882bc795dbd86660777c9b07`:
+- `project-snapshot` #6 / Run `33819006226`: SUCCESS
+- `product-lineage-guard` #30 / Run `33819006293`: SUCCESS
+- `profile-blanco-truthfulness` #64 / Run `33819006358`: SUCCESS
+- `quality` #223 / Run `33819006239`: SUCCESS
 - Vollprojekt-ZIP: 491 Dateien
-- ZIP-SHA-256: `ce40c221ac52ed0fa3b49204cafaa1c30dc081501df1be21a8e57da67d1b8f3a`
+- ZIP-SHA-256: `90d2641d84975556bc0c05d055bdee96a312b13b31708ceee706e96cdb240c70`
 
 Erst nach dokumentierter physischer Evidence darf der Recovery-PR aus Draft genommen oder gemergt werden.
