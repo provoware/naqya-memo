@@ -16,7 +16,7 @@ TARGETS = {
     },
     ROOT / "app" / "secure_response_server.py": {
         "secure.base.PROFILE_ID": {
-            "_profile_security_state_from_readonly_db",
+            "_response_auth_profile_id",
         }
     },
 }
@@ -32,7 +32,7 @@ MAX_OCCURRENCES = {
         ("base.PROFILE_ID", "SecureHandler._authorized"): 1,
     },
     ROOT / "app" / "secure_response_server.py": {
-        ("secure.base.PROFILE_ID", "_profile_security_state_from_readonly_db"): 1,
+        ("secure.base.PROFILE_ID", "_response_auth_profile_id"): 1,
     },
 }
 
@@ -128,6 +128,20 @@ def test_direct_profile_id_dependency_stays_contained() -> None:
         _assert_file_contained(path, allowlist)
 
 
+def test_response_layer_has_single_profile_resolver_boundary() -> None:
+    """The outer response layer may touch PROFILE_ID only in its fail-closed resolver."""
+    path = ROOT / "app" / "secure_response_server.py"
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    visitor = DirectProfileAccessVisitor()
+    visitor.visit(tree)
+    hits = [(dotted, scope) for dotted, scope, _ in visitor.hits]
+    assert hits == [("secure.base.PROFILE_ID", "_response_auth_profile_id")], (
+        "AUTH_PROFILE_RESPONSE_BOUNDARY_DRIFT: secure_response_server.py muss genau einen "
+        "direkten PROFILE_ID-Zugriff besitzen und dieser muss im fail-closed Resolver "
+        "_response_auth_profile_id gekapselt bleiben."
+    )
+
+
 def test_detector_rejects_new_direct_profile_id_scope() -> None:
     """Mutation probe: prove the detector catches a newly spread dependency."""
     synthetic = (
@@ -175,6 +189,7 @@ def test_detector_rejects_extra_access_inside_allowed_scope() -> None:
 if __name__ == "__main__":
     tests = [
         test_direct_profile_id_dependency_stays_contained,
+        test_response_layer_has_single_profile_resolver_boundary,
         test_detector_rejects_new_direct_profile_id_scope,
         test_detector_rejects_extra_access_inside_allowed_scope,
     ]
