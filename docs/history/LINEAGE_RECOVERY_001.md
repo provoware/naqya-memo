@@ -57,4 +57,21 @@ Nicht enthalten:
 - Android: reale Geräte-/WebView-Abnahme.
 - iPhone/iOS: reale Geräte-/WebView-Abnahme.
 
+## Reproduzierbarer Vollprojekt-Export
+Der Recovery-Zweig enthält `.github/workflows/project-snapshot.yml`. Der Workflow:
+- bindet den Checkout an den tatsächlichen PR-Head,
+- prüft `git rev-parse HEAD` gegen die erwartete Source-SHA,
+- erzeugt das vollständige getrackte Projekt mit `git archive`,
+- prüft das ZIP mit `unzip -t`,
+- erzeugt eine SHA-256-Prüfsumme,
+- veröffentlicht ZIP, Prüfsumme und Snapshot-Metadaten als GitHub-Artifact.
+
+Auf exakt `e6ac013dde221e9766f901851d2c7a709f2da249`:
+- `project-snapshot` #2 / Run `33818854695`: SUCCESS
+- `product-lineage-guard` #26 / Run `33818854693`: SUCCESS
+- `profile-blanco-truthfulness` #62 / Run `33818854782`: SUCCESS
+- `quality` #221 / Run `33818854705`: SUCCESS
+- Vollprojekt-ZIP: 491 Dateien
+- ZIP-SHA-256: `4efd3afb7121c5a3184b69d3031b0044bee997b692dcc9992639e682a5d1abee`
+
 Erst nach dokumentierter physischer Evidence darf der Recovery-PR aus Draft genommen oder gemergt werden.
