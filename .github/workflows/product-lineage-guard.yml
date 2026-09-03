@@ -1,0 +1,64 @@
+name: product-lineage-guard
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'integration/**'
+      - 'review/**'
+      - 'recovery/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: product-lineage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lineage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout complete lineage
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$SOURCE_SHA" || { echo "HEAD SHA mismatch: expected $SOURCE_SHA, got $actual"; exit 1; }
+          echo "PASS exact source head: $actual"
+
+      - name: Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+
+      - name: Product lineage baseline
+        run: |
+          python -m py_compile tools/release_gate/verify_product_lineage.py
+          python -S tools/release_gate/verify_product_lineage.py
+
+      - name: Required UI contracts are never optional
+        run: |
+          required=(
+            tests/ui_consistency/test_v01222_static_ui_consistency.py
+            tests/ui_consistency/test_v01223_simplification_guidance.py
+            tests/ui_consistency/test_v01224_ux_control_plane.py
+            tests/ui_consistency/test_v01225_real_viewport_ux.py
+          )
+          for test in "${required[@]}"; do
+            test -f "$test" || { echo "MISSING REQUIRED UI CONTRACT: $test"; exit 1; }
+          done
+
+      - name: Evidence boundary
+        run: |
+          echo "This gate proves product-lineage ancestry and mandatory contract presence only."
+          echo "It does not promote browser/device/microphone release gates."

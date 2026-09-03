@@ -1,0 +1,61 @@
+name: project-snapshot
+
+on:
+  pull_request:
+    branches:
+      - review/profile-blanco-start-20260903
+  push:
+    branches:
+      - 'recovery/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: project-snapshot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$SOURCE_SHA" || { echo "HEAD SHA mismatch: expected $SOURCE_SHA, got $actual"; exit 1; }
+          echo "PASS exact source head: $actual"
+
+      - name: Build complete tracked project ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          short="${SOURCE_SHA:0:12}"
+          name="PROVOWARE-Naqya-Memo-V0.12.2.5-${short}"
+          git archive --format=zip --prefix="${name}/" --output="dist/${name}.zip" "$SOURCE_SHA"
+          sha256sum "dist/${name}.zip" > "dist/${name}.zip.sha256"
+          printf '%s\n' "source_git_head=${SOURCE_SHA}" > "dist/SNAPSHOT_INFO.txt"
+          printf '%s\n' "archive=${name}.zip" >> "dist/SNAPSHOT_INFO.txt"
+          printf '%s\n' "release_status=NO-GO" >> "dist/SNAPSHOT_INFO.txt"
+          unzip -t "dist/${name}.zip"
+
+      - name: Upload complete project snapshot
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: PROVOWARE-Naqya-Memo-FullProject-${{ env.SOURCE_SHA }}
+          path: dist/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
