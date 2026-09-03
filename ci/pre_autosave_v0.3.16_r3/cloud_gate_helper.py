@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, base64, hashlib, json, os, shutil, subprocess, sys, tempfile, zipfile
+import argparse, base64, hashlib, io, json, os, shutil, subprocess, sys, tarfile, tempfile, zipfile
 from pathlib import Path
 
 VERSION = "0.3.16"
@@ -76,13 +76,36 @@ def verify_source_lock(root: Path, kit: Path) -> None:
     assert len(locked) == 5
     for rel, want in locked.items():
         assert sha256_file(kit / rel) == want, f"Source hash drift: {rel}"
+
     release = json.loads((root / RELEASE_INDEX).read_text(encoding="utf-8"))
-    release_map = {x["path"]:x["sha256"] for x in release["basisDateien"]}
-    tx_rel = "basis/skripte/transaktion_FERTIG_v0.3.16.js"
-    assert release_map[tx_rel] == idx["releaseTransactionSha256"]
-    assert locked["BASIS_RELEASE/basis/skripte/transaktion_FERTIG_v0.3.16.js"] == idx["releaseTransactionSha256"]
     assert release["version"] == VERSION and release["status"] == "KANDIDAT"
-    print(json.dumps({"status":"PASS","lockedSources":5,"planId":idx["planId"],"planHash":idx["planHash"],"releaseTransactionSha256":idx["releaseTransactionSha256"]}))
+    release_map = {x["path"]:x for x in release["basisDateien"]}
+    tx_rel = "basis/skripte/transaktion_FERTIG_v0.3.16.js"
+    assert release_map[tx_rel]["sha256"] == idx["releaseTransactionSha256"]
+    assert locked["BASIS_RELEASE/basis/skripte/transaktion_FERTIG_v0.3.16.js"] == idx["releaseTransactionSha256"]
+
+    transport = release["repositoryTransport"]
+    parts_dir = (root / RELEASE_INDEX).parent / "paket"
+    expected = transport["segments"]
+    actual = sorted(p.name for p in parts_dir.glob("*.b64"))
+    assert actual == sorted(expected), f"Release segment inventory drift: {actual} != {sorted(expected)}"
+    payload = "".join((parts_dir / name).read_text(encoding="ascii") for name in expected)
+    assert len(payload) == transport["base64Characters"], "Release Base64 length drift"
+    raw = base64.b64decode(payload, validate=True)
+    assert len(raw) == transport["archiveSize"], "Release archive size drift"
+    archive_sha = sha256_bytes(raw)
+    assert archive_sha == transport["archiveSha256"], f"Release archive SHA drift: {archive_sha}"
+    with tarfile.open(fileobj=io.BytesIO(raw), mode="r:xz") as tf:
+        tx_members = [m for m in tf.getmembers() if m.isfile() and m.name.removeprefix("./") == tx_rel]
+        assert len(tx_members) == 1, f"Expected exactly one transported transaction, got {len(tx_members)}"
+        tx_file = tf.extractfile(tx_members[0])
+        assert tx_file is not None
+        tx_bytes = tx_file.read()
+    assert len(tx_bytes) == release_map[tx_rel]["size"], "Transported transaction size drift"
+    tx_sha = sha256_bytes(tx_bytes)
+    assert tx_sha == idx["releaseTransactionSha256"], f"Transported transaction SHA drift: {tx_sha}"
+
+    print(json.dumps({"status":"PASS","lockedSources":5,"planId":idx["planId"],"planHash":idx["planHash"],"releaseTransactionSha256":tx_sha,"releaseTransportSha256":archive_sha,"releaseTransportVerified":True}))
 
 
 def node_check_text(text: str, suffix: str = ".mjs") -> None:
