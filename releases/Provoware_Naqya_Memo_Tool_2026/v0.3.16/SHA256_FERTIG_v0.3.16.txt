@@ -1,0 +1,2 @@
+65705a2254744cd0df4793f48029e851282767d5a8f593dfdb579b9d69e80af2  Provoware_Naqya_Memo_Tool_2026_BASIS_RELEASE_FERTIG_v0.3.16.tar.xz
+5bcf7372454787af12ff85c760faee9f796b7c415ea4ece71f9aa1130bb289f1  Provoware_Naqya_Memo_Tool_2026_RELEASE_FERTIG_v0.3.16.zip  # lokaler Herkunftsnachweis
