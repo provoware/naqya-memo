@@ -36,3 +36,22 @@ jobs:
       - name: Auth profile dependency containment
         run: |
           python -S tests/security/test_auth_profile_dependency_containment.py
+
+      - name: Desktop auth boundary regressions
+        env:
+          PYTHONPATH: core/reference_python
+        run: |
+          set -euo pipefail
+          tests=(
+            tests/security/test_desktop_pin_gate.py
+            tests/security/test_first_pin_file_symlink_guard.py
+            tests/security/test_desktop_auth_cache_revision.py
+            tests/security/test_desktop_auth_cache_profile_incarnation.py
+            tests/security/test_desktop_auth_cache_credential_fingerprint.py
+            tests/security/test_desktop_auth_cache_uncertainty_eviction.py
+            tests/security/test_desktop_auth_read_connection.py
+          )
+          for test in "${tests[@]}"; do
+            echo "RUN $test"
+            python -S "$test"
+          done
