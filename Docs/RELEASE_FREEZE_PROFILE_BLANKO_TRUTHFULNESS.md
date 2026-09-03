@@ -12,13 +12,23 @@ Der Core-Startvertrag kann bereits `BLANCO` mit `profile_id = null` modellieren.
 
 Eine rein optische Änderung der Profilanzeige auf „Blanco“ wäre deshalb sachlich falsch und könnte Nutzer über den tatsächlich aktiven Datenkontext täuschen.
 
+## Nutzerseitiger Zwischenzustand
+
+Bis der echte Runtime-Blanco-Vertrag umgesetzt ist, zeigt die Tool-Info beim Laden nicht mehr nur ein bedeutungsloses Auslassungszeichen. Das sichtbare Profilelement meldet jetzt **„wird geprüft …“**.
+
+Der Profilstatus ist zugleich als zugänglicher Live-Status (`role="status"`, `aria-live="polite"`, `aria-atomic="true"`) ausgezeichnet. Sobald `/api/state` den tatsächlichen Profilnamen liefert, ersetzt `app.js` den Prüfstatus; unterstützende Technik kann diese Zustandsänderung ohne aggressiven Fokuswechsel ankündigen.
+
+Damit wird bewusst **nicht** vorgetäuscht, dass bereits ein Blanco-Profil aktiv wäre.
+
 ## Automatischer Schutz
 
 `tests/release_gate/test_profile_blanco_truthfulness.py` prüft fail-closed:
 
 - Wird `Blanco` direkt am sichtbaren Element `profileName` im HTML gesetzt, darf kein stiller Server-Fallback mehr existieren.
 - Wird `Blanco` per JavaScript direkt in `profileName` geschrieben, darf ebenfalls kein stiller Server-Fallback mehr existieren.
-- Solange der historische Fallback noch vorhanden ist, muss die Oberfläche auf eine wahrheitsgemäße neutrale/noch nicht aufgelöste Anzeige beschränkt bleiben.
+- Der initiale Profilstatus muss verständlich als laufende Prüfung erkennbar sein.
+- Das Profilelement muss als höflicher, atomarer Live-Status für Screenreader ausgezeichnet bleiben.
+- Solange der historische Fallback noch vorhanden ist, darf die Oberfläche keinen neutralen Blanco-Zustand behaupten.
 
 ## Freigabebedingung für den späteren Runtime-Blanco-Slice
 
@@ -34,4 +44,4 @@ kann die sichtbare Profilanzeige auf `Blanco` umgestellt und dieser Übergang mi
 
 ## Release-Status
 
-Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der neue Truthfulness-Test verhindert lediglich einen gefährlichen Zwischenzustand; er ersetzt den Runtime-Blanco-Nachweis nicht.
+Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der Truthfulness-Test und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
