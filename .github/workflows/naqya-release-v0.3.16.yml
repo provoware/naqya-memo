@@ -1,0 +1,128 @@
+name: NAQYA v0.3.16 Release Package Validation
+
+on:
+  pull_request:
+    paths:
+      - "releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16/**"
+      - ".github/workflows/naqya-release-v0.3.16.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: naqya-release-v0.3.16-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate package, file inventory and SHA-256
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, tempfile, zipfile
+          base = Path('releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16')
+          index = json.loads((base/'RELEASE_INDEX_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+          zip_path = base/index['releaseZip']
+          assert index['version'] == '0.3.16'
+          assert index['dateien'] == 54
+          assert index['lokalesReleaseGate'] == {'status':'PASS','pass':219,'warn':0,'fail':0}
+          assert hashlib.sha256(zip_path.read_bytes()).hexdigest() == index['releaseZipSha256']
+          assert zip_path.stat().st_size == index['releaseZipSize']
+          expected = {x['path']: x for x in index['basisDateien']}
+          assert len(expected) == 54
+          with tempfile.TemporaryDirectory() as td:
+              root = Path(td)
+              with zipfile.ZipFile(zip_path) as zf:
+                  names = sorted(n for n in zf.namelist() if not n.endswith('/'))
+                  assert names == sorted(expected), 'ZIP file inventory drift'
+                  zf.extractall(root)
+              for rel, meta in expected.items():
+                  p = root/rel
+                  assert p.is_file(), f'Missing: {rel}'
+                  data = p.read_bytes()
+                  assert len(data) == meta['size'], f'Size drift: {rel}'
+                  got = hashlib.sha256(data).hexdigest()
+                  assert got == meta['sha256'], f'SHA drift: {rel}'
+          print('Release ZIP + 54 individual files: PASS')
+          PY
+
+      - name: Validate JSON and version consistency
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, tempfile, zipfile
+          base=Path('releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16')
+          idx=json.loads((base/'RELEASE_INDEX_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+          with tempfile.TemporaryDirectory() as td:
+              root=Path(td)
+              with zipfile.ZipFile(base/idx['releaseZip']) as zf: zf.extractall(root)
+              count=0
+              for p in root.rglob('*.json'):
+                  d=json.loads(p.read_text(encoding='utf-8'))
+                  if isinstance(d,dict) and 'version' in d:
+                      assert str(d['version']) == '0.3.16', f'Version drift: {p}'
+                  count += 1
+              assert count >= 10
+              manifest=json.loads((root/'basis/manifeste/manifest_release_inhalt_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+              assert manifest.get('version') == '0.3.16'
+          print('JSON + manifest version consistency: PASS')
+          PY
+
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, tempfile, zipfile, subprocess
+          base=Path('releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16')
+          idx=json.loads((base/'RELEASE_INDEX_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+          with tempfile.TemporaryDirectory() as td:
+              root=Path(td)
+              with zipfile.ZipFile(base/idx['releaseZip']) as zf: zf.extractall(root)
+              files=sorted(root.rglob('*.js'))
+              assert files
+              for p in files:
+                  subprocess.run(['node','--check',str(p)], check=True)
+              print(f'JavaScript syntax: PASS ({len(files)} files)')
+          PY
+
+      - name: Validate release cleanliness and standalone contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, tempfile, zipfile
+          base=Path('releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16')
+          idx=json.loads((base/'RELEASE_INDEX_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+          with tempfile.TemporaryDirectory() as td:
+              root=Path(td)
+              with zipfile.ZipFile(base/idx['releaseZip']) as zf: zf.extractall(root)
+              paths=[p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()]
+              assert not any('ENTWICKLUNG_LOKAL_NICHT_INS_REPO' in p for p in paths)
+              assert not any(p.endswith('.log') for p in paths)
+              html=(root/'index.html').read_text(encoding='utf-8')
+              assert 'data-naqya-design="eingebettet"' in html
+              assert '<script src=' not in html
+              assert '__NAQYA_' not in html
+              assert '0.3.16' in html
+          print('Release cleanliness + standalone contract: PASS')
+          PY
