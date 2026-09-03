@@ -17,12 +17,13 @@ concurrency:
 env:
   HELPER: ci/pre_autosave_v0.3.16_r3/cloud_gate_helper.py
   DIAG: ci/pre_autosave_v0.3.16_r3/firefox_ci_diagnose.py
+  TRACE: ci/pre_autosave_v0.3.16_r3/firefox_runner_trace.py
 
 jobs:
   firefox-harness-diagnose:
-    name: Firefox boot / module / IndexedDB diagnose
+    name: Firefox boot / module / IndexedDB / scenario trace
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 18
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,22 +52,25 @@ jobs:
       - name: Reconfirm source lock before diagnostics
         run: python "$HELPER" source-lock
 
-      - name: Run isolated Firefox diagnostics
-        id: diagnose
-        continue-on-error: true
+      - name: Run isolated Firefox boot/module/IndexedDB diagnostics
         run: python "$DIAG"
+
+      - name: Trace exact frozen runner scenario sequence
+        id: trace
+        continue-on-error: true
+        run: python "$TRACE"
 
       - name: Upload diagnostic evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: naqya-firefox-harness-diagnose-r3
-          path: ${{ runner.temp }}/naqya-firefox-diag.json
+          path: |
+            ${{ runner.temp }}/naqya-firefox-diag.json
+            ${{ runner.temp }}/naqya-firefox-runner-trace.json
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Enforce diagnostic result
-        if: steps.diagnose.outcome != 'success'
-        run: |
-          echo "Firefox harness diagnostics failed. See the diagnostic artifact/log before changing product code."
-          exit 1
+      - name: Mark trace finding without changing product code
+        if: steps.trace.outcome != 'success'
+        run: echo "Exact runner trace reproduced the Firefox acceptance failure. Inspect the trace before repairing the harness."
