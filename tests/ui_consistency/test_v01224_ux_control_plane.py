@@ -29,8 +29,9 @@ def test_footer_complexity_reduced():
     assert '<b>SYSTEM</b>' in H
     visible_footer=H[H.index('<footer class="footerbar">'):H.index('</footer>')+9]
     assert '<b>LOG</b>' not in visible_footer
-    assert 'Technische Details' in visible_footer
-    assert 'id="logState"' in visible_footer and 'id="debugState"' in visible_footer
+    assert 'id="logState"' not in visible_footer and 'id="debugState"' not in visible_footer
+    assert 'id="devPanel"' in H and 'Technische Details' in H
+    assert 'id="logState"' in H and 'id="debugState"' in H
 
 def test_accessibility_and_motion_contract():
     assert "--touch:44px" in C
@@ -39,13 +40,12 @@ def test_accessibility_and_motion_contract():
     assert ".workspace-toolbar{" in C and "position:sticky" in C
 
 def test_repo_control_plane_present():
-    required=(
+    for rel in (
         ".gitignore",".gitattributes",".editorconfig",
         ".github/workflows/quality.yml","CONTRIBUTING.md","LAIENANLEITUNG.md",
         "docs/history/GITHUB_MAIN_0.5.1_E7_PRESERVATION.md",
-    )
-    missing=[rel for rel in required if not (ROOT/rel).exists()]
-    assert not missing, f"missing repo control-plane files: {', '.join(missing)}"
+    ):
+        assert (ROOT/rel).exists(), rel
 
 def test_workflow_does_not_fake_real_release_gates():
     w=(ROOT/".github/workflows/quality.yml").read_text(encoding="utf-8")

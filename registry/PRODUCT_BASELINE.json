@@ -33,8 +33,9 @@
     {
       "id": "V0.12.2.4",
       "path": "tests/ui_consistency/test_v01224_ux_control_plane.py",
-      "blob_sha": "b66042aebbe038360d648c273c12d21d26cc3b85",
-      "qualified_result": "9/9"
+      "blob_sha": "f7edd4f17a7ff967a00baa221fbbf150e9d66d55",
+      "qualified_result": "9/9",
+      "superseded_contract_note": "V0.12.2.5 moves technical details from footer to drawer; this is the qualified consolidated PR #58 contract."
     },
     {
       "id": "V0.12.2.5",
