@@ -37,6 +37,12 @@ jobs:
         run: |
           python -S tests/security/test_auth_profile_dependency_containment.py
 
+      - name: Missing auth profile fails closed
+        env:
+          PYTHONPATH: core/reference_python
+        run: |
+          python -S tests/security/test_auth_profile_none_fail_closed.py
+
       - name: Desktop auth boundary regressions
         env:
           PYTHONPATH: core/reference_python
