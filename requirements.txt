@@ -1,0 +1,4 @@
+# PROVOWARE / Naqya-Memo – Runtime-Abhängigkeiten
+# Externe Python-Runtime-Pakete: keine.
+# Interpreter-Vertrag: Python 3.12.x
+# Dieser Versionsstand verwendet nur die Python-Standardbibliothek und startet mit python3 -S.
