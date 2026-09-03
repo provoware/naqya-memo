@@ -9,9 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 TARGETS = {
     ROOT / "app" / "secure_server.py": {
         "base.PROFILE_ID": {
-            "_harden_first_profile_if_needed",
-            "_profile_revision",
-            "SecureHandler._authorized",
+            "_auth_profile_id",
         }
     },
     ROOT / "app" / "secure_response_server.py": {
@@ -21,15 +19,12 @@ TARGETS = {
     },
 }
 
-# Existing direct dependencies may shrink during the planned centralization, but
-# they must never multiply silently inside an already allowlisted scope. Without
-# this budget, adding more direct PROFILE_ID reads to one of the known functions
-# would bypass the scope-only containment check.
+# Both desktop security layers now own exactly one direct PROFILE_ID dependency,
+# each inside a fail-closed resolver. The budget may shrink only when the upstream
+# product contract stops exposing PROFILE_ID entirely; it must never grow again.
 MAX_OCCURRENCES = {
     ROOT / "app" / "secure_server.py": {
-        ("base.PROFILE_ID", "_harden_first_profile_if_needed"): 3,
-        ("base.PROFILE_ID", "_profile_revision"): 1,
-        ("base.PROFILE_ID", "SecureHandler._authorized"): 1,
+        ("base.PROFILE_ID", "_auth_profile_id"): 1,
     },
     ROOT / "app" / "secure_response_server.py": {
         ("secure.base.PROFILE_ID", "_response_auth_profile_id"): 1,
@@ -115,12 +110,18 @@ def _assert_file_contained(path: Path, allowlist: dict[str, set[str]]) -> None:
         max_occurrences=MAX_OCCURRENCES[path],
     )
     assert not violations, (
-        "AUTH_PROFILE_DEPENDENCY_SPREAD: Direkte PROFILE_ID-Kopplung hat die bekannte "
-        "Auth-Grenze verlassen oder sich innerhalb einer bekannten Grenze vermehrt. "
-        "Neue direkte Zugriffe sind im Release-Freeze nicht zulässig; stattdessen den "
-        "zentralen Profil/Auth-Grenzpunkt verwenden oder zuerst den Vertrag gezielt "
-        "aktualisieren.\n" + "\n".join(violations)
+        "AUTH_PROFILE_DEPENDENCY_SPREAD: Direkte PROFILE_ID-Kopplung hat die zentrale "
+        "Auth-Grenze verlassen oder sich innerhalb des Resolvers vermehrt. Neue direkte "
+        "Zugriffe sind im Release-Freeze nicht zulässig; stattdessen den vorhandenen "
+        "fail-closed Profil/Auth-Resolver verwenden.\n" + "\n".join(violations)
     )
+
+
+def _direct_hits(path: Path) -> list[tuple[str, str]]:
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    visitor = DirectProfileAccessVisitor()
+    visitor.visit(tree)
+    return [(dotted, scope) for dotted, scope, _ in visitor.hits]
 
 
 def test_direct_profile_id_dependency_stays_contained() -> None:
@@ -128,13 +129,20 @@ def test_direct_profile_id_dependency_stays_contained() -> None:
         _assert_file_contained(path, allowlist)
 
 
+def test_secure_server_has_single_profile_resolver_boundary() -> None:
+    """The inner auth layer may touch PROFILE_ID only in its fail-closed resolver."""
+    path = ROOT / "app" / "secure_server.py"
+    hits = _direct_hits(path)
+    assert hits == [("base.PROFILE_ID", "_auth_profile_id")], (
+        "AUTH_PROFILE_INNER_BOUNDARY_DRIFT: secure_server.py muss genau einen direkten "
+        "PROFILE_ID-Zugriff besitzen und dieser muss in _auth_profile_id gekapselt bleiben."
+    )
+
+
 def test_response_layer_has_single_profile_resolver_boundary() -> None:
     """The outer response layer may touch PROFILE_ID only in its fail-closed resolver."""
     path = ROOT / "app" / "secure_response_server.py"
-    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-    visitor = DirectProfileAccessVisitor()
-    visitor.visit(tree)
-    hits = [(dotted, scope) for dotted, scope, _ in visitor.hits]
+    hits = _direct_hits(path)
     assert hits == [("secure.base.PROFILE_ID", "_response_auth_profile_id")], (
         "AUTH_PROFILE_RESPONSE_BOUNDARY_DRIFT: secure_response_server.py muss genau einen "
         "direkten PROFILE_ID-Zugriff besitzen und dieser muss im fail-closed Resolver "
@@ -164,9 +172,9 @@ def test_detector_rejects_new_direct_profile_id_scope() -> None:
 
 
 def test_detector_rejects_extra_access_inside_allowed_scope() -> None:
-    """Mutation probe: an allowlisted function may not accumulate extra direct reads."""
+    """Mutation probe: even the resolver may not accumulate a second direct read."""
     synthetic = (
-        "def _profile_revision():\n"
+        "def _auth_profile_id():\n"
         "    first = base.PROFILE_ID\n"
         "    second = base.PROFILE_ID\n"
         "    return first, second\n"
@@ -179,16 +187,17 @@ def test_detector_rejects_extra_access_inside_allowed_scope() -> None:
         max_occurrences=MAX_OCCURRENCES[secure_server],
     )
     assert violations == [
-        "<mutation-probe-allowed-scope-growth>: base.PROFILE_ID in _profile_revision occurs 2 times; maximum 1"
+        "<mutation-probe-allowed-scope-growth>: base.PROFILE_ID in _auth_profile_id occurs 2 times; maximum 1"
     ], (
-        "AUTH_PROFILE_OCCURRENCE_BUDGET_FALSE_GREEN: Der Detektor ließ zusätzliche direkte "
-        "PROFILE_ID-Zugriffe innerhalb einer bereits erlaubten Auth-Grenze unbemerkt zu."
+        "AUTH_PROFILE_OCCURRENCE_BUDGET_FALSE_GREEN: Der Detektor ließ einen zweiten direkten "
+        "PROFILE_ID-Zugriff innerhalb des zentralen Resolvers unbemerkt zu."
     )
 
 
 if __name__ == "__main__":
     tests = [
         test_direct_profile_id_dependency_stays_contained,
+        test_secure_server_has_single_profile_resolver_boundary,
         test_response_layer_has_single_profile_resolver_boundary,
         test_detector_rejects_new_direct_profile_id_scope,
         test_detector_rejects_extra_access_inside_allowed_scope,
