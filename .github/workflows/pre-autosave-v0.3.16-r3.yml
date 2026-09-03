@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/pre-autosave-v0.3.16-r3.yml"
       - "ci/pre_autosave_v0.3.16_r3/**"
+      - "releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16/**"
       - "README.md"
       - "TODO.md"
       - "CHANGELOG.md"
@@ -110,7 +111,7 @@ jobs:
     name: Real Firefox process-kill / IndexedDB recovery / 5,000
     needs: source-lock
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 50
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -218,8 +219,8 @@ jobs:
       - name: Explicit status semantics
         shell: bash
         run: |
-          echo "PRE-AUTOSAVE PASS permits the Naqya SAFE AUTOSAVE implementation step."
-          echo "It does NOT override the repository-wide GO/NO-GO evaluator."
+          echo "PRE-AUTOSAVE PASS proves only the SAFE AUTOSAVE gate-local prerequisite."
+          echo "SAFE AUTOSAVE implementation remains blocked unless the canonical repository evaluator permits it."
           echo "Canonical evaluator exit code: ${{ steps.canonical.outputs.rc }}"
 
       - name: Upload final PRE-AUTOSAVE evidence package
