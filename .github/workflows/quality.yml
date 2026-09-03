@@ -39,7 +39,7 @@ jobs:
 
       - name: Python syntax
         run: |
-          python -m py_compile app/server.py app/http_security.py tools/startup_port_guard.py tools/build_basisprojekt.py tools/verify_basisprojekt_artifact.py tests/release_gate/test_basisprojekt_standard.py
+          python -m py_compile app/server.py app/http_security.py app/error_contract.py tools/startup_port_guard.py tools/build_basisprojekt.py tools/verify_basisprojekt_artifact.py tests/release_gate/test_basisprojekt_standard.py tests/security/test_error_ux_contract.py
 
       - name: JavaScript syntax
         run: |
@@ -74,6 +74,10 @@ jobs:
         run: |
           python -S tests/security/test_local_http_boundary.py
           PYTHONPATH=core/reference_python python -S tests/security/test_local_http_server_e2e.py
+
+      - name: Error UX contracts
+        run: |
+          python -S tests/security/test_error_ux_contract.py
 
       - name: Basis project contract
         run: |

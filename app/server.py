@@ -13,6 +13,7 @@ from http_security import (
     project_fingerprint,
     resolve_static_path,
 )
+from error_contract import classify_public_error
 
 ROOT = Path(__file__).resolve().parents[1]
 CORE = ROOT / 'core' / 'reference_python'
@@ -72,6 +73,7 @@ if store.conn.execute('SELECT COUNT(*) FROM calendar_colors WHERE profile_id=?',
     calendar_service.set_color_legend(PROFILE_ID, COLORS)
 
 QUICK_NOTE_LOCK = threading.Lock()
+MUTATION_DEGRADED = threading.Event()
 
 
 def _bounded_env_bytes(name, default, minimum=1024, maximum=16*1024*1024):
@@ -94,8 +96,17 @@ ERROR_TEXT = {
     'UNDO_EMPTY':'Es gibt nichts mehr rückgängig zu machen.',
     'REDO_EMPTY':'Es gibt nichts zu wiederholen.',
     'ENTITY_NOT_TRASHED':'Dieser Inhalt liegt nicht im Papierkorb.',
+    'ENTITY_NOT_FOUND':'Der angeforderte Inhalt wurde nicht gefunden.',
+    'MEMO_NOT_FOUND':'Das Memo wurde nicht gefunden.',
+    'TODO_NOT_FOUND':'Die Aufgabe wurde nicht gefunden.',
+    'EVENT_NOT_FOUND':'Der Termin wurde nicht gefunden.',
     'DIAG_CONFIRM_REQUIRED':'Diagnosepaket wird erst nach sichtbarer Bestätigung erzeugt.',
     'CALENDAR_REQUIRES_EXACTLY_FIVE_COLORS':'Es müssen genau fünf Kalenderfarben vorhanden sein.',
+    'CALENDAR_DAY_COLOR_REQUIRED':'Bitte Tag und Kalenderfarbe vollständig auswählen.',
+    'COLOR_TITLE_REQUIRED':'Bitte für jede Kalenderfarbe einen Namen angeben.',
+    'TITLE_TOO_LONG':'Der Titel ist zu lang. Bitte kürzer formulieren.',
+    'DATETIME_REQUIRED':'Bitte Datum und Uhrzeit angeben.',
+    'INVALID_DATETIME':'Datum oder Uhrzeit haben ein ungültiges Format.',
     'ASSET_TEXT_EDIT_UNSUPPORTED':'Nur TXT- und Markdown-Dateien werden im internen Editor verändert.',
     'ASSET_REVISION_CONFLICT':'Das Dokument wurde inzwischen geändert. Bitte neu laden.',
     'RECORDING_NOT_ACTIVE':'Es läuft aktuell keine Aufnahme.',
@@ -104,11 +115,15 @@ ERROR_TEXT = {
     'UPLOAD_EMPTY':'Die ausgewählte Datei ist leer oder wurde nicht übertragen.',
     'UPLOAD_TRUNCATED':'Die Dateiübertragung wurde unvollständig beendet.',
     'UPLOAD_FILENAME_REQUIRED':'Der Dateiname fehlt.',
+    'NOTE_TEXT_REQUIRED':'Bitte zuerst einen Text für die Notiz eingeben.',
+    'NOTE_FILE_NOT_FOUND':'Die Notizdatei wurde nicht gefunden.',
     'REQUEST_HOST_REJECTED':'Lokale Anfrage wegen ungültigem Host abgelehnt.',
     'REQUEST_ORIGIN_REJECTED':'Anfrage einer fremden Webseite wurde abgelehnt.',
     'REQUEST_CONTENT_TYPE_REQUIRED':'Für diese Anfrage ist der erwartete Inhaltstyp erforderlich.',
     'REQUEST_BODY_TOO_LARGE':'Die Anfrage ist zu groß.',
     'REQUEST_LENGTH_INVALID':'Die angegebene Anfragegröße ist ungültig.',
+    'REQUEST_JSON_INVALID':'Die Anfrage enthält ungültige JSON-Daten.',
+    'MUTATION_DEGRADED_MODE':'Schreibzugriffe sind nach einem internen Fehler vorsorglich gesperrt.',
 }
 
 def entity_list(entity_type, include_trashed=False):
@@ -314,6 +329,9 @@ class Handler(SimpleHTTPRequestHandler):
         return False
 
     def _guard_post(self,path):
+        if MUTATION_DEGRADED.is_set():
+            self._fail(ValueError('MUTATION_DEGRADED_MODE'))
+            return False
         if not self._check_host():
             return False
         port=int(self.server.server_address[1])
@@ -373,12 +391,11 @@ class Handler(SimpleHTTPRequestHandler):
     def _ok(self,data=None,message='OK'):
         self._json({'ok':True,'message':message,'data':data})
 
-    def _fail(self,e,status=400):
-        code=str(e.args[0] if getattr(e,'args',None) else e)
-        message=ERROR_TEXT.get(code)
-        if message is None:
-            message='Interner Fehler. Details bleiben lokal verborgen.' if status>=500 else code
-        self._json({'ok':False,'code':code if status<500 else 'INTERNAL_ERROR','message':message},status)
+    def _fail(self,e,status=None,mutation_context=False):
+        public = classify_public_error(e, ERROR_TEXT, status, mutation_context=mutation_context)
+        if public.activate_mutation_barrier:
+            MUTATION_DEGRADED.set()
+        self._json(public.payload(),public.status)
 
     def do_GET(self):
         if not self._check_host():
@@ -418,6 +435,7 @@ class Handler(SimpleHTTPRequestHandler):
                     'project_fingerprint':project_fingerprint(PROJECT),
                     'integrity':store.integrity_check(),
                     'queue':'running',
+                    'mutation_mode':'DEGRADED' if MUTATION_DEGRADED.is_set() else 'READY',
                 })
             return super().do_GET()
         except Exception as e:
@@ -522,7 +540,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._ok(settings_service.get_all(PROFILE_ID),'Einstellungen gespeichert.')
             return self._json({'ok':False,'message':'Nicht gefunden'},404)
         except Exception as e:
-            return self._fail(e,409 if str(e)=='REVISION_CONFLICT' else 400)
+            return self._fail(e, mutation_context=True)
 
 def run(port=8765,open_browser=True):
     os.chdir(UI)
