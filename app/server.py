@@ -153,4 +153,298 @@ def diagnostic_preview():
 
 def create_diagnostic_report():
     preview=diagnostic_preview()
-    outdir=PROJECT/'export'/'d²È="25É”¹•Ñ}•¹Ñ¥Ñä¡•¥¤°Q½‘¼•É±•‘¥Ğ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ¹ÍÑ…ÉÑÍİ¥Ñ  œ½…Á¤½Ñ½‘½Ì¼œ¤…¹Á…Ñ ¹•¹‘Íİ¥Ñ  œ½ÑÉ…Í œ¤è(€€€€€€€€€€€€€€€•¥õÁ…Ñ ¹ÍÁ±¥Ğ œ¼œ¥lÍtìÑ½‘½}Í•ÉÙ¥”¹ÑÉ…Í ¡•¥±AI=%1}%±¥¹Ğ¡ˆ¹•Ğ É•Ù¥Í¥½¸œ¤¤¤ìÉ•ÑÕÉ¸Í•±˜¹}½¬¡9½¹”°Q½‘¼±¥•Ğ¥´A…Á¥•É­½Éˆ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½•Ù•¹ÑÌœè(€€€€€€€€€€€€€€€•¥±É•Øõ…±•¹‘…É}Í•ÉÙ¥”¹É•…Ñ•}•Ù•¹Ğ¡AI=%1}%±ˆ¹•Ğ Ñ¥Ñ±”œ°œœ¤±ˆ¹•Ğ ÍÑ…ÉÑ}…Ğœ°œœ¤±ˆ¹•Ğ •¹‘}…Ğœ¤½È9½¹”±‰½½°¡ˆ¹•Ğ …±±}‘…äœ¤¤±ˆ¹•Ğ ½±½É}¥œ¤½È9½¹”±ˆ¹•Ğ É•µ¥¹‘•É}…Ğœ¤½È9½¹”¤(€€€€€€€€€€€€€€€¥˜ˆ¹•Ğ É•µ¥¹‘•É}…Ğœ¤è¹½Ñ¥™ä =$€´AI=Y=]I€´%<œ±˜‰Q•Éµ¥¸µÉ¥¹¹•ÉÕ¹œÙ½É‰•É•¥Ñ•Ğèíˆ¹•Ğ Ñ¥Ñ±”œ°Q•Éµ¥¸œ¥ôˆ¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡ÍÑ½É”¹•Ñ}•¹Ñ¥Ñä¡•¥¤°Q•Éµ¥¸•ÍÁ•¥¡•ÉĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ¹ÍÑ…ÉÑÍİ¥Ñ  œ½…Á¤½•Ù•¹ÑÌ¼œ¤…¹Á…Ñ ¹•¹‘Íİ¥Ñ  œ½•‘¥Ğœ¤è(€€€€€€€€€€€€€€€•¥õÁ…Ñ ¹ÍÁ±¥Ğ œ¼œ¥lÍtì…±•¹‘…É}Í•ÉÙ¥”¹•‘¥Ñ}•Ù•¹Ğ¡•¥±AI=%1}%±¥¹Ğ¡ˆ¹•Ğ É•Ù¥Í¥½¸œ¤¤±ˆ¹•Ğ Ñ¥Ñ±”œ°œœ¤±ˆ¹•Ğ ÍÑ…ÉÑ}…Ğœ°œœ¤±ˆ¹•Ğ •¹‘}…Ğœ¤½È9½¹”±‰½½°¡ˆ¹•Ğ …±±}‘…äœ¤¤±ˆ¹•Ğ ½±½É}¥œ¤½È9½¹”±ˆ¹•Ğ É•µ¥¹‘•É}…Ğœ¤½È9½¹”¤ìÉ•ÑÕÉ¸Í•±˜¹}½¬¡ÍÑ½É”¹•Ñ}•¹Ñ¥Ñä¡•¥¤°Q•Éµ¥¸…­ÑÕ…±¥Í¥•ÉĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ¹ÍÑ…ÉÑÍİ¥Ñ  œ½…Á¤½•Ù•¹ÑÌ¼œ¤…¹Á…Ñ ¹•¹‘Íİ¥Ñ  œ½ÑÉ…Í œ¤è(€€€€€€€€€€€€€€€•¥õÁ…Ñ ¹ÍÁ±¥Ğ œ¼œ¥lÍtì…±•¹‘…É}Í•ÉÙ¥”¹ÑÉ…Í¡}•Ù•¹Ğ¡•¥±AI=%1}%±¥¹Ğ¡ˆ¹•Ğ É•Ù¥Í¥½¸œ¤¤¤ìÉ•ÑÕÉ¸Í•±˜¹}½¬¡9½¹”°Q•Éµ¥¸±¥•Ğ¥´A…Á¥•É­½Éˆ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½…±•¹‘…È½‘…äµ½±½Èœè(€€€€€€€€€€€€€€€‘…äõÍÑÈ¡ˆ¹•Ğ ‘…äœ°œœ¤¤ì¥õÍÑÈ¡ˆ¹•Ğ ½±½É}¥œ°œœ¤¤(€€€€€€€€€€€€€€€¥˜¹½Ğ‘…ä½È¹½Ğ¥èÉ…¥Í”Y…±Õ•ÉÉ½È 19I}e}=1=I}IEU%Iœ¤(€€€€€€€€€€€€€€€•á¥ÍÑ¥¹œõ‘…å}½±½ÉÌ ¤¹•Ğ¡‘…ä¤(€€€€€€€€€€€€€€€¥˜•á¥ÍÑ¥¹œè(€€€€€€€€€€€€€€€€€€€Á…å±½…õì‘…äœé‘…ä°½±½É}¥œé¥‘ô(€€€€€€€€€€€€€€€€€€€ÅÕ•Õ”¹İ…¥Ğ¡ÅÕ•Õ”¹ÍÕ‰µ¥Ğ …±•¹‘…È¹ÕÁ‘…Ñ•}‘…å}½±½Èœ±±…µ‰‘„éÍÑ½É”¹ÕÁÍ•ÉÑ}•¹Ñ¥Ñä¡ÁÉ½™¥±•}¥õAI=%1}%±•¹Ñ¥Ñå}ÑåÁ”ô…±•¹‘…É}‘…å}½±½Èœ±Ñ¥Ñ±”õ‘…ä±Á…å±½…õÁ…å±½…±•¹Ñ¥Ñå}¥õ•á¥ÍÑ¥¹l¥t±•áÁ•Ñ•‘}É•Ù¥Í¥½¸õ•á¥ÍÑ¥¹lÉ•Ù¥Í¥½¸t¤¤¤(€€€€€€€€€€€€€€€•±Í”è(€€€€€€€€€€€€€€€€€€€…±•¹‘…É}Í•ÉÙ¥”¹Í•Ñ}‘…å}½±½È¡AI=%1}%±‘…ä±¥¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡‘…å}½±½ÉÌ ¤¹•Ğ¡‘…ä¤°Q…™…É‰”•ÍÁ•¥¡•ÉĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½…±•¹‘…È½½±½ÉÌœè(€€€€€€€€€€€€€€€•¹ÑÉ¥•Ìõˆ¹•Ğ •¹ÑÉ¥•Ìœ¤½Èmt(€€€€€€€€€€€€€€€¥˜±•¸¡•¹ÑÉ¥•Ì¤„ôÔèÉ…¥Í”Y…±Õ•ÉÉ½È 19I}IEU%IM}aQ1e}%Y}=1=ILœ¤(€€€€€€€€€€€€€€€Á…¥ÉÌõl¡ÍÑÈ¡à¹•Ğ Ñ¥Ñ±”œ°œœ¤¤±ÍÑÈ¡à¹•Ğ Ñ½­•¸œ°œœ¤¤¤™½Èà¥¸•¹ÑÉ¥•Ít(€€€€€€€€€€€€€€€ÅÕ•Õ”¹İ…¥Ğ¡ÅÕ•Õ”¹ÍÕ‰µ¥Ğ …±•¹‘…È¹½±½ÉÌœ±±…µ‰‘„é…±•¹‘…É}Í•ÉÙ¥”¹Í•Ñ}½±½É}±••¹¡AI=%1}%±Á…¥ÉÌ¤¤¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡½±½ÉÌ ¤°-…±•¹‘•É±••¹‘”•ÍÁ•¥¡•ÉĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ¹ÍÑ…ÉÑÍİ¥Ñ  œ½…Á¤½ÑÉ…Í ¼œ¤…¹Á…Ñ ¹•¹‘Íİ¥Ñ  œ½É•ÍÑ½É”œ¤è(€€€€€€€€€€€€€€€•¥õÁ…Ñ ¹ÍÁ±¥Ğ œ¼œ¥lÍtìÉ•Øõ¥¹Ğ¡ˆ¹•Ğ É•Ù¥Í¥½¸œ¤¤(€€€€€€€€€€€€€€€ÅÕ•Õ”¹İ…¥Ğ¡ÅÕ•Õ”¹ÍÕ‰µ¥Ğ ÑÉ…Í ¹É•ÍÑ½É”œ±±…µ‰‘„éÍÑ½É”¹É•ÍÑ½É•}•¹Ñ¥Ñä¡•¥±É•Ø¤¤¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡ÍÑ½É”¹•Ñ}•¹Ñ¥Ñä¡•¥¤°%¹¡…±Ğİ¥•‘•É¡•É•ÍÑ•±±Ğ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½‘¥…¹½ÍÑ¥Ì½É•…Ñ”œè(€€€€€€€€€€€€€€€¥˜ˆ¹•Ğ ½¹™¥Éµ•œ¤¥Ì¹½ĞQÉÕ”èÉ…¥Í”Y…±Õ•ÉÉ½È %}=9%I5}IEU%Iœ¤(€€€€€€€€€€€€€€€ÀõÉ•…Ñ•}‘¥…¹½ÍÑ¥}É•Á½ÉĞ ¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡ìÁ…Ñ œéÍÑÈ¡À¤°¹…µ”œéÀ¹¹…µ•ô°¥…¹½Í•‰•É¥¡Ğ±½­…°•ÉÍÑ•±±Ğ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½É•µ¥¹‘•ÉÌ½µ…É¬µ‘•±¥Ù•É•œè(€€€€€€€€€€€€€€€•¥õÍÑÈ¡ˆ¹•Ğ •¹Ñ¥Ñå}¥œ°œœ¤¤ìÉ•µ¥¹‘•É}…ĞõÍÑÈ¡ˆ¹•Ğ É•µ¥¹‘•É}…Ğœ°œœ¤¤ìÁ±…Ñ™½É´õÍÑÈ¡ˆ¹•Ğ Á±…Ñ™½É´œ°±¥¹Õàœ¤¤(€€€€€€€€€€€€€€€É•µ¥¹‘•É}•¹¥¹”¹µ…É­}‘•±¥Ù•É•¡AI=%1}%±•¥±É•µ¥¹‘•É}…Ğ±Á±…Ñ™½É´±ÍÑÈ¡ˆ¹•Ğ É•ÍÕ±Ğœ°1%YIœ¤¤¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡9½¹”°I•µ¥¹‘•È…±ÌéÕ•ÍÑ•±±ĞÁÉ½Ñ½­½±±¥•ÉĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½…ÍÍ•ÑÌ½¥µÁ½ÉĞœè(€€€€€€€€€€€€€€€ÍÉŒõA…Ñ ¡ÍÑÈ¡ˆ¹•Ğ Í½ÕÉ•}Á…Ñ œ°œœ¤¤¤(€€€€€€€€€€€€€€€­¥¹õÍÑÈ¡ˆ¹•Ğ ­¥¹œ°œœ¤¤(€€€€€€€€€€€€€€€Ñ¥Ñ±”õÍÑÈ¡ˆ¹•Ğ Ñ¥Ñ±”œ°œœ¤¤(€€€€€€€€€€€€€€€´õ…ÍÍ•Ñ}µ…¹…•È¹¥µÁ½ÉÑ}…ÍÍ•Ğ¡ÍÉŒ±­¥¹±Ñ¥Ñ±”¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡´°ÍÍ•ĞÍ¥¡•È¥µÁ½ÉÑ¥•ÉĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½…ÍÍ•ÑÌ½Ù…±¥‘…Ñ”œè(€€€€€€€€€€€€€€€…¥õÍÑÈ¡ˆ¹•Ğ …ÍÍ•Ñ}¥œ°œœ¤¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡…ÍÍ•Ñ}µ…¹…•È¹Ù…±¥‘…Ñ•}½É}ÅÕ…É…¹Ñ¥¹”¡…¥¤°ÍÍ•Ğ•ÁËñ™Ğ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½…ÍÍ•ÑÌ½•‘¥ĞµÑ•áĞœè(€€€€€€€€€€€€€€€…¥õÍÑÈ¡ˆ¹•Ğ …ÍÍ•Ñ}¥œ°œœ¤¤ìÑ•áĞõÍÑÈ¡ˆ¹•Ğ Ñ•áĞœ°œœ¤¤ìÉ•Øõ¥¹Ğ¡ˆ¹•Ğ É•Ù¥Í¥½¸œ¤¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡…ÍÍ•Ñ}µ…¹…•È¹•‘¥Ñ}Ñ•áÑ}…ÍÍ•Ğ¡…¥±Ñ•áĞ±É•Ø¤°½­Õµ•¹ĞÉ•Ù¥Í¥½¹Í•Í¥¡•ÉĞ•ÍÁ•¥¡•ÉĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½…Õ‘¥¼½ÍÑ…ÉĞœè(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡…Õ‘¥½}É•½É‘•È¹ÍÑ…ÉĞ¡ÍÑÈ¡ˆ¹•Ğ ‰…­•¹œ°ÁÕ±Í”œ¤¤±ÍÑÈ¡ˆ¹•Ğ ‘•Ù¥”œ°‘•™…Õ±Ğœ¤¤¤°Õ™¹…¡µ”•ÍÑ…ÉÑ•Ğ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½…Õ‘¥¼½ÍÑ½Àœè(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡…Õ‘¥½}É•½É‘•È¹ÍÑ½Á}…¹‘}½µµ¥Ğ¡ÍÑÈ¡ˆ¹•Ğ Ñ¥Ñ±”œ°MÁÉ…¡µ•µ¼œ¤¤¤°Õ™¹…¡µ”Í¥¡•È•ÍÁ•¥¡•ÉĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½Á±…å±¥ÍÑÌœè(€€€€€€€€€€€€€€€•¥±É•ØõÁ±…å±¥ÍÑ}Í•ÉÙ¥”¹É•…Ñ”¡AI=%1}%±ÍÑÈ¡ˆ¹•Ğ Ñ¥Ñ±”œ°A±…å±¥ÍĞœ¤¤¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡ÍÑ½É”¹•Ñ}•¹Ñ¥Ñä¡•¥¤°A±…å±¥ÍĞ•ÉÍÑ•±±Ğ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ¹ÍÑ…ÉÑÍİ¥Ñ  œ½…Á¤½Á±…å±¥ÍÑÌ¼œ¤…¹Á…Ñ ¹•¹‘Íİ¥Ñ  œ½…‘œ¤è(€€€€€€€€€€€€€€€•¥õÁ…Ñ ¹ÍÁ±¥Ğ œ¼œ¥lÍt(€€€€€€€€€€€€€€€Á±…å±¥ÍÑ}Í•ÉÙ¥”¹…‘‘}…ÍÍ•Ğ¡•¥±AI=%1}%±¥¹Ğ¡ˆ¹•Ğ É•Ù¥Í¥½¸œ¤¤±ÍÑÈ¡ˆ¹•Ğ …ÍÍ•Ñ}¥œ¤¤¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡ÍÑ½É”¹•Ñ}•¹Ñ¥Ñä¡•¥¤°ÍÍ•ĞéÕÈA±…å±¥ÍĞ¡¥¹éÕ•›ñĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½ÅÕ¥¬µ¹½Ñ”œè(€€€€€€€€€€€€€€€Àõ…ÁÁ•¹‘}ÅÕ¥­}¹½Ñ”¡ˆ¹•Ğ Ñ¥Ñ±”œ°9½Ñ¥é•¸œ¤±ˆ¹•Ğ Ñ•áĞœ°œœ¤¤ìÉ•ÑÕÉ¸Í•±˜¹}½¬¡ìÁ…Ñ œéÍÑÈ¡À¤°¹…µ”œéÀ¹¹…µ•ô°Q•áÑ‘…Ñ•¤•ÉŸ‘¹éĞ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½ÅÕ¥¬µ¹½Ñ”½½Á•¸œè(€€€€€€€€€€€€€€€ÀõAI=)P¼¹½Ñ¥é•¸œ½Í…™•}¹½Ñ•}™¥±•¹…µ”¡ˆ¹•Ğ Ñ¥Ñ±”œ°9½Ñ¥é•¸œ¤¤ì½¬±µÍœõ½Á•¹}Á…Ñ ¡À¤ìÉ•ÑÕÉ¸Í•±˜¹}½¬¡ì½Á•¹•œé½¬°Á…Ñ œéÍÑÈ¡À¥ô±µÍœ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½ÅÕ¥¬µ¹½Ñ”½Í¡…É”œè(€€€€€€€€€€€€€€€ÀõAI=)P¼¹½Ñ¥é•¸œ½Í…™•}¹½Ñ•}™¥±•¹…µ”¡ˆ¹•Ğ Ñ¥Ñ±”œ°9½Ñ¥é•¸œ¤¤(€€€€€€€€€€€€€€€¥˜¹½ĞÀ¹•á¥ÍÑÌ ¤èÉ…¥Í”¥±•9½Ñ½Õ¹‘ÉÉ½È 9=Q}%1}9=Q}=U9œ¤(€€€€€€€€€€€€€€€½¬±µÍœõÍ¡…É•}¹½Ñ”¡À¤ìÉ•ÑÕÉ¸Í•±˜¹}½¬¡ì½Á•¹•œé½¬°Á…Ñ œéÍÑÈ¡À¥ô±µÍœ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½Õ¹‘¼œèÅÕ•Õ”¹İ…¥Ğ¡ÅÕ•Õ”¹ÍÕ‰µ¥Ğ Õ¤¹Õ¹‘¼œ°±…µ‰‘„èÍÑ½É”¹Õ¹‘½}±…ÍĞ¡AI=%1}%¤¤¤ìÉ•ÑÕÉ¸Í•±˜¹}½¬¡…Á¥}ÍÑ…Ñ” ¤°1•ÑéÑ”ƒ¹‘•ÉÕ¹œËñ­Ÿ‘¹¥œ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½É•‘¼œèÅÕ•Õ”¹İ…¥Ğ¡ÅÕ•Õ”¹ÍÕ‰µ¥Ğ Õ¤¹É•‘¼œ°±…µ‰‘„èÍÑ½É”¹É•‘½}±…ÍĞ¡AI=%1}%¤¤¤ìÉ•ÑÕÉ¸Í•±˜¹}½¬¡…Á¥}ÍÑ…Ñ” ¤°Ÿ¹‘•ÉÕ¹œİ¥•‘•É¡½±Ğ¸œ¤(€€€€€€€€€€€¥˜Á…Ñ ôôœ½…Á¤½Í•ÑÑ¥¹Ìœè(€€€€€€€€€€€€€€€™½È¬±Ø¥¸ˆ¹¥Ñ•µÌ ¤èÅÕ•Õ”¹İ…¥Ğ¡ÅÕ•Õ”¹ÍÕ‰µ¥Ğ Í•ÑÑ¥¹Ì¹Í•Ğœ°±…µ‰‘„¬õ¬±ØõØèÍ•ÑÑ¥¹Í}Í•ÉÙ¥”¹Í•Ğ¡AI=%1}%±¬±Ø¤¤¤(€€€€€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}½¬¡Í•ÑÑ¥¹Í}Í•ÉÙ¥”¹•Ñ}…±°¡AI=%1}%¤°¥¹ÍÑ•±±Õ¹•¸•ÍÁ•¥¡•ÉĞ¸œ¤(€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}©Í½¸¡ì½¬œé…±Í”°µ•ÍÍ…”œè9¥¡Ğ•™Õ¹‘•¸ô°ĞÀĞ¤(€€€€€€€•á•ÁĞá•ÁÑ¥½¸…Ì”è(€€€€€€€€€€€É•ÑÕÉ¸Í•±˜¹}™…¥°¡”°ĞÀä¥˜ÍÑÈ¡”¤ôôIY%M%=9}=91%Pœ•±Í”€ĞÀÀ¤()‘•˜ÉÕ¸¡Á½ÉĞôàÜØÔ±½Á•¹}‰É½İÍ•ÈõQÉÕ”¤è(€€€½Ì¹¡‘¥È¡U$¤(€€€ÑÉäè(€€€€€€€Í•ÉÙ•ÈõQ¡É•…‘¥¹!QQAM•ÉÙ•È  œÄÈÜ¸À¸À¸Äœ±Á½ÉĞ¤±!…¹‘±•È¤(€€€•á•ÁĞ=MÉÉ½È…Ì”è(€€€€€€€ÅÕ•Õ”¹ÍÑ½À ¤ìÍÑ½É”¹±½Í” ¤(€€€€€€€¥˜•Ñ…ÑÑÈ¡”°•ÉÉ¹¼œ±9½¹”¤ôôäàè(€€€€€€€€€€€ÁÉ¥¹Ğ¡˜A=IQ}	1Pè€ÄÈÜ¸À¸À¸ÄéíÁ½ÉÑô¸	¥ÑÑ”MQIQ9}1%9U`¹Í Ù•Éİ•¹‘•¸ì‘•È1…Õ¹¡•Èß‘¡±ĞÍ¥¡•È•¥¹•¸™É•¥•¸A½ÉĞÕ¹‰••¹‘•Ğ­•¥¹”™É•µ‘•¸AÉ½é•ÍÍ”¸œ±™¥±”õÍåÌ¹ÍÑ‘•ÉÈ±™±ÕÍ õQÉÕ”¤(€€€€€€€É…¥Í”(€€€ÕÉ°õ˜¡ÑÑÀè¼¼ÄÈÜ¸À¸À¸ÄéíÁ½ÉÑô½¥¹‘•à¹¡Ñµ°œ(€€€ÁÉ¥¹Ğ¡˜=$€´AI=Y=]I€´%<íAA}YIM%=9ô³‘Õ™ĞèíÕÉ±ôœ±™±ÕÍ õQÉÕ”¤(€€€¥˜½Á•¹}‰É½İÍ•ÈèÑ¡É•…‘¥¹œ¹Q¥µ•È ¸Ğ±±…µ‰‘„éİ•‰‰É½İÍ•È¹½Á•¸¡ÕÉ°¤¤¹ÍÑ…ÉĞ ¤(€€€ÑÉäèÍ•ÉÙ•È¹Í•ÉÙ•}™½É•Ù•È ¤(€€€™¥¹…±±äè(€€€€€€€ÅÕ•Õ”¹ÍÑ½À ¤ìÍÑ½É”¹±½Í” ¤ìÍ•ÉÙ•È¹Í•ÉÙ•É}±½Í” ¤()¥˜}}¹…µ•}|ôô}}µ…¥¹}|œè(€€€Á½ÉĞõ¥¹Ğ¡½Ì¹•¹Ù¥É½¸¹•Ğ AI=Y=]I}A=IPœ°œàÜØÔœ¤¤(€€€ÉÕ¸¡Á½ÉĞ°€œ´µ¹¼µ‰É½İÍ•Èœ¹½Ğ¥¸ÍåÌ¹…ÉØ¤
+    outdir=PROJECT/'export'/'diagnose'
+    outdir.mkdir(parents=True,exist_ok=True)
+    stamp=datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    path=outdir/f'OI_PROVOWARE_IO_DIAGNOSE_{stamp}.txt'
+    lines=[
+        'OI - PROVOWARE - IO â€“ DIAGNOSEBERICHT',
+        '='*64,
+        f"Version: {preview['version']}",
+        f"Zeit: {preview['timestamp']}",
+        f"Profil: {preview['profile']}",
+        f"Plattform: {preview['platform']}",
+        f"Python: {preview['python']}",
+        f"Projekt: {preview['project_path']}",
+        f"Datenbank: {preview['database']}",
+        f"IntegritÃ¤t: {preview['integrity']}",
+        f"Inhalte: {json.dumps(preview['counts'],ensure_ascii=False)}",
+        '',
+        'DATENSCHUTZFILTER',
+        json.dumps(preview['privacy'],ensure_ascii=False,indent=2),
+        '',
+        'LÃ–SUNGSHINWEISE',
+    ]+[f"- {x}" for x in preview['solution_hints']]
+    path.write_text('\\n'.join(lines)+'\\n',encoding='utf-8')
+    return path
+
+def safe_note_filename(title):
+    cleaned=''.join(c if c.isalnum() or c in ' _-' else '_' for c in (title or 'Notizen')).strip() or 'Notizen'
+    return cleaned[:80]+'.txt'
+
+def append_quick_note(title,text):
+    if not text.strip(): raise ValueError('NOTE_TEXT_REQUIRED')
+    p=PROJECT/'notizen'/safe_note_filename(title)
+    stamp=datetime.datetime.now().astimezone().isoformat(timespec='seconds')
+    with QUICK_NOTE_LOCK:
+        with p.open('a',encoding='utf-8') as f:
+            f.write(f'[{stamp}] {text.strip()}\n')
+            f.flush(); os.fsync(f.fileno())
+    return p
+
+def open_path(path):
+    path=str(path)
+    cmd = ['xdg-open',path] if shutil.which('xdg-open') else None
+    if not cmd: return False, 'Kein Standard-Ã–ffner erkannt.'
+    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return True, 'Standardprogramm wurde angefordert.'
+
+def notify(title,body):
+    if shutil.which('notify-send'):
+        subprocess.Popen(['notify-send',title,body], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return True
+    return False
+
+def share_note(path):
+    # xdg-email can attach a local file on Linux; still requires explicit user action in the mail client.
+    if shutil.which('xdg-email'):
+        subprocess.Popen(['xdg-email','--subject','OI - PROVOWARE - IO Diagnose/Notiz','--body','Datei aus OI - PROVOWARE - IO. Versand erst nach Ihrer BestÃ¤tigung im Mailprogramm.','--attach',str(path),'provoware.157@gmail.com'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return True,'Mailprogramm wurde mit vorbereiteter Nachricht geÃ¶ffnet.'
+    return False,'Kein xdg-email erkannt; Datei bleibt lokal.'
+
+
+def backup_status():
+    """Truthful runtime backup status; never claims protection without evidence."""
+    roots=[PROJECT/'backups', PROJECT/'daten'/'backups']
+    generations=set()
+    for root in roots:
+        if not root.exists():
+            continue
+        for p in root.rglob('*'):
+            if not p.is_file():
+                continue
+            name=p.name.lower()
+            if ('manifest' in name and p.suffix.lower()=='.json') or name=='core.sqlite3':
+                generations.add(str(p.parent.resolve()))
+    count=len(generations)
+    return {
+        'generations':count,
+        'state':'READY' if count else 'EMPTY',
+        'label':f'{count} Gen.' if count else 'Noch keine'
+    }
+
+def api_state():
+    return {
+        'version':APP_VERSION,'profile':{'id':PROFILE_ID,'name':PROFILE_NAME},
+        'settings':settings_service.get_all(PROFILE_ID),
+        'counts':{
+            'memos':len(entity_list('memo')),
+            'todos':len(entity_list('todo')),
+            'events':len(entity_list('calendar_event')),
+            'trash':store.conn.execute("SELECT COUNT(*) FROM entities WHERE profile_id=? AND status='TRASHED'",(PROFILE_ID,)).fetchone()[0]
+        },
+        'next':calendar_service.next_items(PROFILE_ID,10),
+        'colors':colors(),
+        'day_colors':day_colors(),
+        'integrity':store.integrity_check(),
+        'asset_quota':asset_manager.quota_status(),
+        'audio_capture':audio_recorder.capability(),
+        'backup':backup_status(),
+    }
+
+class Handler(SimpleHTTPRequestHandler):
+    server_version='Provoware/0.12'
+    def translate_path(self,path):
+        clean=urlparse(path).path.lstrip('/')
+        return str(UI / clean)
+    def log_message(self,fmt,*args):
+        pass
+    def _json(self,obj,status=200):
+        data=json.dumps(obj,ensure_ascii=False).encode('utf-8')
+        self.send_response(status); self.send_header('Content-Type','application/json; charset=utf-8'); self.send_header('Content-Length',str(len(data))); self.end_headers(); self.wfile.write(data)
+    def _body(self):
+        n=int(self.headers.get('Content-Length','0')); raw=self.rfile.read(n) if n else b'{}'
+        return json.loads(raw.decode('utf-8') or '{}')
+    def _asset_upload(self):
+        parsed=urlparse(self.path); q=parse_qs(parsed.query)
+        kind=str((q.get('kind') or [''])[0])
+        title=str((q.get('title') or [''])[0])
+        filename=Path(str((q.get('filename') or [''])[0])).name
+        if not filename: raise ValueError('UPLOAD_FILENAME_REQUIRED')
+        length=int(self.headers.get('Content-Length','0') or '0')
+        max_bytes=int(os.environ.get('PROVOWARE_UPLOAD_MAX_BYTES',str(512*1024*1024)))
+        if length<=0: raise ValueError('UPLOAD_EMPTY')
+        if length>max_bytes: raise ValueError('UPLOAD_TOO_LARGE')
+        upload_root=PROJECT/'temp'/'browser-uploads'
+        upload_root.mkdir(parents=True,exist_ok=True)
+        session=Path(tempfile.mkdtemp(prefix='upload_',dir=str(upload_root)))
+        tmp=session/filename
+        try:
+            remaining=length
+            with open(tmp,'wb') as f:
+                while remaining:
+                    chunk=self.rfile.read(min(1024*1024,remaining))
+                    if not chunk: break
+                    f.write(chunk); remaining-=len(chunk)
+                f.flush(); os.fsync(f.fileno())
+            if remaining: raise ValueError('UPLOAD_TRUNCATED')
+            manifest=asset_manager.import_asset(tmp,kind,title or Path(filename).stem)
+            return self._ok(manifest,'Datei sicher importiert.')
+        finally:
+            shutil.rmtree(session,ignore_errors=True)
+    def _ok(self,data=None,message='OK'): self._json({'ok':True,'message':message,'data':data})
+    def _fail(self,e,status=400):
+        code=str(e.args[0] if getattr(e,'args',None) else e)
+        self._json({'ok':False,'code':code,'message':ERROR_TEXT.get(code,code)},status)
+    def do_GET(self):
+        path=urlparse(self.path).path
+        try:
+            if path.startswith('/asset-file/'):
+                aid=path.split('/')[2]
+                manifest=asset_manager.validate_asset(aid)
+                fpath=asset_manager.path_for(aid)
+                ctype=mimetypes.guess_type(fpath.name)[0] or 'application/octet-stream'
+                data=fpath.read_bytes()
+                self.send_response(200); self.send_header('Content-Type',ctype); self.send_header('Content-Length',str(len(data))); self.send_header('Content-Disposition',f"inline; filename*=UTF-8''{manifest['original_name']}"); self.send_header('X-Content-Type-Options','nosniff'); self.end_headers(); self.wfile.write(data); return
+            if path=='/api/state': return self._ok(api_state())
+            if path=='/api/memos': return self._ok(entity_list('memo'))
+            if path=='/api/todos': return self._ok(entity_list('todo'))
+            if path=='/api/events': return self._ok(entity_list('calendar_event'))
+            if path=='/api/calendar/day-colors': return self._ok(day_colors())
+            if path=='/api/diagnostics/preview': return self._ok(diagnostic_preview())
+            if path=='/api/assets/quota': return self._ok(asset_manager.quota_status())
+            if path=='/api/playlists': return self._ok(entity_list('playlist'))
+            if path=='/api/reminders/pending': return self._ok(reminder_engine.pending_for_platform(PROFILE_ID,'linux'))
+            if path=='/api/assets/list': return self._ok(asset_manager.list_assets())
+            if path.startswith('/api/assets/') and path.endswith('/text'):
+                aid=path.split('/')[3]; return self._ok(asset_manager.read_text_asset(aid))
+            if path=='/api/audio/capability': return self._ok(audio_recorder.capability())
+            if path=='/api/platform/capabilities':
+                linux=linux_capability_probe(); linux['filesystem_write_test']=write_probe(PROJECT)
+                return self._ok({'linux':linux,'android':android_contract(),'ios':ios_contract()})
+            if path=='/api/trash':
+                rows=store.conn.execute("SELECT id,entity_type,title,payload_json,revision,status,updated_at FROM entities WHERE profile_id=? AND status='TRASHED' ORDER BY updated_at DESC",(PROFILE_ID,)).fetchall()
+                return self._ok([dict(id=r[0],entity_type=r[1],title=r[2],payload=json.loads(r[3]),revision=r[4],status=r[5],updated_at=r[6]) for r in rows])
+            if path=='/api/health': return self._ok({'version':APP_VERSION,'integrity':store.integrity_check(),
+        'asset_quota':asset_manager.quota_status(),
+        'audio_capture':audio_recorder.capability(),'queue':'running','project':str(PROJECT),'db':str(DB)})
+            return super().do_GET()
+        except Exception as e: return self._fail(e,500)
+    def do_POST(self):
+        path=urlparse(self.path).path
+        try:
+            if path=='/api/assets/upload':
+                return self._asset_upload()
+            b=self._body()
+            if path=='/api/memos':
+                eid,rev=memo_service.create(PROFILE_ID,b.get('title',''),b.get('body',''),b.get('tags') or [])
+                return self._ok(store.get_entity(eid),'Memo gespeichert.')
+            if path.startswith('/api/memos/') and path.endswith('/edit'):
+                eid=path.split('/')[3]; memo_service.edit(eid,PROFILE_ID,int(b.get('revision')),b.get('title',''),b.get('body',''),b.get('tags') or []); return self._ok(store.get_entity(eid),'Memo aktualisiert.')
+            if path.startswith('/api/memos/') and path.endswith('/trash'):
+                eid=path.split('/')[3]; rev=int(b.get('revision')); memo_service.trash(eid,PROFILE_ID,rev); return self._ok(None,'Memo liegt im Papierkorb.')
+            if path=='/api/todos':
+                eid,rev=todo_service.create(PROFILE_ID,b.get('title',''),b.get('description',''),b.get('due_at') or None,b.get('reminder_at') or None,b.get('priority','NORMAL'))
+                if b.get('reminder_at'): notify('OI - PROVOWARE - IO',f"Erinnerung vorbereitet: {b.get('title','Todo')}")
+                return self._ok(store.get_entity(eid),'Todo gespeichert.')
+            if path.startswith('/api/todos/') and path.endswith('/edit'):
+                eid=path.split('/')[3]; todo_service.edit(eid,PROFILE_ID,int(b.get('revision')),b.get('title',''),b.get('description',''),b.get('due_at') or None,b.get('reminder_at') or None,b.get('priority','NORMAL')); return self._ok(store.get_entity(eid),'Todo aktualisiert.')
+            if path.startswith('/api/todos/') and path.endswith('/complete'):
+                eid=path.split('/')[3]; todo_service.complete(eid,PROFILE_ID,int(b.get('revision'))); return self._ok(store.get_entity(eid),'Todo erledigt.')
+            if path.startswith('/api/todos/') and path.endswith('/trash'):
+                eid=path.split('/')[3]; todo_service.trash(eid,PROFILE_ID,int(b.get('revision'))); return self._ok(None,'Todo liegt im Papierkorb.')
+            if path=='/api/events':
+                eid,rev=calendar_service.create_event(PROFILE_ID,b.get('title',''),b.get('start_at',''),b.get('end_at') or None,bool(b.get('all_day')),b.get('color_id') or None,b.get('reminder_at') or None)
+                if b.get('reminder_at'): notify('OI - PROVOWARE - IO',f"Termin-Erinnerung vorbereitet: {b.get('title','Termin')}")
+                return self._ok(store.get_entity(eid),'Termin gespeichert.')
+            if path.startswith('/api/events/') and path.endswith('/edit'):
+                eid=path.split('/')[3]; calendar_service.edit_event(eid,PROFILE_ID,int(b.get('revision')),b.get('title',''),b.get('start_at',''),b.get('end_at') or None,bool(b.get('all_day')),b.get('color_id') or None,b.get('reminder_at') or None); return self._ok(store.get_entity(eid),'Termin aktualisiert.')
+            if path.startswith('/api/events/') and path.endswith('/trash'):
+                eid=path.split('/')[3]; calendar_service.trash_event(eid,PROFILE_ID,int(b.get('revision'))); return self._ok(None,'Termin liegt im Papierkorb.')
+            if path=='/api/calendar/day-color':
+                day=str(b.get('day','')); cid=str(b.get('color_id',''))
+                if not day or not cid: raise ValueError('CALENDAR_DAY_COLOR_REQUIRED')
+                existing=day_colors().get(day)
+                if existing:
+                    payload={'day':day,'color_id':cid}
+                    queue.wait(queue.submit('calendar.update_day_color',lambda:store.upsert_entity(profile_id=PROFILE_ID,entity_type='calendar_day_color',title=day,payload=payload,entity_id=existing['id'],expected_revision=existing['revision'])))
+                else:
+                    calendar_service.set_day_color(PROFILE_ID,day,cid)
+                return self._ok(day_colors().get(day),'Tagfarbe gespeichert.')
+            if path=='/api/calendar/colors':
+                entries=b.get('entries') or []
+                if len(entries)!=5: raise ValueError('CALENDAR_REQUIRES_EXACTLY_FIVE_COLORS')
+                pairs=[(str(x.get('title','')),str(x.get('token',''))) for x in entries]
+                queue.wait(queue.submit('calendar.colors',lambda:calendar_service.set_color_legend(PROFILE_ID,pairs)))
+                return self._ok(colors(),'Kalenderlegende gespeichert.')
+            if path.startswith('/api/trash/') and path.endswith('/restore'):
+                eid=path.split('/')[3]; rev=int(b.get('revision'))
+                queue.wait(queue.submit('trash.restore',lambda:store.restore_entity(eid,rev)))
+                return self._ok(store.get_entity(eid),'Inhalt wiederhergestellt.')
+            if path=='/api/diagnostics/create':
+                if b.get('confirmed') is not True: raise ValueError('DIAG_CONFIRM_REQUIRED')
+                p=create_diagnostic_report()
+                return self._ok({'path':str(p),'name':p.name},'Diagnosebericht lokal erstellt.')
+            if path=='/api/reminders/mark-delivered':
+                eid=str(b.get('entity_id','')); reminder_at=str(b.get('reminder_at','')); platform=str(b.get('platform','linux'))
+                reminder_engine.mark_delivered(PROFILE_ID,eid,reminder_at,platform,str(b.get('result','DELIVERED')))
+                return self._ok(None,'Reminder als zugestellt protokolliert.')
+            if path=='/api/assets/import':
+                src=Path(str(b.get('source_path','')))
+                kind=str(b.get('kind',''))
+                title=str(b.get('title',''))
+                m=asset_manager.import_asset(src,kind,title)
+                return self._ok(m,'Asset sicher importiert.')
+            if path=='/api/assets/validate':
+                aid=str(b.get('asset_id',''))
+                return self._ok(asset_manager.validate_or_quarantine(aid),'Asset geprÃ¼ft.')
+            if path=='/api/assets/edit-text':
+                aid=str(b.get('asset_id','')); text=str(b.get('text','')); rev=int(b.get('revision'))
+                return self._ok(asset_manager.edit_text_asset(aid,text,rev),'Dokument revisionsgesichert gespeichert.')
+            if path=='/api/audio/start':
+                return self._ok(audio_recorder.start(str(b.get('backend','pulse')),str(b.get('device','default'))),'Aufnahme gestartet.')
+            if path=='/api/audio/stop':
+                return self._ok(audio_recorder.stop_and_commit(str(b.get('title','Sprachmemo'))),'Aufnahme sicher gespeichert.')
+            if path=='/api/playlists':
+                eid,rev=playlist_service.create(PROFILE_ID,str(b.get('title','Playlist')))
+                return self._ok(store.get_entity(eid),'Playlist erstellt.')
+            if path.startswith('/api/playlists/') and path.endswith('/add'):
+                eid=path.split('/')[3]
+                playlist_service.add_asset(eid,PROFILE_ID,int(b.get('revision')),str(b.get('asset_id')))
+                return self._ok(store.get_entity(eid),'Asset zur Playlist hinzugefÃ¼gt.')
+            if path=='/api/quick-note':
+                p=append_quick_note(b.get('title','Notizen'),b.get('text','')); return self._ok({'path':str(p),'name':p.name},'Textdatei ergÃ¤nzt.')
+            if path=='/api/quick-note/open':
+                p=PROJECT/'notizen'/safe_note_filename(b.get('title','Notizen')); ok,msg=open_path(p); return self._ok({'opened':ok,'path':str(p)},msg)
+            if path=='/api/quick-note/share':
+                p=PROJECT/'notizen'/safe_note_filename(b.get('title','Notizen'))
+                if not p.exists(): raise FileNotFoundError('NOTE_FILE_NOT_FOUND')
+                ok,msg=share_note(p); return self._ok({'opened':ok,'path':str(p)},msg)
+            if path=='/api/undo': queue.wait(queue.submit('ui.undo', lambda: store.undo_last(PROFILE_ID))); return self._ok(api_state(),'Letzte Ã„nderung rÃ¼ckgÃ¤ngig.')
+            if path=='/api/redo': queue.wait(queue.submit('ui.redo', lambda: store.redo_last(PROFILE_ID))); return self._ok(api_state(),'Ã„nderung wiederholt.')
+            if path=='/api/settings':
+                for k,v in b.items(): queue.wait(queue.submit('settings.set', lambda k=k,v=v: settings_service.set(PROFILE_ID,k,v)))
+                return self._ok(settings_service.get_all(PROFILE_ID),'Einstellungen gespeichert.')
+            return self._json({'ok':False,'message':'Nicht gefunden'},404)
+        except Exception as e:
+            return self._fail(e,409 if str(e)=='REVISION_CONFLICT' else 400)
+
+def run(port=8765,open_browser=True):
+    os.chdir(UI)
+    try:
+        server=ThreadingHTTPServer(('127.0.0.1',port),Handler)
+    except OSError as e:
+        queue.stop(); store.close()
+        if getattr(e,'errno',None)==98:
+            print(f'PORT_BELEGT: 127.0.0.1:{port}. Bitte STARTEN_LINUX.sh verwenden; der Launcher wÃ¤hlt sicher einen freien Port und beendet keine fremden Prozesse.',file=sys.stderr,flush=True)
+        raise
+    url=f'http://127.0.0.1:{port}/index.html'
+    print(f'OI - PROVOWARE - IO {APP_VERSION} lÃ¤uft: {url}',flush=True)
+    if open_browser: threading.Timer(.4,lambda:webbrowser.open(url)).start()
+    try: server.serve_forever()
+    finally:
+        queue.stop(); store.close(); server.server_close()
+
+if __name__=='__main__':
+    port=int(os.environ.get('PROVOWARE_PORT','8765'))
+    run(port, '--no-browser' not in sys.argv)
