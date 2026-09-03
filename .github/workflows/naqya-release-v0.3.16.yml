@@ -112,7 +112,10 @@ jobs:
                   json_count+=1
               assert json_count>=10
               manifest=json.loads((root/'basis/manifeste/manifest_release_inhalt_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
-              assert manifest.get('version')=='0.3.16'
+              assert manifest.get('schemaVersion')==1
+              assert manifest.get('status')=='FERTIG'
+              assert 'basis/**' in manifest.get('erlaubt',[])
+              assert 'ENTWICKLUNG_LOKAL_NICHT_INS_REPO/**' in manifest.get('verboten',[])
           print('JSON + version + release cleanliness: PASS')
           PY
 
