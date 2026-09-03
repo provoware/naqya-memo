@@ -1,0 +1,28 @@
+{
+  "version": "0.3.16",
+  "schemaVersion": 2,
+  "planId": "NAQYA-PRE-AUTOSAVE-ACCEPTANCE-v0.3.16-r2",
+  "zweck": "Verbindliche reale Cross-Platform-Failure-Matrix vor V0.4.0 SAFE AUTOSAVE",
+  "plattformen": ["Linux", "Windows", "macOS", "Firefox"],
+  "szenarien": [
+    {"id":"FM-01","name":"Echter Prozess-Kill nach Journal","erwartung":"Recovery endet konsistent; Journal wird nur nach erfolgreicher Nachprüfung entfernt."},
+    {"id":"FM-02","name":"Echter Prozess-Kill nach Datensatz-Schreiben","erwartung":"Recovery vervollständigt oder rollt konsistent zurück; Datensatz und Index stimmen überein."},
+    {"id":"FM-03","name":"Echter Prozess-Kill nach Index-Schreiben","erwartung":"Nach Neustart sind Datensatz, Index und Journal konsistent; kein stiller Teilzustand."},
+    {"id":"FM-04","name":"5.000 Datensätze","erwartung":"Index enthält exakt 5.000 IDs; definierte Rücklesestichproben sind korrekt."},
+    {"id":"FM-05","name":"Integritätsprüfung","erwartung":"Keine doppelten Index-IDs; Journalreste werden erkannt; Recovery-Ergebnis ist maschinenlesbar."},
+    {"id":"FM-06","name":"Firefox-Browser-Kill","erwartung":"Firefox wird real erkannt; IndexedDB-Zustand überlebt Browserprozess-Kill und Recovery."}
+  ],
+  "evidenzregeln": {
+    "echterHost": "Host-OS wird automatisch aus platform.system() ermittelt und kann nicht per CLI überschrieben werden.",
+    "gleicherStand": "planId, planHash und SHA-256 der Kern-/Testdateien müssen exakt übereinstimmen.",
+    "firefox": "Nur ein real gestarteter Firefox mit Firefox-User-Agent zählt. Chromium/WebKit ersetzen den Nachweis nicht.",
+    "freigabe": "V0.4.0 nur bei PASS für Linux, Windows, macOS und Firefox."
+  },
+  "fehlercodes": {
+    "NQ-ACC-001": "Node.js fehlt.",
+    "NQ-ACC-002": "Firefox fehlt.",
+    "NQ-ACC-101": "Echter Transaction-Kill oder Recovery fehlgeschlagen.",
+    "NQ-ACC-102": "5.000-Memo-Stresstest fehlgeschlagen.",
+    "NQ-ACC-201": "Firefox-E2E konnte nicht vollständig ausgeführt werden."
+  }
+}
