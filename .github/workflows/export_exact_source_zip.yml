@@ -1,0 +1,42 @@
+name: export-exact-source-zip
+
+on:
+  push:
+    branches:
+      - packaging/export-laienanleitung-20260903
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact qualified commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 1b98234d444be08b1dd241231b14614002096af3
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Verify and archive exact tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "1b98234d444be08b1dd241231b14614002096af3"
+          git archive --format=zip \
+            --prefix=naqya-memo-1b98234d/ \
+            --output=/tmp/naqya-memo-1b98234d-LAIENANLEITUNG_RESTORED.zip \
+            HEAD
+          sha256sum /tmp/naqya-memo-1b98234d-LAIENANLEITUNG_RESTORED.zip | tee /tmp/SHA256.txt
+
+      - name: Upload exact source archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: naqya-memo-exact-source-1b98234d
+          path: |
+            /tmp/naqya-memo-1b98234d-LAIENANLEITUNG_RESTORED.zip
+            /tmp/SHA256.txt
+          if-no-files-found: error
+          retention-days: 1
