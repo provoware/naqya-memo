@@ -56,6 +56,25 @@ _AUTH_LOCKED_UNTIL: dict[str, float] = {}
 _AUTH_LOCK = threading.Lock()
 
 
+def _auth_profile_id() -> str | None:
+    """Resolve the desktop auth profile through one fail-closed boundary.
+
+    The current product server still owns ``PROFILE_ID``. Keeping that dependency
+    in exactly one place prevents PIN, cache and bootstrap code from spreading the
+    coupling further and gives the later Blanco transition one explicit seam. A
+    missing, non-string or empty value is never guessed; callers receive ``None``
+    and must fail closed.
+    """
+    try:
+        value = base.PROFILE_ID
+    except (AttributeError, TypeError):
+        return None
+    if not isinstance(value, str):
+        return None
+    value = value.strip()
+    return value or None
+
+
 def _open_first_pin_parent() -> tuple[int | None, Path]:
     """Open the PIN parent directory without following a substituted symlink.
 
@@ -197,6 +216,9 @@ def _generate_first_pin() -> str:
 
 
 def _harden_first_profile_if_needed() -> None:
+    profile_id = _auth_profile_id()
+    if profile_id is None:
+        raise RuntimeError('AUTH_PROFILE_ID_UNAVAILABLE')
     if _HAD_ACTIVE_PROFILE:
         # The reference product shell uses 0000 only as a bootstrap credential.
         # If a prior first-start attempt failed after the profile was created but
@@ -204,18 +226,18 @@ def _harden_first_profile_if_needed() -> None:
         # later secure-server start. This also keeps the new exclusive PIN-file
         # creation fail-closed across retries.
         if base.profile_service.verify_access(
-            base.PROFILE_ID, '0000', source='FIRST_PIN_EXISTING_PROFILE_GUARD'
+            profile_id, '0000', source='FIRST_PIN_EXISTING_PROFILE_GUARD'
         ):
             raise RuntimeError('INSECURE_DEFAULT_PIN_DETECTED')
         return
     # server.py currently bootstraps its development reference profile with 0000.
     # If that upstream contract changes, fail closed instead of guessing.
-    if not base.profile_service.verify_access(base.PROFILE_ID, '0000', source='FIRST_PIN_BOOTSTRAP_CHECK'):
+    if not base.profile_service.verify_access(profile_id, '0000', source='FIRST_PIN_BOOTSTRAP_CHECK'):
         raise RuntimeError('FIRST_PIN_BOOTSTRAP_CONTRACT_CHANGED')
     pin = _generate_first_pin()
     _write_first_pin_file(pin)
     try:
-        base.profile_service.change_pin(base.PROFILE_ID, '0000', pin)
+        base.profile_service.change_pin(profile_id, '0000', pin)
     except Exception:
         _remove_first_pin_file()
         raise
@@ -229,12 +251,15 @@ def _authorization_digest(header: str) -> str:
     return hashlib.sha256(header.encode('utf-8')).hexdigest()
 
 
-def _profile_revision() -> int | None:
-    """Return the active profile security revision, failing closed on DB errors."""
+def _profile_revision(profile_id: str | None = None) -> int | None:
+    """Return the selected profile security revision, failing closed on uncertainty."""
+    profile_id = profile_id or _auth_profile_id()
+    if profile_id is None:
+        return None
     try:
         row = base.store.conn.execute(
             "SELECT revision FROM profiles WHERE id=? AND status='ACTIVE'",
-            (base.PROFILE_ID,),
+            (profile_id,),
         ).fetchone()
         return int(row[0]) if row is not None else None
     except (sqlite3.Error, OSError, TypeError, ValueError):
@@ -420,14 +445,17 @@ class SecureHandler(base.Handler):
         user,pin=credentials
         if not hmac.compare_digest(user,AUTH_USER):
             return False,_record_failure(client,header)
-        revision_before=_profile_revision()
+        profile_id=_auth_profile_id()
+        if profile_id is None:
+            return False,0
+        revision_before=_profile_revision(profile_id)
         if revision_before is None:
             return False,0
         try:
-            ok=base.profile_service.verify_access(base.PROFILE_ID,pin,source='DESKTOP_HTTP_PIN_GATE')
+            ok=base.profile_service.verify_access(profile_id,pin,source='DESKTOP_HTTP_PIN_GATE')
         except Exception:
             return False,_record_failure(client,header)
-        revision_after=_profile_revision()
+        revision_after=_profile_revision(profile_id)
         if ok and revision_after is not None and revision_after==revision_before:
             if not _remove_first_pin_file():
                 self._auth_operational_error = 'FIRST_PIN_CLEANUP_FAILED'
