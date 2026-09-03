@@ -6,7 +6,7 @@
 
 Die Sicherheitsserver besitzen inzwischen zentrale fail-closed Profilresolver und ein fehlendes Auth-Profil ist regressionsgesichert. Der nächste gefährliche Übergang wäre deshalb das Entfernen des Server-Fallbacks, bevor der HTTP-/API-Layer selbst profilgebundene Datenzugriffe zentral sperren kann.
 
-## Neuer Release-Freeze-Schutz
+## Release-Freeze-Schutz
 
 `tests/release_gate/test_blanco_profile_api_boundary.py` verhindert genau diesen Halb-Umbau:
 
@@ -16,11 +16,21 @@ Die Sicherheitsserver besitzen inzwischen zentrale fail-closed Profilresolver un
 - Ein synthetischer profilfreier Server ohne diesen Guard muss vom Detektor sicher als Verstoß erkannt werden.
 - Ein synthetischer profilfreier Server mit explizitem Guard-Vertrag muss als vorbereitete sichere Struktur erkannt werden.
 
+## Detektor-Härtung
+
+Das Gate prüft den vorbereiteten Guard jetzt über den Python-AST (Syntaxbaum) statt nur über Textmarker. Für einen gültigen Vertrag müssen im ausführbaren Modul tatsächlich
+
+- die Konstante `PROFILE_CONTEXT_REQUIRED = 'PROFILE_CONTEXT_REQUIRED'` definiert sein,
+- eine echte Top-Level-Funktion `_require_profile_context` existieren und
+- deren Raise-Pfad den stabilen Fehlercode referenzieren.
+
+Kommentare, Docstrings oder sonstige inerte Stringliterale mit denselben Begriffen reichen ausdrücklich nicht aus. Ein eigener Mutationstest `test_detector_rejects_marker_only_false_green` schleust genau diesen Scheinvertrag ein und muss ihn fail-closed ablehnen. Syntaxfehler im zu prüfenden Quelltext gelten ebenfalls nicht als gültiger Guard-Vertrag.
+
 Das Gate wird im spezialisierten Workflow `.github/workflows/profile-blanco-truthfulness.yml` bei Pull Requests und Pushes auf `main` direkt mit Python ausgeführt. Es benötigt keine zusätzliche Testbibliothek und beendet den CI-Schritt bei einem Verstoß mit Exit-Code 1.
 
 ## Wirkung
 
-Der spätere Runtime-Blanco-Umbau kann damit nicht mehr versehentlich nur den Profilfallback entfernen und anschließend ungeschützte Memo-, Todo-, Kalender-, Asset- oder andere profilgebundene Pfade offenlassen. Der tatsächliche HTTP-Guard ist damit noch nicht implementiert; seine Existenz ist aber jetzt eine automatisch erzwungene Vorbedingung für den Übergang.
+Der spätere Runtime-Blanco-Umbau kann damit nicht mehr versehentlich nur den Profilfallback entfernen und anschließend ungeschützte Memo-, Todo-, Kalender-, Asset- oder andere profilgebundene Pfade offenlassen. Zusätzlich kann ein Kommentar oder toter String den vorbereitenden Sicherheitsvertrag nicht mehr fälschlich als vorhanden erscheinen lassen. Der tatsächliche HTTP-Guard ist damit noch nicht implementiert; seine Existenz ist aber jetzt eine strukturell geprüfte Vorbedingung für den Übergang.
 
 ## Release-Grenze
 
