@@ -251,9 +251,9 @@ def _authorization_digest(header: str) -> str:
     return hashlib.sha256(header.encode('utf-8')).hexdigest()
 
 
-def _profile_revision(profile_id: str | None = None) -> int | None:
-    """Return the selected profile security revision, failing closed on uncertainty."""
-    profile_id = profile_id or _auth_profile_id()
+def _profile_revision() -> int | None:
+    """Return the active auth profile security revision, failing closed on uncertainty."""
+    profile_id = _auth_profile_id()
     if profile_id is None:
         return None
     try:
@@ -448,14 +448,14 @@ class SecureHandler(base.Handler):
         profile_id=_auth_profile_id()
         if profile_id is None:
             return False,0
-        revision_before=_profile_revision(profile_id)
+        revision_before=_profile_revision()
         if revision_before is None:
             return False,0
         try:
             ok=base.profile_service.verify_access(profile_id,pin,source='DESKTOP_HTTP_PIN_GATE')
         except Exception:
             return False,_record_failure(client,header)
-        revision_after=_profile_revision(profile_id)
+        revision_after=_profile_revision()
         if ok and revision_after is not None and revision_after==revision_before:
             if not _remove_first_pin_file():
                 self._auth_operational_error = 'FIRST_PIN_CLEANUP_FAILED'
