@@ -49,7 +49,9 @@ Der Vertrag wird zusätzlich durch `.github/workflows/profile-blanco-truthfulnes
 
 Wichtig: Die Testdateien besitzen eigene kleine Direct-Runner. Ein direkter Aufruf führt die jeweilige Vertragsprüfung tatsächlich aus, gibt PASS/FAIL bzw. eine Zusammenfassung aus und beendet den Prozess bei einem Fehler mit Exit-Code 1. Das Auth-Profil-Containment führt dabei die reale Quelltextprüfung, beide Resolver-Contracts sowie beide Mutationstests aus. Damit kann ein grüner Workflow nicht allein dadurch entstehen, dass Testfunktionen nur definiert, aber nie aufgerufen werden, der Detektor eine neue Zugriffsstelle übersieht oder zusätzliche direkte Zugriffe innerhalb eines Resolvers unbemerkt akzeptiert.
 
-Damit sind die Tests nicht nur vorhandene lokale Evidence, sondern tatsächlich ausführende, fail-closed CI-Gates gegen spätere UI-/Backend-/Auth-Drift, gegen eine erneute Ausbreitung der Profilkopplung und gegen einen falsch grünen Containment-Detektor.
+Die Zentralisierung des inneren Auth-Resolvers ist zusätzlich an bestehende Verhaltensregressionen gebunden. Der spezialisierte Workflow führt nach den Struktur-Gates die vorhandenen Tests für Desktop-PIN-Gate, sichere Erststart-PIN-Datei, Cache-Revision, Profil-Inkarnation, Credential-Fingerprint, Unsicherheits-Eviction und isolierte Sicherheitsreads aus. Dadurch reicht ein strukturell sauberer Resolver allein nicht für grüne Evidence; die bereits etablierten Auth-Sicherheitsgarantien müssen auf demselben Commit erhalten bleiben.
+
+Damit sind die Tests nicht nur vorhandene lokale Evidence, sondern tatsächlich ausführende, fail-closed CI-Gates gegen spätere UI-/Backend-/Auth-Drift, gegen eine erneute Ausbreitung der Profilkopplung, gegen einen falsch grünen Containment-Detektor und gegen Verhaltensregressionen der zentralisierten Auth-Grenze.
 
 ## Freigabebedingung für den späteren Runtime-Blanco-Slice
 
@@ -66,4 +68,4 @@ kann die sichtbare Profilanzeige auf `Blanco` umgestellt und dieser Übergang mi
 
 ## Release-Status
 
-Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der ausführbare Truthfulness-Test, das Profil/Auth-Kopplungs-Gate, die nun in beiden Sicherheitslagen zentralisierten fail-closed Profilgrenzen, das mutationserprobte Dependency-Containment, ihre CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
+Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der ausführbare Truthfulness-Test, das Profil/Auth-Kopplungs-Gate, die nun in beiden Sicherheitslagen zentralisierten fail-closed Profilgrenzen, das mutationserprobte Dependency-Containment, die Auth-Verhaltensregressionen, ihre CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
