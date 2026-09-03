@@ -276,13 +276,13 @@ $('devCloseBtn').onclick=()=>setTechOpen(false);
 scrim.onclick=()=>{
  drawer(false);
  setTechOpen(false);
- if(innerWidth<1280)setSideVisible(false,false);
+ if(innerWidth<1280||root.dataset.fontTier==='xl')setSideVisible(false,false);
 };
 addEventListener('keydown',e=>{
  if(e.key!=='Escape')return;
  drawer(false);
  setTechOpen(false);
- if(innerWidth<1280)setSideVisible(false,false);
+ if(innerWidth<1280||root.dataset.fontTier==='xl')setSideVisible(false,false);
 });
 
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
