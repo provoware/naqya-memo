@@ -1,0 +1,42 @@
+name: export exact source
+
+on:
+  push:
+    branches:
+      - packaging/export-1c5b373-20260903
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact product commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: 1c5b37318d645648432dfd93e2996fda2a5b3c5b
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Build exact project ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="OI_PROVOWARE_IO_NAQYA_MEMO_1c5b373_FULL_PROJECT.zip"
+          PREFIX="OI_PROVOWARE_IO_NAQYA_MEMO_1c5b373/"
+          git archive --format=zip --prefix="$PREFIX" --output="$ZIP" 1c5b37318d645648432dfd93e2996fda2a5b3c5b
+          unzip -t "$ZIP"
+          printf '%s  %s\n' "$(sha256sum "$ZIP" | awk '{print $1}')" "$ZIP" > SHA256.txt
+          test "$(git rev-parse HEAD)" = "1c5b37318d645648432dfd93e2996fda2a5b3c5b"
+
+      - name: Upload exact export
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: naqya-memo-exact-1c5b373
+          path: |
+            OI_PROVOWARE_IO_NAQYA_MEMO_1c5b373_FULL_PROJECT.zip
+            SHA256.txt
+          if-no-files-found: error
+          retention-days: 1
