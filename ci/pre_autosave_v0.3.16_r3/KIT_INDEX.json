@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "version": "0.3.16",
+  "planId": "NAQYA-PRE-AUTOSAVE-ACCEPTANCE-v0.3.16-r2",
+  "planHash": "cfc12de3378151c50ad005ff837e5542382c1c7f067e1041cd4804f95d2d111f",
+  "kitZip": "Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_FERTIG_v0.3.16.zip",
+  "kitSize": 20949,
+  "kitSha256": "76bdeb757fd86eeb3cdc00f151aacf529a24ffcbd1b667712424da685d5f36ff",
+  "base64Characters": 27932,
+  "parts": [
+    "part_000.b64",
+    "part_001.b64",
+    "part_002.b64",
+    "part_003.b64",
+    "part_004.b64",
+    "part_005.b64",
+    "part_006.b64",
+    "part_007.b64",
+    "part_008.b64",
+    "part_009.b64"
+  ],
+  "releaseTransactionSha256": "5d111e9bf5111d1b5d838b8e121637bcc47afdcec57dfd33bd5a6e55dbca87f6"
+}
