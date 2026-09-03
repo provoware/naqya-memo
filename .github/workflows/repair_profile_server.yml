@@ -1,0 +1,50 @@
+name: repair-profile-server
+
+on:
+  push:
+    branches:
+      - automation/repair-profile-server-20260903
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: feature/start-profile-creation-20260903
+          fetch-depth: 0
+
+      - name: Restore canonical server and apply narrow profile selection patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout 1b98234d444be08b1dd241231b14614002096af3 -- app/server.py
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('app/server.py')
+          s=p.read_text(encoding='utf-8')
+          old="""# Ensure a local reference profile. Product login flow remains separate from this development reference shell.\nrow = store.conn.execute(\"SELECT id,display_name FROM profiles WHERE status='ACTIVE' ORDER BY created_at LIMIT 1\").fetchone()\nif row:\n    PROFILE_ID, PROFILE_NAME = row[0], row[1]\nelse:\n    PROFILE_ID = profile_service.create('Standardprofil', '0000')\n    PROFILE_NAME = 'Standardprofil'\n"""
+          new="""# Select the profile chosen by the desktop start helper. Headless/development starts keep\n# the historical first-active-profile fallback. An invalid requested ID fails closed.\nREQUESTED_PROFILE_ID = os.environ.get('PROVOWARE_PROFILE_ID','').strip()\nif REQUESTED_PROFILE_ID:\n    row = store.conn.execute(\"SELECT id,display_name FROM profiles WHERE id=? AND status='ACTIVE'\", (REQUESTED_PROFILE_ID,)).fetchone()\n    if row is None:\n        raise RuntimeError('START_PROFILE_NOT_FOUND')\nelse:\n    row = store.conn.execute(\"SELECT id,display_name FROM profiles WHERE status='ACTIVE' ORDER BY created_at LIMIT 1\").fetchone()\nif row:\n    PROFILE_ID, PROFILE_NAME = row[0], row[1]\nelse:\n    PROFILE_ID = profile_service.create('Standardprofil', '0000')\n    PROFILE_NAME = 'Standardprofil'\n"""
+          if s.count(old) != 1:
+              raise SystemExit('expected canonical profile bootstrap block exactly once')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+          python3 -m py_compile app/server.py tools/startup_profile_selector.py
+          python3 -S tests/startup/test_startup_profile_selector.py
+          bash -n STARTEN_LINUX.sh STARTEN_OHNE_BROWSER.sh
+          git diff --check
+
+      - name: Commit repaired server to feature branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "provoware-automation"
+          git config user.email "provoware-automation@users.noreply.github.com"
+          git add app/server.py
+          git commit -m "fix: restore complete server with narrow profile selection"
+          git push origin HEAD:feature/start-profile-creation-20260903
