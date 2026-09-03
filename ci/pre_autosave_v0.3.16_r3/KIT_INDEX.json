@@ -8,16 +8,15 @@
   "kitSha256": "76bdeb757fd86eeb3cdc00f151aacf529a24ffcbd1b667712424da685d5f36ff",
   "base64Characters": 27932,
   "parts": [
-    "part_000.b64",
-    "part_001.b64",
-    "part_002.b64",
-    "part_003.b64",
-    "part_004.b64",
-    "part_005.b64",
-    "part_006.b64",
-    "part_007.b64",
-    "part_008.b64",
-    "part_009.b64"
+    "part_00.b64",
+    "part_01.b64",
+    "part_02.b64",
+    "part_03.b64",
+    "part_04.b64",
+    "part_05.b64",
+    "part_06.b64",
+    "part_07.b64"
   ],
+  "partSizes": [3500, 3500, 3500, 3500, 3500, 3500, 3500, 3432],
   "releaseTransactionSha256": "5d111e9bf5111d1b5d838b8e121637bcc47afdcec57dfd33bd5a6e55dbca87f6"
 }
