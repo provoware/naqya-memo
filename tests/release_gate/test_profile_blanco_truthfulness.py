@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SERVER = ROOT / "app" / "server.py"
+SECURE_SERVER = ROOT / "app" / "secure_server.py"
 INDEX = ROOT / "ui" / "reference_web" / "index.html"
 APP_JS = ROOT / "ui" / "reference_web" / "app.js"
 
@@ -36,6 +37,22 @@ def _backend_silently_activates_profile() -> bool:
     return first_active_fallback or implicit_standard_profile
 
 
+def _desktop_auth_still_requires_active_profile() -> bool:
+    """Detect the current desktop-auth dependency on the product's active PROFILE_ID.
+
+    This is intentionally a narrow source contract. It prevents server.py from
+    entering a real Blanco runtime before secure_server.py has an explicit
+    profile-optional authentication/bootstrap path.
+    """
+    secure_server = SECURE_SERVER.read_text(encoding="utf-8")
+    profile_id_dependency = "base.PROFILE_ID" in secure_server
+    auth_dependency = (
+        "base.profile_service.verify_access(" in secure_server
+        or "base.profile_service.change_pin(" in secure_server
+    )
+    return profile_id_dependency and auth_dependency
+
+
 def test_ui_never_claims_blanco_while_backend_activates_real_profile() -> None:
     """Release gate: visible profile state must never contradict runtime ownership."""
     assert not (
@@ -44,6 +61,19 @@ def test_ui_never_claims_blanco_while_backend_activates_real_profile() -> None:
         "PROFILE_BLanco_TRUTHFULNESS_VIOLATION: Die UI behauptet 'Blanco', während "
         "app/server.py noch automatisch ein aktives/Standardprofil auswählt. Erst den "
         "Runtime-Blanco-Vertrag umsetzen; danach darf die Oberfläche 'Blanco' anzeigen."
+    )
+
+
+def test_runtime_blanco_waits_for_desktop_auth_decoupling() -> None:
+    """A real Blanco backend is unsafe while desktop PIN auth requires PROFILE_ID."""
+    if _backend_silently_activates_profile():
+        return
+
+    assert not _desktop_auth_still_requires_active_profile(), (
+        "PROFILE_AUTH_COUPLING_VIOLATION: app/server.py aktiviert kein implizites Profil "
+        "mehr, aber app/secure_server.py bindet Desktop-PIN/Erststart weiterhin an "
+        "base.PROFILE_ID. Erst einen expliziten profiloptionalen Auth-Vertrag einführen; "
+        "danach darf der reale Server in Blanco starten."
     )
 
 
