@@ -58,8 +58,13 @@ def _dotted_name(node: ast.AST) -> str | None:
     return None
 
 
-def _assert_file_contained(path: Path, allowlist: dict[str, set[str]]) -> None:
-    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+def _violations_for_source(
+    source: str,
+    allowlist: dict[str, set[str]],
+    *,
+    label: str,
+) -> list[str]:
+    tree = ast.parse(source, filename=label)
     visitor = DirectProfileAccessVisitor()
     visitor.visit(tree)
 
@@ -67,8 +72,16 @@ def _assert_file_contained(path: Path, allowlist: dict[str, set[str]]) -> None:
     for dotted, scope, lineno in visitor.hits:
         allowed_scopes = allowlist.get(dotted)
         if allowed_scopes is None or scope not in allowed_scopes:
-            violations.append(f"{path.relative_to(ROOT)}:{lineno}: {dotted} in {scope}")
+            violations.append(f"{label}:{lineno}: {dotted} in {scope}")
+    return violations
 
+
+def _assert_file_contained(path: Path, allowlist: dict[str, set[str]]) -> None:
+    violations = _violations_for_source(
+        path.read_text(encoding="utf-8"),
+        allowlist,
+        label=str(path.relative_to(ROOT)),
+    )
     assert not violations, (
         "AUTH_PROFILE_DEPENDENCY_SPREAD: Direkte PROFILE_ID-Kopplung hat die bekannte "
         "Auth-Grenze verlassen. Neue direkte Zugriffe sind im Release-Freeze nicht zulässig; "
@@ -82,11 +95,39 @@ def test_direct_profile_id_dependency_stays_contained() -> None:
         _assert_file_contained(path, allowlist)
 
 
+def test_detector_rejects_new_direct_profile_id_scope() -> None:
+    """Mutation probe: prove the detector itself catches a newly spread dependency."""
+    synthetic = (
+        "def accidental_auth_helper():\n"
+        "    return base.PROFILE_ID\n"
+    )
+    secure_server_allowlist = TARGETS[ROOT / "app" / "secure_server.py"]
+    violations = _violations_for_source(
+        synthetic,
+        secure_server_allowlist,
+        label="<mutation-probe>",
+    )
+    assert violations == [
+        "<mutation-probe>:2: base.PROFILE_ID in accidental_auth_helper"
+    ], (
+        "AUTH_PROFILE_CONTAINMENT_DETECTOR_FALSE_GREEN: Der Mutationstest konnte eine "
+        "absichtlich neu eingeführte direkte PROFILE_ID-Kopplung nicht eindeutig erkennen."
+    )
+
+
 if __name__ == "__main__":
-    try:
-        test_direct_profile_id_dependency_stays_contained()
-    except Exception as exc:
-        print(f"FAIL test_direct_profile_id_dependency_stays_contained: {exc}")
+    tests = [
+        test_direct_profile_id_dependency_stays_contained,
+        test_detector_rejects_new_direct_profile_id_scope,
+    ]
+    failed: list[tuple[str, str]] = []
+    for test in tests:
+        try:
+            test()
+            print(f"PASS {test.__name__}")
+        except Exception as exc:
+            failed.append((test.__name__, repr(exc)))
+            print(f"FAIL {test.__name__}: {exc}")
+    print(f"SUMMARY total={len(tests)} passed={len(tests)-len(failed)} failed={len(failed)}")
+    if failed:
         raise SystemExit(1)
-    print("PASS test_direct_profile_id_dependency_stays_contained")
-    print("SUMMARY total=1 passed=1 failed=0")
