@@ -19,7 +19,7 @@ Ein weiterer kritischer Übergang betrifft `/api/state`: Dieser Endpunkt ist der
 - Der historische Auto-Profil-Fallback bleibt unverändert; dadurch ändert sich das heutige Runtime-Verhalten nicht.
 - Die Nutzerfehlermeldung für `PROFILE_CONTEXT_REQUIRED` ist in einfacher Sprache im bestehenden Fehlerkanal hinterlegt.
 
-Zusätzlich schützt jetzt `tests/release_gate/test_blanco_readonly_state_boundary.py` den späteren `/api/state`-Übergang fail-closed:
+Zusätzlich schützt `tests/release_gate/test_blanco_readonly_state_boundary.py` den späteren `/api/state`-Übergang fail-closed:
 
 - Solange kein explizit neutraler Blanco-State existiert, muss `/api/state` vom allgemeinen Profilguard erfasst bleiben.
 - Wird `/api/state` später aus dem Guard ausgenommen, muss ein eigener `_blanco_api_state()`-Vertrag vorhanden und im Dispatcher tatsächlich verwendet werden.
@@ -38,12 +38,18 @@ Zusätzlich schützt jetzt `tests/release_gate/test_blanco_readonly_state_bounda
 - Ein definierter, aber vom HTTP-Dispatcher unbenutzter Guard wird abgelehnt.
 - Ein synthetischer profilfreier Server mit explizit erzwungenem Guard-Vertrag wird akzeptiert.
 
-Das neue `tests/release_gate/test_blanco_readonly_state_boundary.py` ergänzt vier gezielte Prüfungen:
+`tests/release_gate/test_blanco_readonly_state_boundary.py` ergänzt vier gezielte Prüfungen:
 
 - aktueller Server: `/api/state` bleibt geschützt oder muss bereits den neutralen Vertrag erfüllen,
 - Mutation: naive State-Ausnahme mit vollständigem `api_state()` wird abgelehnt,
 - Mutation: scheinbar neutraler Helper mit Store-/Profildatenzugriff wird abgelehnt,
 - Positivvertrag: minimaler datenfreier Zustand mit exakt `version/profile/readiness` wird akzeptiert.
+
+### Evidence-Härtung der synthetischen Testfälle
+
+Workflow Run `33771891046` zeigte einen Testfehler im Read-only-State-Gate: Die drei synthetischen Python-Fixtures enthielten jeweils ein `try:` ohne zugehöriges `except` oder `finally`. Dadurch war der Positivvertrag fälschlich rot; zugleich konnten die beiden Negativtests nur wegen desselben Syntaxfehlers grün erscheinen.
+
+Die Fixtures sind deshalb jetzt syntaktisch vollständige Python-Programme. Zusätzlich ruft jeder synthetische Test vor der eigentlichen Sicherheitsbehauptung `_assert_valid_synthetic()` auf. Damit gilt fail-closed: Ein Negativtest darf nicht mehr wegen eines Parserfehlers scheinbar erfolgreich sein, sondern muss tatsächlich an der geprüften Sicherheitsregel scheitern.
 
 Beide Release-Gates werden im spezialisierten Workflow `.github/workflows/profile-blanco-truthfulness.yml` direkt mit Python ausgeführt und benötigen keine zusätzliche Testbibliothek.
 
@@ -51,7 +57,9 @@ Beide Release-Gates werden im spezialisierten Workflow `.github/workflows/profil
 
 Der gefährliche nächste Übergang ist enger abgesichert: Der historische Profilfallback kann später nicht entfernt werden, ohne dass eine reale HTTP-Sicherheitsgrenze vorhanden ist. Zusätzlich kann `/api/state` nicht versehentlich als profilfreier Vollzustandskanal geöffnet werden.
 
-Dieser Slice führt keine neue Produktfunktion und keine Runtime-Verhaltensänderung ein. Er ist ausschließlich eine Release-Sicherheits-, Datenschutz-, Robustheits- und Regressionhärtung innerhalb des Freeze.
+Die Test-Evidence ist nun ebenfalls belastbarer: Synthetische Mutationen müssen zuerst gültigen Python-Code darstellen. Ein Syntaxfehler kann dadurch weder einen Negativtest künstlich grün noch einen Positivvertrag künstlich rot machen.
+
+Dieser Slice verändert keinen Produkt-, UI-, Runtime- oder Schema-Code. Er ist ausschließlich eine Release-Sicherheits-, Testabdeckungs- und Evidence-Härtung innerhalb des Freeze.
 
 ## Release-Grenze
 
@@ -59,4 +67,4 @@ PR #99 bleibt Draft / NO-GO. Der reale Server startet weiterhin nicht wirklich B
 
 ## Nächster zulässiger Slice
 
-Als nächster einzelner Runtime-Slice kann `_blanco_api_state()` implementiert werden. Ohne Profil darf dieser Zustand ausschließlich Version, `profile: null` und eine minimale Readiness-/Profilauswahl-Aussage liefern; alle Memo-, Todo-, Kalender-, Settings-, Asset-, Diagnose-, Backup- und Mutationsdaten bleiben weiterhin strikt hinter `_require_profile_context()`. Erst nach grüner Regression dieses Zustands sollte der historische Auto-Profil-Fallback entfernt werden.
+Erst nach vollständig grüner SHA-genauer Regression dieses korrigierten Gates kann `_blanco_api_state()` als nächster einzelner Runtime-Slice implementiert werden. Ohne Profil darf dieser Zustand ausschließlich Version, `profile: null` und eine minimale Readiness-/Profilauswahl-Aussage liefern; alle Memo-, Todo-, Kalender-, Settings-, Asset-, Diagnose-, Backup- und Mutationsdaten bleiben weiterhin strikt hinter `_require_profile_context()`. Erst nach grüner Regression dieses Zustands sollte der historische Auto-Profil-Fallback entfernt werden.

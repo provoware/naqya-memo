@@ -104,6 +104,11 @@ def _safe_state_boundary(source: str) -> bool:
     return _helper_has_allowlisted_shape(helper) and _state_dispatch_calls_blanco_helper(tree)
 
 
+def _assert_valid_synthetic(source: str) -> None:
+    """Ensure mutation fixtures exercise the semantic detector, not SyntaxError fallback."""
+    ast.parse(source)
+
+
 def test_current_server_keeps_state_guarded_or_explicitly_neutral() -> None:
     source = SERVER.read_text(encoding="utf-8")
     assert _safe_state_boundary(source), (
@@ -127,7 +132,10 @@ class Handler:
                 _require_profile_context()
             if path == '/api/state':
                 return self._ok(api_state())
+        except Exception:
+            return None
 """
+    _assert_valid_synthetic(synthetic)
     assert not _safe_state_boundary(synthetic), (
         "BLANCO_STATE_EXEMPTION_FALSE_GREEN: Ein aus dem Guard ausgenommenes /api/state "
         "darf niemals weiterhin den vollständigen api_state() ausliefern."
@@ -149,7 +157,10 @@ class Handler:
                 _require_profile_context()
             if path == '/api/state':
                 return self._ok(_blanco_api_state())
+        except Exception:
+            return None
 """
+    _assert_valid_synthetic(synthetic)
     assert not _safe_state_boundary(synthetic), (
         "BLANCO_STATE_DATA_LEAK_FALSE_GREEN: Der neutrale Statushelper darf keine "
         "profil-/datengebundenen Services oder Stores abfragen."
@@ -175,7 +186,10 @@ class Handler:
                 _require_profile_context()
             if path == '/api/state':
                 return self._ok(_blanco_api_state())
+        except Exception:
+            return None
 """
+    _assert_valid_synthetic(synthetic)
     assert _safe_state_boundary(synthetic), (
         "BLANCO_STATE_BOUNDARY_FALSE_RED: Ein minimaler, datenfreier Read-only-Status "
         "mit exakt version/profile/readiness muss als sichere Blanco-Grenze gelten."
