@@ -102,3 +102,27 @@ def test_initial_profile_status_is_informative_and_accessible() -> None:
     assert re.search(r'aria-atomic=["\']true["\']', element, flags=re.IGNORECASE), (
         "PROFILE_STATUS_A11Y_ATOMIC_MISSING: Der Profilstatus muss vollständig angekündigt werden."
     )
+
+
+def _run_direct() -> None:
+    """Execute this dependency-free release gate when CI calls the file directly."""
+    tests = [
+        test_ui_never_claims_blanco_while_backend_activates_real_profile,
+        test_runtime_blanco_waits_for_desktop_auth_decoupling,
+        test_initial_profile_status_is_informative_and_accessible,
+    ]
+    failed: list[tuple[str, str]] = []
+    for test in tests:
+        try:
+            test()
+            print(f"PASS {test.__name__}")
+        except Exception as exc:
+            failed.append((test.__name__, repr(exc)))
+            print(f"FAIL {test.__name__}: {exc}")
+    print(f"SUMMARY total={len(tests)} passed={len(tests)-len(failed)} failed={len(failed)}")
+    if failed:
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    _run_direct()
