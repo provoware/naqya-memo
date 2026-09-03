@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -17,6 +18,21 @@ TARGETS = {
         "secure.base.PROFILE_ID": {
             "_profile_security_state_from_readonly_db",
         }
+    },
+}
+
+# Existing direct dependencies may shrink during the planned centralization, but
+# they must never multiply silently inside an already allowlisted scope. Without
+# this budget, adding more direct PROFILE_ID reads to one of the known functions
+# would bypass the scope-only containment check.
+MAX_OCCURRENCES = {
+    ROOT / "app" / "secure_server.py": {
+        ("base.PROFILE_ID", "_harden_first_profile_if_needed"): 3,
+        ("base.PROFILE_ID", "_profile_revision"): 1,
+        ("base.PROFILE_ID", "SecureHandler._authorized"): 1,
+    },
+    ROOT / "app" / "secure_response_server.py": {
+        ("secure.base.PROFILE_ID", "_profile_security_state_from_readonly_db"): 1,
     },
 }
 
@@ -63,16 +79,31 @@ def _violations_for_source(
     allowlist: dict[str, set[str]],
     *,
     label: str,
+    max_occurrences: dict[tuple[str, str], int] | None = None,
 ) -> list[str]:
     tree = ast.parse(source, filename=label)
     visitor = DirectProfileAccessVisitor()
     visitor.visit(tree)
 
     violations: list[str] = []
+    allowed_hits: Counter[tuple[str, str]] = Counter()
     for dotted, scope, lineno in visitor.hits:
         allowed_scopes = allowlist.get(dotted)
         if allowed_scopes is None or scope not in allowed_scopes:
             violations.append(f"{label}:{lineno}: {dotted} in {scope}")
+            continue
+        allowed_hits[(dotted, scope)] += 1
+
+    for key, count in sorted(allowed_hits.items()):
+        maximum = (max_occurrences or {}).get(key)
+        if maximum is None:
+            violations.append(
+                f"{label}: {key[0]} in {key[1]} has no occurrence budget"
+            )
+        elif count > maximum:
+            violations.append(
+                f"{label}: {key[0]} in {key[1]} occurs {count} times; maximum {maximum}"
+            )
     return violations
 
 
@@ -81,12 +112,14 @@ def _assert_file_contained(path: Path, allowlist: dict[str, set[str]]) -> None:
         path.read_text(encoding="utf-8"),
         allowlist,
         label=str(path.relative_to(ROOT)),
+        max_occurrences=MAX_OCCURRENCES[path],
     )
     assert not violations, (
         "AUTH_PROFILE_DEPENDENCY_SPREAD: Direkte PROFILE_ID-Kopplung hat die bekannte "
-        "Auth-Grenze verlassen. Neue direkte Zugriffe sind im Release-Freeze nicht zulässig; "
-        "stattdessen den zentralen Profil/Auth-Grenzpunkt verwenden oder zuerst den Vertrag "
-        "gezielt aktualisieren.\n" + "\n".join(violations)
+        "Auth-Grenze verlassen oder sich innerhalb einer bekannten Grenze vermehrt. "
+        "Neue direkte Zugriffe sind im Release-Freeze nicht zulässig; stattdessen den "
+        "zentralen Profil/Auth-Grenzpunkt verwenden oder zuerst den Vertrag gezielt "
+        "aktualisieren.\n" + "\n".join(violations)
     )
 
 
@@ -96,22 +129,46 @@ def test_direct_profile_id_dependency_stays_contained() -> None:
 
 
 def test_detector_rejects_new_direct_profile_id_scope() -> None:
-    """Mutation probe: prove the detector itself catches a newly spread dependency."""
+    """Mutation probe: prove the detector catches a newly spread dependency."""
     synthetic = (
         "def accidental_auth_helper():\n"
         "    return base.PROFILE_ID\n"
     )
-    secure_server_allowlist = TARGETS[ROOT / "app" / "secure_server.py"]
+    secure_server = ROOT / "app" / "secure_server.py"
     violations = _violations_for_source(
         synthetic,
-        secure_server_allowlist,
-        label="<mutation-probe>",
+        TARGETS[secure_server],
+        label="<mutation-probe-new-scope>",
+        max_occurrences=MAX_OCCURRENCES[secure_server],
     )
     assert violations == [
-        "<mutation-probe>:2: base.PROFILE_ID in accidental_auth_helper"
+        "<mutation-probe-new-scope>:2: base.PROFILE_ID in accidental_auth_helper"
     ], (
         "AUTH_PROFILE_CONTAINMENT_DETECTOR_FALSE_GREEN: Der Mutationstest konnte eine "
         "absichtlich neu eingeführte direkte PROFILE_ID-Kopplung nicht eindeutig erkennen."
+    )
+
+
+def test_detector_rejects_extra_access_inside_allowed_scope() -> None:
+    """Mutation probe: an allowlisted function may not accumulate extra direct reads."""
+    synthetic = (
+        "def _profile_revision():\n"
+        "    first = base.PROFILE_ID\n"
+        "    second = base.PROFILE_ID\n"
+        "    return first, second\n"
+    )
+    secure_server = ROOT / "app" / "secure_server.py"
+    violations = _violations_for_source(
+        synthetic,
+        TARGETS[secure_server],
+        label="<mutation-probe-allowed-scope-growth>",
+        max_occurrences=MAX_OCCURRENCES[secure_server],
+    )
+    assert violations == [
+        "<mutation-probe-allowed-scope-growth>: base.PROFILE_ID in _profile_revision occurs 2 times; maximum 1"
+    ], (
+        "AUTH_PROFILE_OCCURRENCE_BUDGET_FALSE_GREEN: Der Detektor ließ zusätzliche direkte "
+        "PROFILE_ID-Zugriffe innerhalb einer bereits erlaubten Auth-Grenze unbemerkt zu."
     )
 
 
@@ -119,6 +176,7 @@ if __name__ == "__main__":
     tests = [
         test_direct_profile_id_dependency_stays_contained,
         test_detector_rejects_new_direct_profile_id_scope,
+        test_detector_rejects_extra_access_inside_allowed_scope,
     ]
     failed: list[tuple[str, str]] = []
     for test in tests:
