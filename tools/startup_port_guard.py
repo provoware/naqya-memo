@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
-import argparse, json, os, socket, subprocess, urllib.request
+import argparse, hashlib, json, os, socket, subprocess, urllib.request
+
+SERVICE_ID="oi-provoware-io"
+
+def project_fingerprint(path: Path) -> str:
+    return hashlib.sha256(str(Path(path).expanduser().resolve()).encode("utf-8")).hexdigest()
 
 def is_free(port: int) -> bool:
     s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -16,7 +21,11 @@ def is_free(port: int) -> bool:
 
 def health(port: int):
     try:
-        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/health",timeout=0.8) as r:
+        req=urllib.request.Request(
+            f"http://127.0.0.1:{port}/api/health",
+            headers={"Host":f"127.0.0.1:{port}"},
+        )
+        with urllib.request.urlopen(req,timeout=0.8) as r:
             payload=json.loads(r.read())
         if not payload.get("ok"): return None
         return payload.get("data") or {}
@@ -59,22 +68,24 @@ def main():
     requested=args.requested
     current_version=load_version(root)
     wanted_project=expected_project(root)
+    wanted_fingerprint=project_fingerprint(wanted_project)
     result={
         "requested_port":requested,
         "selected_port":None,
         "action":None,
         "reason":None,
         "version":current_version,
-        "project":str(wanted_project),
+        "project_fingerprint":wanted_fingerprint,
     }
 
     if is_free(requested):
         result.update(action="START",selected_port=requested,reason="REQUESTED_PORT_FREE")
     else:
         h=health(requested)
-        same_project=bool(h and Path(h.get("project","")).resolve()==wanted_project)
+        same_service=bool(h and h.get("service")==SERVICE_ID)
+        same_project=bool(h and h.get("project_fingerprint")==wanted_fingerprint)
         same_version=bool(h and h.get("version")==current_version)
-        if same_project and same_version:
+        if same_service and same_project and same_version:
             result.update(action="REUSE",selected_port=requested,reason="SAME_APP_ALREADY_RUNNING")
         elif args.strict:
             result.update(action="ERROR",selected_port=requested,
@@ -100,7 +111,6 @@ def main():
         out.mkdir(parents=True,exist_ok=True)
         (out/"LAST_START_PORT.json").write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
 
-    # machine-readable single-line output for shell launcher
     print(json.dumps(result,separators=(",",":"),ensure_ascii=False))
     return 0 if result["action"] in ("START","REUSE") else 98
 

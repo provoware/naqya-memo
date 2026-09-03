@@ -34,7 +34,7 @@ jobs:
 
       - name: Python syntax
         run: |
-          python -m py_compile app/server.py tools/startup_port_guard.py
+          python -m py_compile app/server.py app/http_security.py tools/startup_port_guard.py
 
       - name: JavaScript syntax
         run: |
@@ -63,6 +63,12 @@ jobs:
         run: |
           if [ -f tests/startup/test_startup_port_guard.py ]; then
             PYTHONPATH=core/reference_python python -S tests/startup/test_startup_port_guard.py
+          fi
+
+      - name: Local HTTP security contracts
+        run: |
+          if [ -f tests/security/test_local_http_boundary.py ]; then
+            python -S tests/security/test_local_http_boundary.py
           fi
 
       - name: Mobile source contracts
