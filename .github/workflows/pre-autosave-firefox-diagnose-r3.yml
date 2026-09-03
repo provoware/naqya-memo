@@ -1,0 +1,76 @@
+name: PRE-AUTOSAVE Firefox Harness Diagnose R3
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/pre-autosave-firefox-diagnose-r3.yml"
+      - "ci/pre_autosave_v0.3.16_r3/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pre-autosave-firefox-diagnose-r3-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HELPER: ci/pre_autosave_v0.3.16_r3/cloud_gate_helper.py
+  DIAG: ci/pre_autosave_v0.3.16_r3/firefox_ci_diagnose.py
+  TRACE: ci/pre_autosave_v0.3.16_r3/firefox_runner_trace.py
+
+jobs:
+  firefox-harness-diagnose:
+    name: Firefox boot / module / IndexedDB / scenario trace
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install real Firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: latest
+
+      - name: Firefox version
+        run: firefox --version
+
+      - name: Reconstruct exact frozen acceptance kit
+        run: python "$HELPER" reconstruct --out-base "$RUNNER_TEMP"
+
+      - name: Reconfirm source lock before diagnostics
+        run: python "$HELPER" source-lock
+
+      - name: Run isolated Firefox boot/module/IndexedDB diagnostics
+        run: python "$DIAG"
+
+      - name: Trace exact frozen runner scenario sequence
+        id: trace
+        continue-on-error: true
+        run: python "$TRACE"
+
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: naqya-firefox-harness-diagnose-r3
+          path: |
+            ${{ runner.temp }}/naqya-firefox-diag.json
+            ${{ runner.temp }}/naqya-firefox-runner-trace.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Mark trace finding without changing product code
+        if: steps.trace.outcome != 'success'
+        run: echo "Exact runner trace reproduced the Firefox acceptance failure. Inspect the trace before repairing the harness."

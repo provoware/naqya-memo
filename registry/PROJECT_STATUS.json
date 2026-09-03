@@ -28,9 +28,9 @@
     "GATE_06_ANDROID_DEVICE": "BLOCKED",
     "GATE_07_IOS_IPHONE_X": "BLOCKED"
   },
-  "next_step": "Real Linux visual acceptance of simplified UI, then Android SDK/APK Gate 06.",
-  "next_next_step": "macOS/Xcode + iPhone X/iOS 16.7.16 Gate 07; danach Gates 01-04.",
-  "last_updated": "2026-08-28",
+  "next_step": "PR #102 documentation head fully revalidate on Linux/Windows/macOS/Firefox plus quality; keep SAFE AUTOSAVE blocked while canonical evaluator is NO-GO.",
+  "next_next_step": "After the documentation head is fully green, close superseded PR #100 and merge PR #102 only if all required checks remain green and review blockers are cleared.",
+  "last_updated": "2026-09-03",
   "startup_port_guard": "PASS",
   "startup_collision_policy": "REUSE_SAME_VERSION_SAME_PROJECT_ELSE_SAFE_FALLBACK_NO_AUTO_KILL",
   "release_ui_consistency": "PASS",
@@ -57,5 +57,32 @@
   "zoom_layout_hardening": "PASS",
   "input_guidance_contract": "PASS",
   "input_non_brand_palette": "PASS",
-  "all_views_visual_runner": "READY"
+  "all_views_visual_runner": "READY",
+  "naqya_memo_v0_3_16": {
+    "release_package": "VALIDATED_ON_MAIN",
+    "release_package_files": 54,
+    "release_package_local_gate": "219_PASS_0_WARN_0_FAIL",
+    "pre_autosave_cloud_gate": "PASS_PR_102_RUN_33778124686_HEAD_DFA68C478EA3",
+    "pre_autosave_source_head": "dfa68c478ea3edd4465760e85013196f619e06d1",
+    "pre_autosave_ci_merge_head": "a320ceebaa677fc3441f9eb932088307152cc99c",
+    "pre_autosave_plan_id": "NAQYA-PRE-AUTOSAVE-ACCEPTANCE-v0.3.16-r3",
+    "pre_autosave_plan_hash": "5d2d4a189bf73b4686e9d4608ef29b95f7aae055bb46299700b99f341da5e747",
+    "pre_autosave_kit_sha256": "36add593789e25dc3ea9406371f7fdb6ac473cdd795ab02df26dec09dc108752",
+    "pre_autosave_evidence_manifest_sha256": "1c3d8b2cad21c4a317911500749557f3365ff9ba016ebadb151bbe412e355b2a",
+    "pre_autosave_evaluator_closure_sha256": "1b4a5a13beff4720fc876f5b6aff037635b8d35a1cb32298c8f383a502e796b5",
+    "pre_autosave_platforms": {
+      "linux": "PASS",
+      "windows": "PASS",
+      "macos": "PASS",
+      "firefox": "PASS"
+    },
+    "pre_autosave_evidence_merge": "PASS",
+    "canonical_repository_evaluator_exit_code": 2,
+    "canonical_repository_release_status": "NO-GO",
+    "safe_autosave_gate_local_prerequisite_passed": true,
+    "safe_autosave_implementation_allowed": false,
+    "candidate_status": "KANDIDAT",
+    "workflow": ".github/workflows/pre-autosave-v0.3.16-r3.yml",
+    "semantics": "PRE-AUTOSAVE PASS proves only the Naqya v0.3.16 gate-local prerequisite. SAFE AUTOSAVE implementation remains blocked while tools/release_gate/evaluate_release_gate.py reports repository NO-GO."
+  }
 }

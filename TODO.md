@@ -1,3 +1,23 @@
+# ✅ NAQYA v0.3.16 · PRE-AUTOSAVE R3 – STATUS
+
+- [x] r3-Plan eingefroren: `NAQYA-PRE-AUTOSAVE-ACCEPTANCE-v0.3.16-r3`
+- [x] Quell-Head `dfa68c478ea3edd4465760e85013196f619e06d1` vollständig geprüft
+- [x] Linux: realer Prozess-Kill → Recovery → 5.000 Datensätze PASS
+- [x] Windows: realer Prozess-Kill → Recovery → 5.000 Datensätze PASS
+- [x] macOS: realer Prozess-Kill → Recovery → 5.000 Datensätze PASS
+- [x] Firefox: reale Browser-Kills + IndexedDB-Recovery + 5.000 Einträge PASS
+- [x] Evidence-Merge nur für exakten Plan / exakte Quellen PASS
+- [x] kanonischen Repository-Evaluator ausgeführt und tatsächlichen Zustand aufgezeichnet
+- [x] PRE-AUTOSAVE als **gate-lokale Voraussetzung** bewiesen
+- [ ] SAFE AUTOSAVE implementieren – **blockiert**, solange der kanonische Evaluator `NO-GO` meldet
+- [ ] Dokumentations-Head erneut vollständig durch `quality` + Linux/Windows/macOS/Firefox + Evidence-Merge prüfen
+- [ ] PR #100 nach vollständig grünem Dokumentations-Head als überholt schließen
+- [ ] PR #102 nur bei vollständig grüner finaler CI und bereinigten Review-Blockern mergen
+
+> Kanonischer Repository-Status: **NO-GO**, Exit-Code `2`, weiterhin 1/7 reale Release-Gates. PRE-AUTOSAVE PASS hebt diesen Status nicht auf.
+
+---
+
 # ✅ **TODO – OI - PROVOWARE - IO**
 ## **Priorisierte Entwicklungsroadmap**
 

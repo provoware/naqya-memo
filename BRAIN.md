@@ -16,6 +16,25 @@
 
 ---
 
+[2026-09-03] [BRAIN-0036] [CI-HARNESS] [BEWIESEN]
+- Beobachtung: Firefox, ES-Module und IndexedDB waren im Runner funktionsfähig, während der Acceptance-Harness trotzdem ohne Phase-Ergebnis hing.
+- Ursache: Der Fehler lag im eingefrorenen Acceptance-/CI-Harness und nicht im Produktcode; zusätzlich musste der Prozess-Kill-Nachweis so gehärtet werden, dass der Elternprozess einen noch lebenden Worker tatsächlich beendet.
+- Lösung: r3-Plan mit korrigiertem Firefox-Harness, lebendem Kill-Worker bis zum Eltern-Kill und strikter Kill-Evidence eingefroren; keinerlei Änderung am Produkt-/Transaktionskern.
+- Vorbeugeregel: Ein grüner Browser-/Runtime-Probe beweist nicht automatisch den Acceptance-Bootstrap. Harness-Syntax, Modul-Bootstrap, Worker-Liveness und echte OS-Kill-Vor-/Nachbedingungen müssen separat fail-closed geprüft werden.
+- Regressionstest: PRE-AUTOSAVE r3 auf Linux, Windows, macOS und echtem Firefox; jeweils Kill/Recovery + 5.000 Datensätze/Einträge; Evidence-Merge nur bei exakt identischem Plan und Quellen.
+- Betroffene Komponenten: `ci/pre_autosave_v0.3.16_r3`, PRE-AUTOSAVE Workflow, Firefox Acceptance Harness, Kill Worker.
+- Gültig seit/bis: ab Naqya v0.3.16 PRE-AUTOSAVE r3.
+- Evidence: Quell-Head `dfa68c478ea3edd4465760e85013196f619e06d1`, CI-Lauf `33778124686`, Plan-Hash `5d2d4a189bf73b4686e9d4608ef29b95f7aae055bb46299700b99f341da5e747`.
+
+[2026-09-03] [BRAIN-0037] [STATUS-WAHRHEIT] [BEWIESEN]
+- Beobachtung: Ein vollständig grünes PRE-AUTOSAVE-Gate kann gleichzeitig mit einem projektweiten Repository-NO-GO bestehen.
+- Ursache: PRE-AUTOSAVE ist ein gate-lokaler Teilnachweis; der kanonische 7-Gate-Release-Evaluator bewertet einen größeren Scope.
+- Lösung: `PRE-AUTOSAVE PASS` und `SAFE AUTOSAVE implementation allowed` werden getrennt gespeichert; bei Evaluator Exit-Code 2 bleibt Implementierung blockiert.
+- Vorbeugeregel: Kein Teil-Gate darf eine globale Freigabe oder eine nachgelagerte Implementierungsfreigabe implizieren, wenn der kanonische Evaluator sie nicht erlaubt.
+- Regressionstest: Evidence-Merge führt `tools/release_gate/evaluate_release_gate.py` aus und übernimmt dessen tatsächlichen Status ohne Override.
+- Betroffene Komponenten: README/TODO/CHANGELOG/PROJECT_STATUS, PRE-AUTOSAVE Provenance.
+- Evidence: `preAutosaveStatus=PASS`, `safeAutosaveImplementationAllowed=false`, `repositoryReleaseStatus=NO-GO`, Evaluator Exit-Code `2`.
+
 [2026-08-28] [BRAIN-0001] [ARCHITEKTUR] [AKTIV]
 - Beobachtung: Android, Linux und iOS besitzen stark unterschiedliche Rechte- und Hintergrundmodelle.
 - Ursache: Plattformrestriktionen.
