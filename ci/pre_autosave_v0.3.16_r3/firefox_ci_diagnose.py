@@ -13,6 +13,25 @@ def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 
+def check_inline_module_syntax(script: str) -> dict:
+    fd, raw_path=tempfile.mkstemp(prefix='naqya_firefox_harness_',suffix='.mjs')
+    os.close(fd)
+    path=Path(raw_path)
+    try:
+        path.write_text(script,encoding='utf-8')
+        p=subprocess.run(['node','--check',str(path)],text=True,capture_output=True,timeout=15)
+        return {
+            'sha256':sha256_text(script),
+            'bytes':len(script.encode('utf-8')),
+            'returncode':p.returncode,
+            'ok':p.returncode==0,
+            'stdout':p.stdout[-4000:],
+            'stderr':p.stderr[-8000:],
+        }
+    finally:
+        path.unlink(missing_ok=True)
+
+
 def static_harness_evidence(kit: Path) -> dict:
     path=kit/HARNESS
     assert path.is_file(), f'Firefox acceptance harness missing: {path}'
@@ -23,6 +42,7 @@ def static_harness_evidence(kit: Path) -> dict:
     for tag in opening_tags:
         m=re.search(r'\bsrc\s*=\s*["\']([^"\']+)["\']',tag,flags=re.I)
         if m: srcs.append(m.group(1))
+    syntax=[check_inline_module_syntax(s) for s in script_tags]
     return {
         'path':HARNESS,
         'bytes':len(text.encode('utf-8')),
@@ -34,6 +54,7 @@ def static_harness_evidence(kit: Path) -> dict:
         'mentionsStateEndpoint':('/__state__' in text),
         'mentionsPhase':('phase' in text),
         'openingScriptTags':opening_tags[:12],
+        'inlineScriptSyntax':syntax,
         'inlineScriptPreviews':[s.strip()[:1200] for s in script_tags[:8]],
         'headPreview':text[:2400],
     }
