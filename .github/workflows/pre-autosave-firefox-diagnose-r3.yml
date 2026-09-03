@@ -23,7 +23,7 @@ jobs:
   firefox-harness-diagnose:
     name: Firefox boot / module / IndexedDB / scenario trace
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
