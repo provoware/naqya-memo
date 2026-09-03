@@ -1,0 +1,236 @@
+name: PRE-AUTOSAVE v0.3.16 Cloud Acceptance R3
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/pre-autosave-v0.3.16-r3.yml"
+      - "ci/pre_autosave_v0.3.16_r3/**"
+      - "README.md"
+      - "TODO.md"
+      - "CHANGELOG.md"
+      - "registry/PROJECT_STATUS.json"
+      - "BRAIN.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pre-autosave-v0.3.16-r3-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HELPER: ci/pre_autosave_v0.3.16_r3/cloud_gate_helper.py
+
+jobs:
+  source-lock:
+    name: Frozen kit / release source lock
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Reconstruct exact acceptance kit
+        run: python "$HELPER" reconstruct --out-base "$RUNNER_TEMP"
+
+      - name: Verify 5 source hashes, plan and release transaction parity
+        run: python "$HELPER" source-lock
+
+      - name: Syntax preflight
+        run: python "$HELPER" syntax
+
+  native-hosts:
+    name: Native ${{ matrix.label }} kill / recovery / 5,000
+    needs: source-lock
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: Linux
+            runner: ubuntu-latest
+            os: linux
+          - label: Windows
+            runner: windows-latest
+            os: windows
+          - label: macOS
+            runner: macos-latest
+            os: macos
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Reconstruct exact acceptance kit
+        shell: bash
+        run: python "$HELPER" reconstruct --out-base "$RUNNER_TEMP"
+
+      - name: Execute real process-kill / recovery host acceptance
+        shell: bash
+        run: python "$HELPER" run-host
+
+      - name: Validate native host evidence
+        shell: bash
+        run: python "$HELPER" validate-host --os "${{ matrix.os }}"
+
+      - name: Export deterministic evidence artifact
+        shell: bash
+        run: python "$HELPER" export-host --os "${{ matrix.os }}" --dest "$RUNNER_TEMP/naqya-artifact/platform_${{ matrix.os }}_ci_v0.3.16.json"
+
+      - name: Upload native host evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: naqya-preautosave-${{ matrix.os }}
+          path: ${{ runner.temp }}/naqya-artifact/platform_${{ matrix.os }}_ci_v0.3.16.json
+          if-no-files-found: error
+          retention-days: 30
+
+  firefox-e2e:
+    name: Real Firefox process-kill / IndexedDB recovery / 5,000
+    needs: source-lock
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install real Firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: latest
+
+      - name: Verify Firefox executable
+        run: firefox --version
+
+      - name: Reconstruct exact acceptance kit
+        run: python "$HELPER" reconstruct --out-base "$RUNNER_TEMP"
+
+      - name: Execute acceptance with real Firefox browser kills
+        run: python "$HELPER" run-host
+
+      - name: Validate Firefox evidence
+        run: python "$HELPER" validate-firefox
+
+      - name: Export deterministic Firefox evidence artifact
+        run: python "$HELPER" export-firefox --dest "$RUNNER_TEMP/naqya-artifact/platform_linux_firefox_ci_v0.3.16.json"
+
+      - name: Upload Firefox evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: naqya-preautosave-firefox
+          path: ${{ runner.temp }}/naqya-artifact/platform_linux_firefox_ci_v0.3.16.json
+          if-no-files-found: error
+          retention-days: 30
+
+  evidence-merge:
+    name: Evidence merge / PRE-AUTOSAVE decision / canonical release status
+    needs:
+      - native-hosts
+      - firefox-e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Reconstruct exact acceptance kit
+        run: python "$HELPER" reconstruct --out-base "$RUNNER_TEMP"
+
+      - name: Download all real platform evidence
+        uses: actions/download-artifact@v4
+        with:
+          pattern: naqya-preautosave-*
+          path: ${{ runner.temp }}/naqya-evidence-download
+          merge-multiple: true
+
+      - name: Import evidence into frozen kit
+        shell: bash
+        run: |
+          EVIDENCE="$RUNNER_TEMP/naqya-kit-r3/Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/evidence"
+          mkdir -p "$EVIDENCE"
+          cp "$RUNNER_TEMP"/naqya-evidence-download/platform_*_v0.3.16.json "$EVIDENCE"/
+          test "$(find "$EVIDENCE" -maxdepth 1 -name 'platform_*_v0.3.16.json' | wc -l)" -eq 4
+
+      - name: Merge only exact-plan / exact-source evidence
+        run: python "$HELPER" run-merge
+
+      - name: Run canonical repository release evaluator without overriding it
+        id: canonical
+        shell: bash
+        run: |
+          set +e
+          python tools/release_gate/evaluate_release_gate.py
+          rc=$?
+          set -e
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then
+            echo "Canonical evaluator failed unexpectedly with rc=$rc"
+            exit "$rc"
+          fi
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+
+      - name: Prove PRE-AUTOSAVE PASS and record canonical repository status
+        run: |
+          python "$HELPER" validate-merged \
+            --evaluator registry/evidence/v0.12.2/RELEASE_GATE_CLOSURE.json \
+            --out "$RUNNER_TEMP/naqya-final/CI_PRE_AUTOSAVE_PROVENANCE_v0.3.16.json"
+
+      - name: Explicit status semantics
+        shell: bash
+        run: |
+          echo "PRE-AUTOSAVE PASS permits the Naqya SAFE AUTOSAVE implementation step."
+          echo "It does NOT override the repository-wide GO/NO-GO evaluator."
+          echo "Canonical evaluator exit code: ${{ steps.canonical.outputs.rc }}"
+
+      - name: Upload final PRE-AUTOSAVE evidence package
+        uses: actions/upload-artifact@v4
+        with:
+          name: PRE_AUTOSAVE_CLOUD_EVIDENCE_v0.3.16
+          path: |
+            ${{ runner.temp }}/naqya-evidence-download/*.json
+            ${{ runner.temp }}/naqya-kit-r3/Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/manifeste/manifest_evidence_BEWIESEN_v0.3.16.json
+            ${{ runner.temp }}/naqya-kit-r3/Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/berichte/cross_platform_runner_BEWIESEN_v0.3.16.md
+            ${{ runner.temp }}/naqya-final/CI_PRE_AUTOSAVE_PROVENANCE_v0.3.16.json
+            registry/evidence/v0.12.2/RELEASE_GATE_CLOSURE.json
+          if-no-files-found: error
+          retention-days: 90
