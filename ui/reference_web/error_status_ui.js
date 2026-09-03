@@ -4,11 +4,16 @@ const recentErrors=[];
 const MAX_ERROR_AGE_MS=1800;
 
 function $(id){return document.getElementById(id)}
-function localApiRequest(input){
+function localApiMeta(input,init){
  const raw=typeof input==='string'?input:(input&&input.url)||'';
- try{const url=new URL(raw,location.href);return url.origin===location.origin&&url.pathname.startsWith('/api/')}catch{return false}
+ try{
+  const url=new URL(raw,location.href);
+  if(url.origin!==location.origin||!url.pathname.startsWith('/api/'))return null;
+  const method=String(init?.method||(input&&input.method)||'GET').toUpperCase();
+  return {path:url.pathname,method};
+ }catch{return null}
 }
-function rememberError(payload,status){
+function rememberError(payload,status,requestMeta=null){
  const safe={
   code:String(payload?.code||'REQUEST_FAILED'),
   message:String(payload?.message||'Die Aktion konnte nicht abgeschlossen werden.'),
@@ -17,6 +22,7 @@ function rememberError(payload,status){
  };
  recentErrors.push({payload:safe,at:Date.now()});
  while(recentErrors.length>8)recentErrors.shift();
+ window.dispatchEvent(new CustomEvent('provoware:api-error',{detail:{payload:safe,status:safe.status,path:requestMeta?.path||'',method:requestMeta?.method||'GET'}}));
  if(safe.degraded_mode)renderError(safe);
 }
 function consumeRecentError(){
@@ -48,17 +54,18 @@ function fallbackFromToast(message){
 }
 
 window.fetch=async function(...args){
- if(!localApiRequest(args[0]))return nativeFetch(...args);
+ const requestMeta=localApiMeta(args[0],args[1]);
+ if(!requestMeta)return nativeFetch(...args);
  try{
   const response=await nativeFetch(...args);
   const clone=response.clone();
   const ctype=(clone.headers.get('content-type')||'').toLowerCase();
   if(ctype.includes('application/json')){
-   try{const payload=await clone.json();if(payload&&payload.ok===false)rememberError(payload,response.status)}catch{}
+   try{const payload=await clone.json();if(payload&&payload.ok===false)rememberError(payload,response.status,requestMeta)}catch{}
   }
   return response;
  }catch(error){
-  rememberError({code:'NETWORK_ERROR',message:'Die Verbindung zum lokalen Tool wurde unterbrochen.',recovery_hint:'Bitte die Ansicht neu laden. Wenn der Fehler wiederkehrt, das Tool über SCHNELLSTART.sh neu starten.',degraded_mode:false},0);
+  rememberError({code:'NETWORK_ERROR',message:'Die Verbindung zum lokalen Tool wurde unterbrochen.',recovery_hint:'Bitte die Ansicht neu laden. Wenn der Fehler wiederkehrt, das Tool über SCHNELLSTART.sh neu starten.',degraded_mode:false},0,requestMeta);
   throw error;
  }
 };
@@ -78,6 +85,8 @@ $('statusNoticeClose')?.addEventListener('click',()=>{
  const notice=$('statusNotice');
  if(notice?.dataset.level!=='degraded')notice.hidden=true;
 });
+
+import('./form_feedback_ui.js').catch(()=>{});
 
 nativeFetch('/api/health',{headers:{Accept:'application/json'},cache:'no-store'})
  .then(r=>r.json())
