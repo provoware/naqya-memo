@@ -4,6 +4,16 @@ cd "$(dirname "$0")"
 
 export PROVOWARE_NO_BROWSER=1
 REQUESTED_PORT="${PROVOWARE_PORT:-8765}"
+
+PROFILE_ID="$(python3 -S tools/startup_profile_selector.py --root "$PWD")"
+if [[ "$PROFILE_ID" == "__CANCEL__" ]]; then
+  echo "🟡 Start auf Wunsch abgebrochen. Es wurde nichts verändert."
+  exit 0
+fi
+if [[ -n "$PROFILE_ID" ]]; then
+  export PROVOWARE_PROFILE_ID="$PROFILE_ID"
+  echo "🟢 Profil für diesen Start ausgewählt."
+fi
 GUARD_JSON="$(python3 -S tools/startup_port_guard.py --root "$PWD" --requested "$REQUESTED_PORT" --evidence)"
 ACTION="$(python3 -S -c 'import json,sys; print(json.load(sys.stdin)["action"])' <<<"$GUARD_JSON")"
 PORT="$(python3 -S -c 'import json,sys; print(json.load(sys.stdin).get("selected_port") or "")' <<<"$GUARD_JSON")"

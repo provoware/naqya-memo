@@ -9,7 +9,14 @@
 ./STARTEN_LINUX.sh
 ```
 
-3. Öffnet sich der Browser nicht automatisch, zeigt das Terminal die lokale Adresse an.
+3. Beim Start erscheint die Profilwahl. Dort kannst du:
+   - ein vorhandenes Profil auswählen oder
+   - **＋ Neues Profil anlegen** wählen.
+4. Für ein neues Profil einen Namen und eine eigene **4-stellige PIN** eingeben und die PIN einmal wiederholen.
+5. Danach startet PROVOWARE mit genau diesem Profil. Im Browser bleibt die bestehende geschützte PIN-Anmeldung aktiv.
+6. Öffnet sich der Browser nicht automatisch, zeigt das Terminal die lokale Adresse an.
+
+Falls kein grafischer Dialog verfügbar ist, verwendet der Starthelfer das Terminal. Bei einem rein automatischen/headless Start wird nichts blockiert und das bisherige erste aktive Profil verwendet.
 
 ## Orientierung
 

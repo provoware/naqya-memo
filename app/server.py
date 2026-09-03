@@ -45,8 +45,15 @@ audio_recorder = LinuxAudioRecorder(asset_manager)
 playlist_service = PlaylistService(store, queue)
 reminder_engine = ReminderEngine(store)
 
-# Ensure a local reference profile. Product login flow remains separate from this development reference shell.
-row = store.conn.execute("SELECT id,display_name FROM profiles WHERE status='ACTIVE' ORDER BY created_at LIMIT 1").fetchone()
+# Select the profile chosen by the desktop start helper. Headless/development starts keep
+# the historical first-active-profile fallback. An invalid requested ID fails closed.
+REQUESTED_PROFILE_ID = os.environ.get('PROVOWARE_PROFILE_ID','').strip()
+if REQUESTED_PROFILE_ID:
+    row = store.conn.execute("SELECT id,display_name FROM profiles WHERE id=? AND status='ACTIVE'", (REQUESTED_PROFILE_ID,)).fetchone()
+    if row is None:
+        raise RuntimeError('START_PROFILE_NOT_FOUND')
+else:
+    row = store.conn.execute("SELECT id,display_name FROM profiles WHERE status='ACTIVE' ORDER BY created_at LIMIT 1").fetchone()
 if row:
     PROFILE_ID, PROFILE_NAME = row[0], row[1]
 else:
