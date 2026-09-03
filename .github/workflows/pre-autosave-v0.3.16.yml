@@ -2,9 +2,7 @@ name: PRE-AUTOSAVE v0.3.16 Cross-Platform Acceptance
 
 on:
   pull_request:
-    paths:
-      - ".github/workflows/pre-autosave-v0.3.16.yml"
-      - "ci/pre_autosave_v0.3.16/**"
+    paths: [".github/workflows/pre-autosave-v0.3.16.yml", "ci/pre_autosave_v0.3.16/**"]
   workflow_dispatch:
 
 permissions:
@@ -16,310 +14,192 @@ concurrency:
 
 env:
   KIT_ZIP: ci/pre_autosave_v0.3.16/Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_FERTIG_v0.3.16.zip
-  KIT_SHA256: 76bdeb757fd86eeb3cdc00f151aacf529a24ffcbd1b667712424da685d5f36ff
+  KIT_SHA256: fed1574a7bff6318633cc5b50d25b0aaea02ba1dc6ebed9c555f84fd5340edb3
   KIT_FOLDER: Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16
   PLAN_ID: NAQYA-PRE-AUTOSAVE-ACCEPTANCE-v0.3.16-r2
   PLAN_HASH: cfc12de3378151c50ad005ff837e5542382c1c7f067e1041cd4804f95d2d111f
 
 jobs:
   source-lock:
-    name: Source lock / frozen kit
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout acceptance branch
-        uses: actions/checkout@v4
-
-      - name: Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Verify archive and frozen source hashes
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "20"}
+      - name: Verify frozen archive and source lock
         shell: bash
         run: |
           python - <<'PY'
-          import hashlib, json, os, pathlib, zipfile
-          zip_path = pathlib.Path(os.environ["KIT_ZIP"])
-          expected = os.environ["KIT_SHA256"]
-          got = hashlib.sha256(zip_path.read_bytes()).hexdigest()
-          assert got == expected, f"Kit SHA drift: {got} != {expected}"
-
-          out = pathlib.Path(os.environ["RUNNER_TEMP"]) / "naqya-kit"
-          out.mkdir(parents=True, exist_ok=True)
-          with zipfile.ZipFile(zip_path) as zf:
-              zf.extractall(out)
-
-          root = out / os.environ["KIT_FOLDER"]
-          lock = json.loads((root / "QUELLSTAND_LOCK_FERTIG_v0.3.16.json").read_text(encoding="utf-8"))
-          assert lock["planId"] == os.environ["PLAN_ID"]
-          assert lock["planHash"] == os.environ["PLAN_HASH"]
-          for rel, expected_sha in lock.items():
-              if rel in {"planId", "planHash"}:
-                  continue
-              p = root / rel
-              assert p.is_file(), f"Missing locked source: {rel}"
-              actual = hashlib.sha256(p.read_bytes()).hexdigest()
-              assert actual == expected_sha, f"Source drift {rel}: {actual} != {expected_sha}"
-          print("Frozen kit and all locked source hashes: PASS")
+          import hashlib,json,os,pathlib,zipfile
+          z=pathlib.Path(os.environ["KIT_ZIP"])
+          assert hashlib.sha256(z.read_bytes()).hexdigest()==os.environ["KIT_SHA256"]
+          out=pathlib.Path(os.environ["RUNNER_TEMP"])/"naqya-kit"
+          with zipfile.ZipFile(z) as f:f.extractall(out)
+          root=out/os.environ["KIT_FOLDER"]
+          lock=json.loads((root/"QUELLSTAND_LOCK_FERTIG_v0.3.16.json").read_text())
+          assert lock["planId"]==os.environ["PLAN_ID"]
+          assert lock["planHash"]==os.environ["PLAN_HASH"]
+          for rel,want in lock.items():
+              if rel in {"planId","planHash"}:continue
+              p=root/rel
+              assert p.is_file(),rel
+              got=hashlib.sha256(p.read_bytes()).hexdigest()
+              assert got==want,f"{rel}: {got} != {want}"
+          print("Archive + five locked sources + plan: PASS")
           PY
-
-      - name: Syntax preflight
-        shell: bash
-        run: |
           ROOT="${RUNNER_TEMP}/naqya-kit/${KIT_FOLDER}"
           python -m py_compile "$ROOT/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/werkzeuge/cross_platform_runner_FERTIG_v0.3.16.py"
           node --check "$ROOT/BASIS_RELEASE/basis/skripte/transaktion_FERTIG_v0.3.16.js"
           node --check "$ROOT/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/tests/transaction_kill_worker_FERTIG_v0.3.16.mjs"
 
-  host-matrix:
-    name: Native host ${{ matrix.host }}
+  hosts:
     needs: source-lock
     strategy:
       fail-fast: false
       matrix:
         include:
-          - host: Linux
-            runner: ubuntu-latest
-            evidence_os: linux
-          - host: Windows
-            runner: windows-latest
-            evidence_os: windows
-          - host: macOS
-            runner: macos-latest
-            evidence_os: macos
+          - {label: Linux, runner: ubuntu-latest, os: linux}
+          - {label: Windows, runner: windows-latest, os: windows}
+          - {label: macOS, runner: macos-latest, os: macos}
+    name: Native host ${{ matrix.label }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 25
     steps:
-      - name: Checkout acceptance branch
-        uses: actions/checkout@v4
-
-      - name: Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Extract frozen kit
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "20"}
+      - name: Extract exact kit
         shell: bash
         run: |
           python - <<'PY'
-          import os, pathlib, zipfile, hashlib
-          zp = pathlib.Path(os.environ["KIT_ZIP"])
-          assert hashlib.sha256(zp.read_bytes()).hexdigest() == os.environ["KIT_SHA256"]
-          out = pathlib.Path(os.environ["RUNNER_TEMP"]) / "naqya-kit"
-          out.mkdir(parents=True, exist_ok=True)
-          with zipfile.ZipFile(zp) as zf:
-              zf.extractall(out)
+          import hashlib,os,pathlib,zipfile
+          z=pathlib.Path(os.environ["KIT_ZIP"])
+          assert hashlib.sha256(z.read_bytes()).hexdigest()==os.environ["KIT_SHA256"]
+          with zipfile.ZipFile(z) as f:f.extractall(pathlib.Path(os.environ["RUNNER_TEMP"])/"naqya-kit")
           PY
-
-      - name: Real kill / recovery / 5,000 memo acceptance
+      - name: Kill / recovery / 5,000 memo gate
         shell: bash
+        env: {EVIDENCE_OS: "${{ matrix.os }}"}
         run: |
           ROOT="${RUNNER_TEMP}/naqya-kit/${KIT_FOLDER}"
-          RUNNER="$ROOT/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/werkzeuge/cross_platform_runner_FERTIG_v0.3.16.py"
-          set +e
-          python "$RUNNER"
-          rc=$?
-          set -e
-          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then
-            echo "Acceptance runner failed unexpectedly with rc=$rc"
-            exit "$rc"
-          fi
+          R="$ROOT/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/werkzeuge/cross_platform_runner_FERTIG_v0.3.16.py"
+          set +e; python "$R"; rc=$?; set -e
+          [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ] || exit "$rc"
           python - <<'PY'
-          import json, os, pathlib
-          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / "naqya-kit" / os.environ["KIT_FOLDER"]
-          evdir = root / "ENTWICKLUNG_LOKAL_NICHT_INS_REPO/evidence"
-          wanted = os.environ["EVIDENCE_OS"]
-          files = sorted(evdir.glob(f"platform_{wanted}_*_v0.3.16.json"), key=lambda p: p.stat().st_mtime)
-          assert files, f"No {wanted} platform evidence generated"
-          data = json.loads(files[-1].read_text(encoding="utf-8"))
-          assert data["host"]["os"] == wanted
-          assert data["hostAcceptance"] == "PASS", data
-          checks = {c["id"]: c for c in data["checks"]}
-          assert checks["process-kill-recovery"]["status"] == "PASS"
-          assert checks["stress-5000"]["status"] == "PASS"
-          print(f"{wanted} native host acceptance: PASS")
+          import json,os,pathlib
+          root=pathlib.Path(os.environ["RUNNER_TEMP"])/"naqya-kit"/os.environ["KIT_FOLDER"]
+          files=sorted((root/"ENTWICKLUNG_LOKAL_NICHT_INS_REPO/evidence").glob(f"platform_{os.environ['EVIDENCE_OS']}_*_v0.3.16.json"),key=lambda p:p.stat().st_mtime)
+          assert files
+          d=json.loads(files[-1].read_text())
+          c={x["id"]:x for x in d["checks"]}
+          assert d["host"]["os"]==os.environ["EVIDENCE_OS"]
+          assert d["hostAcceptance"]=="PASS"
+          assert c["process-kill-recovery"]["status"]=="PASS"
+          assert c["stress-5000"]["status"]=="PASS"
+          print(os.environ["EVIDENCE_OS"],"host acceptance: PASS")
           PY
-        env:
-          EVIDENCE_OS: ${{ matrix.evidence_os }}
-
-      - name: Upload native host evidence
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: naqya-evidence-${{ matrix.evidence_os }}
-          path: ${{ runner.temp }}/naqya-kit/Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/evidence/platform_${{ matrix.evidence_os }}_*_v0.3.16.json
+          name: naqya-evidence-${{ matrix.os }}
+          path: ${{ runner.temp }}/naqya-kit/Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/evidence/platform_${{ matrix.os }}_*_v0.3.16.json
           if-no-files-found: error
-          retention-days: 30
 
-  firefox-e2e:
-    name: Firefox real browser kill / recovery
+  firefox:
     needs: source-lock
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Checkout acceptance branch
-        uses: actions/checkout@v4
-
-      - name: Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Firefox
-        uses: browser-actions/setup-firefox@v1
-        with:
-          firefox-version: latest
-
-      - name: Verify Firefox is real
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "20"}
+      - uses: browser-actions/setup-firefox@v1
+        with: {firefox-version: latest}
+      - name: Extract exact kit and run real Firefox
         shell: bash
         run: |
           firefox --version
-
-      - name: Extract frozen kit
-        shell: bash
-        run: |
           python - <<'PY'
-          import os, pathlib, zipfile, hashlib
-          zp = pathlib.Path(os.environ["KIT_ZIP"])
-          assert hashlib.sha256(zp.read_bytes()).hexdigest() == os.environ["KIT_SHA256"]
-          out = pathlib.Path(os.environ["RUNNER_TEMP"]) / "naqya-kit"
-          out.mkdir(parents=True, exist_ok=True)
-          with zipfile.ZipFile(zp) as zf:
-              zf.extractall(out)
+          import hashlib,os,pathlib,zipfile
+          z=pathlib.Path(os.environ["KIT_ZIP"])
+          assert hashlib.sha256(z.read_bytes()).hexdigest()==os.environ["KIT_SHA256"]
+          with zipfile.ZipFile(z) as f:f.extractall(pathlib.Path(os.environ["RUNNER_TEMP"])/"naqya-kit")
           PY
-
-      - name: Firefox E2E with browser process kills
-        shell: bash
-        run: |
           ROOT="${RUNNER_TEMP}/naqya-kit/${KIT_FOLDER}"
-          RUNNER="$ROOT/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/werkzeuge/cross_platform_runner_FERTIG_v0.3.16.py"
-          set +e
-          python "$RUNNER"
-          rc=$?
-          set -e
-          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then
-            echo "Acceptance runner failed unexpectedly with rc=$rc"
-            exit "$rc"
-          fi
+          R="$ROOT/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/werkzeuge/cross_platform_runner_FERTIG_v0.3.16.py"
+          set +e; python "$R"; rc=$?; set -e
+          [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ] || exit "$rc"
           python - <<'PY'
-          import json, os, pathlib
-          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / "naqya-kit" / os.environ["KIT_FOLDER"]
-          evdir = root / "ENTWICKLUNG_LOKAL_NICHT_INS_REPO/evidence"
-          files = sorted(evdir.glob("platform_linux_*_v0.3.16.json"), key=lambda p: p.stat().st_mtime)
-          assert files, "No Linux/Firefox evidence generated"
-          data = json.loads(files[-1].read_text(encoding="utf-8"))
-          assert data["hostAcceptance"] == "PASS"
-          ff = next((c for c in data["checks"] if c["id"] == "firefox-e2e"), None)
-          assert ff and ff["status"] == "PASS", ff
-          details = ff["details"]
-          assert details["ok"] is True
-          assert details["probe"]["firefox"] is True
-          assert details["stress5000"]["count"] == 5000
-          assert all(x["ok"] for x in details["killRecovery"])
-          print("Real Firefox E2E acceptance: PASS")
+          import json,os,pathlib
+          root=pathlib.Path(os.environ["RUNNER_TEMP"])/"naqya-kit"/os.environ["KIT_FOLDER"]
+          files=sorted((root/"ENTWICKLUNG_LOKAL_NICHT_INS_REPO/evidence").glob("platform_linux_*_v0.3.16.json"),key=lambda p:p.stat().st_mtime)
+          assert files
+          d=json.loads(files[-1].read_text())
+          ff=next(x for x in d["checks"] if x["id"]=="firefox-e2e")
+          assert d["hostAcceptance"]=="PASS"
+          assert ff["status"]=="PASS",ff
+          z=ff["details"]
+          assert z["ok"] and z["probe"]["firefox"]
+          assert z["stress5000"]["count"]==5000
+          assert all(x["ok"] for x in z["killRecovery"])
+          print("Real Firefox kill/recovery/5,000: PASS")
           PY
-
-      - name: Upload Firefox evidence
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: naqya-evidence-firefox
           path: ${{ runner.temp }}/naqya-kit/Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/evidence/platform_linux_*_v0.3.16.json
           if-no-files-found: error
-          retention-days: 30
 
-  merge-evidence:
-    name: Evidence merge / V0.4 GO-NO-GO
-    needs:
-      - host-matrix
-      - firefox-e2e
+  merge:
+    needs: [hosts, firefox]
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Checkout acceptance branch
-        uses: actions/checkout@v4
-
-      - name: Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Extract frozen kit
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "20"}
+      - name: Extract exact kit
         shell: bash
         run: |
           python - <<'PY'
-          import os, pathlib, zipfile, hashlib
-          zp = pathlib.Path(os.environ["KIT_ZIP"])
-          assert hashlib.sha256(zp.read_bytes()).hexdigest() == os.environ["KIT_SHA256"]
-          out = pathlib.Path(os.environ["RUNNER_TEMP"]) / "naqya-kit"
-          out.mkdir(parents=True, exist_ok=True)
-          with zipfile.ZipFile(zp) as zf:
-              zf.extractall(out)
+          import hashlib,os,pathlib,zipfile
+          z=pathlib.Path(os.environ["KIT_ZIP"])
+          assert hashlib.sha256(z.read_bytes()).hexdigest()==os.environ["KIT_SHA256"]
+          with zipfile.ZipFile(z) as f:f.extractall(pathlib.Path(os.environ["RUNNER_TEMP"])/"naqya-kit")
           PY
-
-      - name: Download all platform evidence
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           pattern: naqya-evidence-*
           path: ${{ runner.temp }}/naqya-kit/Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/evidence
           merge-multiple: true
-
-      - name: Merge exact-source evidence
+      - name: Merge exact-source evidence and decide GO / NO-GO
         shell: bash
         run: |
           ROOT="${RUNNER_TEMP}/naqya-kit/${KIT_FOLDER}"
-          RUNNER="$ROOT/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/werkzeuge/cross_platform_runner_FERTIG_v0.3.16.py"
-          python "$RUNNER" --merge-only
+          R="$ROOT/ENTWICKLUNG_LOKAL_NICHT_INS_REPO/werkzeuge/cross_platform_runner_FERTIG_v0.3.16.py"
+          python "$R" --merge-only
           python - <<'PY'
-          import json, os, pathlib, hashlib
-          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / "naqya-kit" / os.environ["KIT_FOLDER"]
-          mf = root / "ENTWICKLUNG_LOKAL_NICHT_INS_REPO/manifeste/manifest_evidence_BEWIESEN_v0.3.16.json"
-          assert mf.is_file(), "Final PASS evidence manifest missing"
-          d = json.loads(mf.read_text(encoding="utf-8"))
-          assert d["status"] == "PASS"
-          assert d["v0_4_0_safe_autosave_freigabe"] is True
-          assert d["planId"] == os.environ["PLAN_ID"]
-          assert d["planHash"] == os.environ["PLAN_HASH"]
-          assert all(c["status"] == "PASS" for c in d["checks"])
-          provenance = {
-              "schemaVersion": 1,
-              "version": "0.3.16",
-              "githubRepository": os.environ["GITHUB_REPOSITORY"],
-              "githubCommit": os.environ["GITHUB_SHA"],
-              "githubRunId": os.environ["GITHUB_RUN_ID"],
-              "githubRunAttempt": os.environ["GITHUB_RUN_ATTEMPT"],
-              "manifestSha256": hashlib.sha256(mf.read_bytes()).hexdigest(),
-              "planId": d["planId"],
-              "planHash": d["planHash"],
-              "decision": "GO"
-          }
-          out = root / "ENTWICKLUNG_LOKAL_NICHT_INS_REPO/berichte/CI_PROVENANCE_BEWIESEN_v0.3.16.json"
-          out.write_text(json.dumps(provenance, ensure_ascii=False, indent=2), encoding="utf-8")
+          import hashlib,json,os,pathlib
+          root=pathlib.Path(os.environ["RUNNER_TEMP"])/"naqya-kit"/os.environ["KIT_FOLDER"]
+          mf=root/"ENTWICKLUNG_LOKAL_NICHT_INS_REPO/manifeste/manifest_evidence_BEWIESEN_v0.3.16.json"
+          assert mf.is_file()
+          d=json.loads(mf.read_text())
+          assert d["status"]=="PASS" and d["v0_4_0_safe_autosave_freigabe"] is True
+          assert d["planId"]==os.environ["PLAN_ID"] and d["planHash"]==os.environ["PLAN_HASH"]
+          assert all(x["status"]=="PASS" for x in d["checks"])
+          prov={"schemaVersion":1,"version":"0.3.16","githubRepository":os.environ["GITHUB_REPOSITORY"],"githubCommit":os.environ["GITHUB_SHA"],"githubRunId":os.environ["GITHUB_RUN_ID"],"githubRunAttempt":os.environ["GITHUB_RUN_ATTEMPT"],"manifestSha256":hashlib.sha256(mf.read_bytes()).hexdigest(),"planId":d["planId"],"planHash":d["planHash"],"decision":"GO"}
+          (root/"ENTWICKLUNG_LOKAL_NICHT_INS_REPO/berichte/CI_PROVENANCE_BEWIESEN_v0.3.16.json").write_text(json.dumps(prov,indent=2))
           print("V0.4.0 SAFE AUTOSAVE PRE-AUTOSAVE gate: GO")
-          print("Final manifest SHA256:", provenance["manifestSha256"])
           PY
-
-      - name: Upload final PRE-AUTOSAVE evidence
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: PRE_AUTOSAVE_EVIDENCE_BEWIESEN_v0.3.16
           path: |
