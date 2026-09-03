@@ -17,13 +17,22 @@ jobs:
   source-contracts:
     runs-on: ubuntu-latest
     timeout-minutes: 12
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
           fetch-depth: 0
+
+      - name: Verify exact source head
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$SOURCE_SHA" || { echo "HEAD SHA mismatch: expected $SOURCE_SHA, got $actual"; exit 1; }
+          echo "PASS exact source head: $actual"
 
       - name: Python 3.12
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
