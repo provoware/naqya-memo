@@ -1,5 +1,25 @@
 # 🧾 CHANGELOG
 
+## [NAQYA-v0.3.16-PRE-AUTOSAVE-R3-EVIDENCE] – 2026-09-03
+### 🟢 Bewiesen
+- PR #102 auf Quell-Head `dfa68c478ea3edd4465760e85013196f619e06d1` vollständig ausgeführt.
+- Linux, Windows und macOS: realer Prozess-Kill → Recovery → 5.000 Datensätze jeweils PASS.
+- Firefox: reale Browserprozess-Kills + IndexedDB-Recovery + 5.000 Einträge PASS.
+- Evidence-Merge akzeptierte ausschließlich den exakten r3-Plan und die exakten eingefrorenen Quellen.
+- Plan `NAQYA-PRE-AUTOSAVE-ACCEPTANCE-v0.3.16-r3`, Hash `5d2d4a189bf73b4686e9d4608ef29b95f7aae055bb46299700b99f341da5e747`.
+- Acceptance-Kit SHA-256 `36add593789e25dc3ea9406371f7fdb6ac473cdd795ab02df26dec09dc108752`.
+- Verbindlicher CI-Lauf: `33778124686`.
+
+### 🔒 Statussemantik
+- PRE-AUTOSAVE = **PASS** als gate-lokale Voraussetzung.
+- Kanonischer Repository-Evaluator: **NO-GO**, Exit-Code `2`, 1/7 reale Release-Gates.
+- SAFE AUTOSAVE bleibt deshalb **nicht zur Implementierung freigegeben**.
+- Kein Produkt-/UI-Code wurde durch diesen Dokumentationssync verändert.
+
+---
+
+# 🧾 CHANGELOG
+
 ## [0.12.2-MOBILE-RUNTIME-COMPLETION] – 2026-08-28 · FINAL RELEASE CONSOLIDATION
 ### 🟢 Konsolidiert
 - Status- und Versionsregistry auf V0.12.2

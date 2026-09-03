@@ -1,3 +1,20 @@
+# ✅ NAQYA v0.3.16 · PRE-AUTOSAVE R3 EVIDENCE
+
+> **PR:** #102  
+> **Bewiesener Quell-Head:** `dfa68c478ea3edd4465760e85013196f619e06d1`  
+> **Verbindlicher CI-Lauf:** `33778124686`  
+> **Linux / Windows / macOS / Firefox:** 🟢 **4/4 PASS**  
+> **Evidence-Merge:** 🟢 **PASS**  
+> **Plan:** `NAQYA-PRE-AUTOSAVE-ACCEPTANCE-v0.3.16-r3`  
+> **Plan-Hash:** `5d2d4a189bf73b4686e9d4608ef29b95f7aae055bb46299700b99f341da5e747`  
+> **Acceptance-Kit SHA-256:** `36add593789e25dc3ea9406371f7fdb6ac473cdd795ab02df26dec09dc108752`  
+> **Kanonischer Repository-Evaluator:** 🔴 **NO-GO**, Exit-Code `2`  
+> **SAFE AUTOSAVE:** 🔒 **weiterhin nicht zur Implementierung freigegeben**
+
+`PRE-AUTOSAVE PASS` beweist ausschließlich die lokale Voraussetzung des Naqya-v0.3.16-Pfads. Die projektweite Freigabe bleibt allein Sache von `tools/release_gate/evaluate_release_gate.py`; dessen aktueller Zustand ist weiterhin `NO-GO` bei 1/7 realen Release-Gates. Der Dokumentationsstand wird deshalb nicht als V1.0-/Release-GO und nicht als SAFE-AUTOSAVE-Implementierungsfreigabe ausgelegt.
+
+---
+
 # 🧷 GITHUB FULL-TREE BACKUP-ZUSTAND
 
 > **Repository:** `provoware/naqya-memo`  
