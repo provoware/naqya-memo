@@ -45,3 +45,30 @@ def test_ui_never_claims_blanco_while_backend_activates_real_profile() -> None:
         "app/server.py noch automatisch ein aktives/Standardprofil auswählt. Erst den "
         "Runtime-Blanco-Vertrag umsetzen; danach darf die Oberfläche 'Blanco' anzeigen."
     )
+
+
+def test_initial_profile_status_is_informative_and_accessible() -> None:
+    """The pre-API state must explain itself and announce the resolved profile accessibly."""
+    html = INDEX.read_text(encoding="utf-8")
+    match = re.search(
+        r'<dd\s+id=["\']profileName["\'][^>]*>(.*?)</dd>',
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    assert match, "PROFILE_STATUS_MISSING: Das sichtbare Profilstatus-Element fehlt."
+
+    element = match.group(0)
+    text = re.sub(r"<[^>]+>", "", match.group(1)).strip().lower()
+    assert "wird geprüft" in text, (
+        "PROFILE_STATUS_AMBIGUOUS: Vor /api/state muss der Nutzer erkennen können, "
+        "dass der Profilstatus noch geprüft wird."
+    )
+    assert re.search(r'role=["\']status["\']', element, flags=re.IGNORECASE), (
+        "PROFILE_STATUS_A11Y_ROLE_MISSING: Profilstatus benötigt role='status'."
+    )
+    assert re.search(r'aria-live=["\']polite["\']', element, flags=re.IGNORECASE), (
+        "PROFILE_STATUS_A11Y_LIVE_MISSING: Profilwechsel muss höflich angekündigt werden."
+    )
+    assert re.search(r'aria-atomic=["\']true["\']', element, flags=re.IGNORECASE), (
+        "PROFILE_STATUS_A11Y_ATOMIC_MISSING: Der Profilstatus muss vollständig angekündigt werden."
+    )
