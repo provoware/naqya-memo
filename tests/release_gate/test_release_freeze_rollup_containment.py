@@ -11,6 +11,7 @@ ALLOWED_POST_QUALIFICATION_PATHS = {
     ".gitattributes",
     ".gitignore",
     ".github/workflows/quality.yml",
+    "CONTRIBUTING.md",
     "docs/release_gate/RELEASE_FREEZE_ROLLUP__STATUS-AKTIV.md",
     "registry/evidence/security/RELEASE_FREEZE_ROLLUP_CONTAINMENT_ACCEPTANCE.json",
     "tests/release_gate/test_release_freeze_rollup_containment.py",
