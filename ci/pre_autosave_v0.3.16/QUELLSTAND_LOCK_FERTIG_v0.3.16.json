@@ -1,0 +1,9 @@
+{
+  "BASIS_RELEASE/basis/skripte/transaktion_FERTIG_v0.3.16.js": "5d111e9bf5111d1b5d838b8e121637bcc47afdcec57dfd33bd5a6e55dbca87f6",
+  "ENTWICKLUNG_LOKAL_NICHT_INS_REPO/werkzeuge/cross_platform_runner_FERTIG_v0.3.16.py": "afbc35df918bca50a4783a72740b25cb2b2e27427070487015ad8dacd39837ca",
+  "ENTWICKLUNG_LOKAL_NICHT_INS_REPO/tests/transaction_kill_worker_FERTIG_v0.3.16.mjs": "3283a21c89dc1d56bb401b8c754987fb1cc2c99b173fafabd1ceedffbb367cf0",
+  "ENTWICKLUNG_LOKAL_NICHT_INS_REPO/tests/firefox_acceptance_harness_FERTIG_v0.3.16.html": "1967aacc0194fd1f28f6dda836e2d91046112b794c7dd1185ceaa8cdf7788ee1",
+  "ENTWICKLUNG_LOKAL_NICHT_INS_REPO/manifeste/manifest_failure_matrix_FERTIG_v0.3.16.json": "923b293ffbe47cda73b4a84a69e0fd9db819ac3231358353ef970b7a607a26f9",
+  "planId": "NAQYA-PRE-AUTOSAVE-ACCEPTANCE-v0.3.16-r2",
+  "planHash": "cfc12de3378151c50ad005ff837e5542382c1c7f067e1041cd4804f95d2d111f"
+}
