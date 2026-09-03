@@ -68,6 +68,7 @@ jobs:
           path: |
             ${{ runner.temp }}/naqya-firefox-diag.json
             ${{ runner.temp }}/naqya-firefox-runner-trace.json
+            ${{ runner.temp }}/naqya-kit-r3/Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16/**
           if-no-files-found: warn
           retention-days: 14
 
