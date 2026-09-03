@@ -110,6 +110,15 @@ def _unsafe_blanco_transition(source: str) -> bool:
     return not _has_implicit_profile_fallback(source) and not _has_explicit_profile_api_boundary(source)
 
 
+def test_current_server_preinstalls_explicit_profile_api_boundary() -> None:
+    source = SERVER.read_text(encoding="utf-8")
+    assert _has_explicit_profile_api_boundary(source), (
+        "BLANCO_PROFILE_API_BOUNDARY_NOT_PREINSTALLED: app/server.py muss den "
+        "zentralen fail-closed Guard bereits vor Entfernen des historischen "
+        "Profilfallbacks real definieren und aus GET sowie POST erzwingen."
+    )
+
+
 def test_real_blanco_requires_explicit_profile_api_boundary() -> None:
     source = SERVER.read_text(encoding="utf-8")
     assert not _unsafe_blanco_transition(source), (
@@ -188,6 +197,7 @@ def test_detector_accepts_explicit_guarded_blanco_contract() -> None:
 
 def _run_direct() -> None:
     tests = [
+        test_current_server_preinstalls_explicit_profile_api_boundary,
         test_real_blanco_requires_explicit_profile_api_boundary,
         test_detector_rejects_unguarded_synthetic_blanco,
         test_detector_rejects_marker_only_false_green,
