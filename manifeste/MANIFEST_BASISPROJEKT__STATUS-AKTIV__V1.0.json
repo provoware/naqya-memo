@@ -24,7 +24,8 @@
     "exactly_one_zip": true,
     "require_source_git_head_match": true,
     "artifact_name_prefix": "PROVOWARE-Naqya-Memo-Basisprojekt-",
-    "upload_action_sha": "ea165f8d65b6e75b540449e92b4886f43607fa02"
+    "upload_action_sha": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+    "source_sha_policy": "pull_request_head_or_push_sha"
   },
   "mandatory_root_files": [
     "SCHNELLSTART.sh",

@@ -20,6 +20,7 @@ def main():
     assert ci['exactly_one_zip'] is True
     assert ci['require_source_git_head_match'] is True
     assert ci['upload_action_sha']=='ea165f8d65b6e75b540449e92b4886f43607fa02'
+    assert ci['source_sha_policy']=='pull_request_head_or_push_sha'
     for rel in ('SCHNELLSTART.sh','requirements.txt','tools/build_basisprojekt.py','tools/verify_basisprojekt_artifact.py'):
         assert (ROOT/rel).is_file(),rel
     s=(ROOT/'SCHNELLSTART.sh').read_text(encoding='utf-8')
@@ -36,6 +37,11 @@ def main():
     assert 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' in workflow
     assert 'if-no-files-found: error' in workflow
     assert 'PROVOWARE_Naqya-Memo_BASISPROJEKT_' in workflow
+    assert 'SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}' in workflow
+    assert 'ref: ${{ env.SOURCE_SHA }}' in workflow
+    assert '--expected-head "$SOURCE_SHA"' in workflow
+    assert 'name: PROVOWARE-Naqya-Memo-Basisprojekt-${{ env.SOURCE_SHA }}' in workflow
+    assert '--expected-head "$GITHUB_SHA"' not in workflow
     assert workflow.index('Evidence boundary') < workflow.index('Build and independently verify basis project') < workflow.index('Publish verified basis project')
 
     p=subprocess.run([sys.executable,'-S',str(ROOT/'tools'/'build_basisprojekt.py'),'--check'],cwd=ROOT,text=True,capture_output=True)

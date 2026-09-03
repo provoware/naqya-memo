@@ -9,6 +9,9 @@ on:
 permissions:
   contents: read
 
+env:
+  SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
 concurrency:
   group: quality-${{ github.ref }}
   cancel-in-progress: true
@@ -21,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_SHA }}
 
       - name: Python 3.12
         uses: actions/setup-python@v5
@@ -102,7 +107,7 @@ jobs:
           mapfile -t ZIPS < <(find "$OUT_DIR" -maxdepth 1 -type f -name 'PROVOWARE_Naqya-Memo_BASISPROJEKT_*.zip' -print | sort)
           test "${#ZIPS[@]}" -eq 1
           ZIP_PATH="${ZIPS[0]}"
-          python -S tools/verify_basisprojekt_artifact.py "$ZIP_PATH" --expected-head "$GITHUB_SHA"
+          python -S tools/verify_basisprojekt_artifact.py "$ZIP_PATH" --expected-head "$SOURCE_SHA"
           echo "BASIS_ZIP=$ZIP_PATH" >> "$GITHUB_ENV"
           echo "BASIS_SHA256=$(sha256sum "$ZIP_PATH" | awk '{print $1}')" >> "$GITHUB_ENV"
           echo "Verified basis project: $(basename "$ZIP_PATH")"
@@ -111,7 +116,7 @@ jobs:
       - name: Publish verified basis project
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: PROVOWARE-Naqya-Memo-Basisprojekt-${{ github.sha }}
+          name: PROVOWARE-Naqya-Memo-Basisprojekt-${{ env.SOURCE_SHA }}
           path: ${{ env.BASIS_ZIP }}
           if-no-files-found: error
           retention-days: 14
