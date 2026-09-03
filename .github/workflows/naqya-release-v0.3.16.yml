@@ -1,0 +1,156 @@
+name: NAQYA v0.3.16 Release Package Validation
+
+on:
+  pull_request:
+    paths:
+      - "releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16/**"
+      - ".github/workflows/naqya-release-v0.3.16.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: naqya-release-v0.3.16-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Reconstruct canonical release and verify transport
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, json
+
+          base = Path('releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16')
+          index = json.loads((base/'RELEASE_INDEX_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+          transport = index['repositoryTransport']
+          pkg = base/'paket'
+          expected = transport['segments']
+          actual = sorted(p.name for p in pkg.glob('*.b64'))
+          assert actual == sorted(expected), f'Segment inventory drift: {actual}'
+          payload = ''.join((pkg/name).read_text(encoding='ascii') for name in expected)
+          assert len(payload) == transport['base64Characters'] == 102736
+          raw = base64.b64decode(payload, validate=True)
+          assert len(raw) == transport['archiveSize'] == 77052
+          got = hashlib.sha256(raw).hexdigest()
+          assert got == transport['archiveSha256'] == '65705a2254744cd0df4793f48029e851282767d5a8f593dfdb579b9d69e80af2'
+          archive = base/transport['archiveName']
+          archive.write_bytes(raw)
+          print(f'Canonical transport: PASS ({len(expected)} segments, {len(raw)} bytes, {got})')
+          PY
+
+      - name: Verify exact 54-file inventory and SHA-256
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, tarfile, tempfile
+          base=Path('releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16')
+          idx=json.loads((base/'RELEASE_INDEX_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+          tr=idx['repositoryTransport']
+          assert idx['version']=='0.3.16'
+          assert idx['dateien']==54
+          assert idx['lokalesReleaseGate']=={'status':'PASS','pass':219,'warn':0,'fail':0}
+          expected={x['path']:x for x in idx['basisDateien']}
+          assert len(expected)==54
+          with tempfile.TemporaryDirectory() as td:
+              root=Path(td)
+              with tarfile.open(base/tr['archiveName'],'r:xz') as tf:
+                  members=[m for m in tf.getmembers() if m.isfile()]
+                  names=sorted(m.name.removeprefix('./') for m in members)
+                  assert names==sorted(expected), 'tar.xz file inventory drift'
+                  tf.extractall(root, filter='data')
+              for rel,meta in expected.items():
+                  p=root/rel
+                  assert p.is_file(),f'Missing: {rel}'
+                  data=p.read_bytes()
+                  assert len(data)==meta['size'],f'Size drift: {rel}'
+                  assert hashlib.sha256(data).hexdigest()==meta['sha256'],f'SHA drift: {rel}'
+          print('54-file inventory + individual SHA-256: PASS')
+          PY
+
+      - name: Validate JSON, version and release cleanliness
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, tarfile, tempfile
+          base=Path('releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16')
+          idx=json.loads((base/'RELEASE_INDEX_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+          with tempfile.TemporaryDirectory() as td:
+              root=Path(td)
+              with tarfile.open(base/idx['repositoryTransport']['archiveName'],'r:xz') as tf:
+                  tf.extractall(root, filter='data')
+              files=[p for p in root.rglob('*') if p.is_file()]
+              rels=[p.relative_to(root).as_posix() for p in files]
+              assert len(files)==54
+              assert not any('ENTWICKLUNG_LOKAL_NICHT_INS_REPO' in x for x in rels)
+              assert not any(x.endswith('.log') for x in rels)
+              json_count=0
+              for p in root.rglob('*.json'):
+                  d=json.loads(p.read_text(encoding='utf-8'))
+                  if isinstance(d,dict) and 'version' in d:
+                      assert str(d['version'])=='0.3.16',f'Version drift: {p}'
+                  json_count+=1
+              assert json_count>=10
+              manifest=json.loads((root/'basis/manifeste/manifest_release_inhalt_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+              assert manifest.get('version')=='0.3.16'
+          print('JSON + version + release cleanliness: PASS')
+          PY
+
+      - name: Validate all JavaScript syntax
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, tarfile, tempfile, subprocess
+          base=Path('releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16')
+          idx=json.loads((base/'RELEASE_INDEX_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+          with tempfile.TemporaryDirectory() as td:
+              root=Path(td)
+              with tarfile.open(base/idx['repositoryTransport']['archiveName'],'r:xz') as tf:
+                  tf.extractall(root, filter='data')
+              js=sorted(root.rglob('*.js'))
+              assert js
+              for p in js:
+                  subprocess.run(['node','--check',str(p)],check=True)
+              print(f'JavaScript syntax: PASS ({len(js)} files)')
+          PY
+
+      - name: Validate standalone contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json, tarfile, tempfile
+          base=Path('releases/Provoware_Naqya_Memo_Tool_2026/v0.3.16')
+          idx=json.loads((base/'RELEASE_INDEX_FERTIG_v0.3.16.json').read_text(encoding='utf-8'))
+          with tempfile.TemporaryDirectory() as td:
+              root=Path(td)
+              with tarfile.open(base/idx['repositoryTransport']['archiveName'],'r:xz') as tf:
+                  tf.extractall(root, filter='data')
+              html=(root/'index.html').read_text(encoding='utf-8')
+              assert 'data-naqya-design="eingebettet"' in html
+              assert '<script src=' not in html
+              assert '__NAQYA_' not in html
+              assert '0.3.16' in html
+          print('Standalone contract: PASS')
+          PY
