@@ -525,3 +525,27 @@ html[data-font-tier="xl"] .display-group:last-child{grid-column:1/-1}
   .quick-note{grid-template-columns:1fr 1fr}
   .quick-note #quickTitle,.quick-note #quickInput{grid-column:1/-1}
 }
+
+/* ==============================================================
+   V0.12.2.4 HELP MODE LINEAGE
+   ============================================================== */
+.field-hint{
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  margin-top:0;
+  transition:max-height .16s ease,opacity .16s ease,margin .16s ease;
+}
+html[data-help-mode="1"] label:focus-within>.field-hint,
+html[data-help-mode="2"] .field-hint,
+html[data-help-mode="3"] .field-hint{
+  max-height:5em;
+  opacity:1;
+  margin-top:4px;
+}
+html[data-help-mode="2"] .field-hint{color:#aeb8c3}
+html[data-help-mode="3"] .field-hint{
+  color:#d4dde6;
+  padding-left:7px;
+  border-left:2px solid #8997a6;
+}
