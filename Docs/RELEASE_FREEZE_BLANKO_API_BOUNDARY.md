@@ -13,24 +13,27 @@ Die Sicherheitsserver besitzen inzwischen zentrale fail-closed Profilresolver un
 - Solange der historische Profilfallback vorhanden ist, bleibt das aktuelle Runtime-Verhalten unverändert.
 - Wird der Fallback später entfernt, muss `app/server.py` vorher einen expliziten zentralen Guard `_require_profile_context` besitzen.
 - Der Guard muss einen stabilen fail-closed Fehlercode `PROFILE_CONTEXT_REQUIRED` definieren.
+- Der Guard darf nicht nur definiert sein: `Handler.do_GET` und `Handler.do_POST` müssen ihn tatsächlich aufrufen.
 - Ein synthetischer profilfreier Server ohne diesen Guard muss vom Detektor sicher als Verstoß erkannt werden.
-- Ein synthetischer profilfreier Server mit explizitem Guard-Vertrag muss als vorbereitete sichere Struktur erkannt werden.
+- Ein synthetischer profilfreier Server mit definiertem, aber unbenutztem Guard muss ebenfalls als Verstoß erkannt werden.
+- Ein synthetischer profilfreier Server mit explizit erzwungenem Guard-Vertrag muss als vorbereitete sichere Struktur erkannt werden.
 
 ## Detektor-Härtung
 
-Das Gate prüft den vorbereiteten Guard jetzt über den Python-AST (Syntaxbaum) statt nur über Textmarker. Für einen gültigen Vertrag müssen im ausführbaren Modul tatsächlich
+Das Gate prüft den vorbereiteten Guard über den Python-AST (Syntaxbaum) statt nur über Textmarker. Für einen gültigen Vertrag müssen im ausführbaren Modul tatsächlich
 
 - die Konstante `PROFILE_CONTEXT_REQUIRED = 'PROFILE_CONTEXT_REQUIRED'` definiert sein,
-- eine echte Top-Level-Funktion `_require_profile_context` existieren und
-- deren Raise-Pfad den stabilen Fehlercode referenzieren.
+- eine echte Top-Level-Funktion `_require_profile_context` existieren,
+- deren Raise-Pfad den stabilen Fehlercode referenzieren und
+- sowohl `Handler.do_GET` als auch `Handler.do_POST` den Guard als ausführbaren Funktionsaufruf enthalten.
 
-Kommentare, Docstrings oder sonstige inerte Stringliterale mit denselben Begriffen reichen ausdrücklich nicht aus. Ein eigener Mutationstest `test_detector_rejects_marker_only_false_green` schleust genau diesen Scheinvertrag ein und muss ihn fail-closed ablehnen. Syntaxfehler im zu prüfenden Quelltext gelten ebenfalls nicht als gültiger Guard-Vertrag.
+Kommentare, Docstrings oder sonstige inerte Stringliterale mit denselben Begriffen reichen ausdrücklich nicht aus. Ebenso reicht ein korrekt definierter, aber vom HTTP-Dispatcher nie aufgerufener Guard nicht aus. Die Mutationstests `test_detector_rejects_marker_only_false_green` und `test_detector_rejects_defined_but_unused_guard` beweisen beide False-Green-Klassen. Syntaxfehler im zu prüfenden Quelltext gelten ebenfalls nicht als gültiger Guard-Vertrag.
 
 Das Gate wird im spezialisierten Workflow `.github/workflows/profile-blanco-truthfulness.yml` bei Pull Requests und Pushes auf `main` direkt mit Python ausgeführt. Es benötigt keine zusätzliche Testbibliothek und beendet den CI-Schritt bei einem Verstoß mit Exit-Code 1.
 
 ## Wirkung
 
-Der spätere Runtime-Blanco-Umbau kann damit nicht mehr versehentlich nur den Profilfallback entfernen und anschließend ungeschützte Memo-, Todo-, Kalender-, Asset- oder andere profilgebundene Pfade offenlassen. Zusätzlich kann ein Kommentar oder toter String den vorbereitenden Sicherheitsvertrag nicht mehr fälschlich als vorhanden erscheinen lassen. Der tatsächliche HTTP-Guard ist damit noch nicht implementiert; seine Existenz ist aber jetzt eine strukturell geprüfte Vorbedingung für den Übergang.
+Der spätere Runtime-Blanco-Umbau kann damit nicht mehr versehentlich nur den Profilfallback entfernen und anschließend ungeschützte Memo-, Todo-, Kalender-, Asset- oder andere profilgebundene Pfade offenlassen. Zusätzlich können weder Kommentar-/Stringmarker noch ein toter, unbenutzter Guard den vorbereitenden Sicherheitsvertrag fälschlich als erfüllt erscheinen lassen. Der tatsächliche HTTP-Guard ist damit noch nicht implementiert; seine Existenz und reale Einbindung in beide HTTP-Dispatcher sind jetzt aber strukturell geprüfte Vorbedingungen für den Übergang.
 
 ## Release-Grenze
 
@@ -38,4 +41,4 @@ Dieser Slice führt keine neue Produktfunktion ein und ändert kein Runtime-Verh
 
 ## Nächster zulässiger Slice
 
-Als nächster einzelner Runtime-Slice darf `_require_profile_context` verhaltensneutral in `app/server.py` eingeführt und vor profilgebundene API-/Asset-Zugriffe gesetzt werden. Erst danach darf der historische Auto-Profil-Fallback entfernt werden.
+Als nächster einzelner Runtime-Slice darf `_require_profile_context` verhaltensneutral in `app/server.py` eingeführt und von `Handler.do_GET` und `Handler.do_POST` vor profilgebundenen API-/Asset-Zugriffen erzwungen werden. Erst danach darf der historische Auto-Profil-Fallback entfernt werden.
