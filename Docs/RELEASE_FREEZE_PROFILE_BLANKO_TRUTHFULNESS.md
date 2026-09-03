@@ -35,7 +35,9 @@ Damit wird bewusst **nicht** vorgetäuscht, dass bereits ein Blanco-Profil aktiv
 
 Zusätzlich prüft `tests/security/test_auth_profile_dependency_containment.py` per Python-AST (Syntaxbaum), dass direkte `PROFILE_ID`-Zugriffe in den Desktop-Sicherheitsservern ausschließlich innerhalb der bereits bekannten Auth-Grenzen liegen. Neue direkte Kopplungen an anderer Stelle blockieren fail-closed. Weniger direkte Zugriffe oder eine spätere vollständige Zentralisierung bleiben ausdrücklich zulässig.
 
-Das Containment-Gate prüft seit diesem Slice zusätzlich **seinen eigenen Detektor mit einer absichtlich eingeschleusten Mutation**: Ein synthetischer neuer Zugriff `base.PROFILE_ID` in einem nicht erlaubten Auth-Helfer muss eindeutig als Verstoß erkannt werden. Dadurch wird nicht nur der Produktquelltext geprüft, sondern auch nachgewiesen, dass der AST-Detektor bei genau der zu verhindernden Drift tatsächlich anschlägt. Ein falsch grünes Gate durch einen stillen Detektorfehler wird damit wesentlich schwerer.
+Das Containment begrenzt nun außerdem die **Anzahl direkter Zugriffe pro bereits erlaubter Auth-Grenze**. Damit reicht es nicht mehr aus, einen neuen `PROFILE_ID`-Zugriff in eine schon freigegebene Funktion zu setzen: Für jede bestehende Kopplung gilt ein Oberlimit auf dem aktuellen Bestand. Die Anzahl darf im Zuge der Zentralisierung sinken, aber nicht unbemerkt wachsen. So wird die technische Schuld bis zum geplanten zentralen Auth-Profil-Grenzpunkt sowohl räumlich als auch mengenmäßig eingefroren.
+
+Das Containment-Gate prüft seinen eigenen Detektor mit absichtlich eingeschleusten Mutationen: Ein synthetischer neuer Zugriff `base.PROFILE_ID` in einem nicht erlaubten Auth-Helfer muss eindeutig als Verstoß erkannt werden; zusätzlich muss ein zweiter direkter Zugriff innerhalb der bereits erlaubten Funktion `_profile_revision` am Mengenlimit scheitern. Dadurch wird sowohl unerlaubte Ausbreitung als auch verstecktes Wachstum innerhalb erlaubter Grenzen nachweislich erkannt.
 
 Damit ist die Reihenfolge des späteren Runtime-Umbaus technisch abgesichert: **zuerst Auth-Vertrag profiloptional und zentral machen, danach realen Server auf Blanco umstellen**.
 
@@ -43,9 +45,9 @@ Damit ist die Reihenfolge des späteren Runtime-Umbaus technisch abgesichert: **
 
 Der Vertrag wird zusätzlich durch `.github/workflows/profile-blanco-truthfulness.yml` bei Pull Requests und Pushes auf `main` automatisch ausgeführt. Der Workflow verwendet ausschließlich fest auf Commit-SHAs gepinnte GitHub Actions, persistiert keine Checkout-Zugangsdaten und ruft sowohl den Truthfulness-Test als auch das Auth-Profil-Containment ohne externe Testabhängigkeit direkt mit Python auf.
 
-Wichtig: Die Testdateien besitzen eigene kleine Direct-Runner. Ein direkter Aufruf führt die jeweilige Vertragsprüfung tatsächlich aus, gibt PASS/FAIL bzw. eine Zusammenfassung aus und beendet den Prozess bei einem Fehler mit Exit-Code 1. Das Auth-Profil-Containment führt dabei sowohl die reale Quelltextprüfung als auch den Mutationstest aus. Damit kann ein grüner Workflow nicht allein dadurch entstehen, dass Testfunktionen nur definiert, aber nie aufgerufen werden oder der Detektor die relevante Driftklasse nicht erkennt.
+Wichtig: Die Testdateien besitzen eigene kleine Direct-Runner. Ein direkter Aufruf führt die jeweilige Vertragsprüfung tatsächlich aus, gibt PASS/FAIL bzw. eine Zusammenfassung aus und beendet den Prozess bei einem Fehler mit Exit-Code 1. Das Auth-Profil-Containment führt dabei die reale Quelltextprüfung sowie beide Mutationstests aus. Damit kann ein grüner Workflow nicht allein dadurch entstehen, dass Testfunktionen nur definiert, aber nie aufgerufen werden, der Detektor eine neue Zugriffsstelle übersieht oder zusätzliche direkte Zugriffe innerhalb einer erlaubten Funktion unbemerkt akzeptiert.
 
-Damit sind die Tests nicht nur vorhandene lokale Evidence, sondern tatsächlich ausführende, fail-closed CI-Gates gegen spätere UI-/Backend-/Auth-Drift, gegen eine schleichende Ausbreitung der Profilkopplung und gegen einen falsch grünen Containment-Detektor.
+Damit sind die Tests nicht nur vorhandene lokale Evidence, sondern tatsächlich ausführende, fail-closed CI-Gates gegen spätere UI-/Backend-/Auth-Drift, gegen eine schleichende räumliche oder mengenmäßige Ausbreitung der Profilkopplung und gegen einen falsch grünen Containment-Detektor.
 
 ## Freigabebedingung für den späteren Runtime-Blanco-Slice
 
@@ -62,4 +64,4 @@ kann die sichtbare Profilanzeige auf `Blanco` umgestellt und dieser Übergang mi
 
 ## Release-Status
 
-Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der ausführbare Truthfulness-Test, das Profil/Auth-Kopplungs-Gate, das mutationserprobte Dependency-Containment, ihre CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
+Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der ausführbare Truthfulness-Test, das Profil/Auth-Kopplungs-Gate, das räumlich und mengenmäßig begrenzte sowie mutationserprobte Dependency-Containment, ihre CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
