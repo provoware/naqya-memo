@@ -37,6 +37,10 @@ jobs:
         run: |
           python -S tests/release_gate/test_blanco_profile_api_boundary.py
 
+      - name: Blanco read-only state boundary gate
+        run: |
+          python -S tests/release_gate/test_blanco_readonly_state_boundary.py
+
       - name: Auth profile dependency containment
         run: |
           python -S tests/security/test_auth_profile_dependency_containment.py
