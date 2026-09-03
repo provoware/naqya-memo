@@ -50,6 +50,30 @@ const FIELD_GUIDES={
  source_path:{placeholder:'/home/name/Dokumente/datei.pdf',hint:'Nur Profi: lokalen Pfad alternativ manuell eintragen.'},
  help_mode:{hint:'Vorgabe: 1 · knapp – bei Bedarf ausführlicher stellen.'}
 };
+const VIEW_META={
+ dashboard:{title:'Dashboard',hint:'Überblick und nächster sinnvoller Einstieg.'},
+ memo:{title:'Textmemos',hint:'Notiz schreiben, speichern und vorhandene Memos bearbeiten.'},
+ todo:{title:'Todos',hint:'Aufgaben erfassen, terminieren und sicher abhaken.'},
+ calendar:{title:'Kalender',hint:'Termine und Tagesfarben in Tag, Woche, Monat oder Jahr.'},
+ trash:{title:'Papierkorb',hint:'Gelöschte Inhalte prüfen und bei Bedarf wiederherstellen.'},
+ diagnostics:{title:'Diagnose',hint:'Systemzustand verstehen; technische Details nur bei Bedarf öffnen.'},
+ voice:{title:'Sprachmemos',hint:'Aufnahme bewusst starten und anschließend sicher speichern.'},
+ docs:{title:'Dokument / PDF',hint:'Datei auswählen, importieren und revisionsgesichert bearbeiten.'},
+ audio:{title:'Audio',hint:'Audio-Assets und Playlists übersichtlich verwalten.'},
+ search:{title:'Suche',hint:'Inhalte schnell wiederfinden.'},
+ settings:{title:'Einstellungen',hint:'Nur die nötige Hilfetiefe einstellen; Ansicht bleibt oben erreichbar.'},
+ help:{title:'Hilfe',hint:'Kurze Orientierung zur aktuellen Bedienung.'}
+};
+function applyHelpModeUi(mode){
+ const value=String(Math.max(1,Math.min(3,Number(mode)||1)));
+ root.dataset.helpMode=value;
+}
+function updateWorkspaceMeta(view){
+ const meta=VIEW_META[view]||{title:'Arbeitsbereich',hint:'Sicherer Arbeitsbereich.'};
+ $('viewTitle').textContent=meta.title;
+ $('viewHint').textContent=meta.hint;
+}
+
 function fieldGuideFor(el){
  const n=el.name||el.id||'';
  if(FIELD_GUIDES[n])return FIELD_GUIDES[n];
@@ -93,6 +117,7 @@ function displaySettingsFromState(){
  const settings=state?.settings||{};
  if(settings.font_scale!=null)applyFontUi(settings.font_scale,false);
  if(settings.theme)applyThemeUi(settings.theme,false);
+ applyHelpModeUi(settings.help_mode||1);
 }
 async function refresh(){state=await api('/api/state');setVersionUi(state.version);displaySettingsFromState();$('profileName').textContent=state.profile.name;$('integrity').textContent=state.integrity;$('startStatus').textContent='Bereit';$('dataStatus').textContent=state.integrity==='ok'?'OK':'Prüfen';const bs=state.backup||{generations:0,label:'Noch keine'};$('backupStatus').textContent=bs.label;$('backupChip')?.classList.toggle('warn',!bs.generations);$('countMemo').textContent=state.counts.memos;$('countTodo').textContent=state.counts.todos;$('countEvent').textContent=state.counts.events;$('countTrash').textContent=state.counts.trash;renderNext();if(current)await render(current)}
 function renderNext(){const n=$('nextGrid');n.innerHTML='';if(!state.next.length){n.innerHTML='<div class="next-row"><em>—</em><span>Noch keine Aufgaben oder Termine</span><span></span></div>';return}state.next.forEach(x=>{const when=x.payload.due_at||x.payload.start_at||'';n.insertAdjacentHTML('beforeend',`<div class="next-row"><em>${x.entity_type==='todo'?'✓':'▦'}</em><span>${esc(x.title)}</span><span>${esc(isoLocal(when))}</span></div>`)})}
@@ -144,7 +169,7 @@ function assetView(kind,title){return `<div class="module-grid"><section class="
 async function audioView(){const pls=await api('/api/playlists');return `<div class="module-grid"><section class="form-card"><h3>Persistente Playlist</h3><form id="playlistForm" class="form-grid"><label class="full">Playlist-Titel<input name="title" value="Meine Playlist" placeholder="z. B. Sprachmemos heute"></label><div class="form-actions"><button class="primary">Playlist erstellen</button></div></form></section><section class="list-card"><h3>Playlists (${pls.length})</h3><div class="item-list">${pls.map(x=>`<article class="item"><div><h4>${esc(x.title)}</h4><div class="item-meta">${(x.payload.items||[]).length} Assets · Rev ${x.revision}</div></div></article>`).join('')||'<p>Noch keine Playlist.</p>'}</div></section></div>`}
 function placeholder(name){return `<section class="dash-card"><h3>${esc(name)}</h3><p>Dieser Bereich ist in der Referenzoberfläche noch nicht aktiv. Die vorhandenen Kernbereiche bleiben unverändert nutzbar.</p></section>`}
 function settingsView(){return `<section class="form-card simple-settings"><h3>Einstellungen</h3><p>Darstellung stellst du direkt oben im Dashboard ein. Hier bleibt nur die gewünschte Hilfetiefe.</p><form id="settingsForm" class="form-grid"><label class="full">Hilfemodus<select name="help_mode"><option value="1">1 · knapp</option><option value="2">2 · geführt</option><option value="3">3 · ausführlich</option></select></label><div class="form-actions"><button class="primary">Speichern</button></div></form></section>`}
-async function render(view){current=view;const host=$('moduleHost');let html;if(view==='dashboard')html=dash();else if(view==='memo')html=await memoView();else if(view==='todo')html=await todoView();else if(view==='calendar')html=await calendarView();else if(view==='trash')html=await trashView();else if(view==='diagnostics')html=await diagnosticView();
+async function render(view){current=view;updateWorkspaceMeta(view);const host=$('moduleHost');let html;if(view==='dashboard')html=dash();else if(view==='memo')html=await memoView();else if(view==='todo')html=await todoView();else if(view==='calendar')html=await calendarView();else if(view==='trash')html=await trashView();else if(view==='diagnostics')html=await diagnosticView();
 else if(view==='voice')html=await voiceView();
 else if(view==='docs')html=await documentView();
 else if(view==='audio')html=await audioView();
@@ -192,7 +217,7 @@ $('quickOpen').onclick=async()=>{try{const x=await api('/api/quick-note/open','P
 $('quickShare').onclick=async()=>{try{const x=await api('/api/quick-note/share','POST',{title:$('quickTitle').value});toast(x.opened?'Mailprogramm geöffnet. Versand erst nach Bestätigung.':'Teilen nicht verfügbar.')}catch(e){toast(e.message,true)}}
 $('undoBtn').onclick=async()=>{try{await api('/api/undo','POST',{});toast('Rückgängig.');await refresh()}catch(e){toast(e.message,true)}}
 $('redoBtn').onclick=async()=>{try{await api('/api/redo','POST',{});toast('Wiederholt.');await refresh()}catch(e){toast(e.message,true)}}
-document.querySelectorAll('.nav-item[data-view], [data-open]').forEach(b=>b.onclick=async()=>{const v=b.dataset.view||b.dataset.open;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('viewTitle').textContent=b.textContent.trim();$('viewHint').textContent='Service-gebundener, validierter Arbeitsbereich';await render(v);if(innerWidth<=720)drawer(false)})
+document.querySelectorAll('.nav-item[data-view], [data-open]').forEach(b=>b.onclick=async()=>{const v=b.dataset.view||b.dataset.open;document.querySelectorAll('.nav-item[data-view]').forEach(x=>{const active=x.dataset.view===v;x.classList.toggle('active',active);if(active)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});await render(v);if(innerWidth<=720)drawer(false)})
 const nav=$('mainNav'),scrim=$('scrim');function drawer(open){nav.classList.toggle('open',open);scrim.hidden=!open;$('menuBtn').setAttribute('aria-expanded',String(open))}$('menuBtn').onclick=()=>drawer(true);$('closeMenuBtn').onclick=()=>drawer(false);scrim.onclick=()=>drawer(false)
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 $('themeBtn').onclick=async()=>{themeIndex=(themeIndex+1)%themeOptions.length;const opt=themeOptions[themeIndex];applyThemeUi(opt.service);try{await api('/api/settings','POST',{theme:opt.service});if(state?.settings)state.settings.theme=opt.service}catch(e){toast('Theme lokal geändert; Speichern im Profil nicht möglich.',true)}};
@@ -206,5 +231,5 @@ const savedZoom=parseFloat(localStorage.getItem('v012-area-zoom'));if(savedZoom>
 $('devToggle').onclick=()=>{const p=$('devPanel'),o=!p.hidden;p.hidden=o;$('devToggle').setAttribute('aria-expanded',String(!o))}
 function layout(){$('layoutMode').textContent=innerWidth<=720?'Mobil':innerWidth<=1050?'Kompakt':'Desktop'}addEventListener('resize',layout,{passive:true});layout()
 applyFieldGuidance(document);
-refresh().catch(e=>{toast('Backend nicht erreichbar. Bitte STARTEN_LINUX.sh verwenden.',true);$('startStatus').textContent='Backend fehlt';$('debugState').textContent='1 Fehler';$('moduleHost').innerHTML='<section class="dash-card"><h3>Start erforderlich</h3><p>Auf Desktop wird der lokale Service benötigt. Android/iOS verwenden den eingebetteten Mobile-Runtime-Adapter.</p></section>'})
+refresh().catch(e=>{toast('Backend nicht erreichbar. Bitte STARTEN_LINUX.sh verwenden.',true);$('startStatus').textContent='Backend fehlt';$('debugState').textContent='1 Fehler';if($('systemState'))$('systemState').textContent='Start prüfen';$('moduleHost').innerHTML='<section class="dash-card"><h3>Start erforderlich</h3><p>Auf Desktop wird der lokale Service benötigt. Android/iOS verwenden den eingebetteten Mobile-Runtime-Adapter.</p></section>'})
 })();

@@ -63,8 +63,19 @@ if store.conn.execute('SELECT COUNT(*) FROM calendar_colors WHERE profile_id=?',
     calendar_service.set_color_legend(PROFILE_ID, COLORS)
 
 QUICK_NOTE_LOCK = threading.Lock()
+PROFILE_CONTEXT_REQUIRED = 'PROFILE_CONTEXT_REQUIRED'
+
+
+def _require_profile_context():
+    """Return the active profile id or fail closed before profile-bound HTTP work."""
+    profile_id = globals().get('PROFILE_ID')
+    if not isinstance(profile_id, str) or not profile_id.strip():
+        raise RuntimeError(PROFILE_CONTEXT_REQUIRED)
+    return profile_id
+
 
 ERROR_TEXT = {
+    'PROFILE_CONTEXT_REQUIRED':'Bitte zuerst ein Profil auswählen oder neu anlegen.',
     'MEMO_TITLE_REQUIRED':'Bitte einen Titel für das Memo eingeben.',
     'TODO_TITLE_REQUIRED':'Bitte einen Titel für die Aufgabe eingeben.',
     'EVENT_TITLE_REQUIRED':'Bitte einen Titel für den Termin eingeben.',
@@ -292,6 +303,8 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         path=urlparse(self.path).path
         try:
+            if path.startswith('/api/') or path.startswith('/asset-file/'):
+                _require_profile_context()
             if path.startswith('/asset-file/'):
                 aid=path.split('/')[2]
                 manifest=asset_manager.validate_asset(aid)
@@ -326,6 +339,7 @@ class Handler(SimpleHTTPRequestHandler):
     def do_POST(self):
         path=urlparse(self.path).path
         try:
+            _require_profile_context()
             if path=='/api/assets/upload':
                 return self._asset_upload()
             b=self._body()

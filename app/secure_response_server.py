@@ -146,6 +146,23 @@ REQUEST_IO_TIMEOUT_SECONDS = _bounded_int_env(
 )
 
 
+def _response_auth_profile_id() -> str | None:
+    """Resolve the profile used by the response-layer security read.
+
+    This is the only direct PROFILE_ID dependency in the outer response layer.
+    Missing, non-string or blank values fail closed as ``None`` so callers never
+    query security state for an ambiguous profile identity.
+    """
+    try:
+        profile_id = secure.base.PROFILE_ID
+    except AttributeError:
+        return None
+    if not isinstance(profile_id, str):
+        return None
+    profile_id = profile_id.strip()
+    return profile_id or None
+
+
 def _profile_security_state_from_readonly_db() -> tuple[int, str, str] | None:
     """Read the active profile security identity on an isolated read-only connection.
 
@@ -156,13 +173,16 @@ def _profile_security_state_from_readonly_db() -> tuple[int, str, str] | None:
     revision and timestamp happen to be reused. All values are read from one
     committed SQLite snapshot; any read/shape/conversion error fails closed.
     """
+    profile_id = _response_auth_profile_id()
+    if profile_id is None:
+        return None
     try:
         con = sqlite3.connect(f'file:{secure.DB}?mode=ro', uri=True, timeout=2)
         try:
             con.execute('PRAGMA query_only=ON')
             row = con.execute(
                 "SELECT revision, created_at, pin_hash FROM profiles WHERE id=? AND status='ACTIVE'",
-                (secure.base.PROFILE_ID,),
+                (profile_id,),
             ).fetchone()
             if row is None:
                 return None
