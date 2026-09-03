@@ -114,10 +114,14 @@
   </aside>
 
   <footer class="footerbar">
-    <span><b>LOG</b> <i id="logState">bereit</i></span><span><b>DEBUG</b> <i id="debugState">0 Fehler</i></span>
-    <span><b>CHECKPOINT</b> <i>bereit</i></span><span><b>A11Y</b> aktiv</span>
-    <button id="devToggle" aria-expanded="false" aria-controls="devPanel">Entwickler ▴</button>
-    <div class="dev-panel" id="devPanel" hidden><b>Entwicklerbereich</b><span>UI → Loopback API → Domain → Mutation Queue → SQLite → Recovery.</span></div>
+    <span class="footer-primary"><b>SYSTEM</b> <i id="systemState">bereit</i></span>
+    <span><b>A11Y</b> aktiv</span>
+    <button id="devToggle" aria-expanded="false" aria-controls="devPanel">Technik ▴</button>
+    <div class="dev-panel" id="devPanel" hidden>
+      <b>Technische Details</b>
+      <span>LOG: <i id="logState">bereit</i> · DEBUG: <i id="debugState">0 Fehler</i> · CHECKPOINT: bereit</span>
+      <span>UI → Loopback API → Domain → Mutation Queue → SQLite → Recovery.</span>
+    </div>
   </footer>
 </div>
 <div class="scrim" id="scrim" hidden></div>
