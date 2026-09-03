@@ -66,12 +66,18 @@ Der Recovery-Zweig enthält `.github/workflows/project-snapshot.yml`. Der Workfl
 - erzeugt eine SHA-256-Prüfsumme,
 - veröffentlicht ZIP, Prüfsumme und Snapshot-Metadaten als GitHub-Artifact.
 
-Auf exakt `e6ac013dde221e9766f901851d2c7a709f2da249`:
+Qualifizierter Export-Vorlauf auf `e6ac013dde221e9766f901851d2c7a709f2da249`:
 - `project-snapshot` #2 / Run `33818854695`: SUCCESS
 - `product-lineage-guard` #26 / Run `33818854693`: SUCCESS
 - `profile-blanco-truthfulness` #62 / Run `33818854782`: SUCCESS
 - `quality` #221 / Run `33818854705`: SUCCESS
+
+Finaler Repository-Head `282ac3cc34e93e03594cc6f7595b7e9f7d18a6f9`:
+- `project-snapshot` #4 / Run `33818932158`: SUCCESS
+- `product-lineage-guard` #28 / Run `33818932037`: SUCCESS
+- `profile-blanco-truthfulness` #63 / Run `33818932179`: SUCCESS
+- `quality` #222 / Run `33818932018`: SUCCESS
 - Vollprojekt-ZIP: 491 Dateien
-- ZIP-SHA-256: `4efd3afb7121c5a3184b69d3031b0044bee997b692dcc9992639e682a5d1abee`
+- ZIP-SHA-256: `ce40c221ac52ed0fa3b49204cafaa1c30dc081501df1be21a8e57da67d1b8f3a`
 
 Erst nach dokumentierter physischer Evidence darf der Recovery-PR aus Draft genommen oder gemergt werden.
