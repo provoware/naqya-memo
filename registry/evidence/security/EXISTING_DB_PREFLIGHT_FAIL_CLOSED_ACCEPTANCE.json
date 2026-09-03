@@ -1,0 +1,36 @@
+{
+  "evidence_id": "EXISTING_DB_PREFLIGHT_FAIL_CLOSED_ACCEPTANCE",
+  "status": "SOURCE_AND_RUNTIME_CONTRACT",
+  "scope": "official-desktop-existing-project-db-preflight",
+  "release_gate_promoted": false,
+  "product_feature_added": false,
+  "production_entrypoint": "app/secure_response_server.py",
+  "test": "tests/security/test_existing_db_preflight_fail_closed.py",
+  "ci_step": "Existing project DB preflight fail-closed",
+  "contracts": [
+    "missing database remains valid first-start input",
+    "existing database is checked read-only before importing mutating server modules",
+    "schema_version must be readable before bootstrap",
+    "PRAGMA quick_check must return only ok before bootstrap",
+    "existing healthy SQLite file must also match the recognizable PROVOWARE core profiles contract",
+    "profiles table must expose the already required id, display_name, pin_hash, created_at, updated_at, revision and status columns",
+    "foreign but healthy SQLite database fails closed before bootstrap",
+    "partial profiles schema fails closed before bootstrap",
+    "corrupt or unreadable SQLite database fails closed",
+    "header-readable structural SQLite corruption fails closed",
+    "non-file database path fails closed",
+    "failed preflight leaves existing database bytes unchanged",
+    "failed preflight creates no first-start PIN credential file"
+  ],
+  "expected_summary": "SUMMARY total=14 passed=14 failed=0",
+  "known_limits": [
+    "contract identity check is not a versioned migration engine",
+    "future support for older schemas requires an explicit pre-bootstrap migration contract",
+    "quick_check is not a replacement for a full offline integrity_check acceptance",
+    "does not replace backup or recovery acceptance",
+    "does not prove disk-full or storage-removal recovery",
+    "HTTP Basic Auth remains in use",
+    "no explicit invalidatable desktop logout/lock session exists yet",
+    "real browser, microphone, Android-device and iPhone-device gates remain open"
+  ]
+}

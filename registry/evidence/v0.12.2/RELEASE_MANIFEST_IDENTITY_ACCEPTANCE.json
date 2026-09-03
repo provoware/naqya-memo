@@ -1,0 +1,21 @@
+{
+  "version": "0.12.2-MOBILE-RUNTIME-COMPLETION",
+  "generated_at_utc": "2026-08-30T17:22:00+00:00",
+  "feature_freeze": true,
+  "scope": "release manifest identity binding only",
+  "status": "PASS",
+  "contract_count": 4,
+  "test_command": "python -S tests/release_gate/test_release_artifact_integrity.py",
+  "contracts": [
+    "matching start/evaluation manifest SHA-256 passes",
+    "manifest SHA-256 drift during a gate run fails closed",
+    "missing or invalid start manifest identity fails closed",
+    "missing or invalid current manifest identity fails closed"
+  ],
+  "release_effect": "GO additionally requires MOBILE_RUNTIME_RELEASE_MANIFEST.json to retain the exact SHA-256 captured before Gate 01",
+  "non_claims": [
+    "does not create new release artifacts",
+    "does not make Android or iPhone device gates PASS",
+    "does not replace artifact SHA-256 verification or the seven real release gates"
+  ]
+}

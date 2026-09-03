@@ -1,0 +1,31 @@
+{
+  "gate": "DESKTOP_RESPONSE_SECURITY_HEADERS",
+  "status": "PASS",
+  "release_gate_promotion": false,
+  "release_status": "NO-GO",
+  "scope": "official Linux desktop HTTP response boundary",
+  "contracts": [
+    "X-Frame-Options DENY",
+    "CSP frame-ancestors none",
+    "CSP base-uri none",
+    "CSP object-src none",
+    "Referrer-Policy no-referrer",
+    "X-Content-Type-Options nosniff",
+    "existing Cache-Control no-store retained"
+  ],
+  "runtime_test": "tests/security/test_desktop_response_headers.py",
+  "runtime_assertions": "4/4 PASS",
+  "remote_ci": {
+    "workflow": "quality",
+    "run_number": 16,
+    "run_id": 33265595695,
+    "conclusion": "success",
+    "validated_head_sha": "315fdcb3e54773705df29aa894448a705f82764c"
+  },
+  "remaining_real_gates": [
+    "browser",
+    "microphone",
+    "android-device",
+    "iphone-device"
+  ]
+}

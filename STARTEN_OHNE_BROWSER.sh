@@ -14,13 +14,6 @@ case "$ACTION" in
     URL="http://127.0.0.1:${PORT}/index.html"
     echo "🟢 OI - PROVOWARE - IO läuft bereits auf Port ${PORT}."
     echo "   Bestehende Instanz wird wiederverwendet: $URL"
-    if [[ "${PROVOWARE_NO_BROWSER:-0}" != "1" ]]; then
-      if command -v xdg-open >/dev/null 2>&1; then
-        xdg-open "$URL" >/dev/null 2>&1 || true
-      else
-        python3 -m webbrowser "$URL" >/dev/null 2>&1 || true
-      fi
-    fi
     exit 0
     ;;
   START)
@@ -43,4 +36,5 @@ case "$ACTION" in
     ;;
 esac
 
-exec python3 -S app/server.py --no-browser
+echo "🔐 Desktop-Schutz aktiv: Benutzername provoware, Passwort = Profil-PIN."
+exec python3 -S app/secure_response_server.py --no-browser

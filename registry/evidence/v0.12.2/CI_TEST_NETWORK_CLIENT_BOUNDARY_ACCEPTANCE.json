@@ -1,0 +1,58 @@
+{
+  "schema": "provoware.release-ci-test-network-client-boundary.v1",
+  "status": "PASS",
+  "scope": "quality-executed-test-source-direct-network-capability-expansion-boundary",
+  "feature_freeze": true,
+  "product_feature_added": false,
+  "workflow": ".github/workflows/quality.yml",
+  "regression_test": "tests/release_gate/test_ci_test_network_client_boundary.py",
+  "contract": "Quality CI must not silently expand direct network capability in test sources actually executable in the canonical Quality workflow checkout.",
+  "reviewed_network_baseline_files": 16,
+  "baseline_groups": ["tests/security", "tests/startup"],
+  "baseline_identity": "exact Git blob SHA per reviewed Quality-executed loopback source file",
+  "source_discovery": "test-source paths are derived from .github/workflows/quality.yml; only references resolving to existing files in the current checkout are scanned, because quality.yml intentionally contains version-tolerant optional file references guarded by existence checks",
+  "latest_quality_run": 67,
+  "latest_quality_head": "a153e183e15880d2da5f9f1fc8983c57c6369e26",
+  "latest_result": "PASS: Quality Run #67 completed successfully on the exact PR head; CI test-source network client boundary and all subsequent Quality gates passed.",
+  "acceptance_blocker": null,
+  "acceptance_proof": {
+    "workflow_run_id": 33356828102,
+    "job": "source-contracts",
+    "job_conclusion": "success",
+    "network_boundary_step": "CI test-source network client boundary",
+    "network_boundary_step_conclusion": "success",
+    "completed_at_utc": "2026-08-31T04:22:35Z"
+  },
+  "outside_baseline_blocked": [
+    "socket import or direct socket calls",
+    "http.client import or direct calls",
+    "urllib.request import or direct calls",
+    "requests",
+    "httpx",
+    "aiohttp",
+    "ftplib",
+    "smtplib",
+    "telnetlib",
+    "xmlrpc.client",
+    "Node http/https/net/tls/dns/dgram modules",
+    "fetch",
+    "WebSocket",
+    "XMLHttpRequest"
+  ],
+  "fail_closed": [
+    "Quality workflow unreadable or contains no test references",
+    "Quality workflow resolves no existing test sources",
+    "reviewed baseline no longer Quality-executed",
+    "reviewed baseline Git blob SHA drift",
+    "unparseable Python Quality test source",
+    "unreadable JavaScript Quality test source",
+    "direct network-capable import or call outside reviewed baseline",
+    "empty non-baseline Quality source set"
+  ],
+  "diagnostics": [
+    "absent version-tolerant workflow references are reported but not classified as executable sources",
+    "direct network findings include repository-relative file and source line"
+  ],
+  "limitations": "Source-level expansion guard only. Existing reviewed Quality security/startup tests intentionally use local loopback networking. This does not prove an OS-level egress sandbox and does not fully exclude indirect networking through imported application modules.",
+  "boundary": "No product/UI/schema/domain behavior, no sudo, no new workflow permission, no secret, no OIDC, no dependency installation and no browser/device gate promotion."
+}

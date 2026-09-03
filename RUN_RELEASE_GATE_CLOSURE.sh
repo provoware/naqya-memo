@@ -2,6 +2,31 @@
 set -u
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 PY="${PYTHON:-python3}"
+MANIFEST="$ROOT/docs/release/MOBILE_RUNTIME_RELEASE_MANIFEST.json"
+export PROVOWARE_RELEASE_GATE_STARTED_AT="$("$PY" -S -c 'import datetime; print(datetime.datetime.now(datetime.timezone.utc).isoformat())')"
+if ! "$PY" -S "$ROOT/tools/release_gate/require_clean_worktree.py" --root "$ROOT"; then
+  echo "RELEASE_GATE_WORKTREE_NOT_CLEAN"
+  exit 2
+fi
+if ! PROVOWARE_RELEASE_GATE_SOURCE_SHA="$(git -C "$ROOT" rev-parse --verify HEAD 2>/dev/null)"; then
+  echo "RELEASE_GATE_SOURCE_IDENTITY_UNAVAILABLE"
+  exit 2
+fi
+if ! PROVOWARE_RELEASE_GATE_SOURCE_TREE_SHA="$(git -C "$ROOT" rev-parse --verify 'HEAD^{tree}' 2>/dev/null)"; then
+  echo "RELEASE_GATE_SOURCE_TREE_IDENTITY_UNAVAILABLE"
+  exit 2
+fi
+if [ ! -f "$MANIFEST" ] || [ -L "$MANIFEST" ]; then
+  echo "RELEASE_GATE_MANIFEST_IDENTITY_UNAVAILABLE"
+  exit 2
+fi
+if ! PROVOWARE_RELEASE_GATE_MANIFEST_SHA256="$("$PY" -S -c 'import hashlib, pathlib, sys; p=pathlib.Path(sys.argv[1]); print(hashlib.sha256(p.read_bytes()).hexdigest())' "$MANIFEST")"; then
+  echo "RELEASE_GATE_MANIFEST_IDENTITY_UNAVAILABLE"
+  exit 2
+fi
+export PROVOWARE_RELEASE_GATE_SOURCE_SHA
+export PROVOWARE_RELEASE_GATE_SOURCE_TREE_SHA
+export PROVOWARE_RELEASE_GATE_MANIFEST_SHA256
 run(){ echo; echo "===== $1 ====="; shift; "$@"; rc=$?; echo "RC=$rc"; return 0; }
 run "01 8H SOAK" "$PY" -S "$ROOT/tools/release_gate/gate_01_8h_soak.py" --hours 8
 run "02 CHROMIUM" "$PY" -S "$ROOT/tools/release_gate/gate_02_chromium.py"
@@ -11,3 +36,12 @@ run "05 STORAGE FAILURE" "$PY" -S "$ROOT/tools/release_gate/gate_05_storage_fail
 run "06 ANDROID DEVICE" "$PY" -S "$ROOT/tools/release_gate/gate_06_android_device.py"
 run "07 IOS IPHONE X" "$PY" -S "$ROOT/tools/release_gate/gate_07_ios_iphone_x.py"
 "$PY" -S "$ROOT/tools/release_gate/evaluate_release_gate.py"
+evaluation_rc=$?
+"$PY" -S "$ROOT/tools/release_gate/attest_release_closure.py"
+provenance_rc=$?
+"$PY" -S "$ROOT/tools/release_gate/verify_release_closure_provenance.py"
+verification_rc=$?
+if [ "$evaluation_rc" -ne 0 ] || [ "$provenance_rc" -ne 0 ] || [ "$verification_rc" -ne 0 ]; then
+  exit 2
+fi
+exit 0

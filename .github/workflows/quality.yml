@@ -20,21 +20,44 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
 
       - name: Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
 
       - name: Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
 
+      - name: GitHub Actions immutable pinning
+        run: |
+          python -S tests/release_gate/test_github_actions_immutable_pins.py
+
+      - name: CI dependency execution boundary
+        run: |
+          python -S tests/release_gate/test_ci_dependency_execution_boundary.py
+
+      - name: CI trigger and permission boundary
+        run: |
+          python -S tests/release_gate/test_ci_trigger_permission_boundary.py
+
+      - name: CI test-source network client boundary
+        run: |
+          python -S tests/release_gate/test_ci_test_network_client_boundary.py
+
+      - name: Release-freeze rollup containment
+        run: |
+          python -S tests/release_gate/test_release_freeze_rollup_containment.py
+
       - name: Python syntax
         run: |
-          python -m py_compile app/server.py tools/startup_port_guard.py
+          python -m py_compile app/server.py app/secure_server.py app/secure_response_server.py tools/startup_port_guard.py tools/release_gate/evaluate_release_gate.py tools/release_gate/require_clean_worktree.py tools/release_gate/attest_release_closure.py tools/release_gate/verify_release_closure_provenance.py
 
       - name: JavaScript syntax
         run: |
@@ -43,27 +66,125 @@ jobs:
           if [ -f ui/reference_web/mobile/mobile_bootstrap.js ]; then node --check ui/reference_web/mobile/mobile_bootstrap.js; fi
           if [ -f ui/reference_web/mobile/mobile_acceptance.js ]; then node --check ui/reference_web/mobile/mobile_acceptance.js; fi
 
-      - name: UI contracts
+      - name: UI contracts (required, fail-closed)
         run: |
-          for test in \
-            tests/ui_consistency/test_v01222_static_ui_consistency.py \
-            tests/ui_consistency/test_v01223_simplification_guidance.py \
-            tests/ui_consistency/test_v01224_ux_control_plane.py \
+          tests=(
+            tests/ui_consistency/test_v01222_static_ui_consistency.py
+            tests/ui_consistency/test_v01223_simplification_guidance.py
+            tests/ui_consistency/test_v01224_ux_control_plane.py
             tests/ui_consistency/test_v01225_real_viewport_ux.py
-          do
-            if [ -f "$test" ]; then
-              echo "RUN $test"
-              python -S "$test"
-            else
-              echo "SKIP $test (not present in this version)"
+          )
+          missing=0
+          for test in "${tests[@]}"; do
+            if [ ! -f "$test" ]; then
+              echo "MISSING REQUIRED UI CONTRACT: $test"
+              missing=1
             fi
           done
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+          failed=0
+          for test in "${tests[@]}"; do
+            echo "RUN $test"
+            if ! python -S "$test"; then
+              echo "FAILED UI CONTRACT: $test"
+              failed=1
+            fi
+          done
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
 
       - name: Startup contracts
         run: |
           if [ -f tests/startup/test_startup_port_guard.py ]; then
             PYTHONPATH=core/reference_python python -S tests/startup/test_startup_port_guard.py
           fi
+
+      - name: Release gate evidence freshness
+        run: |
+          python -S tests/release_gate/test_release_gate_evidence_freshness.py
+
+      - name: Release gate clean worktree
+        run: |
+          python -S tests/release_gate/test_release_gate_clean_worktree.py
+
+      - name: Release artifact integrity binding
+        run: |
+          python -S tests/release_gate/test_release_artifact_integrity.py
+
+      - name: Release closure provenance binding
+        run: |
+          python -S tests/release_gate/test_release_closure_provenance.py
+
+      - name: Release closure provenance verification
+        run: |
+          python -S tests/release_gate/test_release_closure_provenance_verifier.py
+
+      - name: Release closure verifier enforcement
+        run: |
+          python -S tests/release_gate/test_release_closure_runner_verifier_enforcement.py
+
+      - name: Existing project DB preflight fail-closed
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_existing_db_preflight_fail_closed.py
+
+      - name: Desktop PIN gate
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_pin_gate.py
+
+      - name: Desktop first-PIN file symlink guard
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_first_pin_file_symlink_guard.py
+
+      - name: Desktop auth cache revision invalidation
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_auth_cache_revision.py
+
+      - name: Desktop auth cache profile incarnation invalidation
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_auth_cache_profile_incarnation.py
+
+      - name: Desktop auth cache credential fingerprint invalidation
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_auth_cache_credential_fingerprint.py
+
+      - name: Desktop auth cache uncertainty eviction
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_auth_cache_uncertainty_eviction.py
+
+      - name: Desktop auth security read isolation
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_auth_read_connection.py
+
+      - name: Desktop transport trust boundary
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_transport_trust.py
+
+      - name: Desktop response security headers
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_response_headers.py
+
+      - name: Desktop JSON request body limit
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_json_body_limit.py
+
+      - name: Desktop request I/O timeout
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_request_io_timeout.py
+
+      - name: Desktop security config parsing
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_security_config_parse.py
+
+      - name: Desktop auth security config parsing
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_auth_config_parse.py
+
+      - name: Desktop upload limit config parsing
+        run: |
+          PYTHONPATH=core/reference_python python -S tests/security/test_desktop_upload_config_parse.py
 
       - name: Mobile source contracts
         run: |
@@ -79,5 +200,5 @@ jobs:
 
       - name: Evidence boundary
         run: |
-          echo "CI validates source contracts only."
-          echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
+          echo "CI validates immutable GitHub Action identities, non-persistent checkout credentials, a no-implicit-dependency-install/download boundary, a minimal trigger/permission trust boundary, a test-source direct-network-client boundary, release-freeze rollup containment, required fail-closed UI-contract presence, source contracts and release-gate evidence freshness/clean-worktree/artifact-integrity/closure-provenance/provenance-verification/verifier-enforcement, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
+          echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green, and the test-source guard is not an OS-level network sandbox."
