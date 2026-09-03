@@ -12,7 +12,7 @@ Der Core-Startvertrag kann bereits `BLANCO` mit `profile_id = null` modellieren.
 
 Eine rein optische Änderung der Profilanzeige auf „Blanco“ wäre deshalb sachlich falsch und könnte Nutzer über den tatsächlich aktiven Datenkontext täuschen.
 
-Zusätzlich ist der geschützte Desktop-Start noch an ein konkretes aktives Profil gekoppelt: `app/secure_server.py` verwendet `base.PROFILE_ID` für PIN-Prüfung, Erststart-Härtung und Sicherheitszustand. Ein Entfernen des Server-Fallbacks ohne vorherige Auth-Entkopplung könnte daher den Desktop-Zugriff beschädigen oder einen inkonsistenten Sicherheitszustand erzeugen.
+Zusätzlich ist der geschützte Desktop-Start noch an ein konkretes aktives Profil gekoppelt: `app/secure_server.py` verwendet `base.PROFILE_ID` für PIN-Prüfung, Erststart-Härtung und Sicherheitszustand. `app/secure_response_server.py` bindet seinen isolierten Sicherheitszustand ebenfalls an dieses Profil. Ein Entfernen des Server-Fallbacks ohne vorherige Auth-Entkopplung könnte daher den Desktop-Zugriff beschädigen oder einen inkonsistenten Sicherheitszustand erzeugen.
 
 ## Nutzerseitiger Zwischenzustand
 
@@ -33,15 +33,17 @@ Damit wird bewusst **nicht** vorgetäuscht, dass bereits ein Blanco-Profil aktiv
 - Solange der historische Fallback noch vorhanden ist, darf die Oberfläche keinen neutralen Blanco-Zustand behaupten.
 - Sobald `app/server.py` keinen impliziten Profilfallback mehr besitzt, muss `app/secure_server.py` bereits von der zwingenden `base.PROFILE_ID`-Kopplung für PIN-/Erststart-Authentifizierung entkoppelt sein. Andernfalls blockiert das Gate den Übergang.
 
-Damit ist die Reihenfolge des späteren Runtime-Umbaus technisch abgesichert: **zuerst Auth-Vertrag profiloptional machen, danach realen Server auf Blanco umstellen**.
+Zusätzlich prüft `tests/security/test_auth_profile_dependency_containment.py` per Python-AST (Syntaxbaum), dass direkte `PROFILE_ID`-Zugriffe in den Desktop-Sicherheitsservern ausschließlich innerhalb der bereits bekannten Auth-Grenzen liegen. Neue direkte Kopplungen an anderer Stelle blockieren fail-closed. Weniger direkte Zugriffe oder eine spätere vollständige Zentralisierung bleiben ausdrücklich zulässig.
+
+Damit ist die Reihenfolge des späteren Runtime-Umbaus technisch abgesichert: **zuerst Auth-Vertrag profiloptional und zentral machen, danach realen Server auf Blanco umstellen**.
 
 ## CI-Durchsetzung
 
-Der Vertrag wird zusätzlich durch `.github/workflows/profile-blanco-truthfulness.yml` bei Pull Requests und Pushes auf `main` automatisch ausgeführt. Der Workflow verwendet ausschließlich fest auf Commit-SHAs gepinnte GitHub Actions, persistiert keine Checkout-Zugangsdaten und ruft den Truthfulness-Test ohne externe Testabhängigkeit direkt mit Python auf.
+Der Vertrag wird zusätzlich durch `.github/workflows/profile-blanco-truthfulness.yml` bei Pull Requests und Pushes auf `main` automatisch ausgeführt. Der Workflow verwendet ausschließlich fest auf Commit-SHAs gepinnte GitHub Actions, persistiert keine Checkout-Zugangsdaten und ruft sowohl den Truthfulness-Test als auch das Auth-Profil-Containment ohne externe Testabhängigkeit direkt mit Python auf.
 
-Wichtig: Die Testdatei besitzt deshalb einen eigenen kleinen Direct-Runner. Ein Aufruf mit `python -S tests/release_gate/test_profile_blanco_truthfulness.py` führt alle drei Vertragsprüfungen tatsächlich aus, gibt pro Prüfung PASS/FAIL sowie eine Zusammenfassung aus und beendet den Prozess bei mindestens einem Fehler mit Exit-Code 1. Damit kann ein grüner Workflow nicht mehr allein dadurch entstehen, dass nur Testfunktionen definiert, aber nie aufgerufen werden.
+Wichtig: Die Testdateien besitzen eigene kleine Direct-Runner. Ein direkter Aufruf führt die jeweilige Vertragsprüfung tatsächlich aus, gibt PASS/FAIL bzw. eine Zusammenfassung aus und beendet den Prozess bei einem Fehler mit Exit-Code 1. Damit kann ein grüner Workflow nicht allein dadurch entstehen, dass Testfunktionen nur definiert, aber nie aufgerufen werden.
 
-Damit ist der Test nicht nur vorhandene lokale Evidence, sondern ein tatsächlich ausführendes, fail-closed CI-Gate gegen spätere UI-/Backend-/Auth-Drift.
+Damit sind die Tests nicht nur vorhandene lokale Evidence, sondern tatsächlich ausführende, fail-closed CI-Gates gegen spätere UI-/Backend-/Auth-Drift und gegen eine schleichende Ausbreitung der Profilkopplung.
 
 ## Freigabebedingung für den späteren Runtime-Blanco-Slice
 
@@ -58,4 +60,4 @@ kann die sichtbare Profilanzeige auf `Blanco` umgestellt und dieser Übergang mi
 
 ## Release-Status
 
-Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der ausführbare Truthfulness-Test, das Profil/Auth-Kopplungs-Gate, seine CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
+Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der ausführbare Truthfulness-Test, das Profil/Auth-Kopplungs-Gate, das neue Dependency-Containment, ihre CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
