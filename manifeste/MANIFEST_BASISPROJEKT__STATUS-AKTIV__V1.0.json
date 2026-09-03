@@ -18,6 +18,14 @@
     "browser_open": "automatic",
     "offline_first": true
   },
+  "ci_export": {
+    "enabled": true,
+    "publish_after_all_quality_gates": true,
+    "exactly_one_zip": true,
+    "require_source_git_head_match": true,
+    "artifact_name_prefix": "PROVOWARE-Naqya-Memo-Basisprojekt-",
+    "upload_action_sha": "ea165f8d65b6e75b540449e92b4886f43607fa02"
+  },
   "mandatory_root_files": [
     "SCHNELLSTART.sh",
     "STARTEN_LINUX.sh",
