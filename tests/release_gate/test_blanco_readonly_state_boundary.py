@@ -9,6 +9,7 @@ STATE_PATH = "/api/state"
 GUARD = "_require_profile_context"
 BLANCO_STATE = "_blanco_api_state"
 ALLOWED_TOP_LEVEL_KEYS = {"version", "profile", "readiness"}
+ALLOWED_READINESS_KEYS = {"state", "profile_required"}
 
 
 def _handler_get(tree: ast.Module):
@@ -57,19 +58,43 @@ def _blanco_state_helper(tree: ast.Module):
     )
 
 
+def _dict_items(node: ast.Dict) -> dict[str, ast.AST] | None:
+    result: dict[str, ast.AST] = {}
+    for key, value in zip(node.keys, node.values):
+        if not isinstance(key, ast.Constant) or not isinstance(key.value, str):
+            return None
+        result[key.value] = value
+    return result
+
+
 def _helper_has_allowlisted_shape(helper: ast.AST | None) -> bool:
     if helper is None:
         return False
     returns = [node for node in ast.walk(helper) if isinstance(node, ast.Return)]
     if len(returns) != 1 or not isinstance(returns[0].value, ast.Dict):
         return False
-    keys = set()
-    for key in returns[0].value.keys:
-        if not isinstance(key, ast.Constant) or not isinstance(key.value, str):
-            return False
-        keys.add(key.value)
-    if keys != ALLOWED_TOP_LEVEL_KEYS:
+
+    payload = _dict_items(returns[0].value)
+    if payload is None or set(payload) != ALLOWED_TOP_LEVEL_KEYS:
         return False
+    if not isinstance(payload["version"], ast.Name) or payload["version"].id != "APP_VERSION":
+        return False
+    if not isinstance(payload["profile"], ast.Constant) or payload["profile"].value is not None:
+        return False
+
+    readiness = payload["readiness"]
+    if not isinstance(readiness, ast.Dict):
+        return False
+    readiness_payload = _dict_items(readiness)
+    if readiness_payload is None or set(readiness_payload) != ALLOWED_READINESS_KEYS:
+        return False
+    state = readiness_payload["state"]
+    profile_required = readiness_payload["profile_required"]
+    if not isinstance(state, ast.Constant) or state.value != "PROFILE_REQUIRED":
+        return False
+    if not isinstance(profile_required, ast.Constant) or profile_required.value is not True:
+        return False
+
     # Neutral state must never query profile-bound services, DB/store, assets, queue,
     # memo/todo/calendar helpers, or the rich api_state payload.
     forbidden_names = {
@@ -167,6 +192,40 @@ class Handler:
     )
 
 
+def test_detector_rejects_extra_readiness_details() -> None:
+    synthetic = """
+def _require_profile_context():
+    return None
+
+def _blanco_api_state():
+    return {
+        'version': APP_VERSION,
+        'profile': None,
+        'readiness': {
+            'state': 'PROFILE_REQUIRED',
+            'profile_required': True,
+            'profile_name': PROFILE_NAME,
+            'project_path': str(PROJECT),
+        },
+    }
+class Handler:
+    def do_GET(self):
+        path = self.path
+        try:
+            if path.startswith('/api/') and path != '/api/state':
+                _require_profile_context()
+            if path == '/api/state':
+                return self._ok(_blanco_api_state())
+        except Exception:
+            return None
+"""
+    _assert_valid_synthetic(synthetic)
+    assert not _safe_state_boundary(synthetic), (
+        "BLANCO_STATE_READINESS_LEAK_FALSE_GREEN: readiness darf keine zusätzlichen "
+        "Profil-, Pfad- oder Laufzeitdetails als Seitenkanal transportieren."
+    )
+
+
 def test_detector_accepts_minimal_neutral_state_contract() -> None:
     synthetic = """
 def _require_profile_context():
@@ -201,6 +260,7 @@ def _run_direct() -> None:
         test_current_server_keeps_state_guarded_or_explicitly_neutral,
         test_detector_rejects_naive_state_exemption,
         test_detector_rejects_neutral_helper_with_profile_data_access,
+        test_detector_rejects_extra_readiness_details,
         test_detector_accepts_minimal_neutral_state_contract,
     ]
     failed = []
