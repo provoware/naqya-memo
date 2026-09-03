@@ -68,7 +68,7 @@ jobs:
             runner: macos-latest
             os: macos
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 25
+    timeout-minutes: 50
     steps:
       - name: Checkout
         uses: actions/checkout@v4
