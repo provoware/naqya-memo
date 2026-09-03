@@ -1,5 +1,5 @@
 from pathlib import Path
-import http.client, json, os, socket, subprocess, sys, tempfile, time, urllib.request
+import http.client, json, os, socket, subprocess, sys, tempfile, time
 
 ROOT=Path(__file__).resolve().parents[2]
 SERVER=ROOT/"app/server.py"
@@ -18,6 +18,20 @@ def request(port,method,path,body=None,headers=None):
     out_headers={k.lower():v for k,v in resp.getheaders()}
     conn.close()
     return status,data,out_headers
+
+
+def oversized_headers_only_request(port,path,declared_length):
+    """Prove rejection occurs from headers alone, before a large body is accepted."""
+    conn=http.client.HTTPConnection("127.0.0.1",port,timeout=3)
+    conn.putrequest("POST",path,skip_host=True)
+    conn.putheader("Host",f"127.0.0.1:{port}")
+    conn.putheader("Content-Type","application/json")
+    conn.putheader("Content-Length",str(declared_length))
+    conn.putheader("Origin",f"http://127.0.0.1:{port}")
+    conn.endheaders()
+    resp=conn.getresponse(); data=resp.read(); status=resp.status
+    conn.close()
+    return status,data
 
 
 def wait_ready(port,proc):
@@ -78,12 +92,7 @@ def main():
             })
             assert status==415
 
-            oversized=b'{' + b' '*(2*1024*1024) + b'}'
-            status,_,_=request(port,"POST","/api/settings",oversized,{
-                "Content-Type":"application/json",
-                "Content-Length":str(len(oversized)),
-                "Origin":f"http://127.0.0.1:{port}",
-            })
+            status,_=oversized_headers_only_request(port,"/api/settings",2*1024*1024+2)
             assert status==413
 
             print("PASS local HTTP server E2E boundary")
@@ -92,9 +101,6 @@ def main():
             try: proc.wait(timeout=5)
             except subprocess.TimeoutExpired:
                 proc.kill();proc.wait(timeout=5)
-            if proc.returncode not in (0,-15,1):
-                out,err=proc.communicate()
-                print(out,file=sys.stderr);print(err,file=sys.stderr)
 
 if __name__=="__main__":
     main()
