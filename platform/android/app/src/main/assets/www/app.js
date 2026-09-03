@@ -50,6 +50,30 @@ const FIELD_GUIDES={
  source_path:{placeholder:'/home/name/Dokumente/datei.pdf',hint:'Nur Profi: lokalen Pfad alternativ manuell eintragen.'},
  help_mode:{hint:'Vorgabe: 1 · knapp – bei Bedarf ausführlicher stellen.'}
 };
+const VIEW_META={
+ dashboard:{title:'Dashboard',hint:'Überblick und nächster sinnvoller Einstieg.'},
+ memo:{title:'Textmemos',hint:'Notiz schreiben, speichern und vorhandene Memos bearbeiten.'},
+ todo:{title:'Todos',hint:'Aufgaben erfassen, terminieren und sicher abhaken.'},
+ calendar:{title:'Kalender',hint:'Termine und Tagesfarben in Tag, Woche, Monat oder Jahr.'},
+ trash:{title:'Papierkorb',hint:'Gelöschte Inhalte prüfen und bei Bedarf wiederherstellen.'},
+ diagnostics:{title:'Diagnose',hint:'Systemzustand verstehen; technische Details nur bei Bedarf öffnen.'},
+ voice:{title:'Sprachmemos',hint:'Aufnahme bewusst starten und anschließend sicher speichern.'},
+ docs:{title:'Dokument / PDF',hint:'Datei auswählen, importieren und revisionsgesichert bearbeiten.'},
+ audio:{title:'Audio',hint:'Audio-Assets und Playlists übersichtlich verwalten.'},
+ search:{title:'Suche',hint:'Inhalte schnell wiederfinden.'},
+ settings:{title:'Einstellungen',hint:'Nur die nötige Hilfetiefe einstellen; Ansicht bleibt oben erreichbar.'},
+ help:{title:'Hilfe',hint:'Kurze Orientierung zur aktuellen Bedienung.'}
+};
+function applyHelpModeUi(mode){
+ const value=String(Math.max(1,Math.min(3,Number(mode)||1)));
+ root.dataset.helpMode=value;
+}
+function updateWorkspaceMeta(view){
+ const meta=VIEW_META[view]||{title:'Arbeitsbereich',hint:'Sicherer Arbeitsbereich.'};
+ $('viewTitle').textContent=meta.title;
+ $('viewHint').textContent=meta.hint;
+}
+
 function fieldGuideFor(el){
  const n=el.name||el.id||'';
  if(FIELD_GUIDES[n])return FIELD_GUIDES[n];
@@ -80,6 +104,7 @@ function applyFontUi(value,persistLocal=true){
  root.dataset.fontTier=font>=1.6?'xl':font>=1.3?'large':'normal';
  if($('fontValue'))$('fontValue').value=`${Math.round(font*100)} %`;
  if(persistLocal)localStorage.setItem('v08-font',font);
+ if(typeof layout==='function')layout();
 }
 function applyThemeUi(service,persistLocal=true){
  let idx=themeOptions.findIndex(x=>x.service===service||x.css===service);
@@ -93,14 +118,15 @@ function displaySettingsFromState(){
  const settings=state?.settings||{};
  if(settings.font_scale!=null)applyFontUi(settings.font_scale,false);
  if(settings.theme)applyThemeUi(settings.theme,false);
+ applyHelpModeUi(settings.help_mode||1);
 }
-async function refresh(){state=await api('/api/state');setVersionUi(state.version);displaySettingsFromState();$('profileName').textContent=state.profile.name;$('integrity').textContent=state.integrity;$('startStatus').textContent='Bereit';$('dataStatus').textContent=state.integrity==='ok'?'OK':'Prüfen';const bs=state.backup||{generations:0,label:'Noch keine'};$('backupStatus').textContent=bs.label;$('backupChip')?.classList.toggle('warn',!bs.generations);$('countMemo').textContent=state.counts.memos;$('countTodo').textContent=state.counts.todos;$('countEvent').textContent=state.counts.events;$('countTrash').textContent=state.counts.trash;renderNext();if(current)await render(current)}
+async function refresh(){state=await api('/api/state');setVersionUi(state.version);displaySettingsFromState();$('profileName').textContent=state.profile.name;if($('integrity'))$('integrity').textContent=state.integrity;$('startStatus').textContent='Bereit';$('dataStatus').textContent=state.integrity==='ok'?'OK':'Prüfen';const bs=state.backup||{generations:0,label:'Noch keine'};$('backupStatus').textContent=bs.label;$('backupChip')?.classList.toggle('warn',!bs.generations);$('countMemo').textContent=state.counts.memos;$('countTodo').textContent=state.counts.todos;$('countEvent').textContent=state.counts.events;$('countTrash').textContent=state.counts.trash;renderNext();if(current)await render(current)}
 function renderNext(){const n=$('nextGrid');n.innerHTML='';if(!state.next.length){n.innerHTML='<div class="next-row"><em>—</em><span>Noch keine Aufgaben oder Termine</span><span></span></div>';return}state.next.forEach(x=>{const when=x.payload.due_at||x.payload.start_at||'';n.insertAdjacentHTML('beforeend',`<div class="next-row"><em>${x.entity_type==='todo'?'✓':'▦'}</em><span>${esc(x.title)}</span><span>${esc(isoLocal(when))}</span></div>`)})}
 function dash(){const bs=state.backup||{label:'Noch keine'};return `<div class="dashboard-grid simplified-dashboard">
-<article class="dash-card"><h3>Textmemos</h3><strong>${state.counts.memos}</strong><p>Notizen anlegen, bearbeiten und wiederfinden.</p></article>
-<article class="dash-card"><h3>Todos</h3><strong>${state.counts.todos}</strong><p>Aufgaben mit Termin und Erinnerung.</p></article>
-<article class="dash-card"><h3>Kalender</h3><strong>${state.counts.events}</strong><p>Termine und farbige Tagesmarkierungen.</p></article>
-<article class="dash-card safety-card"><h3>Sicherheit</h3><strong>${state.integrity==='ok'?'OK':'Prüfen'}</strong><p>DB ${esc(state.integrity)} · Papierkorb ${state.counts.trash} · Backup ${esc(bs.label)}</p></article>
+<article class="dash-card" data-dashboard-card="memo"><div><h3>Textmemos</h3><p>Notizen schreiben und wiederfinden.</p></div><strong>${state.counts.memos}</strong></article>
+<article class="dash-card" data-dashboard-card="todo"><div><h3>Todos</h3><p>Aufgaben und Erinnerungen.</p></div><strong>${state.counts.todos}</strong></article>
+<article class="dash-card" data-dashboard-card="calendar"><div><h3>Kalender</h3><p>Termine und Tagesmarkierungen.</p></div><strong>${state.counts.events}</strong></article>
+<article class="dash-card safety-card" data-dashboard-card="safety"><div><h3>Sicherheit</h3><p>Papierkorb ${state.counts.trash} · Backup ${esc(bs.label)}</p></div><strong>${state.integrity==='ok'?'OK':'Prüfen'}</strong></article>
 </div>`}
 async function memoView(){const items=await api('/api/memos');return `<div class="module-grid"><section class="form-card"><h3>Textmemo</h3><form id="memoForm" class="form-grid"><input type="hidden" name="id"><input type="hidden" name="revision"><label class="full">Titel<input name="title" maxlength="240" required placeholder="z. B. Idee, Einkauf oder Projekt"></label><label class="full">Text<textarea name="body" rows="8" placeholder="z. B. Stichpunkte, Gedanken oder längerer Text …"></textarea></label><label class="full">Tags<input name="tags" placeholder="z. B. privat, wichtig, projekt"></label><div class="form-actions"><button class="primary">Speichern</button><button type="button" id="memoCancel">Neu/leeren</button></div></form></section><section class="list-card"><h3>Textmemos (${items.length})</h3><div class="item-list">${items.map(x=>`<article class="item"><div><h4>${esc(x.title)}</h4><p>${esc(x.payload.body)}</p><div class="item-meta">Revision ${x.revision} · ${esc((x.payload.tags||[]).join(', '))}</div></div><div class="item-actions"><button data-edit-memo="${x.id}">Bearbeiten</button><button class="danger" data-trash-memo="${x.id}" data-rev="${x.revision}">Papierkorb</button></div></article>`).join('')||'<p>Noch keine Memos.</p>'}</div></section></div>`}
 async function todoView(){const items=await api('/api/todos');return `<div class="module-grid"><section class="form-card"><h3>Aufgabe</h3><form id="todoForm" class="form-grid"><input type="hidden" name="id"><input type="hidden" name="revision"><label class="full">Titel<input name="title" required placeholder="z. B. Einkauf erledigen"></label><label class="full">Beschreibung<textarea name="description" rows="4" placeholder="z. B. Was genau ist zu erledigen?"></textarea></label><label>Termin<input name="due_at" type="datetime-local"></label><label>Erinnerung<input name="reminder_at" type="datetime-local"></label><label>Priorität<select name="priority"><option>NORMAL</option><option>HOCH</option><option>NIEDRIG</option></select></label><div class="form-actions"><button class="primary">Speichern</button><button type="button" id="todoCancel">Neu/leeren</button></div></form></section><section class="list-card"><h3>Todos (${items.length})</h3><div class="item-list">${items.map(x=>`<article class="item"><div><h4>${esc(x.title)}</h4><p>${esc(x.payload.description||'')}</p><div class="item-meta">${esc(isoLocal(x.payload.due_at))} · ${esc(x.payload.priority)} · Rev ${x.revision}</div></div><div class="item-actions"><button data-edit-todo="${x.id}">Bearbeiten</button>${x.payload.completed?'<span>✓ erledigt</span>':`<button data-complete-todo="${x.id}" data-rev="${x.revision}">Abhaken</button>`}<button class="danger" data-trash-todo="${x.id}" data-rev="${x.revision}">Papierkorb</button></div></article>`).join('')||'<p>Noch keine Todos.</p>'}</div></section></div>`}
@@ -144,7 +170,7 @@ function assetView(kind,title){return `<div class="module-grid"><section class="
 async function audioView(){const pls=await api('/api/playlists');return `<div class="module-grid"><section class="form-card"><h3>Persistente Playlist</h3><form id="playlistForm" class="form-grid"><label class="full">Playlist-Titel<input name="title" value="Meine Playlist" placeholder="z. B. Sprachmemos heute"></label><div class="form-actions"><button class="primary">Playlist erstellen</button></div></form></section><section class="list-card"><h3>Playlists (${pls.length})</h3><div class="item-list">${pls.map(x=>`<article class="item"><div><h4>${esc(x.title)}</h4><div class="item-meta">${(x.payload.items||[]).length} Assets · Rev ${x.revision}</div></div></article>`).join('')||'<p>Noch keine Playlist.</p>'}</div></section></div>`}
 function placeholder(name){return `<section class="dash-card"><h3>${esc(name)}</h3><p>Dieser Bereich ist in der Referenzoberfläche noch nicht aktiv. Die vorhandenen Kernbereiche bleiben unverändert nutzbar.</p></section>`}
 function settingsView(){return `<section class="form-card simple-settings"><h3>Einstellungen</h3><p>Darstellung stellst du direkt oben im Dashboard ein. Hier bleibt nur die gewünschte Hilfetiefe.</p><form id="settingsForm" class="form-grid"><label class="full">Hilfemodus<select name="help_mode"><option value="1">1 · knapp</option><option value="2">2 · geführt</option><option value="3">3 · ausführlich</option></select></label><div class="form-actions"><button class="primary">Speichern</button></div></form></section>`}
-async function render(view){current=view;const host=$('moduleHost');let html;if(view==='dashboard')html=dash();else if(view==='memo')html=await memoView();else if(view==='todo')html=await todoView();else if(view==='calendar')html=await calendarView();else if(view==='trash')html=await trashView();else if(view==='diagnostics')html=await diagnosticView();
+async function render(view){current=view;updateWorkspaceMeta(view);const host=$('moduleHost');let html;if(view==='dashboard')html=dash();else if(view==='memo')html=await memoView();else if(view==='todo')html=await todoView();else if(view==='calendar')html=await calendarView();else if(view==='trash')html=await trashView();else if(view==='diagnostics')html=await diagnosticView();
 else if(view==='voice')html=await voiceView();
 else if(view==='docs')html=await documentView();
 else if(view==='audio')html=await audioView();
@@ -192,19 +218,120 @@ $('quickOpen').onclick=async()=>{try{const x=await api('/api/quick-note/open','P
 $('quickShare').onclick=async()=>{try{const x=await api('/api/quick-note/share','POST',{title:$('quickTitle').value});toast(x.opened?'Mailprogramm geöffnet. Versand erst nach Bestätigung.':'Teilen nicht verfügbar.')}catch(e){toast(e.message,true)}}
 $('undoBtn').onclick=async()=>{try{await api('/api/undo','POST',{});toast('Rückgängig.');await refresh()}catch(e){toast(e.message,true)}}
 $('redoBtn').onclick=async()=>{try{await api('/api/redo','POST',{});toast('Wiederholt.');await refresh()}catch(e){toast(e.message,true)}}
-document.querySelectorAll('.nav-item[data-view], [data-open]').forEach(b=>b.onclick=async()=>{const v=b.dataset.view||b.dataset.open;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('viewTitle').textContent=b.textContent.trim();$('viewHint').textContent='Service-gebundener, validierter Arbeitsbereich';await render(v);if(innerWidth<=720)drawer(false)})
-const nav=$('mainNav'),scrim=$('scrim');function drawer(open){nav.classList.toggle('open',open);scrim.hidden=!open;$('menuBtn').setAttribute('aria-expanded',String(open))}$('menuBtn').onclick=()=>drawer(true);$('closeMenuBtn').onclick=()=>drawer(false);scrim.onclick=()=>drawer(false)
+document.querySelectorAll('.nav-item[data-view], [data-open]').forEach(b=>b.onclick=async()=>{const v=b.dataset.view||b.dataset.open;document.querySelectorAll('.nav-item[data-view]').forEach(x=>{const active=x.dataset.view===v;x.classList.toggle('active',active);if(active)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});await render(v);if(innerWidth<=720)drawer(false)})
+const nav=$('mainNav'),scrim=$('scrim'),shell=document.querySelector('.app-shell'),side=$('sidePanel'),tech=$('devPanel');
+
+function updateScrim(){
+ const navOpen=nav.classList.contains('open');
+ const sideOverlay=side?.classList.contains('overlay-open');
+ const techOpen=tech && !tech.hidden;
+ scrim.hidden=!(navOpen||sideOverlay||techOpen);
+}
+function drawer(open){
+ nav.classList.toggle('open',open);
+ $('menuBtn').setAttribute('aria-expanded',String(open));
+ updateScrim();
+}
+$('menuBtn').onclick=()=>drawer(true);
+$('closeMenuBtn').onclick=()=>drawer(false);
+
+function setNavCollapsed(collapsed,persist=true){
+ if(innerWidth<=720)collapsed=false;
+ shell.classList.toggle('nav-collapsed',collapsed);
+ const btn=$('navCollapseBtn');
+ if(btn){
+   btn.setAttribute('aria-pressed',String(collapsed));
+   btn.setAttribute('aria-label',collapsed?'Menü ausklappen':'Menü einklappen');
+   btn.textContent=collapsed?'⇥':'⇤';
+ }
+ if(persist)localStorage.setItem('v012-nav-collapsed',collapsed?'1':'0');
+}
+$('navCollapseBtn').onclick=()=>setNavCollapsed(!shell.classList.contains('nav-collapsed'));
+setNavCollapsed(localStorage.getItem('v012-nav-collapsed')==='1',false);
+
+function setSideVisible(show,persist=true){
+ const overlay=innerWidth<1280||root.dataset.fontTier==='xl';
+ shell.classList.toggle('side-hidden',!show && !overlay);
+ if(side)side.classList.toggle('overlay-open',show && overlay);
+ if($('sideToggle'))$('sideToggle').setAttribute('aria-expanded',String(show));
+ if(persist && !overlay)localStorage.setItem('v012-side-visible',show?'1':'0');
+ updateScrim();
+}
+$('sideToggle').onclick=()=>{
+ const overlay=innerWidth<1280||root.dataset.fontTier==='xl';
+ const currently=overlay?side.classList.contains('overlay-open'):!shell.classList.contains('side-hidden');
+ setSideVisible(!currently);
+};
+$('sideCloseBtn').onclick=()=>setSideVisible(false);
+
+function setTechOpen(open){
+ tech.hidden=!open;
+ $('devToggle').setAttribute('aria-expanded',String(open));
+ document.body.classList.toggle('tech-open',open);
+ updateScrim();
+}
+$('devToggle').onclick=()=>setTechOpen(true);
+$('devCloseBtn').onclick=()=>setTechOpen(false);
+
+scrim.onclick=()=>{
+ drawer(false);
+ setTechOpen(false);
+ if(innerWidth<1280)setSideVisible(false,false);
+};
+addEventListener('keydown',e=>{
+ if(e.key!=='Escape')return;
+ drawer(false);
+ setTechOpen(false);
+ if(innerWidth<1280)setSideVisible(false,false);
+});
+
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+
+function layout(){
+ const w=innerWidth;
+ root.dataset.viewport=w<=720?'mobile':w<1280?'compact':'desktop';
+ if(w<=720)setNavCollapsed(false,false);
+ if(w<1280||root.dataset.fontTier==='xl'){
+   shell.classList.remove('side-hidden');
+   if(side)side.classList.remove('overlay-open');
+   if($('sideToggle'))$('sideToggle').setAttribute('aria-expanded','false');
+ }else{
+   const pref=localStorage.getItem('v012-side-visible');
+   setSideVisible(pref!=='0',false);
+ }
+ updateScrim();
+}
+addEventListener('resize',layout,{passive:true});
+layout()
+
 $('themeBtn').onclick=async()=>{themeIndex=(themeIndex+1)%themeOptions.length;const opt=themeOptions[themeIndex];applyThemeUi(opt.service);try{await api('/api/settings','POST',{theme:opt.service});if(state?.settings)state.settings.theme=opt.service}catch(e){toast('Theme lokal geändert; Speichern im Profil nicht möglich.',true)}};
 const localTheme=localStorage.getItem('v08-theme-service');if(localTheme)applyThemeUi(localTheme,false);
-async function setFont(d){applyFontUi(font+d);try{await api('/api/settings','POST',{font_scale:font});if(state?.settings)state.settings.font_scale=font}catch(e){toast('Schrift lokal geändert; Speichern im Profil nicht möglich.',true)}}
-$('fontDown').onclick=()=>setFont(-.1);$('fontUp').onclick=()=>setFont(.1);
-const sfStored=parseFloat(localStorage.getItem('v08-font'));if(sfStored>=.8&&sfStored<=2)applyFontUi(sfStored,false);else applyFontUi(1,false);
-function setZoom(d){zoom=clamp(zoom+d,.8,2);root.style.setProperty('--area-zoom',zoom.toFixed(2));const host=$('moduleHost');if(host)host.dataset.zoomTier=zoom>=1.7?'xl':zoom>=1.4?'large':zoom>=1.2?'medium':'normal';if($('zoomValue'))$('zoomValue').value=`${Math.round(zoom*100)} %`;localStorage.setItem('v012-area-zoom',zoom)}
-$('zoomOut').onclick=()=>setZoom(-.1);$('zoomIn').onclick=()=>setZoom(.1);$('zoomReset').onclick=()=>{zoom=1;setZoom(0)}
-const savedZoom=parseFloat(localStorage.getItem('v012-area-zoom'));if(savedZoom>=.8&&savedZoom<=2){zoom=savedZoom;setZoom(0)}else setZoom(0);
-$('devToggle').onclick=()=>{const p=$('devPanel'),o=!p.hidden;p.hidden=o;$('devToggle').setAttribute('aria-expanded',String(!o))}
-function layout(){$('layoutMode').textContent=innerWidth<=720?'Mobil':innerWidth<=1050?'Kompakt':'Desktop'}addEventListener('resize',layout,{passive:true});layout()
+
+async function setFont(d){
+ applyFontUi(font+d);
+ try{
+   await api('/api/settings','POST',{font_scale:font});
+   if(state?.settings)state.settings.font_scale=font;
+ }catch(e){toast('Schrift lokal geändert; Speichern im Profil nicht möglich.',true)}
+}
+$('fontDown').onclick=()=>setFont(-.1);
+$('fontUp').onclick=()=>setFont(.1);
+const sfStored=parseFloat(localStorage.getItem('v08-font'));
+if(sfStored>=.8&&sfStored<=2)applyFontUi(sfStored,false);else applyFontUi(1,false);
+
+function setZoom(d){
+ zoom=clamp(zoom+d,.8,2);
+ root.style.setProperty('--area-zoom',zoom.toFixed(2));
+ const host=$('moduleHost');
+ if(host)host.dataset.zoomTier=zoom>=1.7?'xl':zoom>=1.4?'large':zoom>=1.2?'medium':'normal';
+ if($('zoomValue'))$('zoomValue').value=`${Math.round(zoom*100)} %`;
+ localStorage.setItem('v012-area-zoom',zoom);
+}
+$('zoomOut').onclick=()=>setZoom(-.1);
+$('zoomIn').onclick=()=>setZoom(.1);
+$('zoomReset').onclick=()=>{zoom=1;setZoom(0)};
+const savedZoom=parseFloat(localStorage.getItem('v012-area-zoom'));
+if(savedZoom>=.8&&savedZoom<=2){zoom=savedZoom;setZoom(0)}else setZoom(0);
 applyFieldGuidance(document);
-refresh().catch(e=>{toast('Backend nicht erreichbar. Bitte STARTEN_LINUX.sh verwenden.',true);$('startStatus').textContent='Backend fehlt';$('debugState').textContent='1 Fehler';$('moduleHost').innerHTML='<section class="dash-card"><h3>Start erforderlich</h3><p>Auf Desktop wird der lokale Service benötigt. Android/iOS verwenden den eingebetteten Mobile-Runtime-Adapter.</p></section>'})
+refresh().catch(e=>{toast('Backend nicht erreichbar. Bitte STARTEN_LINUX.sh verwenden.',true);$('startStatus').textContent='Backend fehlt';$('debugState').textContent='1 Fehler';if($('systemState'))$('systemState').textContent='Start prüfen';$('moduleHost').innerHTML='<section class="dash-card"><h3>Start erforderlich</h3><p>Auf Desktop wird der lokale Service benötigt. Android/iOS verwenden den eingebetteten Mobile-Runtime-Adapter.</p></section>'})
 })();

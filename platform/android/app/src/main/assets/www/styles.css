@@ -525,3 +525,939 @@ html[data-font-tier="xl"] .display-group:last-child{grid-column:1/-1}
   .quick-note{grid-template-columns:1fr 1fr}
   .quick-note #quickTitle,.quick-note #quickInput{grid-column:1/-1}
 }
+
+
+/* ==============================================================
+   V0.12.2.4 RELEASE UX HIERARCHY
+   ============================================================== */
+:root{
+  --touch:44px;
+  --panel-soft:rgba(10,20,34,.78);
+  --panel-strong:rgba(7,15,28,.96);
+  --neutral-border:#60758c;
+  --neutral-text:#c8d3df;
+}
+
+/* Ruhigere Flächenhierarchie: Inhalt > Orientierung > Technik. */
+.brand-card,.quick-note,.next-items,.display-strip,.panel-card,.form-card,.list-card,.dash-card{
+  backdrop-filter:blur(5px);
+}
+.brand-card{
+  background:linear-gradient(155deg,rgba(11,32,44,.94),rgba(17,10,38,.9));
+}
+.quick-note,.next-items,.display-strip{
+  background:linear-gradient(145deg,rgba(7,18,32,.97),rgba(10,18,34,.93));
+}
+.workspace-toolbar{
+  position:sticky;
+  top:0;
+  z-index:4;
+  min-height:54px;
+  padding:8px 12px;
+  background:linear-gradient(180deg,rgba(7,15,27,.98),rgba(7,15,27,.88));
+  border-bottom:1px solid rgba(95,126,160,.22);
+  backdrop-filter:blur(8px);
+}
+.workspace-toolbar>div{display:flex;flex-direction:column;gap:2px}
+#viewTitle{font-size:.98rem;color:#f7fbff;letter-spacing:.01em}
+#viewHint{font-size:.72rem;color:#aebdcd;max-width:72ch}
+
+/* Primär, sekundär, neutral, destruktiv eindeutig unterscheiden. */
+button{
+  min-height:var(--touch);
+  border-radius:10px;
+  transition:border-color .14s ease,background .14s ease,transform .14s ease,box-shadow .14s ease;
+}
+button.primary{
+  font-weight:800;
+  box-shadow:0 0 0 1px rgba(25,244,242,.14),0 6px 18px rgba(25,244,242,.08);
+}
+button.secondary{
+  color:#e7eef6;
+  border-color:#6c7f92;
+  background:linear-gradient(180deg,rgba(42,55,70,.78),rgba(22,32,44,.88));
+}
+button.danger{
+  border-color:rgba(255,116,116,.7);
+  background:rgba(86,25,32,.55);
+  color:#ffd7d7;
+}
+button:not(.primary):not(.danger):hover{border-color:#a9bacb}
+button:active{transform:translateY(1px)}
+button:focus-visible,.nav-item:focus-visible{
+  outline:3px solid #f4f7fb;
+  outline-offset:2px;
+}
+
+/* Linke Navigation: feste Iconspalte, ruhige Textspalte, verlässliche Ziele. */
+.nav-item{
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr);
+  align-items:center;
+  text-align:left;
+  gap:6px;
+  min-height:50px;
+  padding:5px 7px;
+}
+.nav-icon{
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  font-size:1.08rem!important;
+  border-radius:8px;
+  color:var(--cyan);
+  background:rgba(25,244,242,.045);
+}
+.nav-label{
+  min-width:0;
+  font-size:inherit;
+  line-height:1.12;
+}
+.nav-item.active .nav-icon{
+  color:#071017;
+  background:var(--cyan);
+  box-shadow:0 0 14px rgba(25,244,242,.22);
+}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(25,244,242,.11),rgba(25,244,242,.025));
+  border-color:rgba(25,244,242,.42);
+}
+
+/* Ansicht oben: visuell wichtig, aber nicht dominant. */
+.display-strip{
+  border-color:rgba(189,66,255,.42);
+  box-shadow:0 0 20px rgba(189,66,255,.08);
+}
+.display-strip-head b{color:#f1e8ff}
+.display-strip-head span{color:#aebdcd}
+.display-group{
+  border-color:rgba(112,132,154,.28);
+  background:rgba(13,23,37,.72);
+}
+.display-group>span{color:#aebdcd}
+.display-group output{color:#f1f5f9;font-variant-numeric:tabular-nums}
+
+/* Eingabehilfen sind optional: knapper Modus zeigt sie erst beim Arbeiten. */
+.field-hint{
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  margin-top:0;
+  transition:max-height .16s ease,opacity .16s ease,margin .16s ease;
+}
+html[data-help-mode="1"] label:focus-within>.field-hint,
+html[data-help-mode="2"] .field-hint,
+html[data-help-mode="3"] .field-hint{
+  max-height:5em;
+  opacity:1;
+  margin-top:4px;
+}
+html[data-help-mode="2"] .field-hint{color:#aeb8c3}
+html[data-help-mode="3"] .field-hint{
+  color:#d4dde6;
+  padding-left:7px;
+  border-left:2px solid #8997a6;
+}
+
+/* Dashboard: scanbar statt großer optischer Konkurrenz. */
+.simplified-dashboard{
+  gap:12px;
+}
+.simplified-dashboard .dash-card{
+  min-height:124px;
+  padding:14px;
+}
+.simplified-dashboard .dash-card h3{
+  margin-bottom:8px;
+  font-size:.86rem;
+  color:#cbd7e3;
+}
+.simplified-dashboard .dash-card strong{
+  font-size:clamp(1.55rem,2.8vw,2.4rem);
+  line-height:1;
+}
+.simplified-dashboard .dash-card p{
+  max-width:44ch;
+  color:#9faebe;
+}
+
+/* Status: nur drei kurze, echte Werte. */
+.status-strip.simplified{gap:6px}
+.status-strip.simplified .status-chip{
+  min-height:44px;
+  padding:6px 8px;
+  border-color:rgba(106,129,153,.28);
+}
+.status-chip b{font-size:.68rem}
+.status-chip span{font-size:.7rem}
+
+/* Schnellmemo: Speichern ist klar primär; Datei/Teilen sind nachrangig. */
+.quick-note button{min-width:72px}
+.quick-note .secondary{opacity:.92}
+
+/* Seitenleiste ist Zusatzinfo und wird visuell zurückgenommen. */
+.side-panel .panel-card{background:rgba(8,16,29,.78)}
+.quote-card{opacity:.78}
+@media(max-width:1450px){.quote-card{display:none}}
+
+/* Footer: normale Nutzung ruhig, technische Details bewusst aufklappbar. */
+.footerbar{
+  min-height:42px;
+  gap:14px;
+  color:#aebbc8;
+}
+.footer-primary{color:#dbe5ee}
+.footerbar>span{white-space:nowrap}
+.dev-panel{
+  display:grid;
+  gap:5px;
+  max-width:min(760px,90vw);
+}
+
+/* Listen besser scanbar. */
+.item{
+  border-radius:12px;
+  padding:11px 12px;
+  border-color:rgba(98,124,150,.22);
+}
+.item h4{margin:0 0 5px;font-size:.91rem}
+.item p{max-width:70ch;line-height:1.45}
+.item-meta{color:#92a4b6;line-height:1.35}
+.item-actions{gap:6px}
+.item-actions button{min-height:38px}
+
+/* Lange Formulare lesbarer, aber weiterhin kompakt. */
+.form-card,.list-card{padding:14px}
+.form-grid{gap:10px}
+label{line-height:1.3}
+input,textarea,select{min-height:42px}
+textarea{line-height:1.5}
+
+/* Kalender: Ziele bleiben groß genug, Raster bleibt in seinem Container. */
+.day-cell{min-height:72px}
+.calendar-modes button,.calendar-nav button{min-height:40px}
+
+/* Hauptkopf kompakter, ohne Inhalte zu überdecken. */
+.app-shell{
+  grid-template-rows:clamp(176px,calc(176px * var(--font-scale)),292px)
+                     clamp(54px,calc(48px * var(--font-scale)),78px)
+                     minmax(0,1fr)
+                     clamp(40px,calc(34px * var(--font-scale)),60px);
+}
+.topbar{
+  padding:8px;
+  gap:8px;
+}
+.brand-card h1{font-size:clamp(1.25rem,2.1vw,2rem)}
+.brand-card .subbrand{font-size:.72rem}
+.brand-card .eyebrow{font-size:.65rem}
+
+/* Kleine Ansichten: Zusatzinfos zuerst reduzieren, Kernbedienung behalten. */
+@media(max-width:1100px){
+  .quote-card{display:none}
+}
+@media(max-width:900px){
+  .display-strip{box-shadow:none}
+}
+@media(max-width:720px){
+  .workspace-toolbar{position:sticky;top:0}
+  .nav-item{grid-template-columns:32px minmax(0,1fr)}
+  .nav-icon{width:32px;height:32px}
+  .quick-note .secondary{min-width:0}
+  #viewHint{max-width:58ch}
+}
+@media(max-width:430px){
+  .display-strip-head span{display:none}
+  .footerbar>span:not(.footer-primary){display:none}
+}
+
+/* Nutzerpräferenz respektieren. */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    scroll-behavior:auto!important;
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+  }
+}
+
+
+/* ==============================================================
+   V0.12.2.5 REAL VIEWPORT UX FIX
+   Screenshot-driven geometry contract:
+   - no character-by-character nav wrapping
+   - display controls get a full-width row
+   - technical details use a drawer
+   - right info panel is compact/collapsible
+   - dashboard cards use less empty area
+   ============================================================== */
+
+:root{
+  --nav-w:168px;
+  --side-w:230px;
+  --shell-gap:9px;
+  --top-row-h:190px;
+}
+
+/* ---- App geometry ------------------------------------------------ */
+.app-shell{
+  grid-template-columns:var(--nav-w) minmax(0,1fr) var(--side-w);
+  grid-template-rows:var(--top-row-h) 54px minmax(0,1fr) 40px;
+  grid-template-areas:
+    "nav top top"
+    "nav quick side"
+    "nav work side"
+    "nav footer footer";
+  gap:var(--shell-gap);
+  padding:10px;
+}
+.app-shell.nav-collapsed{--nav-w:68px}
+.app-shell.side-hidden{
+  --side-w:0px;
+  grid-template-areas:
+    "nav top top"
+    "nav quick quick"
+    "nav work work"
+    "nav footer footer";
+}
+.app-shell.side-hidden .side-panel{display:none}
+
+/* ---- Header: brand + full-width quick memo / next / view ---------- */
+.topbar{
+  grid-template-columns:250px minmax(0,1fr) 300px;
+  grid-template-rows:64px 52px 56px;
+  gap:9px;
+  min-height:0;
+}
+.brand-card{
+  grid-column:1;
+  grid-row:1/4;
+  padding:14px 16px;
+}
+.quick-note{
+  grid-column:2/4;
+  grid-row:1;
+  grid-template-columns:96px 150px minmax(220px,1fr) auto auto auto;
+  gap:7px;
+  padding:7px 9px;
+}
+.quick-note-title{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.quick-note input,
+.quick-note button{min-height:40px;height:40px}
+.status-strip.simplified{
+  grid-column:3;
+  grid-row:2;
+  padding:5px;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.next-items{
+  grid-column:2;
+  grid-row:2;
+  padding:7px 9px;
+}
+.next-grid{max-height:30px;overflow:auto}
+.display-strip{
+  grid-column:2/4;
+  grid-row:3;
+  display:grid;
+  grid-template-columns:150px minmax(0,1fr);
+  align-items:center;
+  gap:9px;
+  padding:6px 9px;
+}
+.display-strip-head{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:1px;
+  margin:0;
+}
+.display-strip-head b{font-size:.7rem}
+.display-strip-head span{font-size:.62rem}
+.display-groups{
+  display:flex;
+  align-items:stretch;
+  gap:7px;
+  min-width:0;
+}
+.display-group{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:4px 6px;
+  min-width:0;
+  flex:1 1 0;
+}
+.display-group>span{
+  grid-column:auto;
+  flex:0 0 auto;
+  font-size:.66rem;
+  white-space:nowrap;
+}
+.display-group button{
+  min-height:34px;
+  height:34px;
+  padding:.2rem .45rem;
+  font-size:.68rem;
+  flex:0 0 auto;
+}
+.display-group output{
+  flex:0 1 auto;
+  min-width:48px;
+  font-size:.68rem;
+}
+.theme-group{
+  display:flex;
+  grid-template-columns:none;
+}
+.theme-group>span{grid-column:auto}
+.theme-group button{white-space:nowrap;line-height:1}
+.button-label{white-space:nowrap}
+
+/* ---- Left navigation --------------------------------------------- */
+.nav-panel{
+  padding:8px 7px;
+  min-width:0;
+}
+.nav-head{
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 5px;
+  gap:5px;
+}
+.nav-head b{white-space:nowrap}
+.nav-collapse-btn{
+  min-width:32px;
+  width:32px;
+  min-height:32px;
+  height:32px;
+  padding:0;
+}
+.nav-panel nav{
+  gap:3px;
+  overflow-x:hidden;
+  overflow-y:auto;
+}
+.nav-item{
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr);
+  align-items:center;
+  gap:7px;
+  min-height:49px;
+  padding:5px 7px;
+  text-align:left;
+}
+.nav-icon{
+  width:30px;
+  height:30px;
+}
+.nav-label{
+  min-width:0;
+  white-space:normal;
+  word-break:keep-all;
+  overflow-wrap:normal;
+  hyphens:none;
+  line-height:1.15;
+}
+.app-shell.nav-collapsed .nav-head b,
+.app-shell.nav-collapsed .nav-label{display:none}
+.app-shell.nav-collapsed .nav-head{justify-content:center}
+.app-shell.nav-collapsed .nav-item{
+  display:grid;
+  grid-template-columns:1fr;
+  justify-items:center;
+  padding:5px 3px;
+}
+.app-shell.nav-collapsed .nav-icon{margin:auto}
+.app-shell.nav-collapsed .nav-collapse-btn{transform:rotate(0)}
+
+/* ---- Quickbar: actions grouped instead of one long flat row ------- */
+.quickbar{
+  padding:5px 7px;
+  gap:8px;
+  overflow-x:auto;
+  overflow-y:hidden;
+}
+.quickbar-group{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex:0 0 auto;
+}
+.quickbar .history-tools{
+  padding-left:8px;
+  border-left:1px solid rgba(112,132,154,.28);
+}
+.quickbar button{
+  min-height:40px;
+  height:40px;
+  padding:.35rem .7rem;
+}
+
+/* ---- Workspace + compact dashboard ------------------------------- */
+.workspace-toolbar{
+  min-height:52px;
+  padding:7px 11px;
+}
+.module-host{padding:10px}
+.simplified-dashboard{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  align-content:start;
+}
+.simplified-dashboard .dash-card{
+  min-height:96px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+}
+.simplified-dashboard .dash-card h3{
+  margin:0 0 5px;
+  font-size:.84rem;
+}
+.simplified-dashboard .dash-card p{
+  margin:0;
+  font-size:.76rem;
+  line-height:1.35;
+}
+.simplified-dashboard .dash-card strong{
+  min-width:52px;
+  text-align:right;
+  font-size:clamp(1.6rem,2.2vw,2.25rem);
+}
+
+/* ---- Right info panel: one quiet card, optional ------------------- */
+.side-panel{
+  gap:0;
+  min-width:0;
+}
+.info-card{
+  padding:10px;
+}
+.info-card header{
+  align-items:center;
+}
+.panel-head-actions{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.panel-head-actions .icon-btn{
+  width:30px;
+  min-width:30px;
+  height:30px;
+  min-height:30px;
+  padding:0;
+}
+.info-meta{margin:8px 0 9px}
+.info-meta div{padding:5px 0}
+.info-meta dt,.info-meta dd{font-size:.75rem}
+.stats-mini{
+  margin-top:6px;
+  gap:6px;
+}
+.stats-mini div{padding:8px 5px}
+.stats-mini strong{font-size:1.15rem}
+
+/* ---- Technical details: dedicated right drawer ------------------- */
+.tech-drawer{
+  position:fixed;
+  z-index:220;
+  right:10px;
+  top:10px;
+  bottom:54px;
+  width:min(430px,calc(100vw - 20px));
+  border:1px solid rgba(189,66,255,.58);
+  border-radius:16px;
+  background:linear-gradient(160deg,rgba(6,14,27,.995),rgba(14,9,30,.995));
+  box-shadow:0 18px 60px rgba(0,0,0,.52),0 0 24px rgba(189,66,255,.1);
+  overflow:hidden;
+}
+.tech-drawer[hidden]{display:none}
+.tech-drawer>header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid rgba(112,132,154,.25);
+}
+.tech-drawer>header>div{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.tech-drawer>header b{color:var(--cyan)}
+.tech-drawer>header span{font-size:.72rem;color:#9eacba}
+.tech-drawer-content{
+  padding:14px;
+  overflow:auto;
+  height:calc(100% - 62px);
+  display:grid;
+  align-content:start;
+  gap:12px;
+}
+.tech-drawer-content section{
+  border:1px solid rgba(112,132,154,.25);
+  border-radius:12px;
+  padding:12px;
+  background:rgba(8,17,30,.72);
+}
+.tech-drawer-content h3{
+  margin:0 0 8px;
+  font-size:.82rem;
+}
+.tech-drawer-content p{
+  margin:5px 0;
+  color:#b7c3cf;
+  line-height:1.45;
+}
+
+/* ---- Scrim shared by menu/info/tech drawers ---------------------- */
+.scrim{
+  position:fixed;
+  inset:0;
+  z-index:190;
+  background:rgba(1,5,12,.58);
+  backdrop-filter:blur(2px);
+}
+.scrim[hidden]{display:none}
+
+/* ---- Footer ------------------------------------------------------- */
+.footerbar{
+  min-height:40px;
+  padding:3px 8px;
+}
+.footerbar button{
+  min-height:32px;
+  height:32px;
+  padding:.2rem .65rem;
+}
+
+/* ---- Large text: widen nav first, then simplify side info -------- */
+html[data-font-tier="large"] .app-shell{--nav-w:188px;--side-w:240px}
+html[data-font-tier="xl"] .app-shell{--nav-w:208px;--side-w:250px}
+html[data-font-tier="large"] .app-shell.nav-collapsed,
+html[data-font-tier="xl"] .app-shell.nav-collapsed{--nav-w:72px}
+html[data-font-tier="large"] .nav-item{font-size:.76rem}
+html[data-font-tier="xl"] .nav-item{font-size:.82rem}
+html[data-font-tier="large"] .display-strip,
+html[data-font-tier="xl"] .display-strip{
+  grid-template-columns:120px minmax(0,1fr);
+}
+html[data-font-tier="xl"] .display-group .button-label{display:none}
+
+/* ---- Medium desktop / compact ------------------------------------ */
+@media(max-width:1450px){
+  :root{--nav-w:154px;--side-w:218px}
+  .brand-card{padding:12px 14px}
+  .topbar{grid-template-columns:230px minmax(0,1fr) 280px}
+  .quick-note{grid-template-columns:82px 130px minmax(190px,1fr) auto auto auto}
+  .quick-note button{padding:.35rem .55rem}
+}
+@media(max-width:1280px){
+  :root{--nav-w:148px;--side-w:0px}
+  .app-shell{
+    grid-template-areas:
+      "nav top top"
+      "nav quick quick"
+      "nav work work"
+      "nav footer footer";
+  }
+  .side-panel{
+    display:none;
+    position:fixed;
+    z-index:210;
+    right:10px;
+    top:10px;
+    bottom:54px;
+    width:min(300px,calc(100vw - 20px));
+    overflow:auto;
+  }
+  .side-panel.overlay-open{display:flex}
+  .topbar{grid-template-columns:220px minmax(0,1fr) 270px}
+  .quick-note{
+    grid-template-columns:76px 118px minmax(170px,1fr) auto auto auto;
+  }
+}
+@media(max-width:1100px){
+  :root{--nav-w:138px}
+  .app-shell{--top-row-h:236px}
+  .topbar{
+    grid-template-columns:205px minmax(0,1fr);
+    grid-template-rows:62px 50px 50px 50px;
+  }
+  .brand-card{grid-column:1;grid-row:1/3}
+  .quick-note{
+    grid-column:2;
+    grid-row:1;
+    grid-template-columns:90px minmax(150px,.7fr) minmax(190px,1fr) auto;
+  }
+  .quick-note-title{display:none}
+  .quick-note #quickOpen,.quick-note #quickShare{display:none}
+  .status-strip.simplified{grid-column:2;grid-row:2}
+  .next-items{grid-column:1/3;grid-row:3}
+  .display-strip{grid-column:1/3;grid-row:4}
+  .display-strip{grid-template-columns:110px minmax(0,1fr)}
+}
+@media(max-width:900px){
+  :root{--nav-w:72px}
+  .app-shell:not(.nav-collapsed){--nav-w:72px}
+  .nav-head b,.nav-label,.nav-collapse-btn{display:none!important}
+  .nav-head{justify-content:center}
+  .nav-item{
+    grid-template-columns:1fr;
+    justify-items:center;
+    padding:5px 3px;
+  }
+  .topbar{grid-template-columns:190px minmax(0,1fr)}
+  .display-strip-head span{display:none}
+}
+@media(max-width:720px){
+  :root{--nav-w:0px}
+  .app-shell{
+    display:grid;
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto minmax(60vh,1fr) auto;
+    grid-template-areas:"top" "quick" "work" "footer";
+    padding:7px;
+    gap:7px;
+  }
+  .topbar{
+    grid-template-columns:44px minmax(0,1fr);
+    grid-template-rows:auto auto auto auto auto;
+    min-height:0;
+  }
+  .brand-card{grid-column:2;grid-row:1}
+  .quick-note{
+    grid-column:1/3;grid-row:2;
+    grid-template-columns:1fr 1fr auto;
+  }
+  .quick-note #quickTitle,.quick-note #quickInput{grid-column:1/3}
+  .quick-note #quickOpen,.quick-note #quickShare{display:inline-flex}
+  .status-strip.simplified{grid-column:1/3;grid-row:3}
+  .next-items{grid-column:1/3;grid-row:4}
+  .display-strip{
+    grid-column:1/3;grid-row:5;
+    grid-template-columns:1fr;
+  }
+  .display-strip-head{display:none}
+  .display-groups{display:grid;grid-template-columns:1fr 1fr}
+  .display-group:last-child{grid-column:1/3}
+  .nav-panel{
+    display:flex!important;
+    position:fixed;
+    z-index:210;
+    left:8px;top:8px;bottom:8px;
+    width:min(320px,86vw);
+    transform:translateX(-110%);
+  }
+  .nav-panel.open{transform:none}
+  .nav-head b,.nav-label{display:block!important}
+  .nav-head{justify-content:space-between}
+  .nav-item{
+    grid-template-columns:32px minmax(0,1fr);
+    justify-items:stretch;
+    text-align:left;
+    padding:7px 9px;
+  }
+  .quickbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+  }
+  .quickbar .secondary[data-open="diagnostics"]{display:none}
+  .simplified-dashboard{grid-template-columns:1fr}
+  .simplified-dashboard .dash-card{min-height:86px}
+  .side-panel{width:min(320px,88vw)}
+  .tech-drawer{right:6px;top:6px;bottom:48px;width:calc(100vw - 12px)}
+}
+@media(max-width:460px){
+  .quick-note{
+    grid-template-columns:1fr 1fr;
+  }
+  .quick-note #quickTitle,.quick-note #quickInput{grid-column:1/3}
+  .quick-note #quickSave{grid-column:1/3}
+  .display-groups{grid-template-columns:1fr}
+  .display-group:last-child{grid-column:auto}
+  .button-label{display:none}
+  .quickbar .history-tools{display:none}
+}
+
+/* No geometry animations when reduced motion is requested. */
+@media(prefers-reduced-motion:reduce){
+  .nav-panel,.side-panel,.tech-drawer{transition:none!important}
+}
+
+
+/* V0.12.2.5 Geometry Gate Fixpack 1 */
+@media(max-width:720px){
+  .quickbar{
+    overflow-x:hidden;
+    flex-wrap:wrap;
+    align-content:center;
+  }
+  .quickbar-group{
+    min-width:0;
+    flex-wrap:wrap;
+  }
+  .quickbar-spacer{display:none}
+  .quickbar #sideToggle{margin-left:auto}
+}
+
+
+/* V0.12.2.5 Visual Review Fixpack 2 */
+html[data-font-tier="large"] .app-shell{--nav-w:240px;--side-w:240px}
+html[data-font-tier="xl"] .app-shell{--nav-w:300px;--side-w:250px}
+html[data-font-tier="large"] .quick-note-title,
+html[data-font-tier="xl"] .quick-note-title{display:none}
+html[data-font-tier="large"] .quick-note,
+html[data-font-tier="xl"] .quick-note{
+  grid-template-columns:150px minmax(220px,1fr) auto auto auto;
+}
+html[data-font-tier="large"] .display-strip-head span,
+html[data-font-tier="xl"] .display-strip-head span{display:none}
+
+@media(max-width:720px){
+  .quickbar{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    min-height:52px;
+  }
+  .quickbar .primary-tools{
+    min-width:0;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .quickbar .primary-tools button{
+    min-width:0;
+    padding:.3rem .45rem;
+  }
+  .quickbar #sideToggle{
+    margin-left:0;
+    white-space:nowrap;
+  }
+}
+
+
+/* V0.12.2.5 Visual Review Fixpack 3 — override legacy font-tier grid columns */
+html[data-font-tier="large"] .app-shell,
+html[data-font-tier="xl"] .app-shell{
+  grid-template-columns:var(--nav-w) minmax(0,1fr) var(--side-w);
+}
+html[data-font-tier="large"] .app-shell.side-hidden,
+html[data-font-tier="xl"] .app-shell.side-hidden{
+  grid-template-columns:var(--nav-w) minmax(0,1fr) 0px;
+}
+@media(max-width:1280px){
+  html[data-font-tier="large"] .app-shell,
+  html[data-font-tier="xl"] .app-shell{
+    grid-template-columns:var(--nav-w) minmax(0,1fr) 0px;
+  }
+}
+@media(max-width:900px){
+  html[data-font-tier="large"] .app-shell,
+  html[data-font-tier="xl"] .app-shell{
+    grid-template-columns:72px minmax(0,1fr) 0px;
+  }
+}
+@media(max-width:720px){
+  html[data-font-tier="large"] .app-shell,
+  html[data-font-tier="xl"] .app-shell{
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* V0.12.2.5 Visual Review Fixpack 4 — high magnification is a deliberate mode */
+:root{--quick-row-h:54px}
+.app-shell{
+  grid-template-rows:var(--top-row-h) var(--quick-row-h) minmax(0,1fr) 40px;
+}
+html[data-font-tier="large"] .app-shell{
+  --top-row-h:210px;
+  --quick-row-h:60px;
+}
+html[data-font-tier="xl"] .app-shell{
+  --top-row-h:236px;
+  --quick-row-h:68px;
+  --side-w:0px;
+  grid-template-areas:
+    "nav top top"
+    "nav quick quick"
+    "nav work work"
+    "nav footer footer";
+}
+html[data-font-tier="xl"] .side-panel{
+  display:none;
+  position:fixed;
+  z-index:210;
+  right:10px;
+  top:10px;
+  bottom:54px;
+  width:min(340px,calc(100vw - 20px));
+  overflow:auto;
+}
+html[data-font-tier="xl"] .side-panel.overlay-open{display:flex}
+html[data-font-tier="large"] .topbar{
+  grid-template-rows:68px 56px 68px;
+}
+html[data-font-tier="xl"] .topbar{
+  grid-template-rows:78px 62px 78px;
+}
+html[data-font-tier="large"] .quick-note{
+  grid-template-columns:180px minmax(260px,1fr) auto auto auto;
+}
+html[data-font-tier="xl"] .quick-note{
+  grid-template-columns:220px minmax(320px,1fr) auto auto auto;
+}
+html[data-font-tier="xl"] .display-strip{
+  grid-template-columns:1fr;
+}
+html[data-font-tier="xl"] .display-strip-head{display:none}
+html[data-font-tier="large"] .quickbar button{min-height:46px;height:46px}
+html[data-font-tier="xl"] .quickbar button{min-height:52px;height:52px}
+
+
+/* V0.12.2.5 Visual Review Fixpack 5 — keep three status chips in one row at XL */
+html[data-font-tier="xl"] .status-strip.simplified{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+
+/* V0.12.2.5 Visual Review Fixpack 6 — restore complete mobile header */
+@media(max-width:720px){
+  .topbar{
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    grid-template-rows:max-content max-content max-content max-content max-content!important;
+    align-content:start;
+  }
+  .status-strip.simplified{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .next-items{display:block!important}
+  .display-strip{display:grid!important}
+}
+
+
+/* V0.12.2.5 Visual Review Fixpack 7 — final topbar sizing authority */
+.topbar{padding:0!important}
+@media(max-width:720px){
+  .app-shell{
+    grid-template-rows:auto auto minmax(60vh,1fr) auto!important;
+  }
+}
