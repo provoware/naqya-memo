@@ -39,13 +39,15 @@ jobs:
 
       - name: Python syntax
         run: |
-          python -m py_compile app/server.py app/http_security.py app/error_contract.py tools/startup_port_guard.py tools/build_basisprojekt.py tools/verify_basisprojekt_artifact.py tests/release_gate/test_basisprojekt_standard.py tests/security/test_error_ux_contract.py tests/ui_consistency/test_visual_error_status.py tests/ui_consistency/test_visual_form_feedback.py
+          python -m py_compile app/server.py app/http_security.py app/error_contract.py tools/startup_port_guard.py tools/build_basisprojekt.py tools/verify_basisprojekt_artifact.py tests/release_gate/test_basisprojekt_standard.py tests/security/test_error_ux_contract.py tests/ui_consistency/test_visual_error_status.py tests/ui_consistency/test_visual_form_feedback.py tests/ui_consistency/test_visual_mutation_status.py
 
       - name: JavaScript syntax
         run: |
           node --check ui/reference_web/app.js
           node --check ui/reference_web/error_status_ui.js
           node --check ui/reference_web/form_feedback_ui.js
+          node --check ui/reference_web/mutation_status_ui.js
+          node --check tests/ui_consistency/test_visual_mutation_status_runtime.mjs
           if [ -f ui/reference_web/mobile/mobile_core.js ]; then node --check ui/reference_web/mobile/mobile_core.js; fi
           if [ -f ui/reference_web/mobile/mobile_bootstrap.js ]; then node --check ui/reference_web/mobile/mobile_bootstrap.js; fi
           if [ -f ui/reference_web/mobile/mobile_acceptance.js ]; then node --check ui/reference_web/mobile/mobile_acceptance.js; fi
@@ -73,6 +75,11 @@ jobs:
       - name: Visual form feedback contract
         run: |
           python -S tests/ui_consistency/test_visual_form_feedback.py
+
+      - name: Visual mutation status contract
+        run: |
+          python -S tests/ui_consistency/test_visual_mutation_status.py
+          node tests/ui_consistency/test_visual_mutation_status_runtime.mjs
 
       - name: Startup contracts
         run: |

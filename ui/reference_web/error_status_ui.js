@@ -87,6 +87,7 @@ $('statusNoticeClose')?.addEventListener('click',()=>{
 });
 
 import('./form_feedback_ui.js').catch(()=>{});
+import('./mutation_status_ui.js').catch(()=>{});
 
 nativeFetch('/api/health',{headers:{Accept:'application/json'},cache:'no-store'})
  .then(r=>r.json())
