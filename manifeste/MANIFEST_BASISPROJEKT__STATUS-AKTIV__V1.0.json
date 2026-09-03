@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "manifest_id": "PROVOWARE-BASISPROJEKT-1",
+  "status": "AKTIV",
+  "project": "naqya-memo",
+  "artifact_policy": {
+    "output": "vollstaendiges_basisprojekt",
+    "partial_patch_artifacts": false,
+    "include_logs": false,
+    "include_runtime_data": false,
+    "include_development_junk": false,
+    "generated_manifest_name": "BASISPROJEKT_MANIFEST.json"
+  },
+  "runtime": {
+    "python": "3.12.x",
+    "external_python_packages": [],
+    "startup": "SCHNELLSTART.sh",
+    "browser_open": "automatic",
+    "offline_first": true
+  },
+  "ci_export": {
+    "enabled": true,
+    "publish_after_all_quality_gates": true,
+    "exactly_one_zip": true,
+    "require_source_git_head_match": true,
+    "artifact_name_prefix": "PROVOWARE-Naqya-Memo-Basisprojekt-",
+    "upload_action_sha": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+    "source_sha_policy": "pull_request_head_or_push_sha"
+  },
+  "lineage_export": {
+    "required": true,
+    "source_file": "registry/PRODUCT_BASELINE.json",
+    "generated_manifest_identity": [
+      "product_version",
+      "product_revision",
+      "ui_contract_version",
+      "acceptance",
+      "required_ancestor_sha",
+      "source_git_head"
+    ]
+  },
+  "mandatory_root_files": [
+    "SCHNELLSTART.sh",
+    "STARTEN_LINUX.sh",
+    "STARTEN_OHNE_BROWSER.sh",
+    "requirements.txt",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "include_roots": [
+    "app",
+    "core",
+    "ui",
+    "resources",
+    "schemas",
+    "platform",
+    "manifeste"
+  ],
+  "include_files": [
+    "registry/VERSION.json",
+    "registry/PROJECT_STATUS.json",
+    "registry/PRODUCT_BASELINE.json",
+    "tools/startup_port_guard.py"
+  ],
+  "exclude_globs": [
+    ".git/**",
+    ".github/**",
+    "tests/**",
+    "ci/**",
+    "agents/**",
+    "runtime/**",
+    "dist/**",
+    "releases/**",
+    "registry/evidence/**",
+    "**/__pycache__/**",
+    "**/*.pyc",
+    "**/*.pyo",
+    "**/*.log",
+    "**/*.tmp",
+    "**/*.bak",
+    "**/*~",
+    ".pytest_cache/**",
+    ".mypy_cache/**",
+    ".ruff_cache/**",
+    ".venv/**",
+    "venv/**",
+    "RUN_*",
+    "TODO.md",
+    "UPGRADE_POTENZIAL.md",
+    "BRAIN.md",
+    "GPT_TAGE_UND_WISSENSBUCH.md",
+    "AGENTS.md"
+  ],
+  "global_quality_standards": {
+    "release": [
+      "exact_same_sha_evidence",
+      "fail_closed",
+      "manifest_regenerated_after_code_change",
+      "final_diff_audit",
+      "no_codex_github_review_without_explicit_user_instruction"
+    ],
+    "appearance": [
+      "dark_clear_hierarchy",
+      "neon_turquoise_purple_yellow_as_brand_accents",
+      "high_contrast",
+      "responsive_without_horizontal_overflow",
+      "status_never_color_only",
+      "keyboard_focus_visible",
+      "100_to_200_percent_zoom_usable",
+      "no_unnecessary_glow_or_visual_noise"
+    ],
+    "error_handling": [
+      "plain_german_user_message",
+      "stable_error_code",
+      "no_raw_exception_or_secret_in_ui",
+      "actionable_recovery_hint",
+      "preflight_before_mutation",
+      "validate_before_write",
+      "atomic_write_where_possible",
+      "rollback_or_recovery_boundary",
+      "no_silent_exception_swallowing",
+      "safe_degraded_mode"
+    ],
+    "error_prevention": [
+      "path_boundary_checks",
+      "port_and_process_identity_checks",
+      "input_size_and_type_limits",
+      "concurrency_guard",
+      "idempotent_startup",
+      "storage_identity_before_destructive_write",
+      "resource_and_permission_preflight",
+      "timeouts_for_external_processes",
+      "runtime_data_separated_from_program_files",
+      "reject_symlinks_and_special_files_in_export"
+    ]
+  }
+}
