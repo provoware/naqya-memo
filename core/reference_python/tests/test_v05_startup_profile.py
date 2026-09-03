@@ -86,16 +86,42 @@ def test_platform_permissions_require_visible_user_action_on_mobile():
         assert p.permissions['microphone']=='USER_ACTION_REQUIRED'
         assert p.permissions['external_paths']=='USER_ACTION_REQUIRED'
 
-def test_guided_first_start_creates_checkpoint_and_settings():
+def test_guided_first_start_creates_checkpoint_and_settings_after_profile_creation():
     with tempfile.TemporaryDirectory() as td:
         base=Path(td); s=CoreStore(base/'core.sqlite3',SCHEMA_V2); pid=ProfileService(s).create('P','1234')
         project=base/'Projekt'
-        report=GuidedFirstStart(s,ProjectFolderService(minimum_free_bytes=1)).run(project_path=project,profile_id=pid,platform_id='linux')
+        report=GuidedFirstStart(s,ProjectFolderService(minimum_free_bytes=1)).run(project_path=project,profile_id=pid,platform_id='linux',entry_reason='PROFILE_CREATED')
         assert report['state'] in ('GREEN','YELLOW') and report['next_action']=='READY'
+        assert report['profile_id']==pid and report['profile_mode']=='ACTIVE'
         assert (project/'manifeste'/'START_CHECKPOINT.json').exists()
         assert SettingsService(s).get(pid,'theme')=='NEON_TUERKIS'
         row=s.conn.execute('SELECT COUNT(*) FROM capability_snapshots').fetchone()[0]
         assert row==1
+        s.close()
+
+def test_guided_app_start_always_stays_blanco_even_with_remembered_profile():
+    with tempfile.TemporaryDirectory() as td:
+        base=Path(td); s=CoreStore(base/'core.sqlite3',SCHEMA_V2); pid=ProfileService(s).create('P','1234')
+        project=base/'Projekt'
+        report=GuidedFirstStart(s,ProjectFolderService(minimum_free_bytes=1)).run(project_path=project,profile_id=pid,platform_id='linux')
+        assert report['profile_id'] is None
+        assert report['profile_mode']=='BLANCO'
+        assert report['profile_entry_reason']=='APP_START'
+        assert report['next_action']=='PROFILE_SELECT_OR_CREATE'
+        assert any(p['name']=='PROFILE' and p['details']['remembered_profile_ignored'] is True for p in report['phases'])
+        row=s.conn.execute('SELECT profile_id FROM startup_runs WHERE run_id=?',(report['run_id'],)).fetchone()
+        assert row[0] is None
+        s.close()
+
+def test_guided_explicit_profile_selection_enters_selected_profile():
+    with tempfile.TemporaryDirectory() as td:
+        base=Path(td); s=CoreStore(base/'core.sqlite3',SCHEMA_V2); pid=ProfileService(s).create('P','1234')
+        project=base/'Projekt'
+        report=GuidedFirstStart(s,ProjectFolderService(minimum_free_bytes=1)).run(project_path=project,profile_id=pid,platform_id='linux',entry_reason='PROFILE_SELECTED')
+        assert report['profile_id']==pid
+        assert report['profile_mode']=='ACTIVE'
+        assert report['profile_entry_reason']=='PROFILE_SELECTED'
+        assert report['next_action']=='READY'
         s.close()
 
 def test_guided_first_start_without_profile_leads_to_profile_selection():
@@ -103,6 +129,17 @@ def test_guided_first_start_without_profile_leads_to_profile_selection():
         base=Path(td); s=CoreStore(base/'core.sqlite3',SCHEMA_V2); project=base/'Projekt'
         report=GuidedFirstStart(s,ProjectFolderService(minimum_free_bytes=1)).run(project_path=project,profile_id=None,platform_id='linux')
         assert report['state']=='YELLOW' and report['next_action']=='PROFILE_SELECT_OR_CREATE'
+        assert report['profile_mode']=='BLANCO' and report['profile_id'] is None
+        s.close()
+
+def test_guided_explicit_profile_entry_requires_profile_id():
+    with tempfile.TemporaryDirectory() as td:
+        base=Path(td); s=CoreStore(base/'core.sqlite3',SCHEMA_V2); project=base/'Projekt'
+        try:
+            GuidedFirstStart(s,ProjectFolderService(minimum_free_bytes=1)).run(project_path=project,profile_id=None,platform_id='linux',entry_reason='PROFILE_SELECTED')
+            raise AssertionError('expected')
+        except ValueError as e:
+            assert str(e)=='PROFILE_ID_REQUIRED_FOR_EXPLICIT_ENTRY'
         s.close()
 
 def test_v1_to_v2_migration_preserves_existing_entity():
