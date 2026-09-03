@@ -30,6 +30,12 @@ Damit wird bewusst **nicht** vorgetäuscht, dass bereits ein Blanco-Profil aktiv
 - Das Profilelement muss als höflicher, atomarer Live-Status für Screenreader ausgezeichnet bleiben.
 - Solange der historische Fallback noch vorhanden ist, darf die Oberfläche keinen neutralen Blanco-Zustand behaupten.
 
+## CI-Durchsetzung
+
+Der Vertrag wird zusätzlich durch `.github/workflows/profile-blanco-truthfulness.yml` bei Pull Requests und Pushes auf `main` automatisch ausgeführt. Der Workflow verwendet ausschließlich fest auf Commit-SHAs gepinnte GitHub Actions, persistiert keine Checkout-Zugangsdaten und führt genau den vorhandenen Truthfulness-Test aus.
+
+Damit ist der Test nicht mehr nur vorhandene lokale Evidence, sondern ein eigenständiges fail-closed CI-Gate gegen spätere UI-/Backend-Drift.
+
 ## Freigabebedingung für den späteren Runtime-Blanco-Slice
 
 Erst wenn der Server nachweisbar:
@@ -44,4 +50,4 @@ kann die sichtbare Profilanzeige auf `Blanco` umgestellt und dieser Übergang mi
 
 ## Release-Status
 
-Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der Truthfulness-Test und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
+Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der Truthfulness-Test, seine CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
