@@ -2,7 +2,6 @@
 """Regression contract: external Actions are immutable and checkout credentials are not persisted."""
 from pathlib import Path
 import re
-import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / ".github" / "workflows" / "quality.yml"
@@ -10,6 +9,7 @@ EXPECTED_ACTIONS = {
     "actions/checkout",
     "actions/setup-python",
     "actions/setup-node",
+    "actions/upload-artifact",
 }
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 USES_LINE = re.compile(r"^\s*uses:\s*([^@\s]+)@([^\s#]+)")
@@ -40,7 +40,11 @@ def require_checkout_nonpersistent_credentials(text: str) -> None:
     checkout_step = "\n".join(lines[checkout_index:step_end])
     if not re.search(r"^\s+persist-credentials:\s*false\s*$", checkout_step, re.MULTILINE):
         fail("actions/checkout must set persist-credentials: false")
-    if re.search(r"^\s+persist-credentials:\s*(true|yes|on|1)\s*$", checkout_step, re.MULTILINE | re.IGNORECASE):
+    if re.search(
+        r"^\s+persist-credentials:\s*(true|yes|on|1)\s*$",
+        checkout_step,
+        re.MULTILINE | re.IGNORECASE,
+    ):
         fail("actions/checkout credential persistence must remain disabled")
     print("PASS: actions/checkout credentials are not persisted in git config")
 
@@ -67,9 +71,12 @@ def main() -> None:
         fail(f"expected external actions missing from workflow: {sorted(missing)}")
     if unexpected:
         fail(f"new external actions require explicit review and contract update: {sorted(unexpected)}")
-
     if len(found) != len(EXPECTED_ACTIONS):
         fail("external action count drift")
+
+    upload_ref = found["actions/upload-artifact"][0]
+    if upload_ref != "ea165f8d65b6e75b540449e92b4886f43607fa02":
+        fail(f"actions/upload-artifact must remain on reviewed v4 commit, got {upload_ref}")
 
     for action in sorted(found):
         ref, line_number = found[action]

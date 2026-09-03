@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ env.SOURCE_SHA }}
           persist-credentials: false
           fetch-depth: 0
 
@@ -66,7 +66,7 @@ jobs:
 
       - name: Python syntax
         run: |
-          python -m py_compile app/server.py app/secure_server.py app/secure_response_server.py tools/startup_port_guard.py tools/release_gate/evaluate_release_gate.py tools/release_gate/require_clean_worktree.py tools/release_gate/attest_release_closure.py tools/release_gate/verify_release_closure_provenance.py
+          python -m py_compile app/server.py app/secure_server.py app/secure_response_server.py tools/startup_port_guard.py tools/release_gate/evaluate_release_gate.py tools/release_gate/require_clean_worktree.py tools/release_gate/attest_release_closure.py tools/release_gate/verify_release_closure_provenance.py tools/build_basisprojekt.py tools/verify_basisprojekt_artifact.py
 
       - name: JavaScript syntax
         run: |
@@ -213,3 +213,25 @@ jobs:
           echo "CI validates immutable GitHub Action identities, non-persistent checkout credentials, a no-implicit-dependency-install/download boundary, a minimal trigger/permission trust boundary, a test-source direct-network-client boundary, release-freeze rollup containment, required fail-closed UI-contract presence, source contracts and release-gate evidence freshness/clean-worktree/artifact-integrity/closure-provenance/provenance-verification/verifier-enforcement, fail-closed existing-DB preflight, local desktop PIN/bootstrap-file hardening, auth-cache revision/incarnation/credential-fingerprint/uncertainty invalidation, isolated auth-security reads, transport-trust, response-security, bounded JSON-body, bounded request-I/O and fail-safe security-config runtime gates only."
           echo "CI does NOT turn real device/browser/microphone release gates green."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green, and the test-source guard is not an OS-level network sandbox."
+
+      - name: Basisproject standard
+        run: |
+          python -S tests/release_gate/test_basisprojekt_standard.py
+
+      - name: Build and independently verify basis project
+        run: |
+          set -euo pipefail
+          rm -rf basisprojekt-out
+          python -S tools/build_basisprojekt.py --output-dir basisprojekt-out
+          mapfile -t zips < <(find basisprojekt-out -maxdepth 1 -type f -name 'PROVOWARE_Naqya-Memo_BASISPROJEKT_STATUS-AKTIV_*.zip' -print)
+          test "${#zips[@]}" -eq 1 || { echo "Expected exactly one basis project ZIP, got ${#zips[@]}"; exit 1; }
+          python -S tools/verify_basisprojekt_artifact.py "${zips[0]}" --expected-head "$SOURCE_SHA"
+          echo "PASS clean basis project bound to $SOURCE_SHA"
+
+      - name: Publish verified basis project
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: PROVOWARE-Naqya-Memo-Basisprojekt-${{ env.SOURCE_SHA }}
+          path: basisprojekt-out/PROVOWARE_Naqya-Memo_BASISPROJEKT_STATUS-AKTIV_*.zip
+          if-no-files-found: error
+          retention-days: 7
