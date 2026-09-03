@@ -153,7 +153,10 @@ def _response_auth_profile_id() -> str | None:
     Missing, non-string or blank values fail closed as ``None`` so callers never
     query security state for an ambiguous profile identity.
     """
-    profile_id = getattr(secure.base, 'PROFILE_ID', None)
+    try:
+        profile_id = secure.base.PROFILE_ID
+    except AttributeError:
+        return None
     if not isinstance(profile_id, str):
         return None
     profile_id = profile_id.strip()
