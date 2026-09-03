@@ -46,7 +46,7 @@ function requestKey(meta,init){
  return `${meta.method}|${meta.href}|${bodyDescriptor(init?.body)}`;
 }
 function mutationLocked(){
- return document.documentElement.dataset.mutationMode==='degraded';
+ return document.documentElement?.dataset?.mutationMode==='degraded';
 }
 function blockedMutation(meta){
  const payload={

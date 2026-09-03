@@ -52,7 +52,7 @@ def test_dynamic_views_and_restart_restore():
 def test_client_transport_fail_closed_for_post_only():
     assert "meta.method!=='POST'" in M
     assert "if(mutationLocked())return blockedMutation(meta)" in M
-    assert "document.documentElement.dataset.mutationMode==='degraded'" in M
+    assert "document.documentElement?.dataset?.mutationMode==='degraded'" in M
     assert "MUTATION_DEGRADED_MODE" in M
     assert "'x-provoware-client-block':'read-only'" in M
     assert "provoware:api-error" in M
