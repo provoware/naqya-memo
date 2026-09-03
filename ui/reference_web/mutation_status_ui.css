@@ -1,0 +1,29 @@
+/* VISUAL-UX-003 · Mutationsstatus & Doppelklick-Prävention */
+button.mutation-busy,
+input.mutation-busy[type="submit"],
+input.mutation-busy[type="button"]{
+ cursor:progress;
+ opacity:.78;
+ box-shadow:inset 0 0 0 1px rgba(25,244,242,.38);
+}
+button.mutation-busy::before{
+ content:"";
+ display:inline-block;
+ width:.72em;height:.72em;
+ margin-inline-end:.5em;
+ border:2px solid currentColor;
+ border-inline-end-color:transparent;
+ border-radius:50%;
+ vertical-align:-.08em;
+ animation:provoware-mutation-spin .8s linear infinite;
+}
+form[aria-busy="true"]{
+ position:relative;
+}
+form[aria-busy="true"] .form-actions{
+ opacity:.9;
+}
+@keyframes provoware-mutation-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+ button.mutation-busy::before{animation:none;border-inline-end-color:currentColor}
+}

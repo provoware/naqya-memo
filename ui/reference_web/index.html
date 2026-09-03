@@ -6,10 +6,12 @@
 <meta name="color-scheme" content="dark">
 <title>OI - PROVOWARE - IO</title>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="error_status_ui.css">
 </head>
 <body>
 <a class="skip-link" href="#workspace">Zum Arbeitsbereich</a>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
 <div class="app-shell">
   <header class="topbar">
     <button class="icon-btn mobile-only" id="menuBtn" aria-controls="mainNav" aria-expanded="false">☰</button>
@@ -90,6 +92,16 @@
   </section>
 
   <main class="workspace" id="workspace" tabindex="-1">
+<section id="statusNotice" class="status-notice" role="alert" aria-live="assertive" aria-atomic="true" aria-labelledby="statusNoticeMessage" aria-describedby="statusNoticeRecovery statusNoticeCode" hidden>
+      <div class="status-notice-icon" id="statusNoticeIcon" aria-hidden="true">⚠</div>
+      <div class="status-notice-body">
+        <div class="status-notice-kicker" id="statusNoticeKind">AKTION NICHT ABGESCHLOSSEN</div>
+        <strong id="statusNoticeMessage">Die Aktion konnte nicht abgeschlossen werden.</strong>
+        <p class="status-notice-recovery"><b>Lösung:</b> <span id="statusNoticeRecovery">Bitte Eingabe prüfen und den Schritt erneut ausführen.</span></p>
+        <code id="statusNoticeCode">Fehlercode: CLIENT_ERROR</code>
+      </div>
+      <button class="status-notice-close" id="statusNoticeClose" type="button" aria-label="Fehlerhinweis schließen">×</button>
+    </section>
     <section class="workspace-toolbar">
       <div><b id="viewTitle">Dashboard</b><span id="viewHint">Validierter Arbeitsbereich</span></div>
     </section>
@@ -125,5 +137,6 @@
 <script src="mobile/mobile_core.js"></script>
 <script src="mobile/mobile_bootstrap.js"></script>
 <script src="mobile/mobile_acceptance.js"></script>
+<script src="error_status_ui.js"></script>
 <script src="app.js"></script>
 </body></html>

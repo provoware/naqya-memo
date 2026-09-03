@@ -1,0 +1,37 @@
+/* VISUAL-UX-002 · Formularfeedback & Eingabefehler */
+.form-grid [aria-invalid="true"],form [aria-invalid="true"]{
+ border-color:var(--danger)!important;
+ box-shadow:0 0 0 1px rgba(255,95,116,.34);
+}
+.form-grid [aria-invalid="true"]:focus-visible,form [aria-invalid="true"]:focus-visible{
+ outline:3px solid var(--yellow)!important;
+ outline-offset:3px;
+}
+.field-has-error{color:#ffd9df!important}
+.form-field-error{
+ display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:start;
+ margin-top:5px;padding:7px 8px;border-inline-start:3px solid var(--danger);border-radius:7px;
+ background:rgba(255,95,116,.08);color:#ffe7eb;font-size:.72rem;line-height:1.35;
+ max-width:100%;min-width:0;overflow-wrap:anywhere;
+}
+.form-field-error>span:first-child{color:#ff9aaa;font-weight:900}
+.form-field-error code{color:#b9c4d3;font-size:.64rem;white-space:normal;overflow-wrap:anywhere}
+.form-error-summary{
+ grid-column:1/-1;display:grid;gap:5px;margin:0 0 4px;padding:10px 11px;
+ border:1px solid var(--yellow);border-inline-start-width:5px;border-radius:10px;
+ background:rgba(255,229,59,.08);color:#fff7bf;max-width:100%;overflow-wrap:anywhere;
+}
+.form-error-summary strong{color:var(--yellow)}
+.form-error-summary span{line-height:1.38}
+.form-error-summary code{color:#c7d0dc;font-size:.68rem;white-space:normal}
+.form-error-summary:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+html[data-font-tier="xl"] .form-field-error{grid-template-columns:auto minmax(0,1fr)}
+html[data-font-tier="xl"] .form-field-error code{grid-column:1/-1}
+@media(max-width:720px){
+ .form-field-error{grid-template-columns:auto minmax(0,1fr)}
+ .form-field-error code{grid-column:1/-1}
+ .form-error-summary{padding:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .form-field-error,.form-error-summary{scroll-behavior:auto}
+}
