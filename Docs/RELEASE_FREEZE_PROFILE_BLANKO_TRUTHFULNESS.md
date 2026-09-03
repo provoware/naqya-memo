@@ -37,9 +37,11 @@ Damit ist die Reihenfolge des späteren Runtime-Umbaus technisch abgesichert: **
 
 ## CI-Durchsetzung
 
-Der Vertrag wird zusätzlich durch `.github/workflows/profile-blanco-truthfulness.yml` bei Pull Requests und Pushes auf `main` automatisch ausgeführt. Der Workflow verwendet ausschließlich fest auf Commit-SHAs gepinnte GitHub Actions, persistiert keine Checkout-Zugangsdaten und führt genau den vorhandenen Truthfulness-Test aus.
+Der Vertrag wird zusätzlich durch `.github/workflows/profile-blanco-truthfulness.yml` bei Pull Requests und Pushes auf `main` automatisch ausgeführt. Der Workflow verwendet ausschließlich fest auf Commit-SHAs gepinnte GitHub Actions, persistiert keine Checkout-Zugangsdaten und ruft den Truthfulness-Test ohne externe Testabhängigkeit direkt mit Python auf.
 
-Damit ist der Test nicht mehr nur vorhandene lokale Evidence, sondern ein eigenständiges fail-closed CI-Gate gegen spätere UI-/Backend-/Auth-Drift.
+Wichtig: Die Testdatei besitzt deshalb einen eigenen kleinen Direct-Runner. Ein Aufruf mit `python -S tests/release_gate/test_profile_blanco_truthfulness.py` führt alle drei Vertragsprüfungen tatsächlich aus, gibt pro Prüfung PASS/FAIL sowie eine Zusammenfassung aus und beendet den Prozess bei mindestens einem Fehler mit Exit-Code 1. Damit kann ein grüner Workflow nicht mehr allein dadurch entstehen, dass nur Testfunktionen definiert, aber nie aufgerufen werden.
+
+Damit ist der Test nicht nur vorhandene lokale Evidence, sondern ein tatsächlich ausführendes, fail-closed CI-Gate gegen spätere UI-/Backend-/Auth-Drift.
 
 ## Freigabebedingung für den späteren Runtime-Blanco-Slice
 
@@ -56,4 +58,4 @@ kann die sichtbare Profilanzeige auf `Blanco` umgestellt und dieser Übergang mi
 
 ## Release-Status
 
-Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der Truthfulness-Test, das Profil/Auth-Kopplungs-Gate, seine CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
+Bis dieser Runtime-Vertrag vollständig implementiert und getestet ist, bleibt die Profil-Startänderung **Draft / NO-GO**. Der ausführbare Truthfulness-Test, das Profil/Auth-Kopplungs-Gate, seine CI-Durchsetzung und die verständliche Ladeanzeige verhindern gefährliche bzw. verwirrende Zwischenzustände; sie ersetzen den Runtime-Blanco-Nachweis nicht.
