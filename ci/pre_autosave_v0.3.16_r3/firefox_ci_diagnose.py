@@ -1,11 +1,43 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import http.server, json, os, shutil, socketserver, subprocess, tempfile, threading, time, urllib.request
+import hashlib, http.server, json, os, re, shutil, socketserver, subprocess, tempfile, threading, time, urllib.request
 from pathlib import Path
 
 VERSION='0.3.16'
 KIT_FOLDER='Provoware_Naqya_CROSS_PLATFORM_ACCEPTANCE_KIT_v0.3.16'
 MODULE='/BASIS_RELEASE/basis/skripte/transaktion_FERTIG_v0.3.16.js'
+HARNESS='ENTWICKLUNG_LOKAL_NICHT_INS_REPO/tests/firefox_acceptance_harness_FERTIG_v0.3.16.html'
+
+
+def sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()
+
+
+def static_harness_evidence(kit: Path) -> dict:
+    path=kit/HARNESS
+    assert path.is_file(), f'Firefox acceptance harness missing: {path}'
+    text=path.read_text(encoding='utf-8')
+    script_tags=re.findall(r'<script\b[^>]*>(.*?)</script\s*>',text,flags=re.I|re.S)
+    opening_tags=re.findall(r'<script\b[^>]*>',text,flags=re.I|re.S)
+    srcs=[]
+    for tag in opening_tags:
+        m=re.search(r'\bsrc\s*=\s*["\']([^"\']+)["\']',tag,flags=re.I)
+        if m: srcs.append(m.group(1))
+    return {
+        'path':HARNESS,
+        'bytes':len(text.encode('utf-8')),
+        'sha256':sha256_text(text),
+        'scriptTagCount':len(opening_tags),
+        'scriptSrcs':srcs,
+        'hasModuleScript':any(re.search(r'\btype\s*=\s*["\']module["\']',tag,flags=re.I) for tag in opening_tags),
+        'mentionsTransactionModule':('transaktion_FERTIG_v0.3.16.js' in text),
+        'mentionsStateEndpoint':('/__state__' in text),
+        'mentionsPhase':('phase' in text),
+        'openingScriptTags':opening_tags[:12],
+        'inlineScriptPreviews':[s.strip()[:1200] for s in script_tags[:8]],
+        'headPreview':text[:2400],
+    }
+
 
 def main():
     rt=Path(os.environ['RUNNER_TEMP'])
@@ -14,6 +46,8 @@ def main():
     ff=shutil.which('firefox') or shutil.which('firefox.exe')
     assert ff, 'Firefox not found'
     events=[]; requests=[]; lock=threading.Lock()
+    static=static_harness_evidence(kit)
+    print(json.dumps({'staticHarness':static},indent=2,ensure_ascii=False),flush=True)
     probe=kit/'__ci_firefox_probe__.html'
     probe.write_text('''<!doctype html><meta charset="utf-8"><title>Naqya Firefox CI Diagnose</title><pre id="o">boot</pre><script type="module">\nconst post=async(stage,extra={})=>{try{await fetch('/__diag__',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({stage,ua:navigator.userAgent,...extra})})}catch(e){}};\nawait post('boot',{href:location.href});\ntry{const m=await import("'''+MODULE+'''" ); await post('module',{exports:Object.keys(m)});}catch(e){await post('module_error',{error:String(e?.stack||e)}); throw e;}\ntry{const name='naqya_ci_diag_'+Date.now(); const db=await new Promise((res,rej)=>{const r=indexedDB.open(name,1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}); await new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put('ok','k');t.oncomplete=res;t.onerror=()=>rej(t.error)}); const v=await new Promise((res,rej)=>{const t=db.transaction('kv','readonly'),r=t.objectStore('kv').get('k');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}); db.close(); await post('idb',{value:v,indexedDB:'indexedDB' in globalThis,localStorage:'localStorage' in globalThis});}catch(e){await post('idb_error',{error:String(e?.stack||e)});}\n</script>''',encoding='utf-8')
 
@@ -53,7 +87,7 @@ def main():
     output=(p.stdout.read() if p.stdout else '')[-12000:]
     srv.shutdown();srv.server_close();shutil.rmtree(profile,ignore_errors=True)
     with lock:
-        data={'firefox':ff,'cmd':cmd,'returncode':p.returncode,'httpChecks':http_checks,'events':events,'requests':requests,'browserOutputTail':output}
+        data={'firefox':ff,'cmd':cmd,'returncode':p.returncode,'staticHarness':static,'httpChecks':http_checks,'events':events,'requests':requests,'browserOutputTail':output}
     out=rt/'naqya-firefox-diag.json';out.write_text(json.dumps(data,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
     print(json.dumps(data,indent=2,ensure_ascii=False))
     stages={x.get('stage') for x in events}
