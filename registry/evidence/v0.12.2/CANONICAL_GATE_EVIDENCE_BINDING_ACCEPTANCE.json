@@ -1,0 +1,23 @@
+{
+  "evidence_id": "CANONICAL_GATE_EVIDENCE_BINDING_ACCEPTANCE",
+  "status": "SOURCE_AND_RUNTIME_CONTRACT",
+  "scope": "release-gate-canonical-evidence-file-binding",
+  "release_gate_promoted": false,
+  "product_feature_added": false,
+  "implementation": "tools/release_gate/evaluate_release_gate.py",
+  "regression_test": "tests/release_gate/test_release_gate_evidence_freshness.py",
+  "ci_step": "Release gate evidence freshness",
+  "contracts": [
+    "each release gate is bound to its exact canonical evidence filename",
+    "a similarly numbered lexicographically later JSON file cannot shadow canonical gate evidence",
+    "missing canonical gate evidence cannot be substituted by a differently named same-number file",
+    "multiple same-number evidence JSON files fail closed as ambiguous",
+    "closure evidence records the canonical evidence binding reason and relative path for accepted gates"
+  ],
+  "expected_regression_summary": "PASS total=17",
+  "known_limits": [
+    "does not attest built release artifacts",
+    "does not provide signed provenance",
+    "real browser, microphone, storage, Android-device and iPhone-device release gates remain authoritative"
+  ]
+}

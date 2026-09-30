@@ -1,0 +1,25 @@
+{
+  "schema": "provoware.release-ci-trigger-permission-boundary.v1",
+  "status": "PASS",
+  "scope": "quality-workflow-trigger-and-permission-boundary",
+  "feature_freeze": true,
+  "product_feature_added": false,
+  "workflow": ".github/workflows/quality.yml",
+  "regression_test": "tests/release_gate/test_ci_trigger_permission_boundary.py",
+  "contract": "Quality CI runs only for pull_request and push to main and keeps workflow permissions exactly contents: read without job-level expansion.",
+  "allowed_triggers": [
+    "pull_request",
+    "push:main"
+  ],
+  "workflow_permissions": {
+    "contents": "read"
+  },
+  "fail_closed": [
+    "trigger block drift",
+    "pull_request_target or other privileged/out-of-scope trigger introduction",
+    "workflow-level permission expansion",
+    "job-level permissions block introduction",
+    "contents write permission"
+  ],
+  "boundary": "No product/UI/schema/domain behavior, no secrets, no OIDC/id-token permission, no deployment permission, no release artifact generation and no real browser/device gate promotion."
+}

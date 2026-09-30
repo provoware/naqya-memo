@@ -1,0 +1,25 @@
+{
+  "id": "DESKTOP_UPLOAD_CONFIG_PARSE_ACCEPTANCE",
+  "status": "SOURCE_CONTRACT_PENDING_CI",
+  "scope": "official desktop production entrypoint",
+  "optimization": "fail-safe parsing of PROVOWARE_UPLOAD_MAX_BYTES",
+  "default_bytes": 536870912,
+  "contracts": [
+    "missing value uses established 512 MiB default",
+    "malformed value uses established default",
+    "empty value uses established default",
+    "zero value is treated as invalid configuration",
+    "negative value is treated as invalid configuration",
+    "valid positive override remains unchanged"
+  ],
+  "test": "tests/security/test_desktop_upload_config_parse.py",
+  "ci_step": "Desktop upload limit config parsing",
+  "does_not_prove": [
+    "real large-file browser upload",
+    "disk exhaustion handling",
+    "real browser acceptance",
+    "Android device acceptance",
+    "iPhone device acceptance"
+  ],
+  "release_gate_promotion": false
+}

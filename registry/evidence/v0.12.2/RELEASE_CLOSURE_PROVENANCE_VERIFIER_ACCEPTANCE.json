@@ -1,0 +1,24 @@
+{
+  "version": "0.12.2",
+  "scope": "release-closure-provenance-verifier",
+  "status": "PASS",
+  "feature_freeze": true,
+  "product_feature_added": false,
+  "contract": "Recompute and verify persisted release provenance read-only against authoritative closure identity fields.",
+  "implementation": {
+    "verifier": "tools/release_gate/verify_release_closure_provenance.py",
+    "closure": "registry/evidence/v0.12.2/RELEASE_GATE_CLOSURE.json",
+    "schema": "provoware.release-provenance.v1",
+    "read_only": true,
+    "fail_closed": true
+  },
+  "regression_contracts": [
+    "valid persisted provenance verifies",
+    "changed bound closure fact is rejected",
+    "changed stored payload is rejected",
+    "changed stored SHA-256 is rejected",
+    "missing provenance is rejected",
+    "verification does not modify closure evidence"
+  ],
+  "security_boundary": "Independent integrity verification only; not a digital signature or trusted-builder attestation. Real browser, microphone, storage, Android-device and iPhone-device gates remain authoritative."
+}

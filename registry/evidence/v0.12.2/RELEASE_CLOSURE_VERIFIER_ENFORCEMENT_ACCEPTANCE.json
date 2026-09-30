@@ -1,0 +1,25 @@
+{
+  "version": "0.12.2",
+  "scope": "release-closure-verifier-enforcement",
+  "status": "PASS",
+  "feature_freeze": true,
+  "product_feature_added": false,
+  "contract": "The official release-closure runner must execute the persisted provenance verifier after attestation and fail closed when verification fails.",
+  "implementation": {
+    "runner": "RUN_RELEASE_GATE_CLOSURE.sh",
+    "verifier": "tools/release_gate/verify_release_closure_provenance.py",
+    "order": [
+      "evaluate_release_gate.py",
+      "attest_release_closure.py",
+      "verify_release_closure_provenance.py"
+    ],
+    "fail_closed_exit_code": 2
+  },
+  "regression_test": "tests/release_gate/test_release_closure_runner_verifier_enforcement.py",
+  "regression_contracts": [
+    "official runner invokes verifier after attestation",
+    "verifier failure blocks official closure",
+    "verifier success preserves the existing successful closure path"
+  ],
+  "security_boundary": "Enforces independent persisted-provenance verification in the canonical closure path only; it does not add signing, trusted-builder identity, APK/IPA builds, or promote any real device gate."
+}

@@ -1,0 +1,29 @@
+{
+  "evidence_id": "DESKTOP_JSON_BODY_LIMIT_ACCEPTANCE",
+  "status": "SOURCE_AND_LOOPBACK_ACCEPTANCE_PASS",
+  "scope": "desktop production HTTP JSON mutation boundary",
+  "release_gate_promotion": false,
+  "contract": {
+    "default_json_post_max_bytes": 1048576,
+    "minimum_configured_bytes": 4096,
+    "maximum_configured_bytes": 16777216,
+    "oversize_status": 413,
+    "oversize_code": "REQUEST_BODY_TOO_LARGE",
+    "invalid_length_status": 400,
+    "asset_upload_exempt": true
+  },
+  "test": "tests/security/test_desktop_json_body_limit.py",
+  "ci_step": "Desktop JSON request body limit",
+  "verified_runtime_source_commit": "b886d8288eda22d8634bb3ca563a280424dce6b0",
+  "verified_workflow_run_id": 33268187242,
+  "assertions": [
+    "authenticated baseline reachable",
+    "oversized JSON mutation rejected before product body parsing",
+    "rejected oversized request creates no memo mutation",
+    "normal bounded JSON mutation succeeds",
+    "server remains healthy and persists only valid mutation"
+  ],
+  "release_status": "NO-GO",
+  "real_device_gates_unchanged": true,
+  "note": "Evidence-record update only; runtime source and test passed quality run 33268187242 before this metadata commit."
+}

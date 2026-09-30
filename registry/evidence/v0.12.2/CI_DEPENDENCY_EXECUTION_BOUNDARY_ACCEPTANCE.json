@@ -1,0 +1,22 @@
+{
+  "schema": "provoware.release-ci-execution-boundary.v1",
+  "status": "PASS",
+  "scope": "quality-workflow-run-blocks",
+  "contract": "canonical Quality CI must not implicitly install project dependencies, invoke package runners, perform direct network downloads, or fetch Git dependency content",
+  "workflow": ".github/workflows/quality.yml",
+  "regression_test": "tests/release_gate/test_ci_dependency_execution_boundary.py",
+  "forbidden_classes": [
+    "system package installation",
+    "python dependency installation",
+    "javascript package installation or package-runner execution",
+    "direct curl/wget download",
+    "git submodule or git-lfs dependency/content fetch"
+  ],
+  "allowed_existing_external_actions": [
+    "actions/checkout pinned to immutable commit",
+    "actions/setup-python pinned to immutable commit",
+    "actions/setup-node pinned to immutable commit"
+  ],
+  "fail_closed": true,
+  "boundary": "No product/UI/schema/domain behavior, no new permissions, secrets, OIDC, signing keys, dependency installation, release artifact generation, or real device/browser gate promotion."
+}

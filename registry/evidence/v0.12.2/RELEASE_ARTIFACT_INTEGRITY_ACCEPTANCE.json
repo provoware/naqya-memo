@@ -1,0 +1,24 @@
+{
+  "version": "0.12.2-MOBILE-RUNTIME-COMPLETION",
+  "generated_at_utc": "2026-08-30T16:19:41+00:00",
+  "feature_freeze": true,
+  "scope": "release artifact integrity binding only",
+  "status": "PASS",
+  "contract_count": 7,
+  "test_command": "python -S tests/release_gate/test_release_artifact_integrity.py",
+  "contracts": [
+    "matching manifest SHA-256 and byte lengths pass",
+    "tampered artifact fails closed",
+    "declared byte-length mismatch fails closed",
+    "missing artifact fails closed",
+    "path traversal is rejected",
+    "invalid declared SHA-256 is rejected",
+    "symlink artifact is rejected"
+  ],
+  "release_effect": "GO additionally requires the committed Android and iOS runtime-source ZIPs to match MOBILE_RUNTIME_RELEASE_MANIFEST.json byte-for-byte by size and SHA-256",
+  "non_claims": [
+    "does not create or validate APK or IPA binaries",
+    "does not make Android or iPhone device gates PASS",
+    "does not replace the seven real release gates"
+  ]
+}

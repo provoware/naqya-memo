@@ -42,4 +42,5 @@ case "$ACTION" in
     ;;
 esac
 
-exec python3 -S app/server.py
+echo "🔐 Desktop-Schutz aktiv: Benutzername provoware, Passwort = Profil-PIN."
+exec python3 -S app/secure_response_server.py
