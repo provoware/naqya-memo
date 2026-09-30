@@ -1,10 +1,10 @@
 name: PRE-AUTOSAVE Firefox Harness Diagnose R3
 
+# Forensic diagnostic only. The original Firefox harness defect is resolved and
+# continuously covered by the normal PRE-AUTOSAVE R3 acceptance workflow.
+# Run this workflow manually only when a new Firefox/bootstrap regression needs
+# deeper boot/module/IndexedDB/scenario tracing.
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/pre-autosave-firefox-diagnose-r3.yml"
-      - "ci/pre_autosave_v0.3.16_r3/**"
   workflow_dispatch:
 
 permissions:
@@ -73,4 +73,4 @@ jobs:
 
       - name: Mark trace finding without changing product code
         if: steps.trace.outcome != 'success'
-        run: echo "Exact runner trace reproduced the Firefox acceptance failure. Inspect the trace before repairing the harness."
+        run: echo "Exact runner trace reproduced a Firefox acceptance finding. Inspect the trace before repairing any harness or product code."

@@ -1,9 +1,13 @@
 from pathlib import Path
-import json, os, socket, subprocess, sys, tempfile, threading
+import hashlib, json, os, socket, subprocess, sys, threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 ROOT=Path(__file__).resolve().parents[2]
 GUARD=ROOT/"tools/startup_port_guard.py"
+SERVICE_ID="oi-provoware-io"
+
+def fingerprint(path):
+    return hashlib.sha256(str(Path(path).resolve()).encode("utf-8")).hexdigest()
 
 def free_port():
     s=socket.socket();s.bind(("127.0.0.1",0));p=s.getsockname()[1];s.close();return p
@@ -14,10 +18,24 @@ def run_guard(port,maxp=None,env=None):
     p=subprocess.run(cmd,text=True,capture_output=True,env=env)
     return p.returncode,json.loads(p.stdout.strip())
 
+def serve_health(port,payload):
+    class H(BaseHTTPRequestHandler):
+        def log_message(self,*a): pass
+        def do_GET(self):
+            if self.path!="/api/health":
+                self.send_response(404);self.end_headers();return
+            body=json.dumps({"ok":True,"data":payload}).encode()
+            self.send_response(200);self.send_header("Content-Type","application/json")
+            self.send_header("Content-Length",str(len(body)));self.end_headers();self.wfile.write(body)
+    srv=HTTPServer(("127.0.0.1",port),H)
+    th=threading.Thread(target=srv.serve_forever,daemon=True);th.start()
+    return srv,th
+
 def test_free_requested_port():
     p=free_port()
     rc,j=run_guard(p,p+3)
     assert rc==0 and j["action"]=="START" and j["selected_port"]==p
+    assert "project" not in j and len(j["project_fingerprint"])==64
 
 def test_foreign_listener_uses_fallback_without_kill():
     p=free_port()
@@ -27,24 +45,35 @@ def test_foreign_listener_uses_fallback_without_kill():
         assert rc==0 and j["action"]=="START" and j["selected_port"]>p
     finally:s.close()
 
-
 def test_same_app_same_project_is_reused():
     p=free_port()
     expected=(ROOT/"runtime"/"projektordner").resolve()
     version=json.loads((ROOT/"registry/VERSION.json").read_text())["version"]
-    class H(BaseHTTPRequestHandler):
-        def log_message(self,*a): pass
-        def do_GET(self):
-            if self.path!="/api/health":
-                self.send_response(404);self.end_headers();return
-            body=json.dumps({"ok":True,"data":{"version":version,"project":str(expected)}}).encode()
-            self.send_response(200);self.send_header("Content-Type","application/json")
-            self.send_header("Content-Length",str(len(body)));self.end_headers();self.wfile.write(body)
-    srv=HTTPServer(("127.0.0.1",p),H)
-    th=threading.Thread(target=srv.serve_forever,daemon=True);th.start()
+    srv,th=serve_health(p,{"service":SERVICE_ID,"version":version,"project_fingerprint":fingerprint(expected)})
     try:
         rc,j=run_guard(p,p+3)
         assert rc==0 and j["action"]=="REUSE" and j["selected_port"]==p
+    finally:
+        srv.shutdown();srv.server_close();th.join(timeout=2)
+
+def test_wrong_service_is_never_reused():
+    p=free_port()
+    expected=(ROOT/"runtime"/"projektordner").resolve()
+    version=json.loads((ROOT/"registry/VERSION.json").read_text())["version"]
+    srv,th=serve_health(p,{"service":"foreign-local-service","version":version,"project_fingerprint":fingerprint(expected)})
+    try:
+        rc,j=run_guard(p,p+3)
+        assert rc==0 and j["action"]=="START" and j["selected_port"]>p
+    finally:
+        srv.shutdown();srv.server_close();th.join(timeout=2)
+
+def test_wrong_project_fingerprint_is_never_reused():
+    p=free_port()
+    version=json.loads((ROOT/"registry/VERSION.json").read_text())["version"]
+    srv,th=serve_health(p,{"service":SERVICE_ID,"version":version,"project_fingerprint":"0"*64})
+    try:
+        rc,j=run_guard(p,p+3)
+        assert rc==0 and j["action"]=="START" and j["selected_port"]>p
     finally:
         srv.shutdown();srv.server_close();th.join(timeout=2)
 

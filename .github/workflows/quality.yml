@@ -9,6 +9,9 @@ on:
 permissions:
   contents: read
 
+env:
+  SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
 concurrency:
   group: quality-${{ github.ref }}
   cancel-in-progress: true
@@ -21,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_SHA }}
 
       - name: Python 3.12
         uses: actions/setup-python@v5
@@ -34,11 +39,17 @@ jobs:
 
       - name: Python syntax
         run: |
-          python -m py_compile app/server.py tools/startup_port_guard.py
+          python -m py_compile app/server.py app/http_security.py app/error_contract.py tools/startup_port_guard.py tools/build_basisprojekt.py tools/verify_basisprojekt_artifact.py tests/release_gate/test_basisprojekt_standard.py tests/security/test_error_ux_contract.py tests/ui_consistency/test_visual_error_status.py tests/ui_consistency/test_visual_form_feedback.py tests/ui_consistency/test_visual_mutation_status.py tests/ui_consistency/test_visual_read_only_mode.py
 
       - name: JavaScript syntax
         run: |
           node --check ui/reference_web/app.js
+          node --check ui/reference_web/error_status_ui.js
+          node --check ui/reference_web/form_feedback_ui.js
+          node --check ui/reference_web/mutation_status_ui.js
+          node --check ui/reference_web/read_only_ui.js
+          node --check tests/ui_consistency/test_visual_mutation_status_runtime.mjs
+          node --check tests/ui_consistency/test_visual_read_only_mode_runtime.mjs
           if [ -f ui/reference_web/mobile/mobile_core.js ]; then node --check ui/reference_web/mobile/mobile_core.js; fi
           if [ -f ui/reference_web/mobile/mobile_bootstrap.js ]; then node --check ui/reference_web/mobile/mobile_bootstrap.js; fi
           if [ -f ui/reference_web/mobile/mobile_acceptance.js ]; then node --check ui/reference_web/mobile/mobile_acceptance.js; fi
@@ -59,11 +70,42 @@ jobs:
             fi
           done
 
+      - name: Visual error status contract
+        run: |
+          python -S tests/ui_consistency/test_visual_error_status.py
+
+      - name: Visual form feedback contract
+        run: |
+          python -S tests/ui_consistency/test_visual_form_feedback.py
+
+      - name: Visual mutation status contract
+        run: |
+          python -S tests/ui_consistency/test_visual_mutation_status.py
+          node tests/ui_consistency/test_visual_mutation_status_runtime.mjs
+
+      - name: Visual read-only mode contract
+        run: |
+          python -S tests/ui_consistency/test_visual_read_only_mode.py
+          node tests/ui_consistency/test_visual_read_only_mode_runtime.mjs
+
       - name: Startup contracts
         run: |
           if [ -f tests/startup/test_startup_port_guard.py ]; then
             PYTHONPATH=core/reference_python python -S tests/startup/test_startup_port_guard.py
           fi
+
+      - name: Local HTTP security contracts
+        run: |
+          python -S tests/security/test_local_http_boundary.py
+          PYTHONPATH=core/reference_python python -S tests/security/test_local_http_server_e2e.py
+
+      - name: Error UX contracts
+        run: |
+          python -S tests/security/test_error_ux_contract.py
+
+      - name: Basis project contract
+        run: |
+          python -S tests/release_gate/test_basisprojekt_standard.py
 
       - name: Mobile source contracts
         run: |
@@ -81,3 +123,31 @@ jobs:
         run: |
           echo "CI validates source contracts only."
           echo "CI does NOT turn real browser, microphone, Android-device or iPhone-device release gates green."
+
+      - name: Build and independently verify basis project
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          OUT_DIR="$RUNNER_TEMP/provoware-basisprojekt"
+          rm -rf "$OUT_DIR"
+          mkdir -p "$OUT_DIR"
+          python -S tools/build_basisprojekt.py --output-dir "$OUT_DIR"
+          mapfile -t ZIPS < <(find "$OUT_DIR" -maxdepth 1 -type f -name 'PROVOWARE_Naqya-Memo_BASISPROJEKT_*.zip' -print | sort)
+          test "${#ZIPS[@]}" -eq 1
+          ZIP_PATH="${ZIPS[0]}"
+          python -S tools/verify_basisprojekt_artifact.py "$ZIP_PATH" --expected-head "$SOURCE_SHA"
+          echo "BASIS_ZIP=$ZIP_PATH" >> "$GITHUB_ENV"
+          echo "BASIS_SHA256=$(sha256sum "$ZIP_PATH" | awk '{print $1}')" >> "$GITHUB_ENV"
+          echo "Verified basis project: $(basename "$ZIP_PATH")"
+          echo "ZIP SHA-256: $(sha256sum "$ZIP_PATH" | awk '{print $1}')"
+
+      - name: Publish verified basis project
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: PROVOWARE-Naqya-Memo-Basisprojekt-${{ env.SOURCE_SHA }}
+          path: ${{ env.BASIS_ZIP }}
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+          overwrite: false
+          include-hidden-files: false

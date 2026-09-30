@@ -1,0 +1,35 @@
+# Python / test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# JavaScript / native build caches
+node_modules/
+.gradle/
+**/build/
+DerivedData/
+
+# Local runtime state – never source/evidence
+runtime/
+*.sqlite3-wal
+*.sqlite3-shm
+*.db-wal
+*.db-shm
+*.log
+*.tmp
+*.swp
+
+# OS / IDE metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Intentionally NOT ignored: dist/, releases/, registry/evidence/ and manifests.
+# Those paths contain reproducible release/evidence artifacts tracked by design.

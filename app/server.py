@@ -3,7 +3,17 @@ from __future__ import annotations
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from pathlib import Path
-import json, os, sys, threading, webbrowser, subprocess, shutil, traceback, datetime, mimetypes, tempfile
+import json, os, sys, threading, webbrowser, subprocess, shutil, datetime, mimetypes, tempfile
+
+from http_security import (
+    DEFAULT_JSON_BODY_MAX_BYTES,
+    SERVICE_ID,
+    host_is_loopback,
+    origin_is_same_loopback,
+    project_fingerprint,
+    resolve_static_path,
+)
+from error_contract import classify_public_error
 
 ROOT = Path(__file__).resolve().parents[1]
 CORE = ROOT / 'core' / 'reference_python'
@@ -56,13 +66,25 @@ settings_service.ensure_defaults(PROFILE_ID)
 try:
     GuidedFirstStart(store).run(project_path=PROJECT, profile_id=PROFILE_ID)
 except Exception:
-    pass
+    print('WARNUNG: Guided First Start konnte nicht vollständig ausgeführt werden; sichere Standardwerte bleiben aktiv.', file=sys.stderr, flush=True)
 
 COLORS = [('Arbeit','neon-tuerkis'),('Privat','lila'),('Wichtig','knallgelb'),('Info','orange'),('Frei','gruen')]
 if store.conn.execute('SELECT COUNT(*) FROM calendar_colors WHERE profile_id=?',(PROFILE_ID,)).fetchone()[0] != 5:
     calendar_service.set_color_legend(PROFILE_ID, COLORS)
 
 QUICK_NOTE_LOCK = threading.Lock()
+MUTATION_DEGRADED = threading.Event()
+
+
+def _bounded_env_bytes(name, default, minimum=1024, maximum=16*1024*1024):
+    try:
+        value=int(os.environ.get(name,str(default)))
+    except (TypeError, ValueError):
+        value=default
+    return min(max(value,minimum),maximum)
+
+
+JSON_BODY_MAX_BYTES = _bounded_env_bytes('PROVOWARE_JSON_BODY_MAX_BYTES', DEFAULT_JSON_BODY_MAX_BYTES)
 
 ERROR_TEXT = {
     'MEMO_TITLE_REQUIRED':'Bitte einen Titel für das Memo eingeben.',
@@ -74,8 +96,17 @@ ERROR_TEXT = {
     'UNDO_EMPTY':'Es gibt nichts mehr rückgängig zu machen.',
     'REDO_EMPTY':'Es gibt nichts zu wiederholen.',
     'ENTITY_NOT_TRASHED':'Dieser Inhalt liegt nicht im Papierkorb.',
+    'ENTITY_NOT_FOUND':'Der angeforderte Inhalt wurde nicht gefunden.',
+    'MEMO_NOT_FOUND':'Das Memo wurde nicht gefunden.',
+    'TODO_NOT_FOUND':'Die Aufgabe wurde nicht gefunden.',
+    'EVENT_NOT_FOUND':'Der Termin wurde nicht gefunden.',
     'DIAG_CONFIRM_REQUIRED':'Diagnosepaket wird erst nach sichtbarer Bestätigung erzeugt.',
     'CALENDAR_REQUIRES_EXACTLY_FIVE_COLORS':'Es müssen genau fünf Kalenderfarben vorhanden sein.',
+    'CALENDAR_DAY_COLOR_REQUIRED':'Bitte Tag und Kalenderfarbe vollständig auswählen.',
+    'COLOR_TITLE_REQUIRED':'Bitte für jede Kalenderfarbe einen Namen angeben.',
+    'TITLE_TOO_LONG':'Der Titel ist zu lang. Bitte kürzer formulieren.',
+    'DATETIME_REQUIRED':'Bitte Datum und Uhrzeit angeben.',
+    'INVALID_DATETIME':'Datum oder Uhrzeit haben ein ungültiges Format.',
     'ASSET_TEXT_EDIT_UNSUPPORTED':'Nur TXT- und Markdown-Dateien werden im internen Editor verändert.',
     'ASSET_REVISION_CONFLICT':'Das Dokument wurde inzwischen geändert. Bitte neu laden.',
     'RECORDING_NOT_ACTIVE':'Es läuft aktuell keine Aufnahme.',
@@ -84,7 +115,15 @@ ERROR_TEXT = {
     'UPLOAD_EMPTY':'Die ausgewählte Datei ist leer oder wurde nicht übertragen.',
     'UPLOAD_TRUNCATED':'Die Dateiübertragung wurde unvollständig beendet.',
     'UPLOAD_FILENAME_REQUIRED':'Der Dateiname fehlt.',
-
+    'NOTE_TEXT_REQUIRED':'Bitte zuerst einen Text für die Notiz eingeben.',
+    'NOTE_FILE_NOT_FOUND':'Die Notizdatei wurde nicht gefunden.',
+    'REQUEST_HOST_REJECTED':'Lokale Anfrage wegen ungültigem Host abgelehnt.',
+    'REQUEST_ORIGIN_REJECTED':'Anfrage einer fremden Webseite wurde abgelehnt.',
+    'REQUEST_CONTENT_TYPE_REQUIRED':'Für diese Anfrage ist der erwartete Inhaltstyp erforderlich.',
+    'REQUEST_BODY_TOO_LARGE':'Die Anfrage ist zu groß.',
+    'REQUEST_LENGTH_INVALID':'Die angegebene Anfragegröße ist ungültig.',
+    'REQUEST_JSON_INVALID':'Die Anfrage enthält ungültige JSON-Daten.',
+    'MUTATION_DEGRADED_MODE':'Schreibzugriffe sind nach einem internen Fehler vorsorglich gesperrt.',
 }
 
 def entity_list(entity_type, include_trashed=False):
@@ -168,7 +207,7 @@ def create_diagnostic_report():
         '',
         'LÖSUNGSHINWEISE',
     ]+[f"- {x}" for x in preview['solution_hints']]
-    path.write_text('\\n'.join(lines)+'\\n',encoding='utf-8')
+    path.write_text('\n'.join(lines)+'\n',encoding='utf-8')
     return path
 
 def safe_note_filename(title):
@@ -199,9 +238,9 @@ def notify(title,body):
     return False
 
 def share_note(path):
-    # xdg-email can attach a local file on Linux; still requires explicit user action in the mail client.
+    # No recipient is prefilled: the user chooses the destination explicitly in the mail client.
     if shutil.which('xdg-email'):
-        subprocess.Popen(['xdg-email','--subject','OI - PROVOWARE - IO Diagnose/Notiz','--body','Datei aus OI - PROVOWARE - IO. Versand erst nach Ihrer Bestätigung im Mailprogramm.','--attach',str(path),'provoware.157@gmail.com'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.Popen(['xdg-email','--subject','OI - PROVOWARE - IO Diagnose/Notiz','--body','Datei aus OI - PROVOWARE - IO. Versand erst nach Ihrer Bestätigung im Mailprogramm.','--attach',str(path)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return True,'Mailprogramm wurde mit vorbereiteter Nachricht geöffnet.'
     return False,'Kein xdg-email erkannt; Datei bleibt lokal.'
 
@@ -246,25 +285,88 @@ def api_state():
     }
 
 class Handler(SimpleHTTPRequestHandler):
-    server_version='Provoware/0.12'
+    server_version='ProvowareLocal'
+    sys_version=''
+
+    def end_headers(self):
+        self.send_header('X-Content-Type-Options','nosniff')
+        self.send_header('X-Frame-Options','DENY')
+        self.send_header('Referrer-Policy','no-referrer')
+        self.send_header('Cross-Origin-Resource-Policy','same-origin')
+        super().end_headers()
+
     def translate_path(self,path):
-        clean=urlparse(path).path.lstrip('/')
-        return str(UI / clean)
+        candidate=resolve_static_path(UI,path)
+        return str(candidate if candidate is not None else UI/'__blocked_request__')
+
     def log_message(self,fmt,*args):
         pass
+
     def _json(self,obj,status=200):
         data=json.dumps(obj,ensure_ascii=False).encode('utf-8')
-        self.send_response(status); self.send_header('Content-Type','application/json; charset=utf-8'); self.send_header('Content-Length',str(len(data))); self.end_headers(); self.wfile.write(data)
+        self.send_response(status)
+        self.send_header('Content-Type','application/json; charset=utf-8')
+        self.send_header('Content-Length',str(len(data)))
+        self.send_header('Cache-Control','no-store')
+        self.end_headers()
+        self.wfile.write(data)
+
+    def _content_length(self):
+        raw=(self.headers.get('Content-Length') or '0').strip()
+        try:
+            length=int(raw)
+        except ValueError:
+            raise ValueError('REQUEST_LENGTH_INVALID')
+        if length < 0:
+            raise ValueError('REQUEST_LENGTH_INVALID')
+        return length
+
+    def _check_host(self):
+        port=int(self.server.server_address[1])
+        if host_is_loopback(self.headers.get('Host'),port):
+            return True
+        self._fail(ValueError('REQUEST_HOST_REJECTED'),403)
+        return False
+
+    def _guard_post(self,path):
+        if MUTATION_DEGRADED.is_set():
+            self._fail(ValueError('MUTATION_DEGRADED_MODE'))
+            return False
+        if not self._check_host():
+            return False
+        port=int(self.server.server_address[1])
+        if not origin_is_same_loopback(self.headers.get('Origin'),port):
+            self._fail(ValueError('REQUEST_ORIGIN_REJECTED'),403)
+            return False
+        ctype=(self.headers.get('Content-Type') or '').split(';',1)[0].strip().lower()
+        expected='application/octet-stream' if path=='/api/assets/upload' else 'application/json'
+        if ctype != expected:
+            self._fail(ValueError('REQUEST_CONTENT_TYPE_REQUIRED'),415)
+            return False
+        try:
+            length=self._content_length()
+        except ValueError as e:
+            self._fail(e,400)
+            return False
+        if path!='/api/assets/upload' and length>JSON_BODY_MAX_BYTES:
+            self._fail(ValueError('REQUEST_BODY_TOO_LARGE'),413)
+            return False
+        return True
+
     def _body(self):
-        n=int(self.headers.get('Content-Length','0')); raw=self.rfile.read(n) if n else b'{}'
+        n=self._content_length()
+        if n>JSON_BODY_MAX_BYTES:
+            raise ValueError('REQUEST_BODY_TOO_LARGE')
+        raw=self.rfile.read(n) if n else b'{}'
         return json.loads(raw.decode('utf-8') or '{}')
+
     def _asset_upload(self):
         parsed=urlparse(self.path); q=parse_qs(parsed.query)
         kind=str((q.get('kind') or [''])[0])
         title=str((q.get('title') or [''])[0])
         filename=Path(str((q.get('filename') or [''])[0])).name
         if not filename: raise ValueError('UPLOAD_FILENAME_REQUIRED')
-        length=int(self.headers.get('Content-Length','0') or '0')
+        length=self._content_length()
         max_bytes=int(os.environ.get('PROVOWARE_UPLOAD_MAX_BYTES',str(512*1024*1024)))
         if length<=0: raise ValueError('UPLOAD_EMPTY')
         if length>max_bytes: raise ValueError('UPLOAD_TOO_LARGE')
@@ -285,11 +387,19 @@ class Handler(SimpleHTTPRequestHandler):
             return self._ok(manifest,'Datei sicher importiert.')
         finally:
             shutil.rmtree(session,ignore_errors=True)
-    def _ok(self,data=None,message='OK'): self._json({'ok':True,'message':message,'data':data})
-    def _fail(self,e,status=400):
-        code=str(e.args[0] if getattr(e,'args',None) else e)
-        self._json({'ok':False,'code':code,'message':ERROR_TEXT.get(code,code)},status)
+
+    def _ok(self,data=None,message='OK'):
+        self._json({'ok':True,'message':message,'data':data})
+
+    def _fail(self,e,status=None,mutation_context=False):
+        public = classify_public_error(e, ERROR_TEXT, status, mutation_context=mutation_context)
+        if public.activate_mutation_barrier:
+            MUTATION_DEGRADED.set()
+        self._json(public.payload(),public.status)
+
     def do_GET(self):
+        if not self._check_host():
+            return
         path=urlparse(self.path).path
         try:
             if path.startswith('/asset-file/'):
@@ -298,7 +408,7 @@ class Handler(SimpleHTTPRequestHandler):
                 fpath=asset_manager.path_for(aid)
                 ctype=mimetypes.guess_type(fpath.name)[0] or 'application/octet-stream'
                 data=fpath.read_bytes()
-                self.send_response(200); self.send_header('Content-Type',ctype); self.send_header('Content-Length',str(len(data))); self.send_header('Content-Disposition',f"inline; filename*=UTF-8''{manifest['original_name']}"); self.send_header('X-Content-Type-Options','nosniff'); self.end_headers(); self.wfile.write(data); return
+                self.send_response(200); self.send_header('Content-Type',ctype); self.send_header('Content-Length',str(len(data))); self.send_header('Content-Disposition',f"inline; filename*=UTF-8''{manifest['original_name']}"); self.end_headers(); self.wfile.write(data); return
             if path=='/api/state': return self._ok(api_state())
             if path=='/api/memos': return self._ok(entity_list('memo'))
             if path=='/api/todos': return self._ok(entity_list('todo'))
@@ -318,13 +428,23 @@ class Handler(SimpleHTTPRequestHandler):
             if path=='/api/trash':
                 rows=store.conn.execute("SELECT id,entity_type,title,payload_json,revision,status,updated_at FROM entities WHERE profile_id=? AND status='TRASHED' ORDER BY updated_at DESC",(PROFILE_ID,)).fetchall()
                 return self._ok([dict(id=r[0],entity_type=r[1],title=r[2],payload=json.loads(r[3]),revision=r[4],status=r[5],updated_at=r[6]) for r in rows])
-            if path=='/api/health': return self._ok({'version':APP_VERSION,'integrity':store.integrity_check(),
-        'asset_quota':asset_manager.quota_status(),
-        'audio_capture':audio_recorder.capability(),'queue':'running','project':str(PROJECT),'db':str(DB)})
+            if path=='/api/health':
+                return self._ok({
+                    'service':SERVICE_ID,
+                    'version':APP_VERSION,
+                    'project_fingerprint':project_fingerprint(PROJECT),
+                    'integrity':store.integrity_check(),
+                    'queue':'running',
+                    'mutation_mode':'DEGRADED' if MUTATION_DEGRADED.is_set() else 'READY',
+                })
             return super().do_GET()
-        except Exception as e: return self._fail(e,500)
+        except Exception as e:
+            return self._fail(e,500)
+
     def do_POST(self):
         path=urlparse(self.path).path
+        if not self._guard_post(path):
+            return
         try:
             if path=='/api/assets/upload':
                 return self._asset_upload()
@@ -420,7 +540,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._ok(settings_service.get_all(PROFILE_ID),'Einstellungen gespeichert.')
             return self._json({'ok':False,'message':'Nicht gefunden'},404)
         except Exception as e:
-            return self._fail(e,409 if str(e)=='REVISION_CONFLICT' else 400)
+            return self._fail(e, mutation_context=True)
 
 def run(port=8765,open_browser=True):
     os.chdir(UI)
