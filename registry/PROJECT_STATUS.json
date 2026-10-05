@@ -2,7 +2,7 @@
   "tool_name": "OI - PROVOWARE - IO",
   "project_name": "Multi-Memo-Modul-Tool 2026 / OI - Naqya - IO",
   "version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE",
-  "status": "V0.12.2.3_UI_SIMPLIFICATION_GREEN_REAL_VISUAL_PENDING",
+  "status": "V0.12.2.3_RELEASE_STATE_CONSOLIDATED_REAL_ACCEPTANCE_PENDING",
   "feature_freeze": true,
   "freeze_exception": "platform parity completion only",
   "desktop_regression": "78/78 PASS",
@@ -28,9 +28,9 @@
     "GATE_06_ANDROID_DEVICE": "BLOCKED",
     "GATE_07_IOS_IPHONE_X": "BLOCKED"
   },
-  "next_step": "Merge the post-PR-102 status-only synchronization after green CI; keep SAFE AUTOSAVE blocked while the canonical evaluator is NO-GO.",
-  "next_next_step": "Activate main branch protection with required green checks, then continue only with canonical release-gate closure rather than SAFE AUTOSAVE implementation.",
-  "last_updated": "2026-09-03",
+  "next_step": "Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.",
+  "next_next_step": "V1.0 RC erst nach 7/7 PASS im kanonischen Evaluator und PASS der Mobile-Runtime-Quelle; automatische oder simulierte Prüfungen dürfen reale Gates nicht hochstufen.",
+  "last_updated": "2026-10-05",
   "startup_port_guard": "PASS",
   "startup_collision_policy": "REUSE_SAME_VERSION_SAME_PROJECT_ELSE_SAFE_FALLBACK_NO_AUTO_KILL",
   "release_ui_consistency": "PASS",
@@ -87,6 +87,16 @@
     "safe_autosave_implementation_allowed": false,
     "candidate_status": "EVIDENCE_MERGED_PR_102",
     "workflow": ".github/workflows/pre-autosave-v0.3.16-r3.yml",
-    "semantics": "PRE-AUTOSAVE PASS proves only the Naqya v0.3.16 gate-local prerequisite. SAFE AUTOSAVE implementation remains blocked while tools/release_gate/evaluate_release_gate.py reports repository NO-GO."
-  }
+    "semantics": "PRE-AUTOSAVE PASS proves only the Naqya v0.3.16 gate-local prerequisite. SAFE AUTOSAVE implementation remains blocked while tools/release_gate/evaluate_release_gate.py reports repository NO-GO.",
+    "pr_100_state": "CLOSED_SUPERSEDED",
+    "pr_102_state": "MERGED"
+  },
+  "release_state_consistency": "QUALITY_GATE_REQUIRED",
+  "release_state_sources": [
+    "registry/VERSION.json",
+    "registry/PROJECT_STATUS.json",
+    "registry/evidence/v0.12.2/gates/*.json",
+    "registry/evidence/v0.12.2/MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json"
+  ],
+  "real_acceptance_boundary": "NO_SIMULATION_OR_SOURCE_CHECK_MAY_PROMOTE_A_REAL_GATE_TO_PASS"
 }
