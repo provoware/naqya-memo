@@ -80,7 +80,7 @@ def render_block(version: dict, status: dict, gates: list[dict]) -> str:
             f'> **Version:** {version["version"]}  ',
             f'> **Feature Freeze:** {"🔒 AKTIV" if status.get("feature_freeze") else "OFFEN"}  ',
             f'> **Reale Release-Gates:** **{passed}/{required} PASS**  ',
-            f'> **Release:** {"🟢 GO" if passed == required else "🔴 NO-GO"}  ',
+            f'> **Release:** {"🟢 GO" if status.get("release_status") == "GO" else "🔴 NO-GO"}  ',
             "> **Wahrheitsquelle:** registry/VERSION.json + registry/PROJECT_STATUS.json + reale Gate-Evidence",
             "",
             "| Gate | Prüfung | Zustand |",
