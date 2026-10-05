@@ -50,3 +50,14 @@ Aktuell ist ausschließlich Gate 05 real bestanden. Gate 01 ist nur PRECHECK_PAS
 Der Hauptzweig `main` war bei der Konsolidierung nicht als geschützt gemeldet. Vor V1.0 RC soll GitHub so konfiguriert werden, dass Änderungen an `main` nur über Pull Requests mit erfolgreicher `quality`-Prüfung übernommen werden.
 
 Diese Repository-Einstellung ist kein Produktcode und wird nicht durch Release-Evidence ersetzt.
+
+
+## Freeze-Status
+
+**FROZEN seit 2026-10-05.**
+
+Ausgangsstand: `main@6064adffc9201181d9b9b847056db2274f1d7a17`.
+
+Bis zum Abschluss der sieben realen Release-Gates werden keine weiteren kosmetischen oder optionalen Repository-/CI-Verbesserungen begonnen. Zulässig bleiben nur reale Gate-Evidence, zwingende Gate-Unterstützung, kritische Gate-Blocker-Korrekturen und daraus notwendige Status-Synchronisation.
+
+Der Freeze endet erst bei **7/7 realen Gates PASS** und Freigabe von V1.0 RC durch den kanonischen Evaluator.

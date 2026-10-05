@@ -98,5 +98,31 @@
     "registry/evidence/v0.12.2/gates/*.json",
     "registry/evidence/v0.12.2/MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json"
   ],
-  "real_acceptance_boundary": "NO_SIMULATION_OR_SOURCE_CHECK_MAY_PROMOTE_A_REAL_GATE_TO_PASS"
+  "real_acceptance_boundary": "NO_SIMULATION_OR_SOURCE_CHECK_MAY_PROMOTE_A_REAL_GATE_TO_PASS",
+  "release_state_ci_freeze": {
+    "enabled": true,
+    "frozen_at": "2026-10-05",
+    "frozen_from_main_sha": "6064adffc9201181d9b9b847056db2274f1d7a17",
+    "scope": [
+      "release-state consolidation",
+      "CI structure and workflow cosmetics",
+      "repository documentation cosmetics",
+      "non-required repository cleanup"
+    ],
+    "allowed_before_thaw": [
+      "real release-gate evidence",
+      "changes strictly required to execute or record a real release gate",
+      "critical correctness or security fixes that block a release gate",
+      "mandatory status synchronization caused by new real gate evidence"
+    ],
+    "prohibited_before_thaw": [
+      "new features",
+      "cosmetic repository cleanup",
+      "optional CI refactoring",
+      "documentation restructuring without gate necessity",
+      "unrelated code refactoring"
+    ],
+    "thaw_condition": "All 7 canonical real release gates are PASS and the canonical evaluator allows V1.0 RC.",
+    "state": "FROZEN"
+  }
 }

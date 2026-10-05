@@ -140,3 +140,29 @@ Dieser globale Kern gilt zusätzlich zu den projektspezifischen Regeln. Bei Sich
 - **Sichtbarer Fortschritt:** Längere Prüfungen mit Schritt, Fortschritt, Ergebnis und Ampelstatus darstellen.
 
 Leitsatz: **Kein Agent muss sich erinnern. Kein Agent darf raten. Keine Änderung verliert ihren Ursprung. Kein PASS existiert ohne Evidence.**
+
+
+---
+
+## RELEASE-STATE / CI FREEZE · 2026-10-05
+
+Der Konsolidierungs- und CI-Bereich ist ab `main@6064adffc9201181d9b9b847056db2274f1d7a17` **FROZEN**.
+
+Bis zur Freigabe von V1.0 RC gilt:
+
+- keine weitere Repository-Kosmetik,
+- keine optionale CI-Umstrukturierung,
+- keine Dokumentations-Neuordnung ohne Gate-Bezug,
+- keine neuen Funktionen,
+- keine unabhängigen Refactorings.
+
+Erlaubt sind ausschließlich:
+
+1. reale Release-Gate-Evidence,
+2. Änderungen, die zwingend zum Ausführen oder Dokumentieren eines realen Gates nötig sind,
+3. kritische Fehler- oder Sicherheitskorrekturen, die ein Gate blockieren,
+4. notwendige Status-Synchronisation nach neuer realer Evidence.
+
+**Auftauen:** erst wenn alle sieben kanonischen realen Release-Gates `PASS` sind und der kanonische Evaluator V1.0 RC erlaubt.
+
+Neue Ideen werden bis dahin ausschließlich in die Next Queue eingeordnet und nicht umgesetzt.
