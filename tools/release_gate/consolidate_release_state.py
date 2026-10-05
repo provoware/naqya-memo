@@ -169,6 +169,15 @@ def validate(check_docs: bool = True) -> tuple[list[str], str]:
     if bool(status.get("v1_rc_allowed")) != should_go:
         errors.append("v1_rc_allowed widerspricht realer Gate-Evidence.")
 
+    freeze = status.get("release_state_ci_freeze", {})
+    if not should_go:
+        if freeze.get("enabled") is not True or freeze.get("state") != "FROZEN":
+            errors.append(
+                "Release-State/CI-Freeze muss bis 7/7 realen Gates und V1.0-RC-Freigabe aktiv bleiben."
+            )
+        if not freeze.get("thaw_condition"):
+            errors.append("Release-State/CI-Freeze besitzt keine dokumentierte Auftau-Bedingung.")
+
     current_steps = " ".join(
         [str(status.get("next_step", "")), str(status.get("next_next_step", ""))]
     )
