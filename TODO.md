@@ -1,4 +1,30 @@
-# ✅ NAQYA v0.3.16 · PRE-AUTOSAVE R3 – STATUS
+<!-- NAQYA_RELEASE_STATE:START -->
+# 🚦 NAQYA · KANONISCHER RELEASE-STAND
+
+> **Version:** 0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE  
+> **Feature Freeze:** 🔒 AKTIV  
+> **Reale Release-Gates:** **1/7 PASS**  
+> **Release:** 🔴 NO-GO  
+> **Wahrheitsquelle:** registry/VERSION.json + registry/PROJECT_STATUS.json + reale Gate-Evidence
+
+| Gate | Prüfung | Zustand |
+|---|---|---|
+| GATE_01_8H_SOAK | 8-Stunden-Dauertest | 🟡 PRECHECK_PASS |
+| GATE_02_CHROMIUM | Chromium reale Browser-Abnahme | 🟡 BLOCKED |
+| GATE_03_FIREFOX | Firefox reale Browser-Abnahme | 🟡 BLOCKED |
+| GATE_04_LINUX_MICROPHONE | Linux reales Mikrofon | 🟡 BLOCKED |
+| GATE_05_STORAGE_FAILURE | Linux Speicherfehler/Recovery | 🟢 PASS |
+| GATE_06_ANDROID_DEVICE | Android APK + echtes Gerät | 🟡 BLOCKED |
+| GATE_07_IOS_IPHONE_X | iPhone X / iOS 16.7.16 | 🟡 BLOCKED |
+
+**Regel:** Automatische Tests, Simulationen und Quellcode-Prüfungen ersetzen keine reale Evidence.
+
+**Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
+<!-- NAQYA_RELEASE_STATE:END -->
+
+---
+
+# 📚 HISTORISCHER STAND · NAQYA v0.3.16 · PRE-AUTOSAVE R3
 
 - [x] r3-Plan eingefroren: `NAQYA-PRE-AUTOSAVE-ACCEPTANCE-v0.3.16-r3`
 - [x] Quell-Head `dfa68c478ea3edd4465760e85013196f619e06d1` vollständig geprüft
@@ -11,15 +37,17 @@
 - [x] PRE-AUTOSAVE als **gate-lokale Voraussetzung** bewiesen
 - [ ] SAFE AUTOSAVE implementieren – **blockiert**, solange der kanonische Evaluator `NO-GO` meldet
 - [ ] Dokumentations-Head erneut vollständig durch `quality` + Linux/Windows/macOS/Firefox + Evidence-Merge prüfen
-- [ ] PR #100 nach vollständig grünem Dokumentations-Head als überholt schließen
-- [ ] PR #102 nur bei vollständig grüner finaler CI und bereinigten Review-Blockern mergen
+- [x] PR #100 als überholt geschlossen (nicht gemergt)
+- [x] PR #102 mit grüner finaler CI gemergt
 
 > Kanonischer Repository-Status: **NO-GO**, Exit-Code `2`, weiterhin 1/7 reale Release-Gates. PRE-AUTOSAVE PASS hebt diesen Status nicht auf.
 
 ---
 
 # ✅ **TODO – OI - PROVOWARE - IO**
-## **Priorisierte Entwicklungsroadmap**
+## **Historische Entwicklungsroadmap / Funktionsinventar**
+
+> Hinweis: Die folgenden Versionsabschnitte dokumentieren den Entwicklungsweg. Für den aktuellen Freigabestatus gelten ausschließlich der kanonische Release-Block oben und registry/PROJECT_STATUS.json.
 
 > Legende: 🔴 P0 kritisch · 🟠 P1 sehr wichtig · 🟡 P2 wichtig · 🔵 P3 Ausbau  
 > Regel: Ein Punkt ist erst **[x]**, wenn Implementierung **und Evidence** vorhanden sind.
