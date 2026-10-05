@@ -1,6 +1,8 @@
 # 🚀 **UPGRADE_POTENZIAL.md**
 ## Erweiterungs-, Verbesserungs- und Robustheitspool
 
+> **ID-Regel:** Jede numerische UP-Kennung ist eindeutig. Neue Punkte erhalten eine neue Nummer; bestehende Nummern werden nicht wiederverwendet.
+
 | ID | Priorität | Vorschlag | Grund | Wirkung | Status |
 |---|---|---|---|---|---|
 | UP-001 | P1 | Portables Export-/Import-Bundle mit Manifest | Umzüge zwischen Geräten | hohe Datenportabilität | OFFEN |
@@ -39,28 +41,28 @@
 | UP-031 | P2 | Projektordner-Umzug mit Dry-Run | Portabilität | weniger Pfadfehler | OFFEN |
 | UP-032 | P2 | Settings-Import/Export mit Schema | Gerätewechsel | komfortable Übernahme | OFFEN |
 
-| UP-028 | P1 | visuelle Regression mit Pixel-/Layout-Toleranzen | UI-Drift | stabilere Releases | V0.7+ |
-| UP-029 | P1 | echte Screenreader-Acceptance auf Zielplattformen | A11y | belastbare Freigabe | OFFEN |
-| UP-030 | P2 | adaptive Informationsdichte je Displayklasse | weniger Überladung | bessere Nutzbarkeit | OFFEN |
-| UP-031 | P2 | Tooltip-Popover mit Kollisionsvermeidung | Hilfe verdeckt keine Controls | bessere Laienführung | OFFEN |
+| UP-045 | P1 | visuelle Regression mit Pixel-/Layout-Toleranzen | UI-Drift | stabilere Releases | V0.7+ |
+| UP-046 | P1 | echte Screenreader-Acceptance auf Zielplattformen | A11y | belastbare Freigabe | OFFEN |
+| UP-047 | P2 | adaptive Informationsdichte je Displayklasse | weniger Überladung | bessere Nutzbarkeit | OFFEN |
+| UP-048 | P2 | Tooltip-Popover mit Kollisionsvermeidung | Hilfe verdeckt keine Controls | bessere Laienführung | OFFEN |
 
-| UP-028 | P1 | echter Browser-E2E Runner Firefox/Chromium | UI-Regressionsschutz | hohe Sicherheit | V0.8 |
-| UP-029 | P1 | Edit-Dialoge für Memo/Todo/Termin | vollständiges CRUD | hoher Nutzwert | V0.8 |
-| UP-030 | P1 | interaktive Monatskalender-Tagesfärbung | Kernanforderung | direkter Kalenderworkflow | V0.8 |
-| UP-031 | P2 | Diagnosepaket mit Privacy-Vorschau vor Share | Support/Datenschutz | sicherere Hilfe | V0.8 |
+| UP-049 | P1 | echter Browser-E2E Runner Firefox/Chromium | UI-Regressionsschutz | hohe Sicherheit | V0.8 |
+| UP-050 | P1 | Edit-Dialoge für Memo/Todo/Termin | vollständiges CRUD | hoher Nutzwert | V0.8 |
+| UP-051 | P1 | interaktive Monatskalender-Tagesfärbung | Kernanforderung | direkter Kalenderworkflow | V0.8 |
+| UP-052 | P2 | Diagnosepaket mit Privacy-Vorschau vor Share | Support/Datenschutz | sicherere Hilfe | V0.8 |
 
-| UP-032 | P1 | Audio-Geräteauswahl per FFmpeg/PipeWire-Discovery | reales Mikrofon auswählen | weniger Startfehler | V0.12/1.0 |
+| UP-053 | P1 | Audio-Geräteauswahl per FFmpeg/PipeWire-Discovery | reales Mikrofon auswählen | weniger Startfehler | V0.12/1.0 |
 | UP-033 | P1 | PDF Annotation als separate Sidecar-Datei | PDF nicht destruktiv ändern | sichere Bearbeitung | OFFEN |
 | UP-034 | P2 | DOCX formatbewusster Editor-Adapter | Office-Dokumente | verhindert Dateikorruption | PRÜFEN |
 | UP-035 | P1 | Android/iOS native CI Runner | Packaging-Evidence | echte Mobile-Freigabe | OFFEN |
 
-| UP-032 | P0 | automatisierter 8h-Nightly-Soak | echte Endurance-Evidence | verhindert schleichende Leaks/Races | OFFEN |
-| UP-033 | P0 | Self-hosted Firefox/Chromium UI Runner | Visual/A11y Release-Gate | reproduzierbare Browser-Evidence | OFFEN |
-| UP-034 | P0 | Android/iOS Device Farm | native Permission/Reminder/Mic Evidence | schließt Mobile-Gate | OFFEN |
-| UP-035 | P1 | Loop-/Mounted-Volume Failure Runner | echte ENOSPC/Read-only Tests | stärkt Storage-Recovery | OFFEN |
+| UP-054 | P0 | automatisierter 8h-Nightly-Soak | echte Endurance-Evidence | verhindert schleichende Leaks/Races | OFFEN |
+| UP-055 | P0 | Self-hosted Firefox/Chromium UI Runner | Visual/A11y Release-Gate | reproduzierbare Browser-Evidence | OFFEN |
+| UP-056 | P0 | Android/iOS Device Farm | native Permission/Reminder/Mic Evidence | schließt Mobile-Gate | OFFEN |
+| UP-057 | P1 | Loop-/Mounted-Volume Failure Runner | echte ENOSPC/Read-only Tests | stärkt Storage-Recovery | OFFEN |
 
-| UP-032 | Post-V1 | Device-Farm-Runner Android+iOS | reproduzierbare native Evidence | Release-Automatisierung | FEATURE-FREEZE: PARKEN |
-| UP-033 | Post-V1 | Browser-Matrix als CI-Runner | Chromium/Firefox reproduzierbar | A11y/Responsive Sicherheit | FEATURE-FREEZE: PARKEN |
+| UP-058 | Post-V1 | Device-Farm-Runner Android+iOS | reproduzierbare native Evidence | Release-Automatisierung | FEATURE-FREEZE: PARKEN |
+| UP-059 | Post-V1 | Browser-Matrix als CI-Runner | Chromium/Firefox reproduzierbar | A11y/Responsive Sicherheit | FEATURE-FREEZE: PARKEN |
 | UP-040 | P0 | gemeinsame maschinenlesbare Domain-Contracts für Python + Mobile-Codegen | verhindert Doppelimplementierungsdrift | höhere Cross-Platform-Sicherheit | OFFEN |
 | UP-041 | P0 | native inkrementelle Binär-Asset-Backupgenerationen Android/iOS | schließt Mobile-Recovery-Paritätslücke | V1.0 Datensicherheit | OFFEN |
 | UP-042 | P1 | optional verschlüsselter Mobile Vault über Android Keystore / iOS Keychain | echte Vertraulichkeit zusätzlich zum PIN | Datenschutz | SPÄTER |
