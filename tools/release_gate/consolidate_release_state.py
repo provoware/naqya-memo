@@ -102,6 +102,24 @@ def replace_block(text: str, block: str) -> str:
     return block + "\n\n---\n\n" + text.lstrip()
 
 
+def validate_workflow_pins(errors: list[str]) -> None:
+    workflow_dir = ROOT / ".github" / "workflows"
+    floating = []
+    pattern = re.compile(r"^\\s*uses:\\s*([^\\s#]+)@([^\\s#]+)")
+    for path in sorted(workflow_dir.glob("*.yml")):
+        for no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+            match = pattern.match(line)
+            if not match:
+                continue
+            action, ref = match.groups()
+            if action.startswith("./"):
+                continue
+            if not re.fullmatch(r"[0-9a-fA-F]{40}", ref):
+                floating.append(f"{path.name}:{no} {action}@{ref}")
+    if floating:
+        errors.append("Nicht unveränderlich gepinnte Workflow-Aktionen: " + "; ".join(floating))
+
+
 def validate_upgrade_ids(errors: list[str]) -> None:
     ids = re.findall(r"^\|\s*(UP-\d{3})\s*\|", UPGRADE.read_text(encoding="utf-8"), flags=re.M)
     duplicates = sorted({item for item in ids if ids.count(item) > 1})
@@ -158,6 +176,7 @@ def validate(check_docs: bool = True) -> tuple[list[str], str]:
         if stale in current_steps:
             errors.append(f"Aktueller nächster Schritt enthält veraltete Referenz {stale}.")
 
+    validate_workflow_pins(errors)
     validate_upgrade_ids(errors)
 
     block = render_block(version, status, gates)
