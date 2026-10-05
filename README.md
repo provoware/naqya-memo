@@ -1,4 +1,30 @@
-# ✅ NAQYA v0.3.16 · PRE-AUTOSAVE R3 EVIDENCE
+<!-- NAQYA_RELEASE_STATE:START -->
+# 🚦 NAQYA · KANONISCHER RELEASE-STAND
+
+> **Version:** 0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE  
+> **Feature Freeze:** 🔒 AKTIV  
+> **Reale Release-Gates:** **1/7 PASS**  
+> **Release:** 🔴 NO-GO  
+> **Wahrheitsquelle:** registry/VERSION.json + registry/PROJECT_STATUS.json + reale Gate-Evidence
+
+| Gate | Prüfung | Zustand |
+|---|---|---|
+| GATE_01_8H_SOAK | 8-Stunden-Dauertest | 🟡 PRECHECK_PASS |
+| GATE_02_CHROMIUM | Chromium reale Browser-Abnahme | 🟡 BLOCKED |
+| GATE_03_FIREFOX | Firefox reale Browser-Abnahme | 🟡 BLOCKED |
+| GATE_04_LINUX_MICROPHONE | Linux reales Mikrofon | 🟡 BLOCKED |
+| GATE_05_STORAGE_FAILURE | Linux Speicherfehler/Recovery | 🟢 PASS |
+| GATE_06_ANDROID_DEVICE | Android APK + echtes Gerät | 🟡 BLOCKED |
+| GATE_07_IOS_IPHONE_X | iPhone X / iOS 16.7.16 | 🟡 BLOCKED |
+
+**Regel:** Automatische Tests, Simulationen und Quellcode-Prüfungen ersetzen keine reale Evidence.
+
+**Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
+<!-- NAQYA_RELEASE_STATE:END -->
+
+---
+
+# 📚 HISTORISCHE EVIDENCE · NAQYA v0.3.16 · PRE-AUTOSAVE R3
 
 > **PR:** #102  
 > **Bewiesener Quell-Head:** `dfa68c478ea3edd4465760e85013196f619e06d1`  
