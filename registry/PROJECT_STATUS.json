@@ -30,7 +30,7 @@
   },
   "next_step": "Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.",
   "next_next_step": "V1.0 RC erst nach 7/7 PASS im kanonischen Evaluator und PASS der Mobile-Runtime-Quelle; automatische oder simulierte Prüfungen dürfen reale Gates nicht hochstufen.",
-  "last_updated": "2026-10-05",
+  "last_updated": "2026-10-24",
   "startup_port_guard": "PASS",
   "startup_collision_policy": "REUSE_SAME_VERSION_SAME_PROJECT_ELSE_SAFE_FALLBACK_NO_AUTO_KILL",
   "release_ui_consistency": "PASS",
@@ -124,5 +124,12 @@
     ],
     "thaw_condition": "All 7 canonical real release gates are PASS and the canonical evaluator allows V1.0 RC.",
     "state": "FROZEN"
+  },
+  "workflow_pin_guard_20261024": {
+    "finding": "CONFIRMED_UNPINNED_ACTIONS_NOT_DETECTED_BY_REGEX",
+    "fix_branch": "fix/release-gate-workflow-pin-guard-20261024",
+    "regression_tests": 5,
+    "verification": "GITHUB_CI_PENDING",
+    "release_gate_effect": "NONE_1_OF_7_NO_GO"
   }
 }
