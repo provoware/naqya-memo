@@ -22,6 +22,13 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Sicherheits-Gate: Actions-Referenzen (24.10.2026)
+- [x] Fehler reproduziert: doppelt maskiertes `\s` übersprang echte `uses:`-Zeilen.
+- [x] Erkennung im Entwicklungszweig korrigiert und fünf Regressionstests ergänzt.
+- [ ] Neue Tests im GitHub-Qualitätslauf auf dem exakten PR-Head bestätigen.
+- [ ] Nach grünem Gate und geprüftem Merge die Release-Pflichtmatrix aktualisieren; keine vorgezogene Endabnahme.
+
+
 ---
 
 # 📚 HISTORISCHER STAND · NAQYA v0.3.16 · PRE-AUTOSAVE R3
