@@ -1,8 +1,8 @@
-## [RELEASE-WORKFLOW-PIN-GUARD] – 2026-10-24 · Entwicklungszweig / CI offen
+## [RELEASE-WORKFLOW-PIN-GUARD] – 2026-10-24 · Entwicklungszweig / CI PASS
 - Sicherheitsrelevante Fehlfunktion in `validate_workflow_pins`: der bisherige Ausdruck erkannte eingerückte `uses:`-Zeilen nicht und konnte veränderliche Actions-Referenzen nicht beanstanden.
 - Regulären Ausdruck für eingerückte, Listen- und zitierte Actions-Referenzen korrigiert.
 - Fünf Regressionstests ergänzt und verbindlich in `quality.yml` eingebunden.
-- Vor GitHub-CI-Ergebnis **kein PASS**, keine Änderung an den sieben realen Release-Gates, keine Veröffentlichung.
+- GitHub-Qualitätslauf `40036550235` auf Prüf-Head `27f1c9319c7f2830444e084e86f8ce9ec7693071`: **PASS**; keine Änderung an den sieben realen Release-Gates, keine Veröffentlichung.
 
 ---
 
