@@ -25,7 +25,7 @@
 ### 🔐 Sicherheits-Gate: Actions-Referenzen (24.10.2026)
 - [x] Fehler reproduziert: doppelt maskiertes `\s` übersprang echte `uses:`-Zeilen.
 - [x] Erkennung im Entwicklungszweig korrigiert und fünf Regressionstests ergänzt.
-- [ ] Neue Tests im GitHub-Qualitätslauf auf dem exakten PR-Head bestätigen.
+- [x] Neue Tests im GitHub-Qualitätslauf `40036550235` auf Prüf-Head `27f1c9319c7f2830444e084e86f8ce9ec7693071` bestätigt.
 - [ ] Nach grünem Gate und geprüftem Merge die Release-Pflichtmatrix aktualisieren; keine vorgezogene Endabnahme.
 
 
