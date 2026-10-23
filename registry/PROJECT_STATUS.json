@@ -129,7 +129,7 @@
     "finding": "CONFIRMED_UNPINNED_ACTIONS_NOT_DETECTED_BY_REGEX",
     "fix_branch": "fix/release-gate-workflow-pin-guard-20261024",
     "regression_tests": 5,
-    "verification": "GITHUB_CI_PENDING",
+    "verification": "PASS_GITHUB_QUALITY_RUN_40036550235_HEAD_27f1c9319c7f2830444e084e86f8ce9ec7693071",
     "release_gate_effect": "NONE_1_OF_7_NO_GO"
   }
 }
