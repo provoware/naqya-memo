@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Release-Gate-Sicherheitskorrektur · 24.10.2026 (PR-Prüfung offen)
+Die Kontrolle unveränderlich gepinnter GitHub-Actions-Verweise wurde durch einen falsch maskierten regulären Ausdruck bisher nicht wirksam ausgeführt. Der Entwicklungszweig `fix/release-gate-workflow-pin-guard-20261024` korrigiert die Erkennung von `uses:` (auch Listen- und Anführungszeichenformen) und ergänzt fünf Regressionstests. **Die GitHub-Gesamtprüfung muss noch grün nachgewiesen werden; reale Release-Gates bleiben 1/7 PASS, NO-GO.**
+
+
 ---
 
 # 📚 HISTORISCHE EVIDENCE · NAQYA v0.3.16 · PRE-AUTOSAVE R3
