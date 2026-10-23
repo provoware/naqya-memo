@@ -1,3 +1,11 @@
+## [RELEASE-WORKFLOW-PIN-GUARD] – 2026-10-24 · Entwicklungszweig / CI offen
+- Sicherheitsrelevante Fehlfunktion in `validate_workflow_pins`: der bisherige Ausdruck erkannte eingerückte `uses:`-Zeilen nicht und konnte veränderliche Actions-Referenzen nicht beanstanden.
+- Regulären Ausdruck für eingerückte, Listen- und zitierte Actions-Referenzen korrigiert.
+- Fünf Regressionstests ergänzt und verbindlich in `quality.yml` eingebunden.
+- Vor GitHub-CI-Ergebnis **kein PASS**, keine Änderung an den sieben realen Release-Gates, keine Veröffentlichung.
+
+---
+
 # 🧾 CHANGELOG
 
 ## [NAQYA-v0.3.16-PRE-AUTOSAVE-R3-EVIDENCE] – 2026-09-03
