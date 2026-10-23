@@ -105,7 +105,7 @@ def replace_block(text: str, block: str) -> str:
 def validate_workflow_pins(errors: list[str]) -> None:
     workflow_dir = ROOT / ".github" / "workflows"
     floating = []
-    pattern = re.compile(r"^\\s*uses:\\s*([^\\s#]+)@([^\\s#]+)")
+    pattern = re.compile(r"""^\s*(?:-\s*)?uses:\s*['"]?([^\s'"#]+)@([^\s'"#]+)""")
     for path in sorted(workflow_dir.glob("*.yml")):
         for no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             match = pattern.match(line)
