@@ -14,12 +14,12 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
 
-def check_workflow(source):
+def check_workflow(source, filename="quality.yml"):
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
         workflows = root / ".github" / "workflows"
         workflows.mkdir(parents=True)
-        (workflows / "quality.yml").write_text(source, encoding="utf-8")
+        (workflows / filename).write_text(source, encoding="utf-8")
         errors = []
         with patch.object(module, "ROOT", root):
             module.validate_workflow_pins(errors)
@@ -52,6 +52,23 @@ class WorkflowActionPinTests(unittest.TestCase):
             "    - uses: ./local-action\n"
         )
         self.assertEqual(check_workflow(source), [])
+
+    def test_yaml_suffix_is_checked(self):
+        errors = check_workflow("    uses: actions/checkout@v4\n", filename="deploy.yaml")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("deploy.yaml:1", errors[0])
+
+    def test_missing_and_dynamic_refs_fail_closed(self):
+        for value in ("actions/checkout", "docker://alpine:3.18", "''",
+                      "actions/checkout@${{ github.ref }}"):
+            with self.subTest(value=value):
+                errors = check_workflow(f"    uses: {value}\n")
+                self.assertEqual(len(errors), 1)
+
+    def test_quoted_local_action_with_comment_is_allowed(self):
+        self.assertEqual(
+            check_workflow('    uses: "./.github/actions/local" # local\n'), []
+        )
 
     def test_comment_is_not_mistaken_for_action(self):
         self.assertEqual(
