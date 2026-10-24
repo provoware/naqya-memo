@@ -1,3 +1,9 @@
+## [RELEASE-WORKFLOW-PIN-GUARD-FOLLOWUP] – 2026-10-24 · CI PENDING
+- Sicherheitslücke: `.yaml`-Workflows und externe `uses:`-Zeilen ohne `@ref` entgingen der bisherigen Prüfung.
+- Erkennung auf beide Workflow-Endungen erweitert und ungültige/fehlende Referenzen fail-closed abgewiesen.
+- Drei zusätzliche Regressionstests (insgesamt acht); finale GitHub-Prüfung auf neuem Head ausstehend.
+- Release-Gates unverändert 1/7 PASS, NO-GO, kein Merge/Release.
+
 ## [RELEASE-WORKFLOW-PIN-GUARD] – 2026-10-24 · Entwicklungszweig / CI PASS
 - Sicherheitsrelevante Fehlfunktion in `validate_workflow_pins`: der bisherige Ausdruck erkannte eingerückte `uses:`-Zeilen nicht und konnte veränderliche Actions-Referenzen nicht beanstanden.
 - Regulären Ausdruck für eingerückte, Listen- und zitierte Actions-Referenzen korrigiert.
