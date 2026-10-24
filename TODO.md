@@ -22,6 +22,22 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 PR #111 – ergänzter Sicherheits-Fix (24.10.2026)
+- [x] Umgehung durch `.yaml`-Dateien und `uses:` ohne `@ref` reproduziert.
+- [x] Beide Endungen und fehlende/dynamische Referenzen abgesichert.
+- [x] Drei zusätzliche Regressionstests auf Entwicklungszweig ergänzt (insgesamt acht).
+- [x] GitHub-CI auf Quell-HEAD c60f12ffbcb02ac0e9c736233e2c2ef96f1ce555: PASS (Lauf 40083337035).
+- [ ] Vor Merge immer CI auf dem aktuellsten PR-HEAD und die P0-Abhängigkeiten prüfen.
+- [ ] P0 #110 (Versionsherkunft) und #50 (Branch-Schutz) vor Integration klären.
+- [ ] Reale Gates 01–04 und 06–07 bleiben offen; keine Zwischenabnahme.
+
+### 🔐 Sicherheits-Gate: Actions-Referenzen (24.10.2026)
+- [x] Fehler reproduziert: doppelt maskiertes `\s` übersprang echte `uses:`-Zeilen.
+- [x] Erkennung im Entwicklungszweig korrigiert und fünf Regressionstests ergänzt.
+- [x] Neue Tests im GitHub-Qualitätslauf `40036550235` auf Prüf-Head `27f1c9319c7f2830444e084e86f8ce9ec7693071` bestätigt.
+- [ ] Nach grünem Gate und geprüftem Merge die Release-Pflichtmatrix aktualisieren; keine vorgezogene Endabnahme.
+
+
 ---
 
 # 📚 HISTORISCHER STAND · NAQYA v0.3.16 · PRE-AUTOSAVE R3

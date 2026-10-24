@@ -105,17 +105,22 @@ def replace_block(text: str, block: str) -> str:
 def validate_workflow_pins(errors: list[str]) -> None:
     workflow_dir = ROOT / ".github" / "workflows"
     floating = []
-    pattern = re.compile(r"^\\s*uses:\\s*([^\\s#]+)@([^\\s#]+)")
-    for path in sorted(workflow_dir.glob("*.yml")):
+    # Check both workflow suffixes and reject missing refs rather than ignoring them.
+    pattern = re.compile(r"^\s*(?:-\s*)?uses:\s*(.*?)\s*$")
+    paths = sorted((*workflow_dir.glob("*.yml"), *workflow_dir.glob("*.yaml")))
+    for path in paths:
         for no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             match = pattern.match(line)
             if not match:
                 continue
-            action, ref = match.groups()
-            if action.startswith("./"):
+            value = match.group(1).split(" #", 1)[0].strip()
+            if len(value) >= 2 and value[0] in ("'", '"') and value[-1] == value[0]:
+                value = value[1:-1].strip()
+            if value.startswith("./") and "@" not in value:
                 continue
-            if not re.fullmatch(r"[0-9a-fA-F]{40}", ref):
-                floating.append(f"{path.name}:{no} {action}@{ref}")
+            action, separator, ref = value.rpartition("@")
+            if not separator or not action or not re.fullmatch(r"[0-9a-fA-F]{40}", ref):
+                floating.append(f"{path.name}:{no} {value or '<leer>'}")
     if floating:
         errors.append("Nicht unveränderlich gepinnte Workflow-Aktionen: " + "; ".join(floating))
 

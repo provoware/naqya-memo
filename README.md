@@ -22,6 +22,13 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Erweiterter Actions-Pin-Schutz · 24.10.2026 (PR #111)
+Die Prüfung erfasst jetzt auch `.yaml` und lehnt externe `uses:` ohne unveränderlichen 40-stelligen Commit-Verweis ab. Drei neue Regressionstests ergänzen die fünf vorhandenen. Quelländerung auf HEAD `c60f12ffbcb02ac0e9c736233e2c2ef96f1ce555` im GitHub-Qualitätslauf `40083337035` **PASS**; der neueste PR-HEAD ist vor Merge erneut zu prüfen. Reale Gates unverändert **1/7, NO-GO**.
+
+### 🔐 Release-Gate-Sicherheitskorrektur · 24.10.2026 (GitHub-Prüfung PASS auf Prüf-Head)
+Die Kontrolle unveränderlich gepinnter GitHub-Actions-Verweise wurde durch einen falsch maskierten regulären Ausdruck bisher nicht wirksam ausgeführt. Der Entwicklungszweig `fix/release-gate-workflow-pin-guard-20261024` korrigiert die Erkennung von `uses:` (auch Listen- und Anführungszeichenformen) und ergänzt fünf Regressionstests. **GitHub-Qualitätslauf 40036550235: PASS (Prüf-Head `27f1c9319c7f2830444e084e86f8ce9ec7693071`); reale Release-Gates bleiben 1/7 PASS, NO-GO.**
+
+
 ---
 
 # 📚 HISTORISCHE EVIDENCE · NAQYA v0.3.16 · PRE-AUTOSAVE R3

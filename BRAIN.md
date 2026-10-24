@@ -16,6 +16,13 @@
 
 ---
 
+[2026-10-24] [BRAIN-0038] [WORKFLOW-PIN-GUARD] [REPRODUCED]
+- Befund: Die Pin-Prüfung übersah `*.yaml` sowie externe `uses:` ohne `@`.
+- Ursache: Unvollständige Dateiauswahl und ein Suchmuster, das fehlende Referenzen nicht meldete.
+- Schutzregel: Beide Workflow-Endungen prüfen; externe Actions ohne 40-stellige SHA abweisen, lokale `./`-Actions zulassen.
+- Regression: drei neue Fälle; GitHub-Qualitätslauf 40083337035 auf Quell-HEAD c60f12ffb02ac0e9c736233e2c2ef96f1ce555 PASS. Dokumentations-Commit separat zu prüfen.
+- Release-Gates: unverändert 1/7, NO-GO.
+
 [2026-09-03] [BRAIN-0036] [CI-HARNESS] [BEWIESEN]
 - Beobachtung: Firefox, ES-Module und IndexedDB waren im Runner funktionsfähig, während der Acceptance-Harness trotzdem ohne Phase-Ergebnis hing.
 - Ursache: Der Fehler lag im eingefrorenen Acceptance-/CI-Harness und nicht im Produktcode; zusätzlich musste der Prozess-Kill-Nachweis so gehärtet werden, dass der Elternprozess einen noch lebenden Worker tatsächlich beendet.

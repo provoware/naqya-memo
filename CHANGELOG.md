@@ -1,3 +1,17 @@
+## [RELEASE-WORKFLOW-PIN-GUARD-FOLLOWUP] – 2026-10-24 · Source-CI PASS
+- Sicherheitslücke: `.yaml`-Workflows und externe `uses:`-Zeilen ohne `@ref` entgingen der bisherigen Prüfung.
+- Erkennung auf beide Workflow-Endungen erweitert und ungültige/fehlende Referenzen fail-closed abgewiesen.
+- Drei zusätzliche Regressionstests (insgesamt acht); GitHub-Qualitätslauf 40083337035 auf Source-HEAD c60f12ffbcb02ac0e9c736233e2c2ef96f1ce555: PASS. Dokumentations-Synchronisation danach separat zu prüfen.
+- Release-Gates unverändert 1/7 PASS, NO-GO, kein Merge/Release.
+
+## [RELEASE-WORKFLOW-PIN-GUARD] – 2026-10-24 · Entwicklungszweig / CI PASS
+- Sicherheitsrelevante Fehlfunktion in `validate_workflow_pins`: der bisherige Ausdruck erkannte eingerückte `uses:`-Zeilen nicht und konnte veränderliche Actions-Referenzen nicht beanstanden.
+- Regulären Ausdruck für eingerückte, Listen- und zitierte Actions-Referenzen korrigiert.
+- Fünf Regressionstests ergänzt und verbindlich in `quality.yml` eingebunden.
+- GitHub-Qualitätslauf `40036550235` auf Prüf-Head `27f1c9319c7f2830444e084e86f8ce9ec7693071`: **PASS**; keine Änderung an den sieben realen Release-Gates, keine Veröffentlichung.
+
+---
+
 # 🧾 CHANGELOG
 
 ## [NAQYA-v0.3.16-PRE-AUTOSAVE-R3-EVIDENCE] – 2026-09-03
