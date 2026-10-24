@@ -22,6 +22,14 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 PR #111 – ergänzter Sicherheits-Fix (24.10.2026)
+- [x] Umgehung durch `.yaml`-Dateien und `uses:` ohne `@ref` reproduziert.
+- [x] Beide Endungen und fehlende/dynamische Referenzen abgesichert.
+- [x] Drei zusätzliche Regressionstests auf Entwicklungszweig ergänzt (insgesamt acht).
+- [ ] Finale GitHub-CI auf dem neuen HEAD abwarten; nicht vorzeitig PASS behaupten.
+- [ ] P0 #110 (Versionsherkunft) und #50 (Branch-Schutz) vor Integration klären.
+- [ ] Reale Gates 01–04 und 06–07 bleiben offen; keine Zwischenabnahme.
+
 ### 🔐 Sicherheits-Gate: Actions-Referenzen (24.10.2026)
 - [x] Fehler reproduziert: doppelt maskiertes `\s` übersprang echte `uses:`-Zeilen.
 - [x] Erkennung im Entwicklungszweig korrigiert und fünf Regressionstests ergänzt.
