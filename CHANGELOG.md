@@ -1,7 +1,7 @@
-## [RELEASE-WORKFLOW-PIN-GUARD-FOLLOWUP] – 2026-10-24 · CI PENDING
+## [RELEASE-WORKFLOW-PIN-GUARD-FOLLOWUP] – 2026-10-24 · Source-CI PASS
 - Sicherheitslücke: `.yaml`-Workflows und externe `uses:`-Zeilen ohne `@ref` entgingen der bisherigen Prüfung.
 - Erkennung auf beide Workflow-Endungen erweitert und ungültige/fehlende Referenzen fail-closed abgewiesen.
-- Drei zusätzliche Regressionstests (insgesamt acht); finale GitHub-Prüfung auf neuem Head ausstehend.
+- Drei zusätzliche Regressionstests (insgesamt acht); GitHub-Qualitätslauf 40083337035 auf Source-HEAD c60f12ffbcb02ac0e9c736233e2c2ef96f1ce555: PASS. Dokumentations-Synchronisation danach separat zu prüfen.
 - Release-Gates unverändert 1/7 PASS, NO-GO, kein Merge/Release.
 
 ## [RELEASE-WORKFLOW-PIN-GUARD] – 2026-10-24 · Entwicklungszweig / CI PASS

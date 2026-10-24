@@ -26,7 +26,8 @@
 - [x] Umgehung durch `.yaml`-Dateien und `uses:` ohne `@ref` reproduziert.
 - [x] Beide Endungen und fehlende/dynamische Referenzen abgesichert.
 - [x] Drei zusätzliche Regressionstests auf Entwicklungszweig ergänzt (insgesamt acht).
-- [ ] Finale GitHub-CI auf dem neuen HEAD abwarten; nicht vorzeitig PASS behaupten.
+- [x] GitHub-CI auf Quell-HEAD c60f12ffbcb02ac0e9c736233e2c2ef96f1ce555: PASS (Lauf 40083337035).
+- [ ] Vor Merge immer CI auf dem aktuellsten PR-HEAD und die P0-Abhängigkeiten prüfen.
 - [ ] P0 #110 (Versionsherkunft) und #50 (Branch-Schutz) vor Integration klären.
 - [ ] Reale Gates 01–04 und 06–07 bleiben offen; keine Zwischenabnahme.
 

@@ -129,12 +129,14 @@
     "finding": "CONFIRMED_UNPINNED_ACTIONS_NOT_DETECTED_BY_REGEX",
     "fix_branch": "fix/release-gate-workflow-pin-guard-20261024",
     "regression_tests": 8,
-    "verification": "PENDING_FINAL_GITHUB_CI",
+    "verification": "PASS_GITHUB_QUALITY_RUN_40083337035_TESTED_SOURCE_HEAD_c60f12ffbcb02ac0e9c736233e2c2ef96f1ce555",
     "release_gate_effect": "NONE_1_OF_7_NO_GO",
     "additional_findings": [
       "YAML_SUFFIX_IGNORED",
       "MISSING_ACTION_REF_IGNORED"
     ],
-    "pr": 111
+    "pr": 111,
+    "tested_source_head": "c60f12ffbcb02ac0e9c736233e2c2ef96f1ce555",
+    "quality_run": 40083337035
   }
 }
