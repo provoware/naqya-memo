@@ -12,7 +12,10 @@ import argparse
 import json
 import re
 from pathlib import Path
+import sys
 
+# Auch bei dynamischem Import durch die bestehenden CI-Vertragstests erreichbar.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from evidence_contract import mobile_source_status, read_gate
 
 ROOT = Path(__file__).resolve().parents[2]
