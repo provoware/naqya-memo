@@ -65,6 +65,17 @@ class EvidenceIdentityTests(unittest.TestCase):
         path.write_text('["PASS"]')
         self.assertEqual(read_gate(self.root, "03", "FIREFOX")["status"], "INVALID_EVIDENCE")
 
+    def test_non_string_status_is_invalid_not_exception(self):
+        self.write_gate("03", "FIREFOX", ["PASS"])
+        self.assertEqual(read_gate(self.root, "03", "FIREFOX")["status"], "INVALID_EVIDENCE")
+
+    def test_non_finite_soak_duration_is_invalid(self):
+        self.write_gate(
+            "01", "8H_SOAK", "PASS", qualification="FULL_8H",
+            required_seconds=28800, executed_seconds=float("inf"), integrity="ok", errors=[]
+        )
+        self.assertEqual(read_gate(self.root, "01", "8H_SOAK")["status"], "INVALID_EVIDENCE")
+
     def test_symlink_evidence_is_invalid(self):
         target = self.root / "outside.json"
         target.write_text('{"gate":"GATE_05_STORAGE_FAILURE","status":"PASS"}')

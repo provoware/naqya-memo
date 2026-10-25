@@ -23,7 +23,7 @@
 <!-- NAQYA_RELEASE_STATE:END -->
 
 ### 🔐 Release-Evidence-Identität · 25.10.2026 (PR-Prüfung ausstehend)
-Der Release-Evaluator und die Statuskonsolidierung verwenden nun ausschließlich exakt benannte Gate-Dateien, prüfen Gate-Identität/JSON-Typ und verwerfen als PASS umetikettierte Kurztests. Ungültige oder verknüpfte Evidence bleibt `INVALID_EVIDENCE` statt GO. Synthetische Regressionstests prüfen nur diese Schutzlogik, **keine** reale Hardware. Die kanonischen realen Gates bleiben **1/7 PASS · NO-GO**; GitHub-CI für den neuen Zweig ist abzuwarten.
+Der Release-Evaluator und die Statuskonsolidierung verwenden nun ausschließlich exakt benannte Gate-Dateien, prüfen Gate-Identität/JSON-Typ und verwerfen als PASS umetikettierte Kurztests. Ungültige oder verknüpfte Evidence bleibt `INVALID_EVIDENCE` statt GO. Synthetische Regressionstests prüfen nur diese Schutzlogik, **keine** reale Hardware. Die kanonischen realen Gates bleiben **1/7 PASS · NO-GO**; Die erste GitHub-CI nach Importkorrektur bestand auf Code-HEAD `25aef6bb` (Lauf `40148667614`); die abschließende Dokumentations-/Grenzfallergänzung wird erneut geprüft.
 
 
 

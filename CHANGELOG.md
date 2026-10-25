@@ -1,9 +1,9 @@
-## [RELEASE-EVIDENCE-IDENTITY-GUARD] – 2026-10-25 · Entwicklungszweig / CI ausstehend
+## [RELEASE-EVIDENCE-IDENTITY-GUARD] – 2026-10-25 · Entwicklungszweig / Source-CI PASS
 - Release-Evaluator nutzte bislang `GATE_XX_*.json` mit lexikographisch letzter Datei; eine zusätzliche Datei konnte kanonische Evidence überdecken.
 - Gemeinsamer Evidence-Vertrag für Evaluator und Statuskonsolidierung: exakte Dateinamen, Gate-ID, JSON-Objekt und gültiger Status; ungültige oder symbolisch verknüpfte Dateien werden abgewiesen.
 - Achtstündiger Dauertest kann nicht allein durch `status=PASS` aus einem Kurztest hochgestuft werden; 8h-Dauer, FULL_8H, Integrität und fehlerfreier Lauf werden vorausgesetzt.
-- Acht synthetische Regressionstests einschließlich echter Evaluator-Ausführung in isoliertem Testverzeichnis in GitHub-Quality-Gate eingebunden.
-- Reale Release-Gates unverändert 1/7 PASS, NO-GO. Diese Quellprüfung ersetzt keine reale Abnahme.
+- Zehn synthetische Regressionstests einschließlich echter Evaluator-Ausführung in isoliertem Testverzeichnis in GitHub-Quality-Gate eingebunden.
+- Source-CI auf Code-HEAD 25aef6bb: PASS (Lauf 40148667614); finaler Ergänzungs-HEAD erneut zu prüfen. Reale Release-Gates unverändert 1/7 PASS, NO-GO. Diese Quellprüfung ersetzt keine reale Abnahme.
 
 ## [RELEASE-WORKFLOW-PIN-GUARD-FOLLOWUP] – 2026-10-24 · Source-CI PASS
 - Sicherheitslücke: `.yaml`-Workflows und externe `uses:`-Zeilen ohne `@ref` entgingen der bisherigen Prüfung.

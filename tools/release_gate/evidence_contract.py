@@ -6,6 +6,7 @@ Eine lokale JSON-Datei ist allein kein unabhängiger Geräte-Nachweis.
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 GATES = (
@@ -44,7 +45,7 @@ def read_gate(root: Path, number: str, name: str) -> dict:
         return _invalid(gate, "NOT_A_JSON_OBJECT")
     if data.get("gate") != gate:
         return _invalid(gate, "GATE_ID_MISMATCH")
-    if data.get("status") not in STATUSES:
+    if not isinstance(data.get("status"), str) or data["status"] not in STATUSES:
         return _invalid(gate, "UNKNOWN_STATUS")
 
     # Ein fünfsekündiger Preflight darf auch bei manipuliertem Status nie
@@ -55,6 +56,7 @@ def read_gate(root: Path, number: str, name: str) -> dict:
         valid_time = all(
             isinstance(value, (int, float)) and not isinstance(value, bool)
             and value >= 8 * 60 * 60
+            and (not isinstance(value, float) or math.isfinite(value))
             for value in (required, executed)
         )
         if not (
