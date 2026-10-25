@@ -30,7 +30,7 @@
   },
   "next_step": "Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.",
   "next_next_step": "V1.0 RC erst nach 7/7 PASS im kanonischen Evaluator und PASS der Mobile-Runtime-Quelle; automatische oder simulierte Prüfungen dürfen reale Gates nicht hochstufen.",
-  "last_updated": "2026-10-24",
+  "last_updated": "2026-10-25",
   "startup_port_guard": "PASS",
   "startup_collision_policy": "REUSE_SAME_VERSION_SAME_PROJECT_ELSE_SAFE_FALLBACK_NO_AUTO_KILL",
   "release_ui_consistency": "PASS",
@@ -138,5 +138,19 @@
     "pr": 111,
     "tested_source_head": "c60f12ffbcb02ac0e9c736233e2c2ef96f1ce555",
     "quality_run": 40083337035
+  },
+  "release_evidence_identity_guard_20261025": {
+    "scope": "CANONICAL_EVIDENCE_IDENTITY_AND_8H_DURATION_GUARD",
+    "branch": "fix/release-evidence-identity-guard-20261025",
+    "baseline_main_sha": "e7e9ab16be3f8154286e161171907de245f2c3b2",
+    "implementation": "IMPLEMENTED_ON_DEV_BRANCH_CI_PENDING",
+    "synthetic_regressions": 8,
+    "source_of_truth": "tools/release_gate/evidence_contract.py",
+    "real_gate_effect": "NONE_1_OF_7_NO_GO",
+    "open_dependencies": [
+      "ISSUE_50_BRANCH_PROTECTION",
+      "ISSUE_110_LINEAGE",
+      "REAL_GATES_01_02_03_04_06_07"
+    ]
   }
 }

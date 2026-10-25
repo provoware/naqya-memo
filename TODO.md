@@ -22,6 +22,28 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Release-Evidence-Identität · 25.10.2026 (PR-Prüfung ausstehend)
+Der Release-Evaluator und die Statuskonsolidierung verwenden nun ausschließlich exakt benannte Gate-Dateien, prüfen Gate-Identität/JSON-Typ und verwerfen als PASS umetikettierte Kurztests. Ungültige oder verknüpfte Evidence bleibt `INVALID_EVIDENCE` statt GO. Synthetische Regressionstests prüfen nur diese Schutzlogik, **keine** reale Hardware. Die kanonischen realen Gates bleiben **1/7 PASS · NO-GO**; GitHub-CI für den neuen Zweig ist abzuwarten.
+
+### 📋 Release-Pflichtmatrix · Stand 25.10.2026 (nur belegte Zustände)
+
+| Pflichtbereich | Evidenz / Ist | Offene Prüfung | Zustand |
+|---|---|---|---|
+| Fachfunktionen und Grenzfälle | Historische Domain-/Service-Tests in `core/reference_python/tests/` | Gesamtabnahme am aktuellen Produktstand | OFFEN |
+| Datenverlustschutz und Wiederherstellung | Gate 05 `PASS`, `registry/evidence/v0.12.2/gates/` | Mehrplattform- und Langzeit-Wiederherstellung | TEILBELEGT |
+| Fehlerbehandlung und Sicherheit | Neue Gate-Identitätskontrolle auf Entwicklungszweig | CI auf finalem PR-HEAD; Issue #50 Branch-Schutz | IN PR / OFFEN |
+| Design, Lesbarkeit, 800×600 und 200 % | UI-Verträge dokumentiert | Echte Screenshots, Zoom und Kontrast in Chromium/Firefox | BLOCKED |
+| Tastatur und Barrierefreiheit | Statische UI-Verträge vorhanden | Reale Browser-/Screenreader-Interaktion | BLOCKED |
+| Leistung und Dauerbetrieb | Gate 01 `PRECHECK_PASS` (5 Sekunden) | 8 Stunden realer Lauf, Ressourcenmessung | BLOCKED |
+| Wartbarkeit und Quellcode-Regression | `quality` auf `main@e7e9ab16` grün | CI auf diesem Entwicklungszweig | TEILBELEGT |
+| Paketierung und Installation | Linux-Paket und Mobile-Quellen im Repository | APK/iOS-Build, Installation auf echten Geräten | BLOCKED |
+| Integration und GUI/Browser | Gate 02/03 dokumentiert `BLOCKED` | Echte Chromium-/Firefox-Abnahme | BLOCKED |
+| Dokumentation und Release | `registry/PROJECT_STATUS.json`, Evaluator, README | Issue #110 Lineage; sieben echte Gates; Freeze | NO-GO |
+
+**Wirkungsgrenze:** Code-/JSON-Tests erzeugen keine reale Gate-Evidence. Kein Merge/Release ohne grüne vorgeschriebene Prüfungen; persönliche Kubuntu-/Sichtabnahme erst unmittelbar vor Veröffentlichung.
+
+
+
 ### 🔐 PR #111 – ergänzter Sicherheits-Fix (24.10.2026)
 - [x] Umgehung durch `.yaml`-Dateien und `uses:` ohne `@ref` reproduziert.
 - [x] Beide Endungen und fehlende/dynamische Referenzen abgesichert.

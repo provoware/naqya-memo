@@ -22,6 +22,11 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Release-Evidence-Identität · 25.10.2026 (PR-Prüfung ausstehend)
+Der Release-Evaluator und die Statuskonsolidierung verwenden nun ausschließlich exakt benannte Gate-Dateien, prüfen Gate-Identität/JSON-Typ und verwerfen als PASS umetikettierte Kurztests. Ungültige oder verknüpfte Evidence bleibt `INVALID_EVIDENCE` statt GO. Synthetische Regressionstests prüfen nur diese Schutzlogik, **keine** reale Hardware. Die kanonischen realen Gates bleiben **1/7 PASS · NO-GO**; GitHub-CI für den neuen Zweig ist abzuwarten.
+
+
+
 ### 🔐 Erweiterter Actions-Pin-Schutz · 24.10.2026 (PR #111)
 Die Prüfung erfasst jetzt auch `.yaml` und lehnt externe `uses:` ohne unveränderlichen 40-stelligen Commit-Verweis ab. Drei neue Regressionstests ergänzen die fünf vorhandenen. Quelländerung auf HEAD `c60f12ffbcb02ac0e9c736233e2c2ef96f1ce555` im GitHub-Qualitätslauf `40083337035` **PASS**; der neueste PR-HEAD ist vor Merge erneut zu prüfen. Reale Gates unverändert **1/7, NO-GO**.
 

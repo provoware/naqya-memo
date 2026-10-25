@@ -47,6 +47,7 @@ jobs:
         run: |
           python -S tools/release_gate/consolidate_release_state.py
           python -S tests/release_gate/test_workflow_action_pins.py
+          python -S tests/release_gate/test_gate_evidence_contract.py
 
       - name: UI contracts
         run: |
