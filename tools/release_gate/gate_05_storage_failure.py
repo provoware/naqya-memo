@@ -18,8 +18,11 @@ except OSError as e:
 prev=ROOT/'registry/evidence/v0.12/FAILURE_MATRIX_RESULTS.json'
 app_ok=False
 if prev.exists():
- data=json.loads(prev.read_text(encoding='utf-8'))
- app_ok=(data.get('disk_full_deterministic_injection')=='PASS' and data.get('permission_denied_deterministic_injection')=='PASS' and str(data.get('read_only_preflight','')).startswith('PASS'))
+ try:
+  data=json.loads(prev.read_text(encoding='utf-8'))
+  app_ok=(isinstance(data,dict) and data.get('disk_full_deterministic_injection')=='PASS' and data.get('permission_denied_deterministic_injection')=='PASS' and str(data.get('read_only_preflight','')).startswith('PASS'))
+ except (OSError,ValueError,TypeError) as e:
+  out['application_failure_matrix_error']=f'{type(e).__name__}: {e}'
 out['application_failure_matrix_evidence_present']=prev.exists()
 out['application_failure_matrix_pass']=app_ok
 out['status']='PASS' if all(x.get('status')=='PASS' for x in out['tests'].values()) and app_ok else 'FAIL'
