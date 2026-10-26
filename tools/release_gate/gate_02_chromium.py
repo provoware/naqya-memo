@@ -17,15 +17,20 @@ if exe:
    out['service_ready']=ready
    if ready:
     shot=ROOT/'registry/evidence/v0.12.2/chromium_1366x768.png'
-    cmd=[exe,'--headless','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--window-size=1366,768',f'--screenshot={shot}',f'http://127.0.0.1:{pnum}/index.html']
-    try:
-     cp=subprocess.run(cmd,text=True,capture_output=True,timeout=12)
-     out['return_code']=cp.returncode; out['stderr_tail']=cp.stderr[-2000:]
-     if cp.returncode==0 and shot.exists() and shot.stat().st_size>1000:
-      out['status']='PASS';out['screenshot']=shot.name
-     else: out['reason']='Chromium returned without valid screenshot'
-    except subprocess.TimeoutExpired as exc:
-     out['reason']='Chromium headless timed out in this execution environment'; out['timeout_seconds']=12
+    # Only a screenshot created by this run can prove the current browser gate.
+    # Keep existing evidence intact if Chromium fails or times out.
+    with tempfile.TemporaryDirectory(prefix='.chromium-gate-',dir=shot.parent) as screenshot_dir:
+     fresh_shot=Path(screenshot_dir)/shot.name
+     cmd=[exe,'--headless','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--window-size=1366,768',f'--screenshot={fresh_shot}',f'http://127.0.0.1:{pnum}/index.html']
+     try:
+      cp=subprocess.run(cmd,text=True,capture_output=True,timeout=12)
+      out['return_code']=cp.returncode; out['stderr_tail']=cp.stderr[-2000:]
+      if cp.returncode==0 and fresh_shot.is_file() and fresh_shot.stat().st_size>1000:
+       os.replace(fresh_shot,shot)
+       out['status']='PASS';out['screenshot']=shot.name
+      else: out['reason']='Chromium returned without valid fresh screenshot'
+     except subprocess.TimeoutExpired as exc:
+      out['reason']='Chromium headless timed out in this execution environment'; out['timeout_seconds']=12
   finally:
    try: os.killpg(srv.pid,signal.SIGTERM)
    except: pass
