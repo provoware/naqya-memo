@@ -44,6 +44,8 @@ if not run_result or run_result.get('status')!='PASS' or not out['reminder_fired
  out['reason']='iPhone acceptance did not prove native microphone + foreground reminder path. Approve system permission prompts and rerun.';save()
 # Terminate app if supported, then verify WebKit/IndexedDB persistence across process lifecycle.
 term=run([xcrun,'devicectl','device','process','terminate','--device',udid,'--bundle-id',bundle],20);out['terminate_output']=(term.stdout+term.stderr)[-2000:]
+if term.returncode != 0:
+ out['reason']='iPhone app termination failed; process lifecycle and persistence cannot be verified.';save()
 time.sleep(1)
 rc2,text2=launch_console('verify',10);out['verify_console_tail']=text2[-8000:];verify=parse_acceptance(text2,'verify');out['verify_result']=verify
 if verify and verify.get('status')=='PASS':
