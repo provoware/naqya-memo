@@ -16,7 +16,7 @@ SOURCE = Path(__file__).resolve().parents[2] / "tools/release_gate/gate_07_ios_i
 
 
 class IOSLifecycleGateTests(unittest.TestCase):
-    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None):
+    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None, install_error=None):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             script = root / "tools/release_gate/gate_07_ios_iphone_x.py"
@@ -43,6 +43,11 @@ class IOSLifecycleGateTests(unittest.TestCase):
                     if terminate_error == "oserror":
                         raise OSError("mock xcrun failure")
                     return subprocess.CompletedProcess(args, terminate_code, "", "device termination failed" if terminate_code else "")
+                if "install" in args:
+                    if install_error == "timeout":
+                        raise subprocess.TimeoutExpired(args, 90)
+                    if install_error == "oserror":
+                        raise OSError("mock install failure")
                 return subprocess.CompletedProcess(args, 0, "installed", "")
 
             class FakeProcess:
@@ -99,6 +104,17 @@ class IOSLifecycleGateTests(unittest.TestCase):
                 self.assertIn("failed", evidence["reason"])
                 if failure_mode == "run":
                     self.assertFalse(any(args[-1] == "verify" for args in calls))
+
+    def test_install_exception_replaces_stale_pass(self):
+        # Installation failures must invalidate any previous successful device evidence.
+        for failure in ("timeout", "oserror"):
+            with self.subTest(failure=failure):
+                code, evidence, calls = self.exercise_gate(0, install_error=failure)
+                self.assertEqual(code, 2)
+                self.assertEqual(evidence["status"], "BLOCKED")
+                self.assertNotIn("stale", evidence)
+                self.assertIn("installation", evidence["reason"].lower())
+                self.assertFalse(any(args[-1] in ("run", "verify") for args in calls))
 
     def test_successful_termination_preserves_pass_path(self):
         code, evidence, calls = self.exercise_gate(0)
