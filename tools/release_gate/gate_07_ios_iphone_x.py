@@ -40,6 +40,8 @@ install=run([xcrun,'devicectl','device','install','app','--device',udid,str(app)
 if install.returncode!=0:out['reason']='Signed app installation failed.';save()
 # User must approve microphone/notification prompts if the device has not granted them before.
 rc,text=launch_console('run',18);out['run_console_tail']=text[-10000:];run_result=parse_acceptance(text,'run');out['run_result']=run_result;out['reminder_fired']='REMINDER_FIRED:' in text
+out['run_exit_code']=rc
+if rc!=0:out['reason']=f'iPhone acceptance run command failed (exit {rc}); native acceptance cannot be verified.';save()
 if not run_result or run_result.get('status')!='PASS' or not out['reminder_fired']:
  out['reason']='iPhone acceptance did not prove native microphone + foreground reminder path. Approve system permission prompts and rerun.';save()
 # Terminate app if supported, then verify WebKit/IndexedDB persistence across process lifecycle.
@@ -52,6 +54,8 @@ if term.returncode != 0:
  out['reason']='iPhone app termination failed; process lifecycle and persistence cannot be verified.';save()
 time.sleep(1)
 rc2,text2=launch_console('verify',10);out['verify_console_tail']=text2[-8000:];verify=parse_acceptance(text2,'verify');out['verify_result']=verify
+out['verify_exit_code']=rc2
+if rc2!=0:out['reason']=f'iPhone persistence verify command failed (exit {rc2}); relaunch cannot be verified.';save()
 if verify and verify.get('status')=='PASS':
  out['status']='PASS';out['reason']='Real iPhone X/iOS device acceptance passed: install, native microphone, reminder callback, and persistence after relaunch.';save(0)
 out['reason']='Initial iPhone run passed, but persistence verification after relaunch failed.';save()
