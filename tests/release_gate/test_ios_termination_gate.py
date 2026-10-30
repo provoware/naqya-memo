@@ -16,7 +16,7 @@ SOURCE = Path(__file__).resolve().parents[2] / "tools/release_gate/gate_07_ios_i
 
 
 class IOSLifecycleGateTests(unittest.TestCase):
-    def exercise_gate(self, terminate_code):
+    def exercise_gate(self, terminate_code, terminate_error=None):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             script = root / "tools/release_gate/gate_07_ios_iphone_x.py"
@@ -24,6 +24,9 @@ class IOSLifecycleGateTests(unittest.TestCase):
             shutil.copyfile(SOURCE, script)
             app = root / "Naqya.app"
             app.mkdir()
+            stale_gate = root / "registry/evidence/v0.12.2/gates/GATE_07_IOS_IPHONE_X.json"
+            stale_gate.parent.mkdir(parents=True)
+            stale_gate.write_text('{"status":"PASS","stale":true}', encoding="utf-8")
             calls = []
 
             def fake_run(args, **_kwargs):
@@ -31,6 +34,10 @@ class IOSLifecycleGateTests(unittest.TestCase):
                 if "xctrace" in args:
                     return subprocess.CompletedProcess(args, 0, "iPhone X (16.7.16) (TEST-UDID)\n", "")
                 if "terminate" in args:
+                    if terminate_error == "timeout":
+                        raise subprocess.TimeoutExpired(args, 20)
+                    if terminate_error == "oserror":
+                        raise OSError("mock xcrun failure")
                     return subprocess.CompletedProcess(args, terminate_code, "", "device termination failed" if terminate_code else "")
                 return subprocess.CompletedProcess(args, 0, "installed", "")
 
@@ -64,6 +71,16 @@ class IOSLifecycleGateTests(unittest.TestCase):
         self.assertEqual(evidence["status"], "BLOCKED")
         self.assertIn("termination", evidence["reason"].lower())
         self.assertFalse(any(args[-1] == "verify" for args in calls))
+
+    def test_termination_exception_replaces_stale_pass(self):
+        for failure in ("timeout", "oserror"):
+            with self.subTest(failure=failure):
+                code, evidence, calls = self.exercise_gate(0, terminate_error=failure)
+                self.assertEqual(code, 2)
+                self.assertEqual(evidence["status"], "BLOCKED")
+                self.assertNotIn("stale", evidence)
+                self.assertIn("termination", evidence["reason"].lower())
+                self.assertFalse(any(args[-1] == "verify" for args in calls))
 
     def test_successful_termination_preserves_pass_path(self):
         code, evidence, calls = self.exercise_gate(0)
