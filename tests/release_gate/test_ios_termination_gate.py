@@ -16,7 +16,7 @@ SOURCE = Path(__file__).resolve().parents[2] / "tools/release_gate/gate_07_ios_i
 
 
 class IOSLifecycleGateTests(unittest.TestCase):
-    def exercise_gate(self, terminate_code, terminate_error=None):
+    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             script = root / "tools/release_gate/gate_07_ios_iphone_x.py"
@@ -44,7 +44,7 @@ class IOSLifecycleGateTests(unittest.TestCase):
             class FakeProcess:
                 def __init__(self, args, **_kwargs):
                     self.mode = args[-1]
-                    self.returncode = 0
+                    self.returncode = 1 if self.mode == launch_failure_mode else 0
                     calls.append(args)
 
                 def communicate(self, timeout=None):
@@ -81,6 +81,20 @@ class IOSLifecycleGateTests(unittest.TestCase):
                 self.assertNotIn("stale", evidence)
                 self.assertIn("termination", evidence["reason"].lower())
                 self.assertFalse(any(args[-1] == "verify" for args in calls))
+
+    def test_nonzero_launch_exit_cannot_pass_gate(self):
+        # A PASS-shaped console line is not trustworthy if devicectl itself failed.
+        for failure_mode in ("run", "verify"):
+            with self.subTest(failure_mode=failure_mode):
+                code, evidence, calls = self.exercise_gate(0, launch_failure_mode=failure_mode)
+                self.assertEqual(code, 2)
+                self.assertEqual(evidence["status"], "BLOCKED")
+                self.assertNotIn("stale", evidence)
+                self.assertTrue(any(args[-1] == failure_mode for args in calls))
+                self.assertEqual(evidence[f"{failure_mode}_exit_code"], 1)
+                self.assertIn("failed", evidence["reason"])
+                if failure_mode == "run":
+                    self.assertFalse(any(args[-1] == "verify" for args in calls))
 
     def test_successful_termination_preserves_pass_path(self):
         code, evidence, calls = self.exercise_gate(0)
