@@ -49,7 +49,11 @@ except (subprocess.TimeoutExpired,OSError) as exc:
 out['install_output']=(install.stdout+install.stderr)[-5000:]
 if install.returncode!=0:out['reason']='Signed app installation failed.';save()
 # User must approve microphone/notification prompts if the device has not granted them before.
-rc,text=launch_console('run',18);out['run_console_tail']=text[-10000:];run_result=parse_acceptance(text,'run');out['run_result']=run_result;out['reminder_fired']='REMINDER_FIRED:' in text
+try:
+ rc,text=launch_console('run',18)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'iPhone acceptance run command failed ({type(exc).__name__}); native acceptance cannot be verified.';save()
+out['run_console_tail']=text[-10000:];run_result=parse_acceptance(text,'run');out['run_result']=run_result;out['reminder_fired']='REMINDER_FIRED:' in text
 out['run_exit_code']=rc
 if rc!=0:out['reason']=f'iPhone acceptance run command failed (exit {rc}); native acceptance cannot be verified.';save()
 if not run_result or run_result.get('status')!='PASS' or not out['reminder_fired']:
@@ -63,7 +67,11 @@ out['terminate_output']=(term.stdout+term.stderr)[-2000:]
 if term.returncode != 0:
  out['reason']='iPhone app termination failed; process lifecycle and persistence cannot be verified.';save()
 time.sleep(1)
-rc2,text2=launch_console('verify',10);out['verify_console_tail']=text2[-8000:];verify=parse_acceptance(text2,'verify');out['verify_result']=verify
+try:
+ rc2,text2=launch_console('verify',10)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'iPhone persistence verify command failed ({type(exc).__name__}); relaunch cannot be verified.';save()
+out['verify_console_tail']=text2[-8000:];verify=parse_acceptance(text2,'verify');out['verify_result']=verify
 out['verify_exit_code']=rc2
 if rc2!=0:out['reason']=f'iPhone persistence verify command failed (exit {rc2}); relaunch cannot be verified.';save()
 if verify and verify.get('status')=='PASS':

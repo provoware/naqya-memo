@@ -16,7 +16,7 @@ SOURCE = Path(__file__).resolve().parents[2] / "tools/release_gate/gate_07_ios_i
 
 
 class IOSLifecycleGateTests(unittest.TestCase):
-    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None, install_error=None):
+    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None, install_error=None, launch_error_mode=None):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             script = root / "tools/release_gate/gate_07_ios_iphone_x.py"
@@ -53,8 +53,10 @@ class IOSLifecycleGateTests(unittest.TestCase):
             class FakeProcess:
                 def __init__(self, args, **_kwargs):
                     self.mode = args[-1]
-                    self.returncode = 1 if self.mode == launch_failure_mode else 0
                     calls.append(args)
+                    if self.mode == launch_error_mode:
+                        raise OSError("mock launch failure")
+                    self.returncode = 1 if self.mode == launch_failure_mode else 0
 
                 def communicate(self, timeout=None):
                     response = f'ProvowareAcceptance {{"mode":"{self.mode}","status":"PASS"}}\n'
@@ -143,6 +145,15 @@ class IOSLifecycleGateTests(unittest.TestCase):
                 self.assertIn("device listing", evidence["reason"].lower())
                 self.assertFalse(any("install" in args for args in calls))
 
+    def test_launch_oserror_replaces_stale_pass(self):
+        for mode in ("run", "verify"):
+            with self.subTest(mode=mode):
+                code, evidence, calls = self.exercise_gate(0, launch_error_mode=mode)
+                self.assertEqual(code, 2)
+                self.assertEqual(evidence["status"], "BLOCKED")
+                self.assertNotIn("stale", evidence)
+                self.assertIn("failed", evidence["reason"].lower())
+                self.assertTrue(any(args[-1] == mode for args in calls))
 
 
 if __name__ == "__main__":
