@@ -32,7 +32,13 @@ if not xcrun or not xcodebuild:out['reason']='Xcode command line tools missing.'
 if not app or not app.is_dir():out['reason']='V0.12.2 Xcode runtime source exists, but no signed .app supplied. Set PROVOWARE_IOS_APP.';save()
 if not udid:out['reason']='Set PROVOWARE_IOS_DEVICE_ID to the physical iPhone X UDID.';save()
 # Strong target identity check from Xcode device listing.
-listing=run([xcrun,'xctrace','list','devices'],20);out['device_list_tail']=(listing.stdout+listing.stderr)[-6000:]
+try:
+ listing=run([xcrun,'xctrace','list','devices'],20)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'iPhone device listing failed ({type(exc).__name__}); device identity cannot be verified.';save()
+out['device_list_tail']=(listing.stdout+listing.stderr)[-6000:]
+if listing.returncode!=0:
+ out['reason']=f'iPhone device listing failed (exit {listing.returncode}); device identity cannot be verified.';save()
 line=next((l for l in (listing.stdout+listing.stderr).splitlines() if udid in l),None);out['matched_device_line']=line
 if not line or 'iPhone X' not in line:out['reason']='Selected physical device is not reported as iPhone X.';save()
 if required not in line:out['reason']=f'iPhone X found, but required iOS {required} is not reported.';save()
