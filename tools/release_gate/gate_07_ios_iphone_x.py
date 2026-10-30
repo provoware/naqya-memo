@@ -42,7 +42,11 @@ if listing.returncode!=0:
 line=next((l for l in (listing.stdout+listing.stderr).splitlines() if udid in l),None);out['matched_device_line']=line
 if not line or 'iPhone X' not in line:out['reason']='Selected physical device is not reported as iPhone X.';save()
 if required not in line:out['reason']=f'iPhone X found, but required iOS {required} is not reported.';save()
-install=run([xcrun,'devicectl','device','install','app','--device',udid,str(app)],90);out['install_output']=(install.stdout+install.stderr)[-5000:]
+try:
+ install=run([xcrun,'devicectl','device','install','app','--device',udid,str(app)],90)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'Signed app installation failed ({type(exc).__name__}); native acceptance cannot be verified.';save()
+out['install_output']=(install.stdout+install.stderr)[-5000:]
 if install.returncode!=0:out['reason']='Signed app installation failed.';save()
 # User must approve microphone/notification prompts if the device has not granted them before.
 rc,text=launch_console('run',18);out['run_console_tail']=text[-10000:];run_result=parse_acceptance(text,'run');out['run_result']=run_result;out['reminder_fired']='REMINDER_FIRED:' in text
