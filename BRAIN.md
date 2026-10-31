@@ -16,6 +16,14 @@
 
 ---
 
+[2026-10-31] [BRAIN-0039] [ANDROID-GATE-EVIDENCE] [REPRODUCED]
+- Beobachtung: Bei einem Abbruch vor `save()` konnte die vorherige Android-Gate-Datei weiter `PASS` anzeigen.
+- Ursache: Vor dem ersten ADB-Aufruf wurde der vorherige Nachweis nicht entwertet; Timeout/Fehler beim Geräteabruf waren nicht abgefangen.
+- Schutzregel: Jeder neue Gate-Lauf schreibt zuerst `BLOCKED`; fehlerhafte ADB-Geräteauflistung führt zu `BLOCKED`, niemals zu einer Übernahme alter Evidence.
+- Regression: drei simulierte Fehlerpfade (Unterbrechung, Timeout, Exit-Code ungleich null); echte Android-Hardware weiterhin ausstehend.
+- Betroffene Komponenten: `tools/release_gate/gate_06_android_device.py`, `tests/release_gate/test_android_stale_evidence_gate.py`.
+- Release-Gates: 1/7 PASS, NO-GO.
+
 [2026-10-24] [BRAIN-0038] [WORKFLOW-PIN-GUARD] [REPRODUCED]
 - Befund: Die Pin-Prüfung übersah `*.yaml` sowie externe `uses:` ohne `@`.
 - Ursache: Unvollständige Dateiauswahl und ein Suchmuster, das fehlende Referenzen nicht meldete.

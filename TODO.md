@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Android-Gate: alte PASS-Evidence bei neuem Prüflauf entwerten · 31.10.2026
+Der Android-Geräteprüfer setzt den Nachweis **vor dem ersten ADB-Aufruf** auf `BLOCKED`. Auch ein Abbruch, eine Zeitüberschreitung oder ein fehlerhafter Geräteabruf darf keinen alten PASS-Nachweis stehen lassen. Drei simulierte Regressionstests sind in der Qualitätsprüfung eingebunden; **keine echte Android-Geräteabnahme**, weiterhin **1/7 reale Gates · NO-GO**. Änderung nur als isolierter PR-Entwurf.
+
+
 ### 🔐 Release-Evidence-Identität · 25.10.2026 (PR-Prüfung ausstehend)
 Der Release-Evaluator und die Statuskonsolidierung verwenden nun ausschließlich exakt benannte Gate-Dateien, prüfen Gate-Identität/JSON-Typ und verwerfen als PASS umetikettierte Kurztests. Ungültige oder verknüpfte Evidence bleibt `INVALID_EVIDENCE` statt GO. Synthetische Regressionstests prüfen nur diese Schutzlogik, **keine** reale Hardware. Die kanonischen realen Gates bleiben **1/7 PASS · NO-GO**; Die erste GitHub-CI nach Importkorrektur bestand auf Code-HEAD `25aef6bb` (Lauf `40148667614`); die abschließende Dokumentations-/Grenzfallergänzung wird erneut geprüft.
 

@@ -1,3 +1,8 @@
+## [ANDROID-GATE-STALE-PASS-GUARD] – 2026-10-31 · PR-Entwurf
+- Kritischer Gate-Nachweisfehler: Ein unterbrochener neuer Android-Prüflauf konnte eine alte `PASS`-Datei unverändert stehen lassen.
+- `GATE_06_ANDROID_DEVICE.json` wird vor dem ersten ADB-Aufruf auf `BLOCKED` gesetzt; ADB-Geräteauflistung mit Timeout, Betriebssystemfehler oder fehlerhaftem Rückgabewert wird kontrolliert abgewiesen.
+- Drei isolierte Regressionstests in `quality.yml`; keine Hardware-Evidence und keine Freigabe. Reale Gates unverändert 1/7 PASS, NO-GO.
+
 ## [RELEASE-EVIDENCE-IDENTITY-GUARD] – 2026-10-25 · Entwicklungszweig / Source-CI PASS
 - Release-Evaluator nutzte bislang `GATE_XX_*.json` mit lexikographisch letzter Datei; eine zusätzliche Datei konnte kanonische Evidence überdecken.
 - Gemeinsamer Evidence-Vertrag für Evaluator und Statuskonsolidierung: exakte Dateinamen, Gate-ID, JSON-Objekt und gültiger Status; ungültige oder symbolisch verknüpfte Dateien werden abgewiesen.
