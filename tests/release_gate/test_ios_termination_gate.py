@@ -149,7 +149,7 @@ class IOSLifecycleGateTests(unittest.TestCase):
         # A different device ID containing the requested ID must never prove this device is iPhone X.
         for device_id in ("OTHER-TEST-UDID", "TEST-UDID-EXTRA"):
             with self.subTest(device_id=device_id):
-                listing = f"iPhone X (16.7.16) ({device_id})\\n"
+                listing = f"iPhone X (16.7.16) ({device_id})\n"
                 code, evidence, calls = self.exercise_gate(0, listing_text=listing)
                 self.assertEqual(code, 2)
                 self.assertEqual(evidence["status"], "BLOCKED")
