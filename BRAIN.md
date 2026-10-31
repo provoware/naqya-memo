@@ -16,6 +16,14 @@
 
 ---
 
+[2026-10-31] [BRAIN-0041] [SOAK-GATE-STALE-EVIDENCE] [CONFIRMED_SOURCE_GAP]
+- Beobachtung: Der Dauertest schrieb erst am ersten Zwischenstand Evidence; ein früher Abbruch ließ einen alten `PASS` stehen.
+- Ursache: Kein initiales Entwerten der kanonischen Gate-01-Datei vor der Initialisierung von CoreStore und MutationQueue.
+- Schutzregel: Jeden neuen Voll- oder Vorprüflauf sofort als `RUNNING` bzw. `PRECHECK_RUNNING` markieren; niemals alten PASS wiederverwenden.
+- Regression: Zwei isolierte Startabbruchfälle mit vorheriger synthetischer PASS-Datei; kein echter 8-Stunden-Lauf.
+- Betroffene Komponenten: `tools/release_gate/gate_01_8h_soak.py`, `tests/release_gate/test_soak_stale_evidence_gate.py`.
+- Release-Gates: 1/7 PASS, NO-GO.
+
 [2026-10-31] [BRAIN-0039] [ANDROID-GATE-EVIDENCE] [REPRODUCED]
 - Beobachtung: Bei einem Abbruch vor `save()` konnte die vorherige Android-Gate-Datei weiter `PASS` anzeigen.
 - Ursache: Vor dem ersten ADB-Aufruf wurde der vorherige Nachweis nicht entwertet; Timeout/Fehler beim Geräteabruf waren nicht abgefangen.

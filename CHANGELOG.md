@@ -1,3 +1,8 @@
+## [SOAK-GATE-STALE-PASS-GUARD] – 2026-10-31 · PR-Entwurf
+- Kritischer Gate-Nachweisfehler: Ein abgebrochener neuer 8-Stunden-Lauf konnte vor dem ersten Zwischenstand eine alte `PASS`-Datei unverändert lassen.
+- Initialen Status `RUNNING` bzw. `PRECHECK_RUNNING` vor dem Datenspeicheraufbau schreiben; dadurch keine Wiederverwendung früherer Erfolgsnachweise nach einem frühen Abbruch.
+- Zwei isolierte Abbruch-Regressionen im Qualitätsworkflow; kein echter 8-Stunden-Lauf und keine Release-Freigabe. Weiterhin 1/7 reale Gates PASS, NO-GO.
+
 ## [ANDROID-GATE-STALE-PASS-GUARD] – 2026-10-31 · PR-Entwurf
 - Kritischer Gate-Nachweisfehler: Ein unterbrochener neuer Android-Prüflauf konnte eine alte `PASS`-Datei unverändert stehen lassen.
 - `GATE_06_ANDROID_DEVICE.json` wird vor dem ersten ADB-Aufruf auf `BLOCKED` gesetzt; ADB-Geräteauflistung mit Timeout, Betriebssystemfehler oder fehlerhaftem Rückgabewert wird kontrolliert abgewiesen.

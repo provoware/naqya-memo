@@ -22,6 +22,9 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 8-Stunden-Gate: alte PASS-Nachweise beim Neustart entwerten · 31.10.2026
+Vor dem Anlegen des Testdatenspeichers wird der alte Gate-01-Nachweis auf `RUNNING` bzw. `PRECHECK_RUNNING` gesetzt. Ein Abbruch vor dem ersten Zwischenstand kann dadurch keinen früheren `PASS` als aktuellen Prüferfolg stehen lassen. Zwei simulierte Abbruch-Regressionsfälle; **kein realer 8-Stunden-Test**, reale Gates weiterhin **1/7 PASS · NO-GO**. Isolierter PR-Entwurf.
+
 ### 🔐 Android-Gate: alte PASS-Evidence bei neuem Prüflauf entwerten · 31.10.2026
 Der Android-Geräteprüfer setzt den Nachweis **vor dem ersten ADB-Aufruf** auf `BLOCKED`. Auch ein Abbruch, eine Zeitüberschreitung oder ein fehlerhafter Geräteabruf darf keinen alten PASS-Nachweis stehen lassen. Drei simulierte Regressionstests sind in der Qualitätsprüfung eingebunden; **keine echte Android-Geräteabnahme**, weiterhin **1/7 reale Gates · NO-GO**. Änderung nur als isolierter PR-Entwurf.
 
