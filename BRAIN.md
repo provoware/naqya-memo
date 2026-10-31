@@ -16,6 +16,13 @@
 
 ---
 
+[2026-10-31] [BRAIN-0040] [ANDROID-GATE-ISOLATION] [CONFIRMED_SOURCE_GAP]
+- Beobachtung: Rückgabewerte beim Löschen alter App-Daten/Logeinträge und beim Force-Stop wurden ignoriert.
+- Ursache: Ein fehlgeschlagener Reset konnte alte App-Daten oder Logzeilen in den neuen Prüflauf übernehmen und dadurch einen unbewiesenen PASS begünstigen.
+- Schutzregel: Alle vier Vorbedingungen müssen erfolgreich sein, sonst BLOCKED; keine realen Gates durch simulierte Tests freigeben.
+- Regression: vier simulierte Negativfälle im bestehenden Android-Gate-Test; echte Hardware-Evidence ausstehend.
+- Betroffene Komponenten: tools/release_gate/gate_06_android_device.py, tests/release_gate/test_android_stale_evidence_gate.py.
+
 [2026-10-31] [BRAIN-0039] [ANDROID-GATE-EVIDENCE] [REPRODUCED]
 - Beobachtung: Bei einem Abbruch vor `save()` konnte die vorherige Android-Gate-Datei weiter `PASS` anzeigen.
 - Ursache: Vor dem ersten ADB-Aufruf wurde der vorherige Nachweis nicht entwertet; Timeout/Fehler beim Geräteabruf waren nicht abgefangen.
