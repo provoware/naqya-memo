@@ -12,6 +12,11 @@ import argparse
 import json
 import re
 from pathlib import Path
+import sys
+
+# Auch bei dynamischem Import durch die bestehenden CI-Vertragstests erreichbar.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from evidence_contract import mobile_source_status, read_gate
 
 ROOT = Path(__file__).resolve().parents[2]
 VERSION_FILE = ROOT / "registry" / "VERSION.json"
@@ -42,19 +47,10 @@ def load_json(path: Path) -> dict:
 def collect_gates() -> list[dict]:
     items = []
     for no, code, label in GATES:
-        path = GATE_DIR / f"GATE_{no}_{code}.json"
-        if not path.exists():
-            items.append({"gate": f"GATE_{no}_{code}", "status": "NOT_RUN", "label": label})
-            continue
-        try:
-            data = load_json(path)
-        except Exception as exc:
-            data = {"gate": f"GATE_{no}_{code}", "status": "INVALID_EVIDENCE", "error": repr(exc)}
-        data = dict(data)
+        data = dict(read_gate(ROOT, no, code))
         data["label"] = label
         items.append(data)
     return items
-
 
 def icon(status: str) -> str:
     if status == "PASS":
@@ -166,8 +162,7 @@ def validate(check_docs: bool = True) -> tuple[list[str], str]:
             f'passed_release_gates driftet: erwartet {passed}, gefunden {status.get("passed_release_gates")}.'
         )
 
-    mobile_source = ROOT / "registry" / "evidence" / "v0.12.2" / "MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json"
-    mobile_source_pass = mobile_source.exists() and load_json(mobile_source).get("status") == "PASS"
+    mobile_source_pass = mobile_source_status(ROOT) == "PASS"
     should_go = passed == required and mobile_source_pass
     if status.get("release_status") != ("GO" if should_go else "NO-GO"):
         errors.append("release_status widerspricht realer Gate-Evidence.")
@@ -213,8 +208,7 @@ def write_sync() -> None:
     passed = sum(value == "PASS" for value in gate_map.values())
     required = len(gate_map)
 
-    mobile_source = ROOT / "registry" / "evidence" / "v0.12.2" / "MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json"
-    mobile_source_pass = mobile_source.exists() and load_json(mobile_source).get("status") == "PASS"
+    mobile_source_pass = mobile_source_status(ROOT) == "PASS"
     should_go = passed == required and mobile_source_pass
 
     status["version"] = version["version"]
