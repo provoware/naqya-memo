@@ -16,7 +16,7 @@
   "ios_native_build": "BLOCKED",
   "ios_iphone_x_evidence": false,
   "android_gate_stale_pass_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING",
-  "soak_gate_stale_pass_guard": "SOURCE_PATCH_IN_PR_CI_PENDING_NO_REAL_8H_TEST",
+  "soak_gate_stale_pass_guard": "SOURCE_PATCH_IN_PR_SOURCE_CI_PASS_NO_REAL_8H_TEST",
   "required_release_gates": 7,
   "passed_release_gates": 1,
   "release_status": "NO-GO",
