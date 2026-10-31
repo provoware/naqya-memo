@@ -41,7 +41,10 @@ out['serial']=serial;out['model']=cmd(['shell','getprop','ro.product.model']).st
 ins=cmd(['install','-r',str(apk)],60);out['install_output']=(ins.stdout+ins.stderr)[-2000:]
 if ins.returncode!=0:out['reason']='APK install failed.';save()
 # Clean application data, then grant only permissions explicitly required by the acceptance run.
-cmd(['shell','pm','clear',pkg])
+cleared=cmd(['shell','pm','clear',pkg])
+# A previous app session must not supply data for this fresh acceptance attempt.
+if cleared.returncode!=0 or cleared.stdout.strip()!='Success':
+ out['reason']='Android app data could not be cleared; previous data must not count as fresh acceptance.';save()
 rec=cmd(['shell','pm','grant',pkg,'android.permission.RECORD_AUDIO']);notif=None
 if int(sdk or 0)>=33:notif=cmd(['shell','pm','grant',pkg,'android.permission.POST_NOTIFICATIONS'])
 out['record_audio_grant_rc']=rec.returncode;out['notification_grant_rc']=None if notif is None else notif.returncode
@@ -50,7 +53,9 @@ info=cmd(['shell','dumpsys','package',pkg]).stdout
 vm=re.search(r'versionName=([^\s]+)',info);out['version_name']=vm.group(1) if vm else None
 if out['version_name']!='0.12.2':out['reason']='Installed APK is not V0.12.2.';save()
 # Real run: persistent data, real microphone, real AlarmManager/Receiver notification path.
-cmd(['logcat','-c'])
+run_log_clear=cmd(['logcat','-c'])
+if run_log_clear.returncode!=0:
+ out['reason']='Android logcat could not be cleared before acceptance; stale logs must not count as proof.';save()
 launch=cmd(['shell','am','start','-W','-n',f'{pkg}/.MainActivity','--es','provoware_acceptance','run']);out['run_launch_output']=(launch.stdout+launch.stderr)[-1500:]
 time.sleep(8)
 logs=cmd(['logcat','-d','-s','ProvowareAcceptance:I','*:S']).stdout
@@ -59,7 +64,13 @@ run_result=parse_acceptance(logs,'run');out['run_result']=run_result;out['remind
 if launch.returncode!=0 or not run_result or run_result.get('status')!='PASS' or not out['reminder_fired']:
  out['reason']='Native run did not prove microphone + reminder + mobile core acceptance.';save()
 # Process restart must retain IndexedDB data and audio metadata.
-cmd(['shell','am','force-stop',pkg]);cmd(['logcat','-c']);time.sleep(.5)
+stopped=cmd(['shell','am','force-stop',pkg])
+if stopped.returncode!=0:
+ out['reason']='Android app could not be force-stopped; persistence after restart cannot be verified.';save()
+verify_log_clear=cmd(['logcat','-c'])
+if verify_log_clear.returncode!=0:
+ out['reason']='Android logcat could not be cleared before persistence verification; stale logs must not count as proof.';save()
+time.sleep(.5)
 verify_launch=cmd(['shell','am','start','-W','-n',f'{pkg}/.MainActivity','--es','provoware_acceptance','verify']);out['verify_launch_output']=(verify_launch.stdout+verify_launch.stderr)[-1500:]
 time.sleep(5)
 verify_logs=cmd(['logcat','-d','-s','ProvowareAcceptance:I','*:S']).stdout

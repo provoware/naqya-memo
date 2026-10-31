@@ -1,3 +1,7 @@
+## [ANDROID-GATE-RESET-PRECONDITIONS] – 2026-10-31 · PR-Entwurf
+- Kritischer Gate-Schutz: App-Daten-Löschung, Logcat-Rücksetzung (vor Lauf und Neustartprüfung) und Force-Stop müssen erfolgreich sein, bevor Android-Evidence als PASS gelten darf.
+- Vier simulierte Fehlerpfade ergänzen den bestehenden Android-Regressionstest; CI und reale Geräteabnahme stehen aus. Release bleibt 1/7 PASS, NO-GO.
+
 ## [ANDROID-GATE-STALE-PASS-GUARD] – 2026-10-31 · PR-Entwurf
 - Kritischer Gate-Nachweisfehler: Ein unterbrochener neuer Android-Prüflauf konnte eine alte `PASS`-Datei unverändert stehen lassen.
 - `GATE_06_ANDROID_DEVICE.json` wird vor dem ersten ADB-Aufruf auf `BLOCKED` gesetzt; ADB-Geräteauflistung mit Timeout, Betriebssystemfehler oder fehlerhaftem Rückgabewert wird kontrolliert abgewiesen.

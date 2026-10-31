@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Android-Gate: Prüfdaten und Geräteprotokoll vor PASS zwingend zurücksetzen · 31.10.2026
+Wenn App-Daten, Android-Protokolle oder der Prozess vor der Neustartprüfung nicht zuverlässig zurückgesetzt werden, wird GATE_06 kontrolliert als `BLOCKED` beendet. Vier simulierte Negativtests schützen gegen alte Daten und Logeinträge. Keine reale Android-Abnahme; weiterhin **1/7 reale Gates · NO-GO**. Isolierter PR-Entwurf.
+
+
 ### 🔐 Android-Gate: alte PASS-Evidence bei neuem Prüflauf entwerten · 31.10.2026
 Der Android-Geräteprüfer setzt den Nachweis **vor dem ersten ADB-Aufruf** auf `BLOCKED`. Auch ein Abbruch, eine Zeitüberschreitung oder ein fehlerhafter Geräteabruf darf keinen alten PASS-Nachweis stehen lassen. Drei simulierte Regressionstests sind in der Qualitätsprüfung eingebunden; **keine echte Android-Geräteabnahme**, weiterhin **1/7 reale Gates · NO-GO**. Änderung nur als isolierter PR-Entwurf.
 
