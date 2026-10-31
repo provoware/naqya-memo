@@ -16,7 +16,7 @@ SOURCE = Path(__file__).resolve().parents[2] / "tools/release_gate/gate_07_ios_i
 
 
 class IOSLifecycleGateTests(unittest.TestCase):
-    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None, install_error=None, launch_error_mode=None, listing_text=None):
+    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None, install_error=None, launch_error_mode=None, listing_text=None, listing_interrupt=False):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             script = root / "tools/release_gate/gate_07_ios_iphone_x.py"
@@ -32,6 +32,8 @@ class IOSLifecycleGateTests(unittest.TestCase):
             def fake_run(args, **_kwargs):
                 calls.append(args)
                 if "xctrace" in args:
+                    if listing_interrupt:
+                        raise KeyboardInterrupt("simulated operator interruption")
                     if listing_error == "timeout":
                         raise subprocess.TimeoutExpired(args, 20)
                     if listing_error == "oserror":
@@ -71,10 +73,19 @@ class IOSLifecycleGateTests(unittest.TestCase):
                  patch("subprocess.Popen", side_effect=FakeProcess), \
                  patch("time.sleep", return_value=None), \
                  contextlib.redirect_stdout(io.StringIO()):
-                with self.assertRaises(SystemExit) as exit_ctx:
+                with self.assertRaises((SystemExit, KeyboardInterrupt)) as exit_ctx:
                     runpy.run_path(str(script), run_name="__main__")
             evidence = json.loads((root / "registry/evidence/v0.12.2/gates/GATE_07_IOS_IPHONE_X.json").read_text())
-            return exit_ctx.exception.code, evidence, calls
+            return (exit_ctx.exception.code if isinstance(exit_ctx.exception, SystemExit)
+                    else type(exit_ctx.exception)), evidence, calls
+
+    def test_interrupted_new_run_invalidates_previous_pass(self):
+        # A prior PASS cannot survive an interrupted new device acceptance attempt.
+        code, evidence, calls = self.exercise_gate(0, listing_interrupt=True)
+        self.assertIs(code, KeyboardInterrupt)
+        self.assertEqual(evidence["status"], "BLOCKED")
+        self.assertNotIn("stale", evidence)
+        self.assertFalse(any("install" in args for args in calls))
 
     def test_failed_termination_cannot_pass_persistence_gate(self):
         code, evidence, calls = self.exercise_gate(1)

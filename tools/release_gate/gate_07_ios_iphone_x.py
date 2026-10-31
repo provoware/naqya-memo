@@ -5,8 +5,13 @@ E=ROOT/'registry/evidence/v0.12.2/gates/GATE_07_IOS_IPHONE_X.json';E.parent.mkdi
 xcrun=shutil.which('xcrun');xcodebuild=shutil.which('xcodebuild');app_env=os.environ.get('PROVOWARE_IOS_APP');app=Path(app_env).expanduser() if app_env else None
 udid=os.environ.get('PROVOWARE_IOS_DEVICE_ID');required=os.environ.get('PROVOWARE_IOS_REQUIRED_VERSION','16.7.16');bundle='de.provoware.naqya'
 out={'gate':'GATE_07_IOS_IPHONE_X','status':'BLOCKED','host_platform':platform.system(),'xcrun':xcrun,'xcodebuild':xcodebuild,'app_bundle':str(app) if app else None,'device_id':udid,'target':f'iPhone X / iOS {required}','runtime_source':'V0.12.2','timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+def write_evidence():
+ E.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 def save(code=2):
- E.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print(json.dumps(out,ensure_ascii=False));raise SystemExit(code)
+ write_evidence();print(json.dumps(out,ensure_ascii=False));raise SystemExit(code)
+# Invalidate prior PASS before any external command; interrupted runs cannot reuse stale proof.
+out['reason']='iPhone acceptance attempt started; fresh device evidence pending.'
+write_evidence()
 def run(args,timeout=30):return subprocess.run(args,text=True,capture_output=True,timeout=timeout)
 def parse_acceptance(text,mode):
  for line in reversed(text.splitlines()):
