@@ -39,7 +39,7 @@ except (subprocess.TimeoutExpired,OSError) as exc:
 out['device_list_tail']=(listing.stdout+listing.stderr)[-6000:]
 if listing.returncode!=0:
  out['reason']=f'iPhone device listing failed (exit {listing.returncode}); device identity cannot be verified.';save()
-line=next((l for l in (listing.stdout+listing.stderr).splitlines() if udid in l),None);out['matched_device_line']=line
+line=next((l for l in (listing.stdout+listing.stderr).splitlines() if f'({udid})' in l),None);out['matched_device_line']=line
 if not line or 'iPhone X' not in line:out['reason']='Selected physical device is not reported as iPhone X.';save()
 if required not in line:out['reason']=f'iPhone X found, but required iOS {required} is not reported.';save()
 try:
