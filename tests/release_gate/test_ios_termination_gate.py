@@ -16,7 +16,7 @@ SOURCE = Path(__file__).resolve().parents[2] / "tools/release_gate/gate_07_ios_i
 
 
 class IOSLifecycleGateTests(unittest.TestCase):
-    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None, install_error=None, launch_error_mode=None):
+    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None, install_error=None, launch_error_mode=None, listing_text=None):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             script = root / "tools/release_gate/gate_07_ios_iphone_x.py"
@@ -36,7 +36,7 @@ class IOSLifecycleGateTests(unittest.TestCase):
                         raise subprocess.TimeoutExpired(args, 20)
                     if listing_error == "oserror":
                         raise OSError("mock xctrace failure")
-                    return subprocess.CompletedProcess(args, listing_code, "iPhone X (16.7.16) (TEST-UDID)\n", "")
+                    return subprocess.CompletedProcess(args, listing_code, listing_text if listing_text is not None else "iPhone X (16.7.16) (TEST-UDID)\n", "")
                 if "terminate" in args:
                     if terminate_error == "timeout":
                         raise subprocess.TimeoutExpired(args, 20)
@@ -143,6 +143,17 @@ class IOSLifecycleGateTests(unittest.TestCase):
                 self.assertEqual(evidence["status"], "BLOCKED")
                 self.assertNotIn("stale", evidence)
                 self.assertIn("device listing", evidence["reason"].lower())
+                self.assertFalse(any("install" in args for args in calls))
+
+    def test_device_id_substring_does_not_validate_other_iphone(self):
+        # A different device ID containing the requested ID must never prove this device is iPhone X.
+        for device_id in ("OTHER-TEST-UDID", "TEST-UDID-EXTRA"):
+            with self.subTest(device_id=device_id):
+                listing = f"iPhone X (16.7.16) ({device_id})\\n"
+                code, evidence, calls = self.exercise_gate(0, listing_text=listing)
+                self.assertEqual(code, 2)
+                self.assertEqual(evidence["status"], "BLOCKED")
+                self.assertNotIn("stale", evidence)
                 self.assertFalse(any("install" in args for args in calls))
 
     def test_launch_oserror_replaces_stale_pass(self):
