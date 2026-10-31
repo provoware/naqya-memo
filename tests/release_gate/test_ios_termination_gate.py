@@ -172,7 +172,7 @@ class IOSLifecycleGateTests(unittest.TestCase):
         for model in ("iPhone XS", "iPhone XR", "iPhone XS Max", "iPhone X Pro"):
             with self.subTest(model=model):
                 code, evidence, calls = self.exercise_gate(
-                    0, listing_text=f"{model} (16.7.16) (TEST-UDID)\\n".replace("\\n", "\n")
+                    0, listing_text=f"{model} (16.7.16) (TEST-UDID)\n"
                 )
                 self.assertEqual(code, 2)
                 self.assertEqual(evidence["status"], "BLOCKED")
@@ -183,7 +183,7 @@ class IOSLifecycleGateTests(unittest.TestCase):
         for version in ("16.7.160", "116.7.16", "16.7.16.1"):
             with self.subTest(version=version):
                 code, evidence, calls = self.exercise_gate(
-                    0, listing_text=f"iPhone X ({version}) (TEST-UDID)\\n".replace("\\n", "\n")
+                    0, listing_text=f"iPhone X ({version}) (TEST-UDID)\n"
                 )
                 self.assertEqual(code, 2)
                 self.assertEqual(evidence["status"], "BLOCKED")
@@ -192,7 +192,7 @@ class IOSLifecycleGateTests(unittest.TestCase):
 
     def test_named_iphone_x_remains_accepted(self):
         code, evidence, calls = self.exercise_gate(
-            0, listing_text="Poppis iPhone X (16.7.16) (TEST-UDID)\\n".replace("\\n", "\n")
+            0, listing_text="Poppis iPhone X (16.7.16) (TEST-UDID)\n"
         )
         self.assertEqual(code, 0)
         self.assertEqual(evidence["status"], "PASS")
