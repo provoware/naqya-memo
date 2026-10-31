@@ -25,13 +25,15 @@ def parse_acceptance(text,mode):
 def launch_console(mode,seconds):
  args=[xcrun,'devicectl','device','process','launch','--device',udid,'--console',bundle,'--','-ProvowareAcceptance',mode]
  p=subprocess.Popen(args,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+ timed_out=False
  try:
   text,_=p.communicate(timeout=seconds)
  except subprocess.TimeoutExpired:
+  timed_out=True
   p.terminate()
   try:text,_=p.communicate(timeout=3)
   except subprocess.TimeoutExpired:p.kill();text,_=p.communicate()
- return p.returncode,text
+ return p.returncode,text,timed_out
 if platform.system()!='Darwin':out['reason']='Native iOS build/sign/install requires macOS/Xcode; current runner is not macOS.';save()
 if not xcrun or not xcodebuild:out['reason']='Xcode command line tools missing.';save()
 if not app or not app.is_dir():out['reason']='V0.12.2 Xcode runtime source exists, but no signed .app supplied. Set PROVOWARE_IOS_APP.';save()
@@ -57,11 +59,12 @@ out['install_output']=(install.stdout+install.stderr)[-5000:]
 if install.returncode!=0:out['reason']='Signed app installation failed.';save()
 # User must approve microphone/notification prompts if the device has not granted them before.
 try:
- rc,text=launch_console('run',18)
+ rc,text,run_timed_out=launch_console('run',18)
 except (subprocess.TimeoutExpired,OSError) as exc:
  out['reason']=f'iPhone acceptance run command failed ({type(exc).__name__}); native acceptance cannot be verified.';save()
 out['run_console_tail']=text[-10000:];run_result=parse_acceptance(text,'run');out['run_result']=run_result;out['reminder_fired']='REMINDER_FIRED:' in text
 out['run_exit_code']=rc
+if run_timed_out:out['reason']='iPhone acceptance run command timed out; native acceptance cannot be verified.';save()
 if rc!=0:out['reason']=f'iPhone acceptance run command failed (exit {rc}); native acceptance cannot be verified.';save()
 if not run_result or run_result.get('status')!='PASS' or not out['reminder_fired']:
  out['reason']='iPhone acceptance did not prove native microphone + foreground reminder path. Approve system permission prompts and rerun.';save()
@@ -75,11 +78,12 @@ if term.returncode != 0:
  out['reason']='iPhone app termination failed; process lifecycle and persistence cannot be verified.';save()
 time.sleep(1)
 try:
- rc2,text2=launch_console('verify',10)
+ rc2,text2,verify_timed_out=launch_console('verify',10)
 except (subprocess.TimeoutExpired,OSError) as exc:
  out['reason']=f'iPhone persistence verify command failed ({type(exc).__name__}); relaunch cannot be verified.';save()
 out['verify_console_tail']=text2[-8000:];verify=parse_acceptance(text2,'verify');out['verify_result']=verify
 out['verify_exit_code']=rc2
+if verify_timed_out:out['reason']='iPhone persistence verify command timed out; relaunch cannot be verified.';save()
 if rc2!=0:out['reason']=f'iPhone persistence verify command failed (exit {rc2}); relaunch cannot be verified.';save()
 if verify and verify.get('status')=='PASS':
  out['status']='PASS';out['reason']='Real iPhone X/iOS device acceptance passed: install, native microphone, reminder callback, and persistence after relaunch.';save(0)
