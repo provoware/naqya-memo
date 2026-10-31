@@ -7,6 +7,9 @@ pkg='de.provoware.naqya'
 out={'gate':'GATE_06_ANDROID_DEVICE','status':'BLOCKED','adb':adb,'acceptance_apk':str(apk) if apk else None,'release_apk':str(release_apk) if release_apk else None,'package':pkg,'runtime_source':'V0.12.2','timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat()}
 def save(code=2):
  E.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print(json.dumps(out,ensure_ascii=False));raise SystemExit(code)
+# An interrupted acceptance attempt must never leave an earlier device PASS usable.
+out['reason']='Android acceptance attempt started; fresh device evidence pending.'
+E.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 def parse_acceptance(logs,mode):
  found=[]
  for line in logs.splitlines():
@@ -23,7 +26,12 @@ if not apk or not apk.is_file():
  out['reason']='No debuggable acceptance APK supplied. Set PROVOWARE_ANDROID_ACCEPTANCE_APK.';save()
 if not release_apk or not release_apk.is_file():
  out['reason']='No signed release APK supplied. Set PROVOWARE_ANDROID_RELEASE_APK.';save()
-cp=subprocess.run([adb,'devices'],text=True,capture_output=True,timeout=8)
+try:
+ cp=subprocess.run([adb,'devices'],text=True,capture_output=True,timeout=8)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'ADB device listing failed ({type(exc).__name__}); device acceptance cannot be verified.';save()
+if cp.returncode!=0:
+ out['reason']=f'ADB device listing failed (exit {cp.returncode}); device acceptance cannot be verified.';save()
 dev=[l.split()[0] for l in cp.stdout.splitlines()[1:] if l.strip().endswith('\tdevice')]
 out['devices']=dev
 if len(dev)!=1:out['reason']='Exactly one authorized Android device is required.';save()

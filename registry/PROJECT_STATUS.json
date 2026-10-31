@@ -15,6 +15,7 @@
   "ios_xcode_runtime_source": "COMPLETE",
   "ios_native_build": "BLOCKED",
   "ios_iphone_x_evidence": false,
+  "android_gate_stale_pass_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING",
   "required_release_gates": 7,
   "passed_release_gates": 1,
   "release_status": "NO-GO",
