@@ -2,6 +2,7 @@
 import contextlib
 import io
 import json
+import os
 from pathlib import Path
 import runpy
 import shutil
@@ -24,6 +25,11 @@ class AndroidEvidenceInvalidationTests(unittest.TestCase):
             evidence.parent.mkdir(parents=True)
             evidence.write_text('{"gate":"GATE_06_ANDROID_DEVICE","status":"PASS","stale":true}', encoding='utf-8')
 
+            acceptance_apk = root / 'acceptance.apk'
+            release_apk = root / 'release.apk'
+            acceptance_apk.touch()
+            release_apk.touch()
+
             def fake_adb(args, **kwargs):
                 if failure == 'interrupt':
                     raise KeyboardInterrupt('simulated interrupted device listing')
@@ -31,7 +37,8 @@ class AndroidEvidenceInvalidationTests(unittest.TestCase):
                     raise subprocess.TimeoutExpired(args, 8)
                 return subprocess.CompletedProcess(args, 1, '', 'ADB device listing failed')
 
-            with patch('shutil.which', return_value='/usr/bin/adb'), \
+            with patch.dict(os.environ, {'PROVOWARE_ANDROID_ACCEPTANCE_APK': str(acceptance_apk), 'PROVOWARE_ANDROID_RELEASE_APK': str(release_apk)}), \
+                 patch('shutil.which', return_value='/usr/bin/adb'), \
                  patch('subprocess.run', side_effect=fake_adb), \
                  contextlib.redirect_stdout(io.StringIO()):
                 with self.assertRaises((KeyboardInterrupt, SystemExit)) as caught:
