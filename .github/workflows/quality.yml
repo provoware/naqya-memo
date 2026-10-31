@@ -49,6 +49,7 @@ jobs:
           python -S tests/release_gate/test_workflow_action_pins.py
           python -S tests/release_gate/test_gate_evidence_contract.py
           python -S tests/release_gate/test_android_stale_evidence_gate.py
+          python -S tests/release_gate/test_soak_stale_evidence_gate.py
 
       - name: UI contracts
         run: |
