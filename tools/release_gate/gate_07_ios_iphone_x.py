@@ -5,8 +5,13 @@ E=ROOT/'registry/evidence/v0.12.2/gates/GATE_07_IOS_IPHONE_X.json';E.parent.mkdi
 xcrun=shutil.which('xcrun');xcodebuild=shutil.which('xcodebuild');app_env=os.environ.get('PROVOWARE_IOS_APP');app=Path(app_env).expanduser() if app_env else None
 udid=os.environ.get('PROVOWARE_IOS_DEVICE_ID');required=os.environ.get('PROVOWARE_IOS_REQUIRED_VERSION','16.7.16');bundle='de.provoware.naqya'
 out={'gate':'GATE_07_IOS_IPHONE_X','status':'BLOCKED','host_platform':platform.system(),'xcrun':xcrun,'xcodebuild':xcodebuild,'app_bundle':str(app) if app else None,'device_id':udid,'target':f'iPhone X / iOS {required}','runtime_source':'V0.12.2','timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+def write_evidence():
+ E.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 def save(code=2):
- E.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print(json.dumps(out,ensure_ascii=False));raise SystemExit(code)
+ write_evidence();print(json.dumps(out,ensure_ascii=False));raise SystemExit(code)
+# Invalidate prior PASS before any external command; interrupted runs cannot reuse stale proof.
+out['reason']='iPhone acceptance attempt started; fresh device evidence pending.'
+write_evidence()
 def run(args,timeout=30):return subprocess.run(args,text=True,capture_output=True,timeout=timeout)
 def parse_acceptance(text,mode):
  for line in reversed(text.splitlines()):
@@ -32,20 +37,50 @@ if not xcrun or not xcodebuild:out['reason']='Xcode command line tools missing.'
 if not app or not app.is_dir():out['reason']='V0.12.2 Xcode runtime source exists, but no signed .app supplied. Set PROVOWARE_IOS_APP.';save()
 if not udid:out['reason']='Set PROVOWARE_IOS_DEVICE_ID to the physical iPhone X UDID.';save()
 # Strong target identity check from Xcode device listing.
-listing=run([xcrun,'xctrace','list','devices'],20);out['device_list_tail']=(listing.stdout+listing.stderr)[-6000:]
-line=next((l for l in (listing.stdout+listing.stderr).splitlines() if udid in l),None);out['matched_device_line']=line
-if not line or 'iPhone X' not in line:out['reason']='Selected physical device is not reported as iPhone X.';save()
-if required not in line:out['reason']=f'iPhone X found, but required iOS {required} is not reported.';save()
-install=run([xcrun,'devicectl','device','install','app','--device',udid,str(app)],90);out['install_output']=(install.stdout+install.stderr)[-5000:]
+try:
+ listing=run([xcrun,'xctrace','list','devices'],20)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'iPhone device listing failed ({type(exc).__name__}); device identity cannot be verified.';save()
+out['device_list_tail']=(listing.stdout+listing.stderr)[-6000:]
+if listing.returncode!=0:
+ out['reason']=f'iPhone device listing failed (exit {listing.returncode}); device identity cannot be verified.';save()
+line=next((l for l in (listing.stdout+listing.stderr).splitlines() if re.search(r'\('+re.escape(udid)+r'\)\s*$',l)),None);out['matched_device_line']=line
+# Match the exact model and version fields; substring matches also accept XS/XR or 16.7.160.
+device_match=re.search(r'\biPhone X\s+\((?:iOS\s+)?([^()]*)\)\s+\('+re.escape(udid)+r'\)\s*$',line) if line else None
+if not device_match:out['reason']='Selected physical device is not reported as iPhone X.';save()
+if device_match.group(1)!=required:out['reason']=f'iPhone X found, but required iOS {required} is not reported.';save()
+try:
+ install=run([xcrun,'devicectl','device','install','app','--device',udid,str(app)],90)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'Signed app installation failed ({type(exc).__name__}); native acceptance cannot be verified.';save()
+out['install_output']=(install.stdout+install.stderr)[-5000:]
 if install.returncode!=0:out['reason']='Signed app installation failed.';save()
 # User must approve microphone/notification prompts if the device has not granted them before.
-rc,text=launch_console('run',18);out['run_console_tail']=text[-10000:];run_result=parse_acceptance(text,'run');out['run_result']=run_result;out['reminder_fired']='REMINDER_FIRED:' in text
+try:
+ rc,text=launch_console('run',18)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'iPhone acceptance run command failed ({type(exc).__name__}); native acceptance cannot be verified.';save()
+out['run_console_tail']=text[-10000:];run_result=parse_acceptance(text,'run');out['run_result']=run_result;out['reminder_fired']='REMINDER_FIRED:' in text
+out['run_exit_code']=rc
+if rc!=0:out['reason']=f'iPhone acceptance run command failed (exit {rc}); native acceptance cannot be verified.';save()
 if not run_result or run_result.get('status')!='PASS' or not out['reminder_fired']:
  out['reason']='iPhone acceptance did not prove native microphone + foreground reminder path. Approve system permission prompts and rerun.';save()
 # Terminate app if supported, then verify WebKit/IndexedDB persistence across process lifecycle.
-term=run([xcrun,'devicectl','device','process','terminate','--device',udid,'--bundle-id',bundle],20);out['terminate_output']=(term.stdout+term.stderr)[-2000:]
+try:
+ term=run([xcrun,'devicectl','device','process','terminate','--device',udid,'--bundle-id',bundle],20)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'iPhone app termination failed ({type(exc).__name__}); process lifecycle and persistence cannot be verified.';save()
+out['terminate_output']=(term.stdout+term.stderr)[-2000:]
+if term.returncode != 0:
+ out['reason']='iPhone app termination failed; process lifecycle and persistence cannot be verified.';save()
 time.sleep(1)
-rc2,text2=launch_console('verify',10);out['verify_console_tail']=text2[-8000:];verify=parse_acceptance(text2,'verify');out['verify_result']=verify
+try:
+ rc2,text2=launch_console('verify',10)
+except (subprocess.TimeoutExpired,OSError) as exc:
+ out['reason']=f'iPhone persistence verify command failed ({type(exc).__name__}); relaunch cannot be verified.';save()
+out['verify_console_tail']=text2[-8000:];verify=parse_acceptance(text2,'verify');out['verify_result']=verify
+out['verify_exit_code']=rc2
+if rc2!=0:out['reason']=f'iPhone persistence verify command failed (exit {rc2}); relaunch cannot be verified.';save()
 if verify and verify.get('status')=='PASS':
  out['status']='PASS';out['reason']='Real iPhone X/iOS device acceptance passed: install, native microphone, reminder callback, and persistence after relaunch.';save(0)
 out['reason']='Initial iPhone run passed, but persistence verification after relaunch failed.';save()
