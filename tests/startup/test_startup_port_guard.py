@@ -56,6 +56,27 @@ def test_strict_mode_refuses_occupied_port():
         assert rc==98 and j["action"]=="ERROR"
     finally:s.close()
 
+def test_launcher_reports_strict_port_error():
+    p=free_port()
+    s=socket.socket()
+    s.bind(("127.0.0.1",p))
+    s.listen(1)
+    env=os.environ.copy()
+    env["PROVOWARE_PORT"]=str(p)
+    env["PROVOWARE_PORT_STRICT"]="1"
+    env["PROVOWARE_NO_BROWSER"]="1"
+    try:
+        result=subprocess.run(
+            ["bash",str(ROOT/"STARTEN_LINUX.sh")],
+            cwd=ROOT,env=env,text=True,capture_output=True,timeout=12,
+        )
+        assert result.returncode==98, result.stderr
+        assert "Start nicht möglich" in result.stderr
+        assert "REQUESTED_PORT_OCCUPIED_STRICT" in result.stderr
+    finally:
+        s.close()
+
+
 if __name__=="__main__":
     tests=[v for k,v in sorted(globals().items()) if k.startswith("test_")]
     bad=[]

@@ -3,7 +3,16 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 REQUESTED_PORT="${PROVOWARE_PORT:-8765}"
-GUARD_JSON="$(python3 -S tools/startup_port_guard.py --root "$PWD" --requested "$REQUESTED_PORT" --evidence)"
+if GUARD_JSON="$(python3 -S tools/startup_port_guard.py --root "$PWD" --requested "$REQUESTED_PORT" --evidence)"; then
+  :
+else
+  GUARD_STATUS=$?
+  echo "🔴 Start nicht möglich (Startprüfung, Status ${GUARD_STATUS})." >&2
+  if [[ -n "$GUARD_JSON" ]]; then
+    printf '   Diagnose: %s\n' "$GUARD_JSON" >&2
+  fi
+  exit "$GUARD_STATUS"
+fi
 ACTION="$(python3 -S -c 'import json,sys; print(json.load(sys.stdin)["action"])' <<<"$GUARD_JSON")"
 PORT="$(python3 -S -c 'import json,sys; print(json.load(sys.stdin).get("selected_port") or "")' <<<"$GUARD_JSON")"
 REASON="$(python3 -S -c 'import json,sys; print(json.load(sys.stdin).get("reason") or "")' <<<"$GUARD_JSON")"
