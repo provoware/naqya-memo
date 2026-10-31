@@ -167,5 +167,36 @@ class IOSLifecycleGateTests(unittest.TestCase):
                 self.assertTrue(any(args[-1] == mode for args in calls))
 
 
+    def test_other_iphone_models_cannot_pass_iphone_x_gate(self):
+        # A shared name prefix is not proof that the physical model is iPhone X.
+        for model in ("iPhone XS", "iPhone XR", "iPhone XS Max", "iPhone X Pro"):
+            with self.subTest(model=model):
+                code, evidence, calls = self.exercise_gate(
+                    0, listing_text=f"{model} (16.7.16) (TEST-UDID)\\n".replace("\\n", "\n")
+                )
+                self.assertEqual(code, 2)
+                self.assertEqual(evidence["status"], "BLOCKED")
+                self.assertNotIn("stale", evidence)
+                self.assertFalse(any("install" in args for args in calls))
+
+    def test_ios_version_must_match_exactly(self):
+        for version in ("16.7.160", "116.7.16", "16.7.16.1"):
+            with self.subTest(version=version):
+                code, evidence, calls = self.exercise_gate(
+                    0, listing_text=f"iPhone X ({version}) (TEST-UDID)\\n".replace("\\n", "\n")
+                )
+                self.assertEqual(code, 2)
+                self.assertEqual(evidence["status"], "BLOCKED")
+                self.assertNotIn("stale", evidence)
+                self.assertFalse(any("install" in args for args in calls))
+
+    def test_named_iphone_x_remains_accepted(self):
+        code, evidence, calls = self.exercise_gate(
+            0, listing_text="Poppis iPhone X (16.7.16) (TEST-UDID)\\n".replace("\\n", "\n")
+        )
+        self.assertEqual(code, 0)
+        self.assertEqual(evidence["status"], "PASS")
+        self.assertTrue(any("install" in args for args in calls))
+
 if __name__ == "__main__":
     unittest.main()
