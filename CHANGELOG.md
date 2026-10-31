@@ -1,3 +1,8 @@
+## [CHROMIUM-GATE-STALE-PASS-GUARD] – 2026-10-31 · PR-Entwurf
+- Release-Gate-Fehler: Ein neuer Chromium-Prüflauf konnte vor dem abschließenden Evidence-Schreiben abbrechen und einen alten `PASS`-Nachweis stehen lassen.
+- Der Gate-Status wird vor dem ersten Server-/Browserstart auf `BLOCKED` gesetzt; vorhandene Bildschirmaufnahmen bleiben bei Fehlversuchen unverändert.
+- Unterbrechungsregression ergänzt und bestehende Screenshot-Frischetests in `quality.yml` eingebunden; keine reale Browser-Evidence, weiterhin 1/7 PASS und NO-GO.
+
 ## [ANDROID-GATE-STALE-PASS-GUARD] – 2026-10-31 · PR-Entwurf
 - Kritischer Gate-Nachweisfehler: Ein unterbrochener neuer Android-Prüflauf konnte eine alte `PASS`-Datei unverändert stehen lassen.
 - `GATE_06_ANDROID_DEVICE.json` wird vor dem ersten ADB-Aufruf auf `BLOCKED` gesetzt; ADB-Geräteauflistung mit Timeout, Betriebssystemfehler oder fehlerhaftem Rückgabewert wird kontrolliert abgewiesen.

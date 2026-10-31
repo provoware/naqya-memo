@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Chromium-Gate: alten PASS vor einem neuen Prüflauf entwerten · 31.10.2026 (PR-Entwurf)
+Vor dem Start des lokalen Servers und Browsers wird `GATE_02_CHROMIUM.json` auf `BLOCKED` gesetzt. Ein Abbruch darf keine frühere Browserfreigabe stehen lassen. Drei isolierte Tests prüfen Unterbrechung sowie frische/veraltete Bildschirmaufnahmen. **Keine reale Browserabnahme**; Release weiterhin **NO-GO, 1/7 reale Gates**.
+
+
 ### 🔐 Android-Gate: alte PASS-Evidence bei neuem Prüflauf entwerten · 31.10.2026
 Der Android-Geräteprüfer setzt den Nachweis **vor dem ersten ADB-Aufruf** auf `BLOCKED`. Auch ein Abbruch, eine Zeitüberschreitung oder ein fehlerhafter Geräteabruf darf keinen alten PASS-Nachweis stehen lassen. Drei simulierte Regressionstests sind in der Qualitätsprüfung eingebunden; **keine echte Android-Geräteabnahme**, weiterhin **1/7 reale Gates · NO-GO**. Änderung nur als isolierter PR-Entwurf.
 

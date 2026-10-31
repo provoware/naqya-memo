@@ -155,5 +155,6 @@
     ],
     "tested_source_head": "25aef6bb60703ba4edc95fda5e2a53710040e1d5",
     "quality_run": 40148667614
-  }
+  },
+  "chromium_gate_stale_pass_guard": "SOURCE_PATCH_IN_PR_REAL_BROWSER_PENDING"
 }

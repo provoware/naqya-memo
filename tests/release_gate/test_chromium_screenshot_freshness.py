@@ -3,11 +3,13 @@
 
 import json
 import os
+import runpy
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 GATE_SOURCE = ROOT / 'tools' / 'release_gate' / 'gate_02_chromium.py'
@@ -55,6 +57,25 @@ class ChromiumScreenshotFreshnessTests(unittest.TestCase):
                                        text=True, timeout=20)
             evidence = json.loads((screenshot.parent / 'gates/GATE_02_CHROMIUM.json').read_text())
             return completed.returncode, evidence, screenshot.read_bytes()
+
+    def test_interrupted_attempt_invalidates_previous_pass(self):
+        # Reproduces an interruption after the gate starts but before browser launch.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            gate = root / 'tools/release_gate/gate_02_chromium.py'
+            gate.parent.mkdir(parents=True)
+            gate.write_text(GATE_SOURCE.read_text(encoding='utf-8'), encoding='utf-8')
+            evidence = root / 'registry/evidence/v0.12.2/gates/GATE_02_CHROMIUM.json'
+            evidence.parent.mkdir(parents=True)
+            evidence.write_text('{"gate":"GATE_02_CHROMIUM","status":"PASS","stale":true}', encoding='utf-8')
+            with patch('shutil.which', return_value='/mock/chromium'), \
+                 patch('subprocess.Popen', side_effect=KeyboardInterrupt('simulated interruption')):
+                with self.assertRaises(KeyboardInterrupt):
+                    runpy.run_path(str(gate), run_name='__main__')
+            result = json.loads(evidence.read_text(encoding='utf-8'))
+            self.assertEqual(result['gate'], 'GATE_02_CHROMIUM')
+            self.assertEqual(result['status'], 'BLOCKED')
+            self.assertNotIn('stale', result)
 
     def test_stale_screenshot_does_not_pass(self):
         code, evidence, image = self.run_gate(writes=False)

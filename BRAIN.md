@@ -16,6 +16,14 @@
 
 ---
 
+[2026-10-31] [BRAIN-0040] [CHROMIUM-GATE-EVIDENCE] [REPRODUCED]
+- Beobachtung: Abbruch beim Start eines neuen Chromium-Gate-Laufs konnte den alten `PASS`-Nachweis unverändert erhalten.
+- Ursache: `GATE_02_CHROMIUM.json` wurde erst am Ende des Prüflaufs geschrieben.
+- Schutzregel: Vor dem ersten externen Prozess den Status `BLOCKED` schreiben; nur ein erfolgreicher frischer Screenshot darf später PASS setzen.
+- Regression: isolierter Unterbrechungstest plus bestehende Screenshot-Frischetests in CI; keine reale Browser-Evidence.
+- Betroffene Komponenten: `tools/release_gate/gate_02_chromium.py`, `tests/release_gate/test_chromium_screenshot_freshness.py`.
+- Release-Gates: unverändert 1/7 PASS, NO-GO.
+
 [2026-10-31] [BRAIN-0039] [ANDROID-GATE-EVIDENCE] [REPRODUCED]
 - Beobachtung: Bei einem Abbruch vor `save()` konnte die vorherige Android-Gate-Datei weiter `PASS` anzeigen.
 - Ursache: Vor dem ersten ADB-Aufruf wurde der vorherige Nachweis nicht entwertet; Timeout/Fehler beim Geräteabruf waren nicht abgefangen.
