@@ -1654,5 +1654,21 @@
   {
     "path": "ui/reference_web/theme_tokens.json",
     "status": "AKTIV"
+  },
+  {
+    "path": "app/runtime_safety.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/startup/test_runtime_safety.py",
+    "status": "AKTIV"
+  },
+  {
+    "path": "tests/ui_consistency/runtime_safety_browser.cjs",
+    "status": "AKTIV"
+  },
+  {
+    "path": "docs/QA_RUNTIME_UI_20261101.md",
+    "status": "AKTIV"
   }
 ]

@@ -1,6 +1,6 @@
 {
   "version": "0.12.2.3-UI-SIMPLIFICATION-INPUT-GUIDANCE",
-  "generated_at": "2026-08-28T22:02:25.485198+00:00",
+  "generated_at": "2026-11-01T02:16:38.201324+00:00",
   "source": "ui/reference_web",
   "targets": [
     "platform/android/app/src/main/assets/www",
@@ -9,8 +9,8 @@
   "files": [
     {
       "file": "app.js",
-      "sha256": "676216c5a923a71280183381798e6d55d6cd7902234a3ff7f28930b88a7d3477",
-      "bytes": 38660
+      "sha256": "cc94cfcfd1c9f89801c5cf6865849e0fc958ee9be08705f84969b76ae905b5bf",
+      "bytes": 38676
     },
     {
       "file": "build_info.js",
@@ -19,8 +19,8 @@
     },
     {
       "file": "index.html",
-      "sha256": "b34f5b3f6ebf60dcda114d37f7950fea1387523a1d18134832dfa695f0716afa",
-      "bytes": 6952
+      "sha256": "bbf52cb6257ea9acc2cf5e4ca236b3dab09d2da81de008739f8d0fa4c7579610",
+      "bytes": 6989
     },
     {
       "file": "mobile/mobile_acceptance.js",
@@ -39,8 +39,8 @@
     },
     {
       "file": "styles.css",
-      "sha256": "6ccec1897c098202a3929efa0e34a2071554847de6cb04738ac8e4b4a2ea8bef",
-      "bytes": 34749
+      "sha256": "fa2e5b62d408a32e5bf582d78ee083d121f02bb13cf4d9b6359ef2c8731cd2e5",
+      "bytes": 35924
     },
     {
       "file": "tests/test_shell_contract.py",

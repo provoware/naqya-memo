@@ -1,3 +1,19 @@
+## [READ-ONLY-BACKUP-STATUS] - 2026-11-01
+- P1 aus Code-Review vor Merge behoben: Sicherungsstatus darf SQLite-WAL niemals checkpointen oder Journaldateien entfernen.
+- Strikt lesende Inspektion mit expliziter Journal-Sperre; aktuelle Hashprüfung vor und nach dem Lesen, Medienhashprüfung erhalten.
+- Sicherheitsregression auf 15 Tests erweitert; bestehende 14 Wiederherstellungsprüfungen weiterhin bestanden. Reale Release-Gates unverändert 1/7, NO-GO.
+
+## [RUNTIME-BOUNDARY-AND-SMALL-SCREEN-FIX] - 2026-11-01
+
+## Sicherheits- und Bedienkorrektur - 01.11.2026
+
+- Statische Dateien bleiben nach URL-Dekodierung und Auflösen von Verknüpfungen im Oberflächenordner; GET und HEAD sperren Ausbruchsversuche mit HTTP 403.
+- Der Sicherungsstatus zählt nur aktuell geprüfte Generationen. Datenbanksicherungen und vollständige Projektsicherungen werden getrennt bezeichnet; beschädigte Generationen erzeugen eine sichtbare Warnung.
+- Kleine Fenster ordnen den Kopfbereich bei hoher Vergrößerung untereinander an. Die Schnellstartleiste überdeckt die Schriftsteuerung nicht mehr.
+- Beschriftungen verwenden Übersicht, Aufgaben, Rückgängig, Wiederholen und Farbschema; Android-/iOS-Webdateien sind synchronisiert.
+- Prüfung: 15 Sicherheitsfälle, 14 Wiederherstellungsfälle, 5 Persistenzfälle, 20 bestehende Oberflächenverträge und echte Chromium-Memoabläufe bei 800 x 600 / 100, 150, 200 Prozent bestanden.
+- Keine reale Kubuntu-/Hardwarefreigabe: kanonische Release-Gates unverändert 1/7, NO-GO. Details: docs/QA_RUNTIME_UI_20261101.md.
+
 ## [GATE-EVIDENCE-GUARDS-CONSOLIDATED] – 2026-11-01 · Integrationskandidat
 - PR #121: fehlgeschlagenes Löschen von Android-Daten oder Logeinträgen sperrt ein neues Hardware-PASS.
 - PR #122: der neue 8h-Test entwertet den alten PASS vor der Initialisierung.

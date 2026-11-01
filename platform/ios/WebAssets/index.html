@@ -31,17 +31,17 @@
     <section class="status-strip simplified" aria-label="Systemstatus">
       <div class="status-chip ok"><b>START</b><span id="startStatus">Prüfe …</span></div>
       <div class="status-chip"><b>DATEN</b><span id="dataStatus">Prüfe …</span></div>
-      <div class="status-chip" id="backupChip"><b>BACKUP</b><span id="backupStatus">Prüfe …</span></div>
+      <div class="status-chip" id="backupChip"><b>SICHERUNG</b><span id="backupStatus">Prüfe …</span></div>
     </section>
     <section class="next-items">
-      <div class="section-title"><b>NÄCHSTE 10</b><span>Todos & Termine</span></div>
+      <div class="section-title"><b>NÄCHSTE 10</b><span>Aufgaben & Termine</span></div>
       <div class="next-grid" id="nextGrid"></div>
     </section>
     <section class="display-strip" aria-label="Darstellung">
       <div class="display-strip-head"><b>DARSTELLUNG</b><span>direkt anpassen</span></div>
       <div class="display-groups">
         <div class="display-group theme-group">
-          <span>Theme</span>
+          <span>Farbschema</span>
           <button id="themeBtn" type="button">◐ Wechseln</button>
           <output id="themeValue">Neon</output>
         </div>
@@ -65,9 +65,9 @@
   <aside class="nav-panel" id="mainNav">
     <div class="nav-head"><b>MENÜ</b><button class="icon-btn mobile-only" id="closeMenuBtn">×</button></div>
     <nav>
-      <button class="nav-item active" data-view="dashboard"><span>⌂</span>Dashboard</button>
+      <button class="nav-item active" data-view="dashboard"><span>⌂</span>Übersicht</button>
       <button class="nav-item" data-view="memo"><span>▤</span>Textmemos</button>
-      <button class="nav-item" data-view="todo"><span>✓</span>Todos</button>
+      <button class="nav-item" data-view="todo"><span>✓</span>Aufgaben</button>
       <button class="nav-item" data-view="calendar"><span>▦</span>Kalender</button>
       <button class="nav-item" data-view="trash"><span>⌫</span>Papierkorb</button>
       <button class="nav-item" data-view="diagnostics"><span>⌁</span>Diagnose</button>
@@ -83,15 +83,15 @@
   </aside>
 
   <section class="quickbar" aria-label="Schnellstart">
-    <button data-open="memo">＋ Memo</button><button data-open="todo">＋ Todo</button>
+    <button data-open="memo">＋ Memo</button><button data-open="todo">＋ Aufgabe</button>
     <button data-open="calendar">＋ Termin</button><button data-open="diagnostics">⌁ Diagnose</button>
-    <button id="undoBtn">↶ Undo</button><button id="redoBtn">↷ Redo</button>
+    <button id="undoBtn">↶ Rückgängig</button><button id="redoBtn">↷ Wiederholen</button>
     <span class="quickbar-spacer"></span>
   </section>
 
   <main class="workspace" id="workspace" tabindex="-1">
     <section class="workspace-toolbar">
-      <div><b id="viewTitle">Dashboard</b><span id="viewHint">Validierter Arbeitsbereich</span></div>
+      <div><b id="viewTitle">Übersicht</b><span id="viewHint">Validierter Arbeitsbereich</span></div>
     </section>
     <section class="module-host" id="moduleHost"></section>
   </main>
@@ -105,7 +105,7 @@
       <header><b>INHALT</b><span>live</span></header>
       <div class="stats-mini">
         <div><strong id="countMemo">0</strong><span>Memos</span></div>
-        <div><strong id="countTodo">0</strong><span>Todos</span></div>
+        <div><strong id="countTodo">0</strong><span>Aufgaben</span></div>
         <div><strong id="countEvent">0</strong><span>Termine</span></div>
         <div><strong id="countTrash">0</strong><span>Papierkorb</span></div>
       </div>
