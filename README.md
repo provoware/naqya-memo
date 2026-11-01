@@ -22,7 +22,17 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
-### 🔐 Konsolidierte Sicherheitskorrekturen · 01.11.2026 (Integrationskandidat)
+## Sicherheits- und Bedienkorrektur - 01.11.2026
+
+- Statische Dateien bleiben nach URL-Dekodierung und Auflösen von Verknüpfungen im Oberflächenordner; GET und HEAD sperren Ausbruchsversuche mit HTTP 403.
+- Der Sicherungsstatus zählt nur aktuell geprüfte Generationen. Datenbanksicherungen und vollständige Projektsicherungen werden getrennt bezeichnet; beschädigte Generationen erzeugen eine sichtbare Warnung.
+- Kleine Fenster ordnen den Kopfbereich bei hoher Vergrößerung untereinander an. Die Schnellstartleiste überdeckt die Schriftsteuerung nicht mehr.
+- Beschriftungen verwenden Übersicht, Aufgaben, Rückgängig, Wiederholen und Farbschema; Android-/iOS-Webdateien sind synchronisiert.
+- Prüfung: 11 Sicherheitsfälle, 14 Wiederherstellungsfälle, 5 Persistenzfälle, 20 bestehende Oberflächenverträge und echte Chromium-Memoabläufe bei 800 x 600 / 100, 150, 200 Prozent bestanden.
+- Keine reale Kubuntu-/Hardwarefreigabe: kanonische Release-Gates unverändert 1/7, NO-GO. Details: [Prüfbericht](docs/QA_RUNTIME_UI_20261101.md).
+
+
+### 🔐 Konsolidierte Sicherheitskorrekturen · 01.11.2026 (historischer Integrationsvermerk)
 
 Die vier bereits einzeln geprüften PR-Entwürfe [#121](https://github.com/provoware/naqya-memo/pull/121), [#122](https://github.com/provoware/naqya-memo/pull/122), [#123](https://github.com/provoware/naqya-memo/pull/123) und [#124](https://github.com/provoware/naqya-memo/pull/124) werden auf dem gemeinsamen `main`-Ausgangsstand `5bbcfd9a` zusammengeführt. Jeder Schutz entwertet einen alten Erfolgseintrag vor dem neuen Prüflauf; die Android-Prüfung sperrt fehlgeschlagene Rücksetzungen von App-Daten und Geräteprotokollen. Der Qualitätsworkflow enthält alle zugehörigen Negativtests.
 

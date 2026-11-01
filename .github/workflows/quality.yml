@@ -69,6 +69,9 @@ jobs:
             fi
           done
 
+      - name: Local file and backup safety
+        run: python -S tests/startup/test_runtime_safety.py
+
       - name: Startup contracts
         run: |
           if [ -f tests/startup/test_startup_port_guard.py ]; then

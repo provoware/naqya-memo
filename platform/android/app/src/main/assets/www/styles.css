@@ -525,3 +525,30 @@ html[data-font-tier="xl"] .display-group:last-child{grid-column:1/-1}
   .quick-note{grid-template-columns:1fr 1fr}
   .quick-note #quickTitle,.quick-note #quickInput{grid-column:1/-1}
 }
+
+/* A fixed header row cannot contain large text on a small screen. Let the
+   document grow vertically so display controls never sit under the quickbar. */
+@media(max-width:900px){
+  body{overflow-y:auto;overflow-x:hidden}
+  .app-shell{
+    height:auto;
+    min-height:100vh;
+    grid-template-rows:auto auto minmax(60vh,1fr) auto;
+  }
+  .topbar{grid-template-columns:minmax(0,1fr);grid-template-rows:none}
+  .brand-card,.quick-note,.display-strip,.next-items{grid-column:1;grid-row:auto}
+  .brand-card{padding:8px 12px}
+  .brand-card h1{font-size:1.25rem}
+  .quick-note{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .quick-note-title,.quick-note #quickTitle,.quick-note #quickInput{grid-column:1/-1}
+  .quick-note-title{display:none}
+  .quick-note input{min-width:0;height:auto}
+  .display-groups{grid-template-columns:minmax(0,1fr)}
+  .display-group{flex-wrap:wrap}
+  .display-group:last-child{grid-column:auto}
+  .quickbar{position:static;flex-wrap:wrap;overflow:visible}
+  .workspace{min-height:60vh}
+  .module-host{max-height:75vh}
+  .module-grid,.dashboard-grid,.form-grid{grid-template-columns:minmax(0,1fr)}
+  .footerbar{flex-wrap:wrap;min-width:0;height:auto}
+}

@@ -328,3 +328,10 @@
 [2026-08-28] [BRAIN-0035] [ZOOM-LAYOUT] [AKTIV]
 - Bis 200 % darf Vergrößerung nicht durch Überdecken erkauft werden.
 - Priorität: Neuordnung → Zusatzinfo ausblenden → Scrollen innerhalb des Inhaltsbereichs; niemals primäre Bedienung überdecken.
+
+[2026-11-01] [BRAIN-0044] [RUNTIME-SAFETY] [GEPRUEFT]
+- Ursache: UI-Pfade wurden ungeprüft angehängt; Sicherungsstatus zählte nur Dateinamen.
+- Schutz: aufgelöste UI-Grenze, bekannte Backupformate, aktuelle Hash-/SQLite-Prüfung und vollständige Restoremetadaten.
+- Regression: tests/startup/test_runtime_safety.py (11 Tests).
+- Bedienbefund: feste Kopfzeilenhöhe überdeckte bei 800x600 die Schriftsteuerung; natürlicher vertikaler Dokumentfluss bis 900px behebt den belegten Fehler.
+- Browserregression: tests/ui_consistency/runtime_safety_browser.cjs; keine kanonischen Release-Gates hochgestuft.

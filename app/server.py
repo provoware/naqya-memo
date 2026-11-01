@@ -13,6 +13,8 @@ except Exception:
     APP_VERSION = 'UNKNOWN'
 sys.path.insert(0, str(CORE))
 
+from runtime_safety import ui_file_path, verified_backup_status
+
 from provoware_core.assets import AssetManager, AssetError
 from provoware_core.reminders import ReminderEngine
 from provoware_core.media import LinuxAudioRecorder, RecordingError
@@ -207,24 +209,7 @@ def share_note(path):
 
 
 def backup_status():
-    """Truthful runtime backup status; never claims protection without evidence."""
-    roots=[PROJECT/'backups', PROJECT/'daten'/'backups']
-    generations=set()
-    for root in roots:
-        if not root.exists():
-            continue
-        for p in root.rglob('*'):
-            if not p.is_file():
-                continue
-            name=p.name.lower()
-            if ('manifest' in name and p.suffix.lower()=='.json') or name=='core.sqlite3':
-                generations.add(str(p.parent.resolve()))
-    count=len(generations)
-    return {
-        'generations':count,
-        'state':'READY' if count else 'EMPTY',
-        'label':f'{count} Gen.' if count else 'Noch keine'
-    }
+    return verified_backup_status(PROJECT)
 
 def api_state():
     return {
@@ -248,8 +233,13 @@ def api_state():
 class Handler(SimpleHTTPRequestHandler):
     server_version='Provoware/0.12'
     def translate_path(self,path):
-        clean=urlparse(path).path.lstrip('/')
-        return str(UI / clean)
+        return str(ui_file_path(UI, path))
+    def send_head(self):
+        try:
+            return super().send_head()
+        except PermissionError:
+            self.send_error(403, 'Dateizugriff gesperrt')
+            return None
     def log_message(self,fmt,*args):
         pass
     def _json(self,obj,status=200):

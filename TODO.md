@@ -538,3 +538,9 @@ Ein TODO darf nur abgehakt werden, wenn:
 - [x] Android-/iOS-WebAssets synchronisiert
 - [x] realer All-Views-Visual-Runner erstellt
 - [ ] `RUN_VISUAL_ACCEPTANCE_LINUX.sh` auf realem Linux-Zielrechner ausführen
+
+## Sicherheits- und Bedienprüfung 01.11.2026
+- [x] 01.11.2026 | Sicherheit | Oberflächenpfade begrenzen | prüfen: GET/HEAD und kodierte Pfade | fertig wenn: externe Pfade HTTP 403 liefern.
+- [x] 01.11.2026 | Sicherung | Generationen tatsächlich prüfen | prüfen: Hash, SQLite, Medien und Restore-Metadaten | fertig wenn: falsche Sicherungen kein READY erzeugen.
+- [x] 01.11.2026 | Bedienung | Kleines Fenster bei 100/150/200 Prozent | prüfen: Memo speichern, bearbeiten, Papierkorb, Wiederherstellen | fertig wenn: alle drei Chromium-Fälle ohne Überlauf bestehen.
+- [ ] 01.11.2026 | Abnahme | Reale Zielsystem-Gates schließen | prüfen: kanonischer Evaluator | fertig wenn: alle sieben echten Gates PASS sind.

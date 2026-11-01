@@ -37,7 +37,7 @@
   "release_ui_consistency": "PASS",
   "version_single_source": "registry/VERSION.json -> /api/state -> all visible version fields",
   "desktop_file_picker": "PASS",
-  "truthful_backup_status": "PASS",
+  "truthful_backup_status": "VERIFIED_GENERATIONS_DATABASE_AND_PROJECT_SEPARATE",
   "adaptive_area_zoom": "0.8-2.0 with layout tiers",
   "technical_details_default": "COLLAPSED",
   "ui_targeted_acceptance": "57/57 PASS",
@@ -159,5 +159,14 @@
   "android_gate_reset_preconditions": "SOURCE_PATCH_PENDING_REAL_DEVICE_EVIDENCE",
   "soak_gate_stale_pass_guard": "SOURCE_PATCH_PENDING_REAL_8H_TEST",
   "chromium_gate_stale_pass_guard": "SOURCE_PATCH_PENDING_REAL_BROWSER_EVIDENCE",
-  "microphone_gate_stale_pass_guard": "SOURCE_PATCH_PENDING_REAL_MICROPHONE_EVIDENCE"
+  "microphone_gate_stale_pass_guard": "SOURCE_PATCH_PENDING_REAL_MICROPHONE_EVIDENCE",
+  "runtime_safety_20261101": {
+    "source_base": "9b1dbab0442058bb819ab9152b9ddef17590f8d5",
+    "security_tests": 11,
+    "recovery_tests": 14,
+    "persistence_tests": 5,
+    "browser_cases": "800x600: 100/150/200 percent, real Chromium 134, memo create/edit/trash/restore",
+    "real_release_gate_promotion": false,
+    "report": "docs/QA_RUNTIME_UI_20261101.md"
+  }
 }
