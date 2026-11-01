@@ -433,3 +433,7 @@
 - gezielte Regression 57/57 PASS
 - Browser-Visual-PASS im aktuellen Build-Runner nicht behauptet
 
+## 2026-11-01 – iOS Gate 07 Konsolen-Nachweisprüfung (Entwurf)
+- Kritischer Release-Gate-Fix: Unvollständige `ProvowareAcceptance`-PASS-Meldungen dürfen kein reales iPhone-X-Gate abschließen.
+- Pflichtangaben für Aufnahme, Zähler, iOS-Brücke, Integrität und Persistenz; Regressionen für falsches PASS.
+- Keine neuen Funktionen, keine realen Device-Gates freigegeben.
