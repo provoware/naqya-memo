@@ -169,5 +169,12 @@
     "real_release_gate_promotion": false,
     "report": "docs/QA_RUNTIME_UI_20261101.md",
     "backup_sqlite_inspection": "READ_ONLY_IMMUTABLE_WITH_SIDECAR_REJECTION_AND_PRE_POST_HASH"
+  },
+  "ios_gate07_console_evidence_guard_20261101": {
+    "state": "DRAFT_PENDING_CI",
+    "scope": "GATE_07_IOS_IPHONE_X_CONSOLE_EVIDENCE_VALIDATION",
+    "real_device_evidence": false,
+    "release_gate_promotion": false,
+    "risk": "SYNTHETIC_CONSOLE_TEXT_NOT_INDEPENDENT_DEVICE_PROOF"
   }
 }
