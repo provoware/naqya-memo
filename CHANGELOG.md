@@ -1,3 +1,10 @@
+## [GATE-EVIDENCE-GUARDS-CONSOLIDATED] – 2026-11-01 · Integrationskandidat
+- PR #121: fehlgeschlagenes Löschen von Android-Daten oder Logeinträgen sperrt ein neues Hardware-PASS.
+- PR #122: der neue 8h-Test entwertet den alten PASS vor der Initialisierung.
+- PR #123: der neue Chromium-Test entwertet den alten PASS vor dem Browserstart.
+- PR #124: der neue Mikrofontest entwertet den alten PASS vor Imports/Geräteerkennung.
+- Gemeinsamer GitHub-Qualitätsworkflow enthält die zugehörigen isolierten Negativtests. Vor dem abschließenden Integrations-CI und dem Herkunftsabgleich sind Änderungen nicht freigegeben. Echte Release-Gates: 1/7 PASS, NO-GO.
+
 ## [ANDROID-GATE-STALE-PASS-GUARD] – 2026-10-31 · PR-Entwurf
 - Kritischer Gate-Nachweisfehler: Ein unterbrochener neuer Android-Prüflauf konnte eine alte `PASS`-Datei unverändert stehen lassen.
 - `GATE_06_ANDROID_DEVICE.json` wird vor dem ersten ADB-Aufruf auf `BLOCKED` gesetzt; ADB-Geräteauflistung mit Timeout, Betriebssystemfehler oder fehlerhaftem Rückgabewert wird kontrolliert abgewiesen.
