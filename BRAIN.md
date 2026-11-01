@@ -340,3 +340,8 @@
 - Ursache: sqlite3.connect ohne read-only kann beim Schließen WAL in eine Sicherungs-DB übertragen und Sidecars entfernen.
 - Schutz: Statuspfad liest nur über mode=ro&immutable=1; vorhandene/auftauchende Journaldateien sperren READY; Hash vor/nach Prüfung. Medienhashprüfung erhalten, Restorepfade unverändert.
 - Regression: tests/startup/test_runtime_safety.py, 15/15 bestanden, beide Sicherungstypen und Dateibaum-/Zeitstempelvergleich.
+
+## 2026-11-01 – Gate-07-Falschpositiv aus Konsolentext
+- **CONFIRMED (Quellcode):** Der iOS-Prüfer akzeptierte `run_result` und `verify_result` allein anhand `mode/status=PASS`, obwohl die native JS-Abnahme weitere Felder liefert. Dadurch konnten leere Konsolenmeldungen zu einem falschen Geräte-PASS führen.
+- **Fix im Entwurf:** Mindestfelder aus dem tatsächlichen iOS-Acceptance-Vertrag validieren; synthetische Negativ- und Positivtests in Quality-CI ausführen.
+- **Grenze:** Ein korrekt geformter Konsolentext ist kein unabhängiger Herkunftsnachweis; echte physische iPhone-X-Abnahme bleibt erforderlich.
