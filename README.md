@@ -22,6 +22,12 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Firefox-Gate 03: veraltete PASS-Evidence bei neuem Prüflauf sperren · 01.11.2026
+
+Der Firefox-Prüfer setzt die kanonische Gate-Datei **vor der Programmerkennung und Versionsabfrage** auf `BLOCKED`. Ein Abbruch kann dadurch keinen früheren `PASS` als neuen Prüfnachweis stehen lassen. Drei isolierte Regressionstests prüfen Unterbrechungen und fehlendes Firefox. **Keine reale Firefox-Endabnahme; 1/7 reale Gates, NO-GO.** Änderung als isolierter PR-Entwurf.
+
+
+
 ## Sicherheits- und Bedienkorrektur - 01.11.2026
 
 - Statische Dateien bleiben nach URL-Dekodierung und Auflösen von Verknüpfungen im Oberflächenordner; GET und HEAD sperren Ausbruchsversuche mit HTTP 403.

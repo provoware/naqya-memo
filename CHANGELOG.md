@@ -1,3 +1,8 @@
+## [FIREFOX-GATE-STALE-PASS-GUARD] – 2026-11-01 · PR-Entwurf
+- Gate 03 konnte bei Unterbrechung der Firefox-Erkennung oder Versionsabfrage einen alten `PASS`-Nachweis stehen lassen.
+- Die kanonische Gate-Datei wird vor jeder externen Prüfung auf `BLOCKED` gesetzt; drei synthetische Negativ-/Normalfalltests laufen im Qualitätsworkflow.
+- Keine reale Firefox-Abnahme; 1/7 reale Gates, NO-GO; keine neuen Abhängigkeiten.
+
 ## [READ-ONLY-BACKUP-STATUS] - 2026-11-01
 - P1 aus Code-Review vor Merge behoben: Sicherungsstatus darf SQLite-WAL niemals checkpointen oder Journaldateien entfernen.
 - Strikt lesende Inspektion mit expliziter Journal-Sperre; aktuelle Hashprüfung vor und nach dem Lesen, Medienhashprüfung erhalten.

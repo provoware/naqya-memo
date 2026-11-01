@@ -16,6 +16,15 @@
 
 ---
 
+[2026-11-01] [BRAIN-0044] [FIREFOX-STALE-PASS] [REPRODUCED]
+- Beobachtung: Eine Unterbrechung vor dem bisherigen Abschluss-Schreibvorgang beließ einen früheren Firefox-Gate-PASS unverändert.
+- Ursache: `GATE_03_FIREFOX.json` wurde erst nach `shutil.which` und `firefox --version` aktualisiert.
+- Schutzregel: Vor externen Firefox-Proben zuerst `BLOCKED` schreiben; nur echte Browser-E2E-Evidence darf später `PASS` belegen.
+- Regression: zwei simulierte Startunterbrechungen und ein Normalfall ohne Firefox, keine reale Browserfreigabe.
+- Betroffene Komponenten: `tools/release_gate/gate_03_firefox.py`, `tests/release_gate/test_firefox_stale_evidence_gate.py`.
+- Release-Gates: 1/7 PASS, NO-GO.
+
+
 [2026-11-01] [BRAIN-0040] [ANDROID-DATA-ISOLATION] [REPRODUCED]
 - Ursache: Fehler von pm clear, logcat -c oder force-stop konnten veraltete Gerätedaten im neuen Test belassen.
 - Schutz: Jeder Fehler blockiert Gate 06; vier neue Negativfälle aus PR #121. Keine echte Android-Abnahme.
