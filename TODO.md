@@ -22,6 +22,9 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+- [ ] 2026-11-01 | Gate 04 · Evidenz | Vollständige Aufnahmemetadaten bei `PASS` erzwingen (PR-Entwurf) | prüfen: sechs synthetische Negativ-/Positivtests, GitHub-Quality-CI, echte Mikrofonabnahme getrennt | fertig wenn: Quellprüfung auf PR-HEAD grün und reale Gate-Evidence später unabhängig erbracht ist.
+
+
 ## 🔐 Sicherheitsintegration – prüfbare Aufgaben vom 01.11.2026
 
 - [ ] 2026-11-01 | P0 · Gate-Schutz | Vier bereits isoliert geprüfte Quellenkorrekturen #121–#124 auf demselben Stand integrieren | prüfen: 14 Schutzregressionen (Android 7, Dauerlauf 2, Chromium 3, Mikrofon 2); unveränderte Release-Gates | fertig wenn: gemeinsame CI auf aktuellem Integrations-HEAD grün und kein alter PASS wiederverwendbar.

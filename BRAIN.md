@@ -16,6 +16,14 @@
 
 ---
 
+[2026-11-01] [BRAIN-0044] [MICROPHONE-EVIDENCE-CONTRACT] [REPRODUCED]
+- Beobachtung: Ein nacktes Gate-04-JSON mit `status=PASS` wurde bisher als echte Mikrofonabnahme gezählt.
+- Ursache: Der gemeinsame Evidence-Vertrag prüfte für Gate 04 nur Identität und Status.
+- Schutz: PASS benötigt Aufnahmedauer, positive Bytes, Asset-ID und gültige SHA-256-Form; fehlende Felder ergeben INVALID_EVIDENCE.
+- Regression: sechs synthetische Positiv-/Negativfälle im bestehenden Quality-Workflow; echte Hardware und Herkunft nicht bewiesen.
+- Betroffene Komponenten: `tools/release_gate/evidence_contract.py`, `tests/release_gate/test_gate_evidence_contract.py`.
+- Release-Gates: unverändert 1/7 PASS, NO-GO; Änderung nur im PR-Entwurf.
+
 [2026-11-01] [BRAIN-0040] [ANDROID-DATA-ISOLATION] [REPRODUCED]
 - Ursache: Fehler von pm clear, logcat -c oder force-stop konnten veraltete Gerätedaten im neuen Test belassen.
 - Schutz: Jeder Fehler blockiert Gate 06; vier neue Negativfälle aus PR #121. Keine echte Android-Abnahme.

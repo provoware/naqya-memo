@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from pathlib import Path
 
 GATES = (
@@ -66,6 +67,20 @@ def read_gate(root: Path, number: str, name: str) -> dict:
             and data.get("errors") == []
         ):
             return _invalid(gate, "FULL_8H_EVIDENCE_REQUIRED")
+    # Ein PASS ohne überprüfbare Aufnahmemetadaten darf keine reale
+    # Mikrofonabnahme vortäuschen; dies beweist nicht die Hardware-Herkunft.
+    if number == "04" and data["status"] == "PASS":
+        seconds = data.get("physical_capture_seconds")
+        size = data.get("bytes")
+        digest = data.get("sha256")
+        if not (
+            isinstance(seconds, (int, float)) and not isinstance(seconds, bool)
+            and seconds >= 2 and (not isinstance(seconds, float) or math.isfinite(seconds))
+            and isinstance(size, int) and not isinstance(size, bool) and size > 0
+            and isinstance(data.get("asset_id"), str) and bool(data["asset_id"].strip())
+            and isinstance(digest, str) and re.fullmatch(r"[0-9a-fA-F]{64}", digest)
+        ):
+            return _invalid(gate, "PHYSICAL_CAPTURE_EVIDENCE_REQUIRED")
     return data
 
 

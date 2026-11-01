@@ -22,6 +22,11 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Gate 04 – Mikrofon-Nachweis absichern (01.11.2026, PR-Entwurf)
+
+Ein bloßer JSON-Eintrag `status=PASS` reicht für die reale Mikrofonprüfung nicht mehr: Der gemeinsame Release-Evaluator verlangt nun eine Aufnahmedauer von mindestens zwei Sekunden, eine positive Dateigröße, eine Asset-ID und einen SHA-256-Wert. Sechs synthetische Regressionen prüfen die Schutzregel; sie sind **keine** echte Mikrofonabnahme. Der reale Release-Stand bleibt **1/7, NO-GO**. Der Patch ist nur zur Prüfung vorgeschlagen und nicht nach `main` übernommen.
+
+
 ## Sicherheits- und Bedienkorrektur - 01.11.2026
 
 - Statische Dateien bleiben nach URL-Dekodierung und Auflösen von Verknüpfungen im Oberflächenordner; GET und HEAD sperren Ausbruchsversuche mit HTTP 403.

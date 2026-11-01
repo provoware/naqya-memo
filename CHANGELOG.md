@@ -1,3 +1,9 @@
+## [GATE-04-CAPTURE-EVIDENCE-CONTRACT] – 2026-11-01 · PR-Entwurf
+- Fehler: Der gemeinsame Release-Evaluator akzeptierte für Gate 04 ein nacktes `status=PASS` ohne Aufnahmedaten.
+- Schutz: Bei PASS sind mindestens zwei Sekunden Aufnahmedauer, positive Bytes, Asset-ID und SHA-256-Prüfsumme Pflicht; sonst `INVALID_EVIDENCE`.
+- Sechs synthetische Regressionstests im vorhandenen Quality-Workflow; keine Hardwareprüfung, keine neuen Abhängigkeiten.
+- Release bleibt 1/7 reale Gates PASS, NO-GO. Patch nicht automatisch zusammenführen.
+
 ## [READ-ONLY-BACKUP-STATUS] - 2026-11-01
 - P1 aus Code-Review vor Merge behoben: Sicherungsstatus darf SQLite-WAL niemals checkpointen oder Journaldateien entfernen.
 - Strikt lesende Inspektion mit expliziter Journal-Sperre; aktuelle Hashprüfung vor und nach dem Lesen, Medienhashprüfung erhalten.

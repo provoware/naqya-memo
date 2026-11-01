@@ -58,6 +58,38 @@ class EvidenceIdentityTests(unittest.TestCase):
         )
         self.assertEqual(read_gate(self.root, "01", "8H_SOAK")["status"], "PASS")
 
+    def microphone_metadata(self):
+        return {
+            "physical_capture_seconds": 2.0,
+            "bytes": 1024,
+            "sha256": "a" * 64,
+            "asset_id": "synthetic-asset-01",
+        }
+
+    def test_microphone_bare_pass_is_invalid(self):
+        self.write_gate("04", "LINUX_MICROPHONE", "PASS")
+        self.assertEqual(read_gate(self.root, "04", "LINUX_MICROPHONE")["status"], "INVALID_EVIDENCE")
+
+    def test_microphone_zero_bytes_is_invalid(self):
+        self.write_gate("04", "LINUX_MICROPHONE", "PASS", **(self.microphone_metadata() | {"bytes": 0}))
+        self.assertEqual(read_gate(self.root, "04", "LINUX_MICROPHONE")["status"], "INVALID_EVIDENCE")
+
+    def test_microphone_invalid_digest_is_invalid(self):
+        self.write_gate("04", "LINUX_MICROPHONE", "PASS", **(self.microphone_metadata() | {"sha256": "bad"}))
+        self.assertEqual(read_gate(self.root, "04", "LINUX_MICROPHONE")["status"], "INVALID_EVIDENCE")
+
+    def test_microphone_nonfinite_duration_is_invalid(self):
+        self.write_gate("04", "LINUX_MICROPHONE", "PASS", **(self.microphone_metadata() | {"physical_capture_seconds": float("nan")}))
+        self.assertEqual(read_gate(self.root, "04", "LINUX_MICROPHONE")["status"], "INVALID_EVIDENCE")
+
+    def test_microphone_capture_metadata_is_structurally_accepted(self):
+        self.write_gate("04", "LINUX_MICROPHONE", "PASS", **self.microphone_metadata())
+        self.assertEqual(read_gate(self.root, "04", "LINUX_MICROPHONE")["status"], "PASS")
+
+    def test_microphone_blocked_status_remains_blocked(self):
+        self.write_gate("04", "LINUX_MICROPHONE", "BLOCKED")
+        self.assertEqual(read_gate(self.root, "04", "LINUX_MICROPHONE")["status"], "BLOCKED")
+
     def test_malformed_and_non_object_json_are_invalid(self):
         path = self.gates / "GATE_03_FIREFOX.json"
         path.write_text("{invalid")
