@@ -4,14 +4,33 @@ const path = require('path');
 const output=process.env.PROVOWARE_QA_OUTPUT || fs.mkdtempSync('/tmp/naqya-ui-evidence-');
 fs.mkdirSync(output,{recursive:true});
 const {spawn}=require('child_process');
-const origin='http://127.0.0.1:18765';
+const net=require('net');
 (async()=>{
+ const port=await new Promise((resolve,reject)=>{
+  const probe=net.createServer();probe.once('error',reject);
+  probe.listen(0,'127.0.0.1',()=>{const value=probe.address().port;probe.close(()=>resolve(value));});
+ });
+ const origin=`http://127.0.0.1:${port}`;
  const project=fs.mkdtempSync('/tmp/naqya-ui-case-');
- const server=spawn(process.env.PROVOWARE_PYTHON || 'python3',['-S','app/server.py','--no-browser'],{cwd:path.resolve(__dirname,'../..'),env:{...process.env,PROVOWARE_PORT:'18765',PROVOWARE_PROJECT_PATH:project},stdio:'ignore'});
- await new Promise(r=>setTimeout(r,800));
- const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ const server=spawn(process.env.PROVOWARE_PYTHON || 'python3',['-S','app/server.py','--no-browser'],{cwd:path.resolve(__dirname,'../..'),env:{...process.env,PROVOWARE_PORT:String(port),PROVOWARE_PROJECT_PATH:project},stdio:'ignore'});
+ let startupError;server.once('error',error=>{startupError=error;});
+ let browser;
  const results=[];
  try {
+ let ready=false;
+ for(let attempt=0;attempt<50;attempt++){
+  if(startupError)throw startupError;
+  if(server.exitCode!==null)throw new Error('Isolated test server exited before readiness');
+  try{
+   const response=await fetch(origin+'/api/health',{signal:AbortSignal.timeout(200)});
+   const state=await response.json();
+   if(state.data?.project!==project)throw new Error('TEST_SERVER_IDENTITY_MISMATCH');
+   ready=true;break;
+  }catch(error){if(error.message==='TEST_SERVER_IDENTITY_MISMATCH')throw error;}
+  await new Promise(resolve=>setTimeout(resolve,100));
+ }
+ if(!ready)throw new Error('Isolated test server did not become ready');
+ browser=await chromium.launch({headless:true,args:['--no-sandbox']});
  for(const scale of [100,150,200]) {
   const context=await browser.newContext({viewport:{width:800,height:600}});
   await context.request.post(origin+'/api/settings',{data:{font_scale:1}});
@@ -45,7 +64,15 @@ const origin='http://127.0.0.1:18765';
   }catch(e){result.pass=false;result.failure=e.message;await page.screenshot({path:`${output}/naqya-${scale}-failure.png`}).catch(()=>{});}
   results.push(result);await context.close();
  }
- }finally{await browser.close();server.kill();await new Promise(r=>server.once('exit',r));fs.rmSync(project,{recursive:true,force:true});}
+ }finally{
+  if(browser)await browser.close();
+  if(server.pid&&server.exitCode===null){
+   const stopped=new Promise(resolve=>server.once('exit',resolve));
+   server.kill();const timeout=setTimeout(()=>server.kill('SIGKILL'),5000);
+   await stopped;clearTimeout(timeout);
+  }
+  fs.rmSync(project,{recursive:true,force:true});
+ }
  fs.writeFileSync(path.join(output,'naqya-results.json'),JSON.stringify(results,null,2));
  console.log(JSON.stringify(results,null,2));process.exitCode=results.every(x=>x.pass)?0:1;
 })().catch(e=>{console.error(e);process.exitCode=1});
