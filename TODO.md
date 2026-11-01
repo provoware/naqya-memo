@@ -546,3 +546,5 @@ Ein TODO darf nur abgehakt werden, wenn:
 - [ ] 01.11.2026 | Abnahme | Reale Zielsystem-Gates schließen | prüfen: kanonischer Evaluator | fertig wenn: alle sieben echten Gates PASS sind.
 
 - [x] 01.11.2026 | Sicherung | Statusprüfung strikt lesend halten | prüfen: echte WAL/SHM, Journal-Verknüpfungen und Dateibaumvergleich | fertig wenn: 15 Sicherheitsfälle bestehen und Statusabrufe keine Sicherungsdatei verändern.
+
+- [ ] 2026-11-01 | Release Gate 07 | Entwurfs-PR: Konsolen-PASS ohne Audio-/Persistenz-Nachweise blockieren | `test_ios_launch_timeout_gate.py` und `test_ios_termination_gate.py` + Quality-CI prüfen | fertig wenn CI auf PR-HEAD grün und echte iPhone-X-Abnahme separat nachgewiesen (NO-GO bis dahin)
