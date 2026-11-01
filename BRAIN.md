@@ -16,6 +16,14 @@
 
 ---
 
+[2026-11-01] [BRAIN-0040] [MICROPHONE-GATE-EVIDENCE] [REPRODUCED]
+- Beobachtung: Ein früherer `PASS` blieb erhalten, wenn ein neuer Mikrofon-Prüflauf beim Import oder bei der Geräteerkennung abbrach.
+- Ursache: Die Gate-Datei wurde erst am regulären Ende des Skripts geschrieben.
+- Schutzregel: Vor Imports und Hardwareprüfung muss der alte Gate-Nachweis auf `BLOCKED` gesetzt werden.
+- Regression: zwei isolierte Negativfälle (Importfehler, `KeyboardInterrupt` bei Geräteerkennung), vor Patch 2/2 rot, nach Patch lokal 2/2 grün (Python 3.13.5). CI und reale Hardwareprüfung ausstehend.
+- Betroffene Komponenten: `tools/release_gate/gate_04_linux_microphone.py`, `tests/release_gate/test_microphone_stale_evidence_gate.py`.
+- Release-Gates: unverändert 1/7 PASS, NO-GO.
+
 [2026-10-31] [BRAIN-0039] [ANDROID-GATE-EVIDENCE] [REPRODUCED]
 - Beobachtung: Bei einem Abbruch vor `save()` konnte die vorherige Android-Gate-Datei weiter `PASS` anzeigen.
 - Ursache: Vor dem ersten ADB-Aufruf wurde der vorherige Nachweis nicht entwertet; Timeout/Fehler beim Geräteabruf waren nicht abgefangen.

@@ -1,3 +1,8 @@
+## [MICROPHONE-GATE-STALE-PASS-GUARD] – 2026-11-01 · PR-Entwurf
+- Kritischer Gate-Nachweisfehler: Importfehler oder unterbrochene Hardwareerkennung konnten einen älteren `GATE_04_LINUX_MICROPHONE.json`-PASS stehen lassen.
+- Zu Beginn wird der vorherige Nachweis auf `BLOCKED` gesetzt, bevor Aufnahmemodule importiert oder Geräte geprüft werden.
+- Zwei isolierte Negativtests in `quality.yml`; lokal 2/2 bestanden, auf Ausgangsstand 2/2 fehlgeschlagen. Keine reale Mikrofonabnahme; 1/7 reale Gates, NO-GO.
+
 ## [ANDROID-GATE-STALE-PASS-GUARD] – 2026-10-31 · PR-Entwurf
 - Kritischer Gate-Nachweisfehler: Ein unterbrochener neuer Android-Prüflauf konnte eine alte `PASS`-Datei unverändert stehen lassen.
 - `GATE_06_ANDROID_DEVICE.json` wird vor dem ersten ADB-Aufruf auf `BLOCKED` gesetzt; ADB-Geräteauflistung mit Timeout, Betriebssystemfehler oder fehlerhaftem Rückgabewert wird kontrolliert abgewiesen.
