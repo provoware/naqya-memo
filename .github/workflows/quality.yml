@@ -52,6 +52,8 @@ jobs:
           python -S tests/release_gate/test_soak_stale_evidence_gate.py
           python -S tests/release_gate/test_chromium_screenshot_freshness.py
           python -S tests/release_gate/test_microphone_stale_evidence_gate.py
+          python -S tests/release_gate/test_ios_launch_timeout_gate.py
+          python -S tests/release_gate/test_ios_termination_gate.py
 
       - name: UI contracts
         run: |
