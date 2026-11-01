@@ -1,3 +1,8 @@
+## [STORAGE-GATE-STALE-PASS-GUARD] – 2026-11-01 · PR-Entwurf
+- Gate 05 schrieb die kanonische Evidence erst am Ende; ein Abbruch vor `/dev/full` oder `/sys` ließ einen alten PASS unverändert.
+- Beim Start wird jetzt `RUNNING` geschrieben, bevor Kernel- und Recovery-Prüfungen beginnen. Nur ein vollständig abgeschlossener Lauf darf PASS setzen.
+- Zwei simulierte Unterbrechungsfälle und die drei vorhandenen Speicherfehler-Vertragstests sind im Qualitätsworkflow eingebunden. Keine neue reale Linux-Abnahme, weiterhin 1/7 reale Gates und NO-GO.
+
 ## [READ-ONLY-BACKUP-STATUS] - 2026-11-01
 - P1 aus Code-Review vor Merge behoben: Sicherungsstatus darf SQLite-WAL niemals checkpointen oder Journaldateien entfernen.
 - Strikt lesende Inspektion mit expliziter Journal-Sperre; aktuelle Hashprüfung vor und nach dem Lesen, Medienhashprüfung erhalten.
