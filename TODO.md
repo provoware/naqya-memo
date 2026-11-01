@@ -544,3 +544,5 @@ Ein TODO darf nur abgehakt werden, wenn:
 - [x] 01.11.2026 | Sicherung | Generationen tatsächlich prüfen | prüfen: Hash, SQLite, Medien und Restore-Metadaten | fertig wenn: falsche Sicherungen kein READY erzeugen.
 - [x] 01.11.2026 | Bedienung | Kleines Fenster bei 100/150/200 Prozent | prüfen: Memo speichern, bearbeiten, Papierkorb, Wiederherstellen | fertig wenn: alle drei Chromium-Fälle ohne Überlauf bestehen.
 - [ ] 01.11.2026 | Abnahme | Reale Zielsystem-Gates schließen | prüfen: kanonischer Evaluator | fertig wenn: alle sieben echten Gates PASS sind.
+
+- [x] 01.11.2026 | Sicherung | Statusprüfung strikt lesend halten | prüfen: echte WAL/SHM, Journal-Verknüpfungen und Dateibaumvergleich | fertig wenn: 15 Sicherheitsfälle bestehen und Statusabrufe keine Sicherungsdatei verändern.

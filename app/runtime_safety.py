@@ -7,8 +7,7 @@ import sqlite3
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
-from provoware_core.recovery import validate_backup_generation
-from provoware_core.project_checkpoint import validate_project_checkpoint
+from provoware_core.recovery import sha256_file
 
 
 def ui_file_path(root: Path, request_path: str) -> Path:
@@ -61,8 +60,31 @@ def _digest(value) -> bool:
     return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
 
 
+def _check_standalone_database(database: Path, expected_hash: str) -> None:
+    def reject_sidecars() -> None:
+        for suffix in ("-wal", "-shm", "-journal"):
+            sidecar = Path(str(database) + suffix)
+            if sidecar.exists() or sidecar.is_symlink():
+                raise ValueError("Backup database has journal sidecars")
+
+    # A status request must never checkpoint a WAL or create/remove sidecars.
+    # Immutable reads ignore WAL contents, so only standalone snapshots qualify.
+    reject_sidecars()
+    if sha256_file(database) != expected_hash:
+        raise ValueError("Backup database checksum mismatch")
+    connection = sqlite3.connect(database.resolve(strict=True).as_uri()
+                                 + "?mode=ro&immutable=1", uri=True)
+    try:
+        integrity = connection.execute("PRAGMA integrity_check").fetchone()[0]
+    finally:
+        connection.close()
+    reject_sidecars()
+    if integrity != "ok" or sha256_file(database) != expected_hash:
+        raise ValueError("Backup database changed or failed integrity check")
+
+
 def _generation_kind(generation: Path) -> str:
-    _regular_file(generation, "core.sqlite3")
+    database_path = _regular_file(generation, "core.sqlite3")
     checkpoint = generation / "checkpoint_manifest.json"
     if checkpoint.exists() or checkpoint.is_symlink():
         manifest = _manifest(generation, "checkpoint_manifest.json")
@@ -85,6 +107,8 @@ def _generation_kind(generation: Path) -> str:
                 raise ValueError("Invalid checkpoint asset path")
             seen.add(aid)
             media = _regular_file(generation, f"assets/{kind}/{name}")
+            if sha256_file(media) != asset["sha256"]:
+                raise ValueError("Checkpoint asset checksum mismatch")
             saved = _manifest(generation, f"manifeste/assets/{aid}.json")
             if any(saved.get(k) != asset[k] for k in ("asset_id", "kind", "stored_name", "sha256")):
                 raise ValueError("Checkpoint restore manifest mismatch")
@@ -94,7 +118,7 @@ def _generation_kind(generation: Path) -> str:
                     or type(saved.get("size_bytes")) is not int
                     or saved["size_bytes"] != media.stat().st_size):
                 raise ValueError("Incomplete checkpoint restore metadata")
-        validate_project_checkpoint(generation)
+        _check_standalone_database(database_path, database["sha256"])
         return "project"
     manifest = _manifest(generation, "manifest.json")
     if (manifest.get("database") != "core.sqlite3"
@@ -103,7 +127,7 @@ def _generation_kind(generation: Path) -> str:
             or manifest.get("verified_restore") is not True
             or not _digest(manifest.get("sha256"))):
         raise ValueError("Invalid database backup")
-    validate_backup_generation(generation)
+    _check_standalone_database(database_path, manifest["sha256"])
     return "database"
 
 

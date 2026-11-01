@@ -1,8 +1,10 @@
 """Real temporary files, snapshots and fresh restores; no user data."""
 import json
+import hashlib
 import http.client
 import os
 import socket
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -10,6 +12,7 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "app"), str(ROOT / "core/reference_python")]
@@ -77,6 +80,100 @@ class RuntimeSafetyTests(unittest.TestCase):
         with sqlite3.connect(restored) as conn:
             self.assertEqual(conn.execute("SELECT value FROM sample").fetchone()[0], "retained")
 
+    @staticmethod
+    def tree_bytes(root):
+        return {p.relative_to(root).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns)
+                for p in root.rglob("*") if p.is_file()}
+
+    def update_database_hash(self, generation):
+        checkpoint = generation / "checkpoint_manifest.json"
+        path = checkpoint if checkpoint.exists() else generation / "manifest.json"
+        manifest = json.loads(path.read_text())
+        digest = hashlib.sha256((generation / "core.sqlite3").read_bytes()).hexdigest()
+        if checkpoint.exists():
+            manifest["database"]["sha256"] = digest
+        else:
+            manifest["sha256"] = digest
+        path.write_text(json.dumps(manifest))
+
+    def test_real_wal_backups_rejected_without_changing_any_file(self):
+        for create in (self.snapshot, self.checkpoint):
+            generation = create()
+            source = self.project / (generation.name + ".sqlite3")
+            conn = sqlite3.connect(source)
+            try:
+                conn.execute("PRAGMA journal_mode=WAL")
+                conn.execute("PRAGMA wal_autocheckpoint=0")
+                conn.execute("CREATE TABLE pending(value TEXT)")
+                conn.execute("INSERT INTO pending VALUES ('committed in WAL')")
+                conn.commit()
+                for suffix in ("", "-wal", "-shm"):
+                    shutil.copyfile(Path(str(source) + suffix), generation / ("core.sqlite3" + suffix))
+            finally:
+                conn.close()
+            self.update_database_hash(generation)
+        before = self.tree_bytes(self.project / "backups")
+        for _ in range(2):
+            state = verified_backup_status(self.project)
+            self.assertEqual(state["state"], "WARNING")
+            self.assertEqual(state["generations"], 0)
+            self.assertEqual(self.tree_bytes(self.project / "backups"), before)
+
+    def test_sidecars_and_sidecar_symlinks_block_both_formats(self):
+        for create in (self.snapshot, self.checkpoint):
+            generation = create()
+            for suffix in ("-wal", "-shm", "-journal"):
+                sidecar = generation / ("core.sqlite3" + suffix)
+                for linked in (False, True):
+                    with self.subTest(format=create.__name__, suffix=suffix, linked=linked):
+                        if linked:
+                            sidecar.symlink_to(self.project / "missing-sidecar")
+                        else:
+                            sidecar.write_bytes(b"pending journal")
+                        before = self.tree_bytes(generation) if not linked else None
+                        state = verified_backup_status(self.project)
+                        self.assertEqual(state["state"], "WARNING")
+                        if linked:
+                            self.assertTrue(sidecar.is_symlink())
+                        else:
+                            self.assertEqual(self.tree_bytes(generation), before)
+                        sidecar.unlink()
+
+    def test_standalone_wal_mode_and_uri_special_characters_stay_valid(self):
+        generation = self.snapshot()
+        renamed = generation.with_name(generation.name + " space ?#%")
+        generation.rename(renamed)
+        path = renamed / "manifest.json"
+        manifest = json.loads(path.read_text())
+        manifest["generation"] = renamed.name
+        path.write_text(json.dumps(manifest))
+        conn = sqlite3.connect(renamed / "core.sqlite3")
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.close()
+        self.update_database_hash(renamed)
+        before = self.tree_bytes(renamed)
+        for _ in range(2):
+            self.assertEqual(verified_backup_status(self.project)["state"], "READY")
+            self.assertEqual(self.tree_bytes(renamed), before)
+
+    def test_sidecar_created_during_inspection_is_rejected_without_checkpoint(self):
+        generation = self.snapshot()
+        database = generation / "core.sqlite3"
+        before = database.read_bytes()
+        connect = sqlite3.connect
+        sidecar = generation / "core.sqlite3-journal"
+
+        def concurrent_journal(*args, **kwargs):
+            sidecar.write_bytes(b"created concurrently")
+            return connect(*args, **kwargs)
+
+        with patch("runtime_safety.sqlite3.connect", side_effect=concurrent_journal):
+            state = verified_backup_status(self.project)
+        self.assertEqual(state["state"], "WARNING")
+        self.assertEqual(state["generations"], 0)
+        self.assertEqual(database.read_bytes(), before)
+        self.assertEqual(sidecar.read_bytes(), b"created concurrently")
+
     def test_manifest_type_missing_database_bad_hash_and_invalid_sqlite(self):
         for defect in ("list", "missing", "hash", "sqlite", "false_success"):
             with self.subTest(defect=defect):
@@ -124,7 +221,7 @@ class RuntimeSafetyTests(unittest.TestCase):
         self.assertEqual(restored["assets_verified"], 1)
 
     def test_checkpoint_invalid_paths_missing_media_and_restore_manifest(self):
-        for defect in ("db_path", "asset_path", "missing_media", "missing_manifest", "metadata", "inactive_metadata"):
+        for defect in ("db_path", "asset_path", "missing_media", "media_hash", "missing_manifest", "metadata", "inactive_metadata"):
             with self.subTest(defect=defect):
                 generation = self.checkpoint()
                 path = generation / "checkpoint_manifest.json"
@@ -136,6 +233,8 @@ class RuntimeSafetyTests(unittest.TestCase):
                     asset["stored_name"] = "../../outside.txt"
                 elif defect == "missing_media":
                     (generation / "assets" / asset["kind"] / asset["stored_name"]).unlink()
+                elif defect == "media_hash":
+                    (generation / "assets" / asset["kind"] / asset["stored_name"]).write_text("tampered")
                 elif defect == "missing_manifest":
                     (generation / "manifeste/assets" / (asset["asset_id"] + ".json")).unlink()
                 else:

@@ -335,3 +335,8 @@
 - Regression: tests/startup/test_runtime_safety.py (11 Tests).
 - Bedienbefund: feste Kopfzeilenhöhe überdeckte bei 800x600 die Schriftsteuerung; natürlicher vertikaler Dokumentfluss bis 900px behebt den belegten Fehler.
 - Browserregression: tests/ui_consistency/runtime_safety_browser.cjs; keine kanonischen Release-Gates hochgestuft.
+
+[2026-11-01] [BRAIN-0045] [READ-ONLY-BACKUP-STATUS] [GEPRUEFT]
+- Ursache: sqlite3.connect ohne read-only kann beim Schließen WAL in eine Sicherungs-DB übertragen und Sidecars entfernen.
+- Schutz: Statuspfad liest nur über mode=ro&immutable=1; vorhandene/auftauchende Journaldateien sperren READY; Hash vor/nach Prüfung. Medienhashprüfung erhalten, Restorepfade unverändert.
+- Regression: tests/startup/test_runtime_safety.py, 15/15 bestanden, beide Sicherungstypen und Dateibaum-/Zeitstempelvergleich.

@@ -162,11 +162,12 @@
   "microphone_gate_stale_pass_guard": "SOURCE_PATCH_PENDING_REAL_MICROPHONE_EVIDENCE",
   "runtime_safety_20261101": {
     "source_base": "9b1dbab0442058bb819ab9152b9ddef17590f8d5",
-    "security_tests": 11,
+    "security_tests": 15,
     "recovery_tests": 14,
     "persistence_tests": 5,
     "browser_cases": "800x600: 100/150/200 percent, real Chromium 134, memo create/edit/trash/restore",
     "real_release_gate_promotion": false,
-    "report": "docs/QA_RUNTIME_UI_20261101.md"
+    "report": "docs/QA_RUNTIME_UI_20261101.md",
+    "backup_sqlite_inspection": "READ_ONLY_IMMUTABLE_WITH_SIDECAR_REJECTION_AND_PRE_POST_HASH"
   }
 }

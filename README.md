@@ -28,7 +28,7 @@
 - Der Sicherungsstatus zählt nur aktuell geprüfte Generationen. Datenbanksicherungen und vollständige Projektsicherungen werden getrennt bezeichnet; beschädigte Generationen erzeugen eine sichtbare Warnung.
 - Kleine Fenster ordnen den Kopfbereich bei hoher Vergrößerung untereinander an. Die Schnellstartleiste überdeckt die Schriftsteuerung nicht mehr.
 - Beschriftungen verwenden Übersicht, Aufgaben, Rückgängig, Wiederholen und Farbschema; Android-/iOS-Webdateien sind synchronisiert.
-- Prüfung: 11 Sicherheitsfälle, 14 Wiederherstellungsfälle, 5 Persistenzfälle, 20 bestehende Oberflächenverträge und echte Chromium-Memoabläufe bei 800 x 600 / 100, 150, 200 Prozent bestanden.
+- Prüfung: 15 Sicherheitsfälle, 14 Wiederherstellungsfälle, 5 Persistenzfälle, 20 bestehende Oberflächenverträge und echte Chromium-Memoabläufe bei 800 x 600 / 100, 150, 200 Prozent bestanden.
 - Keine reale Kubuntu-/Hardwarefreigabe: kanonische Release-Gates unverändert 1/7, NO-GO. Details: [Prüfbericht](docs/QA_RUNTIME_UI_20261101.md).
 
 
