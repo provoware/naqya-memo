@@ -16,6 +16,15 @@
 
 ---
 
+[2026-11-01] [BRAIN-0044] [STORAGE-GATE-PASS-CONTRACT] [REPRODUCED]
+- Beobachtung: Ein synthetisches Gate-05-JSON mit nur Gate-ID und `status=PASS` wurde vom bestehenden Evaluator als gültiger Erfolg gezählt.
+- Ursache: Der Evidence-Vertrag prüfte die Pflichtfelder des 8h-Gates, nicht aber die zwei Kernel-Speicherfehlerproben und die Anwendungs-Recovery-Matrix von Gate 05.
+- Lösung: Fehlende oder widersprüchliche Gate-05-PASS-Pflichtfelder ergeben `INVALID_EVIDENCE`; vorhandene kanonische Evidence bleibt strukturell gültig.
+- Vorbeugeregel: Ein Statusfeld allein ist kein Nachweis. Diese Quellprüfung authentifiziert keine physischen Tests.
+- Regressionstest: fehlende Proben, falsche/Bool-Fehlernummer, fehlgeschlagene Recovery-Matrix, vollständige Struktur in `tests/release_gate/test_gate_evidence_contract.py`.
+- Betroffene Komponenten: `tools/release_gate/evidence_contract.py`, Release-Evaluator, Statuskonsolidierung.
+- Release-Gates: unverändert 1/7 PASS, NO-GO; physische Abnahme weiterhin erforderlich.
+
 [2026-11-01] [BRAIN-0040] [ANDROID-DATA-ISOLATION] [REPRODUCED]
 - Ursache: Fehler von pm clear, logcat -c oder force-stop konnten veraltete Gerätedaten im neuen Test belassen.
 - Schutz: Jeder Fehler blockiert Gate 06; vier neue Negativfälle aus PR #121. Keine echte Android-Abnahme.

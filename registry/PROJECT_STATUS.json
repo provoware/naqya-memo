@@ -169,5 +169,6 @@
     "real_release_gate_promotion": false,
     "report": "docs/QA_RUNTIME_UI_20261101.md",
     "backup_sqlite_inspection": "READ_ONLY_IMMUTABLE_WITH_SIDECAR_REJECTION_AND_PRE_POST_HASH"
-  }
+  },
+  "storage_gate_pass_evidence_contract": "SOURCE_PATCH_IN_PR_STRUCTURAL_VALIDATION_ONLY"
 }

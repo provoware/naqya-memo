@@ -22,6 +22,9 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+- [ ] 2026-11-01 | Gate 05 · P0 | Unvollständige Speicherfehler-PASS-Nachweise im Evaluator zurückweisen | prüfen: Negativtests für fehlende Proben, falsche Fehlernummer und fehlende Recovery-Matrix; CI auf PR-HEAD | fertig wenn: nur vollständige Struktur PASS ergibt und kanonischer Release-Stand 1/7 NO-GO bleibt.
+
+
 ## 🔐 Sicherheitsintegration – prüfbare Aufgaben vom 01.11.2026
 
 - [ ] 2026-11-01 | P0 · Gate-Schutz | Vier bereits isoliert geprüfte Quellenkorrekturen #121–#124 auf demselben Stand integrieren | prüfen: 14 Schutzregressionen (Android 7, Dauerlauf 2, Chromium 3, Mikrofon 2); unveränderte Release-Gates | fertig wenn: gemeinsame CI auf aktuellem Integrations-HEAD grün und kein alter PASS wiederverwendbar.

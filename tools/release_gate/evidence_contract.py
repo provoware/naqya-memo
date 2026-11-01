@@ -5,6 +5,7 @@ Eine lokale JSON-Datei ist allein kein unabhängiger Geräte-Nachweis.
 """
 from __future__ import annotations
 
+import errno
 import json
 import math
 from pathlib import Path
@@ -66,6 +67,28 @@ def read_gate(root: Path, number: str, name: str) -> dict:
             and data.get("errors") == []
         ):
             return _invalid(gate, "FULL_8H_EVIDENCE_REQUIRED")
+    # A bare PASS flag cannot stand in for the two Linux kernel probes and
+    # the application recovery matrix. This is structural validation only;
+    # it does not authenticate the physical origin of the evidence file.
+    if number == "05" and data["status"] == "PASS":
+        probes = data.get("tests")
+        if not isinstance(probes, dict) or set(probes) != {"dev_full", "read_only_mount"}:
+            return _invalid(gate, "STORAGE_PROBES_REQUIRED")
+        full = probes["dev_full"]
+        readonly = probes["read_only_mount"]
+        if not (
+            isinstance(full, dict)
+            and isinstance(readonly, dict)
+            and full.get("status") == "PASS"
+            and type(full.get("errno")) is int
+            and full["errno"] == errno.ENOSPC
+            and readonly.get("status") == "PASS"
+            and type(readonly.get("errno")) is int
+            and readonly["errno"] in (errno.EROFS, errno.EACCES, errno.EPERM)
+            and data.get("application_failure_matrix_evidence_present") is True
+            and data.get("application_failure_matrix_pass") is True
+        ):
+            return _invalid(gate, "STORAGE_RECOVERY_EVIDENCE_REQUIRED")
     return data
 
 

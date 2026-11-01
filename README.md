@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Gate 05: unvollständige Erfolgsnachweise abweisen · 01.11.2026 (PR-Entwurf)
+Der Release-Evaluator akzeptiert ein `PASS` für Linux-Speicherfehler nur noch, wenn beide Kernel-Fehlerproben (`ENOSPC` und ein zulässiger Nur-Lese-/Rechtefehler) sowie die erfolgreiche Anwendungs-Wiederherstellungsmatrix im Nachweis enthalten sind. Ein bloßes `{"status":"PASS"}` zählt als `INVALID_EVIDENCE`. Die bisherige kanonische Gate-05-Datei erfüllt diese Struktur. Dies prüft die **Vollständigkeit**, nicht die Echtheit der Hardwareprüfung; echte Release-Gates bleiben **1/7 PASS · NO-GO**. Neue Negativtests sind im vorhandenen Qualitätsworkflow eingebunden.
+
+
 ## Sicherheits- und Bedienkorrektur - 01.11.2026
 
 - Statische Dateien bleiben nach URL-Dekodierung und Auflösen von Verknüpfungen im Oberflächenordner; GET und HEAD sperren Ausbruchsversuche mit HTTP 403.

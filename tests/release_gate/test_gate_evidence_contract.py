@@ -4,6 +4,7 @@ Alle Daten in diesem Test sind synthetische Fixtures, KEINE reale Gate-Evidence.
 """
 from __future__ import annotations
 
+import errno
 import json
 import shutil
 import subprocess
@@ -29,6 +30,38 @@ class EvidenceIdentityTests(unittest.TestCase):
         data = {"gate": f"GATE_{number}_{name}", "status": status, **extra}
         (self.gates / f"GATE_{number}_{name}.json").write_text(json.dumps(data))
         return data
+
+    @staticmethod
+    def valid_storage_fields():
+        return {
+            "tests": {
+                "dev_full": {"status": "PASS", "errno": errno.ENOSPC},
+                "read_only_mount": {"status": "PASS", "errno": errno.EROFS},
+            },
+            "application_failure_matrix_evidence_present": True,
+            "application_failure_matrix_pass": True,
+        }
+
+    def test_storage_pass_without_kernel_probes_is_invalid(self):
+        self.write_gate("05", "STORAGE_FAILURE", "PASS")
+        self.assertEqual(read_gate(self.root, "05", "STORAGE_FAILURE")["status"], "INVALID_EVIDENCE")
+
+    def test_storage_pass_rejects_wrong_errno_and_bool_errno(self):
+        for bad_errno in (errno.EACCES, True):
+            fields = self.valid_storage_fields()
+            fields["tests"]["dev_full"]["errno"] = bad_errno
+            self.write_gate("05", "STORAGE_FAILURE", "PASS", **fields)
+            self.assertEqual(read_gate(self.root, "05", "STORAGE_FAILURE")["status"], "INVALID_EVIDENCE")
+
+    def test_storage_pass_requires_application_recovery_matrix(self):
+        fields = self.valid_storage_fields()
+        fields["application_failure_matrix_pass"] = False
+        self.write_gate("05", "STORAGE_FAILURE", "PASS", **fields)
+        self.assertEqual(read_gate(self.root, "05", "STORAGE_FAILURE")["status"], "INVALID_EVIDENCE")
+
+    def test_storage_pass_with_full_structure_is_accepted(self):
+        self.write_gate("05", "STORAGE_FAILURE", "PASS", **self.valid_storage_fields())
+        self.assertEqual(read_gate(self.root, "05", "STORAGE_FAILURE")["status"], "PASS")
 
     def test_prefix_decoy_is_ignored(self):
         self.write_gate("01", "8H_SOAK", "PRECHECK_PASS")
@@ -99,7 +132,7 @@ class EvidenceIdentityTests(unittest.TestCase):
         version.write_text('{"version":"TEST-ONLY"}')
         for number, name in GATES:
             self.write_gate(number, name, "BLOCKED")
-        self.write_gate("05", "STORAGE_FAILURE", "PASS")
+        self.write_gate("05", "STORAGE_FAILURE", "PASS", **self.valid_storage_fields())
         self.write_gate("01", "8H_SOAK", "PRECHECK_PASS")
         (self.gates / "GATE_01_ZZZ.json").write_text(
             '{"gate":"GATE_01_ZZZ","status":"PASS"}'

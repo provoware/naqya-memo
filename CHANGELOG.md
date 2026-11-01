@@ -1,3 +1,8 @@
+## [GATE-05-PASS-EVIDENCE-CONTRACT] – 2026-11-01 · isolierter PR-Entwurf
+- Kritische Release-Gate-Lücke: Der Evaluator zählte bisher sogar eine leere Gate-05-`PASS`-Datei als echte Speicherfehler-Abnahme.
+- Für `PASS` werden jetzt zwei konkrete Kernel-Proben mit passenden Fehlernummern sowie die bestätigte Anwendungs-Recovery-Matrix verlangt. Fehlende/widersprüchliche Felder ergeben `INVALID_EVIDENCE`.
+- Vier synthetische Regressionstests ergänzen den bereits im Quality-Workflow laufenden Evidence-Vertrag. Kein neuer physischer Test, keine Änderung an realen Gate-Nachweisen oder Freigaben; 1/7 PASS, NO-GO.
+
 ## [READ-ONLY-BACKUP-STATUS] - 2026-11-01
 - P1 aus Code-Review vor Merge behoben: Sicherungsstatus darf SQLite-WAL niemals checkpointen oder Journaldateien entfernen.
 - Strikt lesende Inspektion mit expliziter Journal-Sperre; aktuelle Hashprüfung vor und nach dem Lesen, Medienhashprüfung erhalten.
