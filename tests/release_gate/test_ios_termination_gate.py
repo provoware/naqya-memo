@@ -16,7 +16,7 @@ SOURCE = Path(__file__).resolve().parents[2] / "tools/release_gate/gate_07_ios_i
 
 
 class IOSLifecycleGateTests(unittest.TestCase):
-    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None, install_error=None, launch_error_mode=None, listing_text=None, listing_interrupt=False):
+    def exercise_gate(self, terminate_code, terminate_error=None, launch_failure_mode=None, listing_code=0, listing_error=None, install_error=None, launch_error_mode=None, listing_text=None, listing_interrupt=False, run_payload=None, verify_payload=None):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             script = root / "tools/release_gate/gate_07_ios_iphone_x.py"
@@ -61,7 +61,19 @@ class IOSLifecycleGateTests(unittest.TestCase):
                     self.returncode = 1 if self.mode == launch_failure_mode else 0
 
                 def communicate(self, timeout=None):
-                    response = f'ProvowareAcceptance {{"mode":"{self.mode}","status":"PASS"}}\n'
+                    payload = (
+                        {"mode":"run","status":"PASS","audio_bytes":128,"audio_sha256":"a"*64,
+                         "counts":{"memos":1,"todos":1,"events":1},"integrity":"ok",
+                         "platform":{"platform":"ios","native_bridge":True}}
+                        if self.mode == "run" else
+                        {"mode":"verify","status":"PASS","persistence":{"memo":True,"audio":True},
+                         "integrity":"ok"}
+                    )
+                    if self.mode == "run" and run_payload is not None:
+                        payload = run_payload
+                    if self.mode == "verify" and verify_payload is not None:
+                        payload = verify_payload
+                    response = "ProvowareAcceptance " + json.dumps(payload) + "\n"
                     if self.mode == "run":
                         response += "REMINDER_FIRED: mock\n"
                     return response, None
@@ -208,6 +220,19 @@ class IOSLifecycleGateTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(evidence["status"], "PASS")
         self.assertTrue(any("install" in args for args in calls))
+
+    def test_incomplete_console_pass_cannot_prove_real_ios_acceptance(self):
+        # Console output with only mode/status is not microphone or persistence proof.
+        for mode in ("run", "verify"):
+            with self.subTest(mode=mode):
+                data = {"mode": mode, "status": "PASS"}
+                kwargs = {"run_payload": data} if mode == "run" else {"verify_payload": data}
+                code, evidence, calls = self.exercise_gate(0, **kwargs)
+                self.assertEqual(code, 2)
+                self.assertEqual(evidence["status"], "BLOCKED")
+                self.assertNotIn("stale", evidence)
+                if mode == "run":
+                    self.assertFalse(any(args[-1] == "verify" for args in calls))
 
 if __name__ == "__main__":
     unittest.main()
