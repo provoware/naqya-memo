@@ -655,3 +655,6 @@ Reihenfolge:
 - Hintergrund-Erinnerungen müssen pro Plattform separat akzeptanzgetestet werden.
 - Ein Backup gilt erst als funktionsfähig, wenn ein automatischer Restore-Test bestanden wurde.
 - README, TODO, CHANGELOG, BRAIN und PROJECT_STATUS werden bei jeder relevanten Iteration synchron aktualisiert.
+
+### 2026-11-01 · iPhone-X-Gate 07: Konsolen-PASS nur mit Fachnachweisen (Entwurfs-PR)
+Der iOS-Gerätelauf akzeptiert `PASS` nur mit positivem Audioumfang, SHA-256-Format, Memo/To-do/Termin-Zählern, iOS-Brückenkennung und Integritätsstatus. Der zweite Lauf muss Memo- und Audio-Persistenz bestätigen. Dies sind synthetisch testbare Mindestbedingungen, **kein Ersatz für eine reale iPhone-X-Abnahme**. Release bleibt NO-GO bis 7/7 reale Gates bestanden sind.
