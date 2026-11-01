@@ -22,6 +22,11 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Chromium-Gate 02 · echte Browser-Endabnahme (01.11.2026)
+
+- [ ] 2026-11-01 | P0 · Gate 02 | Bildschirmfoto nur als Vorprüfung zählen, nicht als Browser-Endabnahme | prüfen: drei isolierte Chromium-Regressionstests und GitHub-Qualitätsprüfung; danach echte Memo-, Tastatur-, Barrierefreiheits- und Wiederherstellungsabläufe im Browser | fertig wenn: echte Browser-Endabnahme unabhängig belegt und Gate 02 erst danach PASS meldet.
+
+
 ## 🔐 Sicherheitsintegration – prüfbare Aufgaben vom 01.11.2026
 
 - [ ] 2026-11-01 | P0 · Gate-Schutz | Vier bereits isoliert geprüfte Quellenkorrekturen #121–#124 auf demselben Stand integrieren | prüfen: 14 Schutzregressionen (Android 7, Dauerlauf 2, Chromium 3, Mikrofon 2); unveränderte Release-Gates | fertig wenn: gemeinsame CI auf aktuellem Integrations-HEAD grün und kein alter PASS wiederverwendbar.

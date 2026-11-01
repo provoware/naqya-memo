@@ -1,3 +1,8 @@
+## [CHROMIUM-SCREENSHOT-PRECHECK-ONLY] – 2026-11-01 · PR-Entwurf
+- Reproduziert: Ein künstlicher HTTP-Server ohne Memo-Oberfläche und ein Fake-Chromium, das nur eine Bilddatei schreibt, genügten bisher für Gate-02-`PASS`.
+- Der reine Bildschirmfoto-Lauf meldet jetzt `PRECHECK_PASS` mit Exit-Code 2; ein echtes Chromium-App-E2E bleibt zwingend erforderlich.
+- Drei isolierte Regressionen prüfen alte Nachweise, fehlende und frische Bilder. Keine reale Browserabnahme, Release weiterhin 1/7 und NO-GO.
+
 ## [READ-ONLY-BACKUP-STATUS] - 2026-11-01
 - P1 aus Code-Review vor Merge behoben: Sicherungsstatus darf SQLite-WAL niemals checkpointen oder Journaldateien entfernen.
 - Strikt lesende Inspektion mit expliziter Journal-Sperre; aktuelle Hashprüfung vor und nach dem Lesen, Medienhashprüfung erhalten.

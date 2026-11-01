@@ -16,6 +16,13 @@
 
 ---
 
+[2026-11-01] [BRAIN-CHROMIUM-SCREENSHOT-20261101] [RELEASE-GATE-FALSE-PASS] [REPRODUCED]
+- Beobachtung: Eine neue Bilddatei von einem Fake-Chromium und ein HTTP-Server ohne funktionsfähige Memo-App reichten für Gate-02-PASS.
+- Ursache: Die Gate-Entscheidung verwechselte das Erstellen eines Bildschirmfotos mit der realen Browser-Endabnahme.
+- Schutz: Frisches Bild = PRECHECK_PASS/Exit 2; vollständige App-E2E-, Bedien- und Barrierefreiheitsabnahme bleibt notwendig.
+- Regression: Drei isolierte Chromium-Tests; Vorher-Negativtest fehlgeschlagen, nachher lokal bestanden.
+- Restrisiko: Ein vollwertiger Chromium-E2E-Gate-Runner muss separat bereitgestellt und real ausgeführt werden.
+
 [2026-11-01] [BRAIN-0040] [ANDROID-DATA-ISOLATION] [REPRODUCED]
 - Ursache: Fehler von pm clear, logcat -c oder force-stop konnten veraltete Gerätedaten im neuen Test belassen.
 - Schutz: Jeder Fehler blockiert Gate 06; vier neue Negativfälle aus PR #121. Keine echte Android-Abnahme.

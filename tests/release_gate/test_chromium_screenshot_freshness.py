@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Isolated regression: only screenshots created by this browser run may pass."""
+"""Isolated regression: screenshots never replace real browser app E2E."""
 
 import json
 import os
@@ -83,10 +83,11 @@ class ChromiumScreenshotFreshnessTests(unittest.TestCase):
         self.assertEqual(evidence['status'], 'BLOCKED')
         self.assertEqual(image, b'PREVIOUS' * 200)
 
-    def test_fresh_screenshot_replaces_old_only_on_success(self):
+    def test_fresh_screenshot_is_only_precheck_not_real_e2e(self):
         code, evidence, image = self.run_gate(writes=True)
-        self.assertEqual(code, 0)
-        self.assertEqual(evidence['status'], 'PASS')
+        self.assertEqual(code, 2)
+        self.assertEqual(evidence['status'], 'PRECHECK_PASS')
+        self.assertIn('E2E', evidence['reason'])
         self.assertEqual(image, b'PNG' + b'X' * 1500)
 
 if __name__ == '__main__':
