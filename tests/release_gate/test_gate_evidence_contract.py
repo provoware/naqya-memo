@@ -82,6 +82,66 @@ class EvidenceIdentityTests(unittest.TestCase):
         (self.gates / "GATE_05_STORAGE_FAILURE.json").symlink_to(target)
         self.assertEqual(read_gate(self.root, "05", "STORAGE_FAILURE")["status"], "INVALID_EVIDENCE")
 
+    @staticmethod
+    def complete_android_evidence():
+        # Synthetische Felder aus gate_06_android_device.py; kein echtes Geraet.
+        return {
+            "adb": "/usr/bin/adb",
+            "acceptance_apk": "/tmp/acceptance.apk",
+            "release_apk": "/tmp/release.apk",
+            "package": "de.provoware.naqya",
+            "runtime_source": "V0.12.2",
+            "devices": ["device-123"],
+            "serial": "device-123",
+            "model": "Pixel",
+            "sdk": "34",
+            "reminder_fired": True,
+            "run_result": {"mode": "run", "status": "PASS"},
+            "verify_result": {"mode": "verify", "status": "PASS"},
+            "release_version_name": "0.12.2",
+            "release_pid": "1234",
+        }
+
+    def test_android_bare_pass_is_invalid(self):
+        self.write_gate("06", "ANDROID_DEVICE", "PASS")
+        self.assertEqual(
+            read_gate(self.root, "06", "ANDROID_DEVICE")["status"],
+            "INVALID_EVIDENCE",
+        )
+
+    def test_android_complete_pass_structure_is_accepted(self):
+        self.write_gate("06", "ANDROID_DEVICE", "PASS", **self.complete_android_evidence())
+        self.assertEqual(read_gate(self.root, "06", "ANDROID_DEVICE")["status"], "PASS")
+
+    def test_android_partial_and_inconsistent_pass_is_invalid(self):
+        full = self.complete_android_evidence()
+        for missing in (
+            "adb", "acceptance_apk", "release_apk", "serial", "model",
+            "sdk", "release_pid", "devices", "reminder_fired",
+            "run_result", "verify_result", "release_version_name",
+        ):
+            with self.subTest(missing=missing):
+                partial = dict(full)
+                partial.pop(missing)
+                self.write_gate("06", "ANDROID_DEVICE", "PASS", **partial)
+                self.assertEqual(read_gate(self.root, "06", "ANDROID_DEVICE")["status"], "INVALID_EVIDENCE")
+        for field, value in (
+            ("devices", ["different-device"]),
+            ("run_result", {"mode": "verify", "status": "PASS"}),
+            ("verify_result", {"mode": "run", "status": "PASS"}),
+            ("reminder_fired", 1),
+            ("release_pid", " "),
+        ):
+            with self.subTest(field=field):
+                partial = dict(full)
+                partial[field] = value
+                self.write_gate("06", "ANDROID_DEVICE", "PASS", **partial)
+                self.assertEqual(read_gate(self.root, "06", "ANDROID_DEVICE")["status"], "INVALID_EVIDENCE")
+
+    def test_android_blocked_does_not_require_pass_fields(self):
+        self.write_gate("06", "ANDROID_DEVICE", "BLOCKED")
+        self.assertEqual(read_gate(self.root, "06", "ANDROID_DEVICE")["status"], "BLOCKED")
+
     def test_invalid_mobile_source_is_not_pass(self):
         source = self.root / "registry/evidence/v0.12.2/MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json"
         source.write_text('["PASS"]')

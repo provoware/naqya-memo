@@ -16,6 +16,15 @@
 
 ---
 
+[2026-11-01] [BRAIN-0044] [ANDROID-PASS-STRUCTURE] [REPRODUCED]
+- Beobachtung: GATE_06_ANDROID_DEVICE.json mit nur Gate-ID und PASS wurde vom kanonischen Evaluator akzeptiert.
+- Ursache: read_gate() pruefte Android-PASS nicht auf Debug-/Release-Geraetenachweise.
+- Schutzregel: Vollstaendige Felder aus dem bestehenden physischen Gate-06-Pruefer verlangen; fehlende und widerspruechliche Angaben als INVALID_EVIDENCE melden.
+- Regression: synthetischer Minimal-PASS, Voll-PASS, 17 unvollstaendige/widerspruechliche Faelle und BLOCKED-Status; keine reale Geraeteabnahme.
+- Betroffene Komponenten: tools/release_gate/evidence_contract.py und tests/release_gate/test_gate_evidence_contract.py.
+- Release: 1/7 reale Gates, NO-GO. Strukturpruefung beweist keine Herkunft oder Unveraenderlichkeit der JSON-Datei.
+
+
 [2026-11-01] [BRAIN-0040] [ANDROID-DATA-ISOLATION] [REPRODUCED]
 - Ursache: Fehler von pm clear, logcat -c oder force-stop konnten veraltete Gerätedaten im neuen Test belassen.
 - Schutz: Jeder Fehler blockiert Gate 06; vier neue Negativfälle aus PR #121. Keine echte Android-Abnahme.

@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### Gate 06: Android-PASS nur mit Geraete-Pruefstruktur (PR-Entwurf, 01.11.2026)
+
+Der kanonische Evaluator verwirft einen blossen oder unvollstaendigen GATE_06_ANDROID_DEVICE=PASS-Eintrag als INVALID_EVIDENCE. Pflicht sind u. a. genau ein zum Serienwert passendes Geraet, erfolgreiche Debug-run-/verify-Ergebnisse, der Erinnerungsnachweis sowie Version und Prozess der installierten Release-APK. Die Pruefung validiert nur die Struktur der JSON-Datei, nicht die Echtheit eines Geraets oder einer APK. Echte Android-Abnahme steht aus; Release bleibt 1/7, NO-GO.
+
 ## Sicherheits- und Bedienkorrektur - 01.11.2026
 
 - Statische Dateien bleiben nach URL-Dekodierung und Auflösen von Verknüpfungen im Oberflächenordner; GET und HEAD sperren Ausbruchsversuche mit HTTP 403.

@@ -1,3 +1,8 @@
+## [ANDROID-GATE06-PASS-EVIDENCE-CONTRACT] – 2026-11-01 · PR-Entwurf
+- Kritische Release-Gate-Korrektur: Ein synthetisches JSON mit nur GATE_06_ANDROID_DEVICE und status=PASS wurde zuvor als reales Android-Gate gezaehlt.
+- Der gemeinsame Evidence-Vertrag verlangt bei Android-PASS jetzt passende Geraeteidentitaet, Debug-run und verify, Erinnerungsereignis und Release-APK-Version/-Prozess.
+- Vier synthetische Regressionstests; keine neuen Abhaengigkeiten, keine reale Hardware-Evidence. Release bleibt 1/7, NO-GO.
+
 ## [READ-ONLY-BACKUP-STATUS] - 2026-11-01
 - P1 aus Code-Review vor Merge behoben: Sicherungsstatus darf SQLite-WAL niemals checkpointen oder Journaldateien entfernen.
 - Strikt lesende Inspektion mit expliziter Journal-Sperre; aktuelle Hashprüfung vor und nach dem Lesen, Medienhashprüfung erhalten.

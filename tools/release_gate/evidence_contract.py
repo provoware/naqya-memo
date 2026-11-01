@@ -66,6 +66,35 @@ def read_gate(root: Path, number: str, name: str) -> dict:
             and data.get("errors") == []
         ):
             return _invalid(gate, "FULL_8H_EVIDENCE_REQUIRED")
+    # Ein Quellcode-Build oder unvollstaendiger JSON-PASS ist kein reales Android-Gate.
+    # Nur Ergebnisfelder des physischen Debug-/Release-Ablaufs akzeptieren.
+    if number == "06" and data["status"] == "PASS":
+        required_text = (
+            "adb", "acceptance_apk", "release_apk", "serial",
+            "model", "sdk", "release_pid",
+        )
+        valid_device = (
+            data.get("package") == "de.provoware.naqya"
+            and data.get("runtime_source") == "V0.12.2"
+            and all(
+                isinstance(data.get(field), str) and bool(data[field].strip())
+                for field in required_text
+            )
+            and isinstance(data.get("devices"), list)
+            and data["devices"] == [data["serial"]]
+            and data.get("reminder_fired") is True
+            and data.get("release_version_name") == "0.12.2"
+            and all(
+                isinstance(data.get(field), dict)
+                and data[field].get("mode") == mode
+                and data[field].get("status") == "PASS"
+                for field, mode in (
+                    ("run_result", "run"), ("verify_result", "verify")
+                )
+            )
+        )
+        if not valid_device:
+            return _invalid(gate, "ANDROID_DEVICE_EVIDENCE_REQUIRED")
     return data
 
 
