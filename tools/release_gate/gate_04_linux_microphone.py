@@ -1,12 +1,16 @@
 from pathlib import Path
 import datetime,json,os,shutil,sys,tempfile,time
 ROOT=Path(__file__).resolve().parents[2];E=ROOT/'registry/evidence/v0.12.2/gates/GATE_04_LINUX_MICROPHONE.json'
+E.parent.mkdir(parents=True,exist_ok=True)
+# Invalidate any previous PASS before importing the recorder or probing hardware.
+out={'gate':'GATE_04_LINUX_MICROPHONE','status':'BLOCKED','timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'reason':'Physical microphone acceptance started; fresh capture pending.'}
+E.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 sys.path.insert(0,str(ROOT/'core/reference_python'))
 from provoware_core.assets import AssetManager
 from provoware_core.media import LinuxAudioRecorder, RecordingError
 backend=os.environ.get('PROVOWARE_MIC_BACKEND','alsa' if Path('/dev/snd').exists() else 'pulse')
 device=os.environ.get('PROVOWARE_MIC_DEVICE','default')
-out={'gate':'GATE_04_LINUX_MICROPHONE','status':'BLOCKED','timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'ffmpeg':shutil.which('ffmpeg'),'dev_snd_exists':Path('/dev/snd').exists(),'backend':backend,'device':device}
+out.update({'ffmpeg':shutil.which('ffmpeg'),'dev_snd_exists':Path('/dev/snd').exists(),'backend':backend,'device':device})
 if not out['ffmpeg']:
  out['reason']='ffmpeg unavailable'
 elif not out['dev_snd_exists'] and not os.environ.get('PULSE_SERVER') and not Path(os.environ.get('XDG_RUNTIME_DIR','/nonexistent')).joinpath('pulse/native').exists():

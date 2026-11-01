@@ -13,6 +13,20 @@ requested=args.hours*3600
 actual_target=args.preflight_seconds if args.preflight_seconds>0 else requested
 qualification='PRECHECK_ONLY' if actual_target < required else 'FULL_8H'
 start_wall=now(); start=time.monotonic(); ops=0; errors=[]; checkpoints=[]
+# A new attempt invalidates any earlier PASS before storage initialization or first checkpoint.
+# A crash or process kill must never leave an old eight-hour result as current evidence.
+E.parent.mkdir(parents=True, exist_ok=True)
+E.write_text(json.dumps({
+    'gate': 'GATE_01_8H_SOAK',
+    'status': 'RUNNING' if qualification == 'FULL_8H' else 'PRECHECK_RUNNING',
+    'qualification': qualification,
+    'required_seconds': required,
+    'executed_seconds': 0,
+    'operations': 0,
+    'started_at': start_wall,
+    'last_checkpoint_at': start_wall,
+    'reason': 'Fresh endurance attempt started; completed evidence pending.'
+}, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
 with tempfile.TemporaryDirectory() as td:
     store=CoreStore(Path(td)/'core.sqlite3',SCHEMA); pid=store.create_profile('8h Soak','hash'); q=MutationQueue();q.start(); memo=MemoService(store,q); todo=TodoService(store,q); ids=[]
     next_cp=time.monotonic()+min(60,max(1,actual_target/4))

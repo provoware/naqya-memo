@@ -22,6 +22,14 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔐 Konsolidierte Sicherheitskorrekturen · 01.11.2026 (Integrationskandidat)
+
+Die vier bereits einzeln geprüften PR-Entwürfe [#121](https://github.com/provoware/naqya-memo/pull/121), [#122](https://github.com/provoware/naqya-memo/pull/122), [#123](https://github.com/provoware/naqya-memo/pull/123) und [#124](https://github.com/provoware/naqya-memo/pull/124) werden auf dem gemeinsamen `main`-Ausgangsstand `5bbcfd9a` zusammengeführt. Jeder Schutz entwertet einen alten Erfolgseintrag vor dem neuen Prüflauf; die Android-Prüfung sperrt fehlgeschlagene Rücksetzungen von App-Daten und Geräteprotokollen. Der Qualitätsworkflow enthält alle zugehörigen Negativtests.
+
+> [!WARNING]
+> **Keine reale Hardware- oder Browserfreigabe:** 1 von 7 echten Release-Gates ist bestanden; **NO-GO**, Feature-Freeze und [Versionsherkunft #110](https://github.com/provoware/naqya-memo/issues/110) bleiben unverändert. Gemeinsame CI muss auf dem endgültigen Integrations-HEAD erfolgreich sein. Ein PR-Entwurf wird dadurch nicht automatisch zum Release.
+
+
 ### 🔐 Android-Gate: alte PASS-Evidence bei neuem Prüflauf entwerten · 31.10.2026
 Der Android-Geräteprüfer setzt den Nachweis **vor dem ersten ADB-Aufruf** auf `BLOCKED`. Auch ein Abbruch, eine Zeitüberschreitung oder ein fehlerhafter Geräteabruf darf keinen alten PASS-Nachweis stehen lassen. Drei simulierte Regressionstests sind in der Qualitätsprüfung eingebunden; **keine echte Android-Geräteabnahme**, weiterhin **1/7 reale Gates · NO-GO**. Änderung nur als isolierter PR-Entwurf.
 

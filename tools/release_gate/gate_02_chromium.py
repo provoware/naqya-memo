@@ -5,6 +5,10 @@ def port():
  s=socket.socket();s.bind(('127.0.0.1',0));p=s.getsockname()[1];s.close();return p
 exe=shutil.which('chromium') or shutil.which('chromium-browser')
 out={'gate':'GATE_02_CHROMIUM','status':'BLOCKED','browser':exe,'started_at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+E.parent.mkdir(parents=True, exist_ok=True)
+# A new attempt must invalidate an older PASS before starting the server/browser.
+# An interrupted run must not leave a previous browser acceptance as current proof.
+E.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 if exe:
  with tempfile.TemporaryDirectory() as td:
   pnum=port(); env=os.environ.copy(); env['PROVOWARE_PORT']=str(pnum); env['PROVOWARE_PROJECT_PATH']=str(Path(td)/'project')

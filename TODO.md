@@ -22,6 +22,13 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Sicherheitsintegration – prüfbare Aufgaben vom 01.11.2026
+
+- [ ] 2026-11-01 | P0 · Gate-Schutz | Vier bereits isoliert geprüfte Quellenkorrekturen #121–#124 auf demselben Stand integrieren | prüfen: 14 Schutzregressionen (Android 7, Dauerlauf 2, Chromium 3, Mikrofon 2); unveränderte Release-Gates | fertig wenn: gemeinsame CI auf aktuellem Integrations-HEAD grün und kein alter PASS wiederverwendbar.
+- [ ] 2026-11-01 | P0 · Herkunft | [Versionsherkunft #110](https://github.com/provoware/naqya-memo/issues/110) getrennt aufklären | prüfen: historischen Donor-/Freeze-Zweig mit Herkunftsnachweis abgleichen; nicht ungeprüft mitmischen | fertig wenn: fremde Quellherkunft lückenlos belegt.
+- [ ] 2026-11-01 | P0 · Freigabe | Echte, bislang blockierte Hardware-/Browser-Gates weiterhin getrennt nachweisen | prüfen: tatsächlicher 8-Stunden-Test, Desktop-Browser und Mikrofon, Android/iOS-Geräte | fertig wenn: kanonischer Evaluator alle sieben Prüfungen PASS meldet; bis dahin NO-GO.
+
+
 ### 🔐 Android-Gate: alte PASS-Evidence bei neuem Prüflauf entwerten · 31.10.2026
 Der Android-Geräteprüfer setzt den Nachweis **vor dem ersten ADB-Aufruf** auf `BLOCKED`. Auch ein Abbruch, eine Zeitüberschreitung oder ein fehlerhafter Geräteabruf darf keinen alten PASS-Nachweis stehen lassen. Drei simulierte Regressionstests sind in der Qualitätsprüfung eingebunden; **keine echte Android-Geräteabnahme**, weiterhin **1/7 reale Gates · NO-GO**. Änderung nur als isolierter PR-Entwurf.
 

@@ -16,6 +16,22 @@
 
 ---
 
+[2026-11-01] [BRAIN-0040] [ANDROID-DATA-ISOLATION] [REPRODUCED]
+- Ursache: Fehler von pm clear, logcat -c oder force-stop konnten veraltete Gerätedaten im neuen Test belassen.
+- Schutz: Jeder Fehler blockiert Gate 06; vier neue Negativfälle aus PR #121. Keine echte Android-Abnahme.
+
+[2026-11-01] [BRAIN-0041] [8H-STALE-PASS] [REPRODUCED]
+- Ursache: Alter PASS blieb bis zur ersten Zwischenmeldung eines neuen Dauertests bestehen.
+- Schutz: Sofort RUNNING/PRECHECK_RUNNING schreiben; zwei Startabbruchtests aus PR #122. Kein echter achtstündiger Lauf.
+
+[2026-11-01] [BRAIN-0042] [CHROMIUM-STALE-PASS] [REPRODUCED]
+- Ursache: Früher Browserabbruch konnte alten PASS-Nachweis erhalten.
+- Schutz: Vor Prozessstart BLOCKED schreiben; Screenshot- und Startabbruchtests aus PR #123. Keine reale Browserabnahme.
+
+[2026-11-01] [BRAIN-0043] [MICROPHONE-STALE-PASS] [REPRODUCED]
+- Ursache: Import- oder Hardwarefehler vor der Abschlussmeldung konnte alten PASS erhalten.
+- Schutz: Vor Modulimporten BLOCKED schreiben; zwei Negativtests aus PR #124. Keine reale Mikrofonabnahme.
+
 [2026-10-31] [BRAIN-0039] [ANDROID-GATE-EVIDENCE] [REPRODUCED]
 - Beobachtung: Bei einem Abbruch vor `save()` konnte die vorherige Android-Gate-Datei weiter `PASS` anzeigen.
 - Ursache: Vor dem ersten ADB-Aufruf wurde der vorherige Nachweis nicht entwertet; Timeout/Fehler beim Geräteabruf waren nicht abgefangen.
