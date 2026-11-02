@@ -19,7 +19,7 @@
 [2026-11-02] [BRAIN-GATE06-LOGCAT-EXITCODE-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
 - Befund: `logcat -d` konnte mit Fehlercode enden, während die Teil-Ausgabe plausible `PASS`-Zeilen enthielt; die Auswertung prüfte nur Text und nicht den Rückgabecode.
 - Schutz: Beide Log-Lesephasen erzwingen Rückgabecode 0; sonst `BLOCKED`, `LOGCAT_READ_FAILED`, eindeutiger Schritt und keine Release-Installation.
-- Regression: zwei synthetische Fälle mit Exitcode 1 und gefälschtem PASS-Text in `test_android_stale_evidence_gate.py`; finale GitHub-CI und reale Hardware-Abnahme getrennt.
+- Regression: zwei synthetische Fälle mit Exitcode 1 und gefälschtem PASS-Text in `test_android_stale_evidence_gate.py`; GitHub Quality auf Quell-HEAD `2f939501` PASS (41454237043), finaler Dokumentations-HEAD erneut zu prüfen; reale Hardware-Abnahme getrennt.
 - Risiko: Ein erfolgreicher ADB-Rückgabecode beweist für sich allein keine Echtheit der Log-Zeilen. Release weiterhin NO-GO, 1/7 reale Gates.
 
 [2026-11-02] [BRAIN-GATE06-UNINSTALL-PRECONDITION-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]

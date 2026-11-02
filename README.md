@@ -24,7 +24,7 @@
 
 ## 🔐 Android-Gate 06 – ADB-Abbruch sicher dokumentieren (02.11.2026)
 
-**ADB-Logcat-Nachweis (PR #140, 02.11.2026):** Ein `logcat -d`-Befehl mit Fehlercode darf selbst dann keinen Android-PASS belegen, wenn seine unvollständige Ausgabe `PASS` enthält. Beide Log-Lesephasen (Start und Persistenzprüfung) blockieren mit `LOGCAT_READ_FAILED`, ohne signierte Release-APK zu installieren. Zwei simulierte Negativfälle; reale Android-Abnahme und Freigabe bleiben ausstehend. GitHub-Quality-Prüfung des finalen Commits erforderlich.
+**ADB-Logcat-Nachweis (PR #140, 02.11.2026):** Ein `logcat -d`-Befehl mit Fehlercode darf selbst dann keinen Android-PASS belegen, wenn seine unvollständige Ausgabe `PASS` enthält. Beide Log-Lesephasen (Start und Persistenzprüfung) blockieren mit `LOGCAT_READ_FAILED`, ohne signierte Release-APK zu installieren. Zwei simulierte Negativfälle; reale Android-Abnahme und Freigabe bleiben ausstehend. GitHub Quality auf Quell-HEAD `2f939501` bestanden ([Lauf 41454237043](https://github.com/provoware/naqya-memo/actions/runs/41454237043)); der abschließende Dokumentations-HEAD ist erneut zu prüfen.
 
 **Debug-APK-Isolation (PR #140):** Vor der signierten Release-Abnahme muss die vorherige Debug-/Abnahme-APK nachweislich entfernt werden. Gate 06 prüft den ADB-Exitcode **und** die Erfolgsmeldung `Success`. Bei fehlgeschlagener Entfernung: `BLOCKED`, `failure_class=DEBUG_APK_UNINSTALL_FAILED`, `failed_step=uninstall`, **keine Release-Installation**. Zwei synthetische Negativfälle decken Fehlercode und widersprüchliche Erfolgsmeldung ab. Ein echter Geräte-PASS wird dadurch nicht ersetzt.
 

@@ -24,7 +24,7 @@
 
 ## 🔐 Android-Gate 06 · ADB-Zeitüberschreitungen (02.11.2026)
 
-- [x] 2026-11-02 | P0 · Gate 06 | Logcat-Lesefehler mit scheinbarer PASS-Ausgabe in Start- und Persistenzphase sicher blockieren (PR #140) | prüfen: zwei synthetische Negativtests + GitHub Quality am finalen Commit | fertig wenn beide Phasen `LOGCAT_READ_FAILED` schreiben, die Release-Installation unterbleibt und echte Geräteabnahme separat offen bleibt.
+- [x] 2026-11-02 | P0 · Gate 06 | Logcat-Lesefehler mit scheinbarer PASS-Ausgabe in Start- und Persistenzphase sicher blockieren (PR #140) | geprüft: zwei synthetische Negativtests + GitHub Quality auf Quell-HEAD `2f939501` PASS (41454237043); finalen Dokumentations-HEAD erneut prüfen | fertig wenn beide Phasen `LOGCAT_READ_FAILED` schreiben, die Release-Installation unterbleibt und echte Geräteabnahme separat offen bleibt.
 
 
 - [x] 2026-11-02 | P0 · Gate 06 | Debug-APK vor signiertem Release-Test zwingend erfolgreich deinstallieren (PR #140) | prüfen: ADB-Fehlercode und Exitcode 0 mit `Failure` führen zu `BLOCKED`, kein Release-Installationsaufruf; GitHub Quality am endgültigen Commit prüfen | fertig wenn: beide synthetischen Negativfälle bestehen; reale Android-Abnahme bleibt gesondert offen.

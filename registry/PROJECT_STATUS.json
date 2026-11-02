@@ -18,7 +18,7 @@
   "android_gate_stale_pass_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING",
   "android_sdk_metadata_guard": "SOURCE_PATCH_IN_PR_CI_PASS_REAL_DEVICE_PENDING",
   "android_debug_uninstall_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING",
-  "android_logcat_exit_guard": "SOURCE_PATCH_IN_PR_CI_PENDING_REAL_DEVICE_PENDING",
+  "android_logcat_exit_guard": "SOURCE_PATCH_IN_PR_CI_PASS_REAL_DEVICE_PENDING",
   "storage_gate_stale_pass_guard": "SOURCE_PATCH_IN_PR_REAL_LINUX_RECHECK_PENDING",
   "required_release_gates": 7,
   "passed_release_gates": 1,
