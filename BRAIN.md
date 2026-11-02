@@ -16,6 +16,12 @@
 
 ---
 
+[2026-11-02] [BRAIN-GATE06-SDK-METADATA-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: Leere SDK-Ausgabe wurde als 0 interpretiert; nichtnumerische Ausgabe konnte einen unbehandelten ValueError auslösen. Beides verhindert die sichere Auswahl der Android-13+-Benachrichtigungsberechtigung.
+- Schutz: SDK-Rückgabecode und positive Dezimalzahl vor APK-Installation prüfen; sonst BLOCKED mit Fehlerklasse und betroffenem Schritt.
+- Regression: drei synthetische Negativfälle in test_android_stale_evidence_gate.py; CI am endgültigen PR-HEAD noch nachzuweisen.
+- Grenze: keine reale Android-Geräteabnahme, weiterhin NO-GO und 1/7 echte Gates.
+
 [2026-11-02] [BRAIN-GATE06-ADB-FAILCLOSED-20261102] [RELEASE-GATE-ROBUSTHEIT] [REPRODUCED-IN-CODE]
 - Beobachtung: `cmd()` in Gate 06 setzt zwar ein Zeitlimit, fängt `TimeoutExpired` und `OSError` aber nicht ab; die abschließende BLOCKED-Ursache fehlt bei diesen ADB-Abbrüchen.
 - Ursache: Nur `adb devices` hatte einen expliziten Fehlerfang, spätere Gerätebefehle nicht.

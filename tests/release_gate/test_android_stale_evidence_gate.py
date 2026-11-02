@@ -95,6 +95,12 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 if command == ['shell', 'getprop', 'ro.product.model']:
                     return subprocess.CompletedProcess(args, 0, 'Pixel 8\n', '')
                 if command == ['shell', 'getprop', 'ro.build.version.sdk']:
+                    if failed_step == 'sdk_non_numeric':
+                        return subprocess.CompletedProcess(args, 0, 'unknown\n', '')
+                    if failed_step == 'sdk_empty':
+                        return subprocess.CompletedProcess(args, 0, '\n', '')
+                    if failed_step == 'sdk_command_error':
+                        return subprocess.CompletedProcess(args, 1, '34\n', 'Device error')
                     return subprocess.CompletedProcess(args, 0, '34\n', '')
                 if command[:3] == ['shell', 'pm', 'clear']:
                     if failed_step == 'app_data':
@@ -141,7 +147,16 @@ class AndroidResetPreconditionTests(unittest.TestCase):
             if failed_step.endswith('_oserror'):
                 self.assertEqual(data['failure_class'], 'COMMAND_ERROR')
             self.assertFalse(any('release.apk' in str(call) for call in calls))
+            if failed_step.startswith('sdk_'):
+                self.assertEqual(data['failure_class'], 'INVALID_DEVICE_METADATA')
+                self.assertEqual(data['failed_step'], 'shell getprop ro.build.version.sdk')
+                self.assertFalse(any(call[3:4] == ['install'] for call in calls))
             return data['reason']
+
+    def test_unknown_sdk_blocks_before_installation(self):
+        for case in ('sdk_non_numeric', 'sdk_empty', 'sdk_command_error'):
+            with self.subTest(case=case):
+                self.assertIn('SDK version could not be verified', self.exercise(case))
 
     def test_adb_install_timeout_is_blocked_with_evidence(self):
         self.assertIn('ADB install failed (TimeoutExpired)', self.exercise('install_timeout'))

@@ -45,7 +45,15 @@ def cmd(args,timeout=30):
   out['failed_step']=args[0]
   out['reason']=f'ADB {args[0]} failed ({type(exc).__name__}); device acceptance cannot be verified.'
   save()
-out['serial']=serial;out['model']=cmd(['shell','getprop','ro.product.model']).stdout.strip();sdk=cmd(['shell','getprop','ro.build.version.sdk']).stdout.strip();out['sdk']=sdk
+out['serial']=serial;out['model']=cmd(['shell','getprop','ro.product.model']).stdout.strip()
+sdk_result=cmd(['shell','getprop','ro.build.version.sdk'])
+sdk=sdk_result.stdout.strip();out['sdk']=sdk
+# An unknown SDK version must not bypass Android 13+ notification permission checks.
+if sdk_result.returncode!=0 or not sdk.isdecimal() or int(sdk)<=0:
+ out['failure_class']='INVALID_DEVICE_METADATA'
+ out['failed_step']='shell getprop ro.build.version.sdk'
+ out['reason']='Android SDK version could not be verified; required permissions are unknown.'
+ save()
 ins=cmd(['install','-r',str(apk)],60);out['install_output']=(ins.stdout+ins.stderr)[-2000:]
 if ins.returncode!=0:out['reason']='APK install failed.';save()
 # Clean application data, then grant only permissions explicitly required by the acceptance run.
@@ -54,7 +62,7 @@ cleared=cmd(['shell','pm','clear',pkg])
 if cleared.returncode!=0 or cleared.stdout.strip()!='Success':
  out['reason']='Android app data could not be cleared; previous data must not count as fresh acceptance.';save()
 rec=cmd(['shell','pm','grant',pkg,'android.permission.RECORD_AUDIO']);notif=None
-if int(sdk or 0)>=33:notif=cmd(['shell','pm','grant',pkg,'android.permission.POST_NOTIFICATIONS'])
+if int(sdk)>=33:notif=cmd(['shell','pm','grant',pkg,'android.permission.POST_NOTIFICATIONS'])
 out['record_audio_grant_rc']=rec.returncode;out['notification_grant_rc']=None if notif is None else notif.returncode
 if rec.returncode!=0 or (notif is not None and notif.returncode!=0):out['reason']='Required runtime permissions could not be granted for acceptance.';save()
 info=cmd(['shell','dumpsys','package',pkg]).stdout

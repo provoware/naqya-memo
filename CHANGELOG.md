@@ -1,3 +1,7 @@
+## [UNRELEASED] – 2026-11-02 · Android-SDK-Metadaten vor Geräteabnahme prüfen
+- Gate 06 stoppt vor der APK-Installation bei leerer, ungültiger oder fehlgeschlagener SDK-Versionsabfrage; verhindert stillschweigend ausgelassene Android-13+-Berechtigungen.
+- Drei synthetische Negativfälle mit BLOCKED-Evidence und Installationssperre ergänzt; Quality-CI auf neuem PR-HEAD und reale Geräteabnahme getrennt ausstehend. Release weiterhin NO-GO (1/7).
+
 ## [UNRELEASED] – 2026-11-02 · Android-ADB-Gerätefehler kontrolliert abfangen
 - Release-Gate 06: Zeitüberschreitungen und Betriebssystemfehler aller ADB-Gerätebefehle werden mit Fehlerklasse, Schritt und BLOCKED-Evidence statt unbehandelter Ausnahme dokumentiert.
 - Drei isolierte Negativtests für Installation, Geräteabfrage und zweiten Logcat-Lauf; keine automatische Wiederholung potenziell destruktiver ADB-Aktionen.
