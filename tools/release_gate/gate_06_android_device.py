@@ -36,7 +36,15 @@ dev=[l.split()[0] for l in cp.stdout.splitlines()[1:] if l.strip().endswith('\td
 out['devices']=dev
 if len(dev)!=1:out['reason']='Exactly one authorized Android device is required.';save()
 serial=dev[0]
-def cmd(args,timeout=30):return subprocess.run([adb,'-s',serial,*args],text=True,capture_output=True,timeout=timeout)
+def cmd(args,timeout=30):
+ try:
+  return subprocess.run([adb,'-s',serial,*args],text=True,capture_output=True,timeout=timeout)
+ except (subprocess.TimeoutExpired,OSError) as exc:
+  # A failed ADB step cannot count as device acceptance; preserve a usable BLOCKED reason.
+  out['failure_class']='TIMEOUT' if isinstance(exc,subprocess.TimeoutExpired) else 'COMMAND_ERROR'
+  out['failed_step']=args[0]
+  out['reason']=f'ADB {args[0]} failed ({type(exc).__name__}); device acceptance cannot be verified.'
+  save()
 out['serial']=serial;out['model']=cmd(['shell','getprop','ro.product.model']).stdout.strip();sdk=cmd(['shell','getprop','ro.build.version.sdk']).stdout.strip();out['sdk']=sdk
 ins=cmd(['install','-r',str(apk)],60);out['install_output']=(ins.stdout+ins.stderr)[-2000:]
 if ins.returncode!=0:out['reason']='APK install failed.';save()

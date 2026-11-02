@@ -16,6 +16,13 @@
 
 ---
 
+[2026-11-02] [BRAIN-GATE06-ADB-FAILCLOSED-20261102] [RELEASE-GATE-ROBUSTHEIT] [REPRODUCED-IN-CODE]
+- Beobachtung: `cmd()` in Gate 06 setzt zwar ein Zeitlimit, fängt `TimeoutExpired` und `OSError` aber nicht ab; die abschließende BLOCKED-Ursache fehlt bei diesen ADB-Abbrüchen.
+- Ursache: Nur `adb devices` hatte einen expliziten Fehlerfang, spätere Gerätebefehle nicht.
+- Abhilfe: Zentraler ADB-Aufruf speichert `failure_class`, `failed_step` und BLOCKED-Evidence; keine automatische Wiederholung nach Gerätefehler.
+- Regression: `tests/release_gate/test_android_stale_evidence_gate.py` (drei zusätzliche synthetische Negativfälle); GitHub-CI erforderlich.
+- Risiko: Physisches Gerät und APKs nicht verfügbar; Gate 06 bleibt bis echter Abnahme BLOCKED.
+
 [2026-11-02] [BRAIN-GATE-PREFLIGHT-MUTATION-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED]
 - Beobachtung: `RUN_GATE_PREFLIGHT.sh` rief tatsächlich alle sieben Gate-Programme auf, darunter lang laufende und Android-/iOS-Geräteaktionen.
 - Ursache: Vorprüfung und reale Abnahme waren technisch nicht getrennt; Gate-Skripte können Nachweise überschreiben und Android-Anwendungsdaten für Akzeptanztests zurücksetzen.

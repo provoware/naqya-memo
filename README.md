@@ -22,6 +22,12 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Android-Gate 06 – ADB-Abbruch sicher dokumentieren (02.11.2026)
+
+Beim echten Android-Gerätetest werden Zeitüberschreitungen und Betriebssystemfehler **aller ADB-Einzelschritte** kontrolliert als `BLOCKED` protokolliert (`failure_class: TIMEOUT/COMMAND_ERROR`, `failed_step`). Der bisherige, unbehandelte Python-Abbruch wird verhindert. Es gibt **keine automatische Wiederholung** von Installations-, Lösch- oder Gerätebefehlen. Synthetische Regressionen ersetzen keine reale Android-Abnahme; Gate 06 bleibt BLOCKED, Gesamtfreigabe NO-GO (1/7).
+
+
+
 ## 🔒 Gate-Vorprüfung ohne Datenänderung · 02.11.2026
 `./RUN_GATE_PREFLIGHT.sh` prüft ausschließlich die **Voraussetzungen** der sechs offenen Gates 01, 02, 03, 04, 06 und 07. `--json` liefert einen maschinenlesbaren Bericht, `--gate 02` prüft gezielt ein Gate. Die Vorprüfung **startet weder Browser-Gates noch ADB/Xcode noch den 8-Stunden-Lauf** und verändert keine kanonischen Gate-Dateien, keine Android-App-Daten und keine Nutzerdaten. `FOUND` bedeutet nur: benötigte Werkzeuge/Pfade sind auffindbar, **niemals realer PASS**. Echte Gate-Abnahmen müssen separat auf geeigneter Hardware mit den ausgewiesenen Befehlen ausgeführt werden. Für Browser-Gates ist die vorhandene Playwright-Bedienungsprüfung erforderlich; bloßes Bildschirmfoto oder Versionsabfrage reichen nicht. iOS benötigt macOS/Xcode und das reale iPhone X. Reale Gates bleiben 1/7, Release NO-GO. Die Nutzer-Endabnahme folgt erst nach technischer Gesamtabnahme, als ausnahmslos letzter Projektschritt.
 

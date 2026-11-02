@@ -197,5 +197,15 @@
     "real_gate_promotion": false,
     "user_final_acceptance": "LAST_STEP_ONLY",
     "validation": "SOURCE_CI_REQUIRED"
+  },
+  "android_adb_command_fail_closed_20261102": {
+    "state": "SOURCE_PATCH_CI_PENDING_REAL_DEVICE",
+    "failure_classes": [
+      "TIMEOUT",
+      "COMMAND_ERROR"
+    ],
+    "regression_cases": 3,
+    "real_device_evidence": false,
+    "release_gate_promotion": false
   }
 }

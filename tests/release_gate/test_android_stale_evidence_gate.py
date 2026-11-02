@@ -88,6 +88,10 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 if args == ['/usr/bin/adb', 'devices']:
                     return subprocess.CompletedProcess(args, 0, 'List of devices attached\nserial-1\tdevice\n', '')
                 command = args[3:]
+                if command == ['shell', 'getprop', 'ro.product.model'] and failed_step == 'getprop_oserror':
+                    raise OSError('simulated disconnected device')
+                if command[:1] == ['install'] and failed_step == 'install_timeout':
+                    raise subprocess.TimeoutExpired(args, kwargs.get('timeout', 30))
                 if command == ['shell', 'getprop', 'ro.product.model']:
                     return subprocess.CompletedProcess(args, 0, 'Pixel 8\n', '')
                 if command == ['shell', 'getprop', 'ro.build.version.sdk']:
@@ -100,6 +104,8 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                     return subprocess.CompletedProcess(args, 1, '', 'Device disconnected')
                 if command == ['logcat', '-c']:
                     cleared_logs += 1
+                    if failed_step == 'verify_logs_timeout' and cleared_logs == 2:
+                        raise subprocess.TimeoutExpired(args, kwargs.get('timeout', 30))
                     if (failed_step == 'run_logs' and cleared_logs == 1) or (
                         failed_step == 'verify_logs' and cleared_logs == 2
                     ):
@@ -130,8 +136,21 @@ class AndroidResetPreconditionTests(unittest.TestCase):
             self.assertEqual(caught.exception.code, 2)
             self.assertEqual(data['status'], 'BLOCKED')
             self.assertNotIn('release_pid', data)
+            if failed_step.endswith('_timeout'):
+                self.assertEqual(data['failure_class'], 'TIMEOUT')
+            if failed_step.endswith('_oserror'):
+                self.assertEqual(data['failure_class'], 'COMMAND_ERROR')
             self.assertFalse(any('release.apk' in str(call) for call in calls))
             return data['reason']
+
+    def test_adb_install_timeout_is_blocked_with_evidence(self):
+        self.assertIn('ADB install failed (TimeoutExpired)', self.exercise('install_timeout'))
+
+    def test_adb_getprop_oserror_is_blocked_with_evidence(self):
+        self.assertIn('ADB shell failed (OSError)', self.exercise('getprop_oserror'))
+
+    def test_adb_verify_logcat_timeout_is_blocked_with_evidence(self):
+        self.assertIn('ADB logcat failed (TimeoutExpired)', self.exercise('verify_logs_timeout'))
 
     def test_app_data_clear_failure_blocks_gate(self):
         self.assertIn('app data', self.exercise('app_data'))

@@ -22,6 +22,13 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Android-Gate 06 · ADB-Zeitüberschreitungen (02.11.2026)
+
+- [x] 2026-11-02 | P0 · Gate 06 | ADB-Timeout und Betriebssystemfehler bei Gerätebefehlen fail-closed als BLOCKED dokumentieren | prüfen: drei neue isolierte Negativtests (Installations-Timeout, Geräteabfrage-Fehler, zweiter Logcat-Timeout) plus Quality-CI | fertig wenn: Ausnahme nicht unkontrolliert ausbricht und keine alte PASS-Evidence wiederverwendet wird.
+- [ ] 2026-11-02 | P0 · Gate 06 | Auf echtem Android-Gerät mit Debug- und signierter Release-APK prüfen | prüfen: echte Audio-, Erinnerungs- und Persistenznachweise; kanonischer Evaluator | fertig wenn: Gate 06 real PASS und Gesamtfreigabe unabhängig erneut geprüft.
+
+
+
 ## 🔐 NI-20261102-03 · Sechs reale Release-Gates – technischer Abnahmeplan
 
 - [x] 2026-11-02 | P0 · Gate-Sicherheit | Vorprüfung von realem Hardwarelauf trennen und gegen Daten-/Evidence-Mutation absichern | prüfen: `test_readonly_preflight.py`, GitHub-CI am endgültigen Commit | fertig wenn: ausschließlich 6 Gates auf Voraussetzungen geprüft werden und Nachweisdateien unverändert bleiben.

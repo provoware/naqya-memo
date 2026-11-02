@@ -1,3 +1,8 @@
+## [UNRELEASED] – 2026-11-02 · Android-ADB-Gerätefehler kontrolliert abfangen
+- Release-Gate 06: Zeitüberschreitungen und Betriebssystemfehler aller ADB-Gerätebefehle werden mit Fehlerklasse, Schritt und BLOCKED-Evidence statt unbehandelter Ausnahme dokumentiert.
+- Drei isolierte Negativtests für Installation, Geräteabfrage und zweiten Logcat-Lauf; keine automatische Wiederholung potenziell destruktiver ADB-Aktionen.
+- Reale Android-Abnahme bleibt ausstehend; Release weiterhin NO-GO (1/7).
+
 ## [RELEASE-GATE-READONLY-PREFLIGHT] – 2026-11-02
 - Sicherheitskorrektur: `RUN_GATE_PREFLIGHT.sh` führt keine potenziell destruktiven Browser-/Android-/iOS- und Langzeit-Gates mehr aus.
 - Neue Standardbibliotheks-Voraussetzungsprüfung für Gates 01/02/03/04/06/07; Zustände FOUND/BLOCKED statt vorgetäuschter PASS.
