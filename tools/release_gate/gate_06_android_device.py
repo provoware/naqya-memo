@@ -117,9 +117,23 @@ if uninstalled.returncode!=0 or uninstalled.stdout.strip()!='Success':
  save()
 rel=cmd(['install','-r',str(release_apk)],60);out['release_install_output']=(rel.stdout+rel.stderr)[-2000:]
 if rel.returncode!=0:out['reason']='Acceptance APK passed, but signed release APK install failed.';save()
-release_info=cmd(['shell','dumpsys','package',pkg]).stdout;rv=re.search(r'versionName=([^\s]+)',release_info);out['release_version_name']=rv.group(1) if rv else None
+release_info_result=cmd(['shell','dumpsys','package',pkg])
+# A failed metadata query must not certify the signed release using partial stdout.
+if release_info_result.returncode!=0:
+ out['failure_class']='RELEASE_METADATA_QUERY_FAILED'
+ out['failed_step']='shell dumpsys package'
+ out['reason']='Signed release package metadata could not be verified.'
+ save()
+release_info=release_info_result.stdout;rv=re.search(r'versionName=([^\s]+)',release_info);out['release_version_name']=rv.group(1) if rv else None
 normal=cmd(['shell','am','start','-W','-n',f'{pkg}/.MainActivity']);out['release_launch_output']=(normal.stdout+normal.stderr)[-1600:]
-time.sleep(2);pid=cmd(['shell','pidof',pkg]).stdout.strip();out['release_pid']=pid
+time.sleep(2);pid_result=cmd(['shell','pidof',pkg]);pid=pid_result.stdout.strip()
+# A failed process query cannot prove the signed release is running.
+if pid_result.returncode!=0:
+ out['failure_class']='RELEASE_PROCESS_QUERY_FAILED'
+ out['failed_step']='shell pidof'
+ out['reason']='Signed release process could not be verified.'
+ save()
+out['release_pid']=pid
 if rel.returncode==0 and normal.returncode==0 and pid and out['release_version_name']=='0.12.2':
  out['status']='PASS';out['reason']='Android gate passed: debug-only device acceptance proved microphone/reminder/persistence; signed non-debuggable V0.12.2 release APK then installed and launched.';save(0)
 out['reason']='Acceptance run passed, but normal release APK launch/version verification failed.';save()
