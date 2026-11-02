@@ -16,6 +16,13 @@
 
 ---
 
+[2026-11-02] [BRAIN-GATE-PREFLIGHT-MUTATION-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED]
+- Beobachtung: `RUN_GATE_PREFLIGHT.sh` rief tatsächlich alle sieben Gate-Programme auf, darunter lang laufende und Android-/iOS-Geräteaktionen.
+- Ursache: Vorprüfung und reale Abnahme waren technisch nicht getrennt; Gate-Skripte können Nachweise überschreiben und Android-Anwendungsdaten für Akzeptanztests zurücksetzen.
+- Abhilfe: Neue reine Voraussetzungskontrolle `check_real_gate_readiness.py`; Shell-Einstieg startet nur diese Datei, keine Geräte-/Datenoperationen.
+- Prüfung: Regression testet sechs Gates, Fehlerstatus, unbekannte Gate-ID sowie SHA-256-Unveränderlichkeit aller kanonischen Gate-Dateien.
+- Grenze: FOUND ist niemals Hardware-/Browser-PASS; reales Prüfen separat und Nutzer-Endabnahme allerletzt.
+
 [2026-11-02] [BRAIN-0044] [RELEASE-EVIDENCE-PATH-SYMLINK] [REPRODUCED]
 - Beobachtung: Ein direkter Datei-Symlink wurde abgewiesen, ein Symlink des übergeordneten Evidence-Ordners jedoch vor dem Patch nicht geprüft.
 - Ursache: Die bisherige Prüfung untersuchte ausschließlich `path.is_symlink()` am Blattpfad.

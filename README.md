@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔒 Gate-Vorprüfung ohne Datenänderung · 02.11.2026
+`./RUN_GATE_PREFLIGHT.sh` prüft ausschließlich die **Voraussetzungen** der sechs offenen Gates 01, 02, 03, 04, 06 und 07. `--json` liefert einen maschinenlesbaren Bericht, `--gate 02` prüft gezielt ein Gate. Die Vorprüfung **startet weder Browser-Gates noch ADB/Xcode noch den 8-Stunden-Lauf** und verändert keine kanonischen Gate-Dateien, keine Android-App-Daten und keine Nutzerdaten. `FOUND` bedeutet nur: benötigte Werkzeuge/Pfade sind auffindbar, **niemals realer PASS**. Echte Gate-Abnahmen müssen separat auf geeigneter Hardware mit den ausgewiesenen Befehlen ausgeführt werden. Für Browser-Gates ist die vorhandene Playwright-Bedienungsprüfung erforderlich; bloßes Bildschirmfoto oder Versionsabfrage reichen nicht. iOS benötigt macOS/Xcode und das reale iPhone X. Reale Gates bleiben 1/7, Release NO-GO. Die Nutzer-Endabnahme folgt erst nach technischer Gesamtabnahme, als ausnahmslos letzter Projektschritt.
+
+
 ### 🔒 Release-Evidence-Pfadschutz – Entwurf vom 02.11.2026
 Der kanonische Prüfer soll nicht nur direkte symbolische Links auf Gate-Dateien, sondern auch Links in deren Elternordnern ablehnen. Dadurch kann eine umgeleitete Evidence-Ablage nicht als PASS gelesen werden. Zwei synthetische Regressionstests prüfen die Umleitung; echte Geräte- und Browserabnahmen bleiben offen. Dieser Schutz ist bis zur Integration des separaten PRs **nicht auf main aktiv**. Release weiterhin **NO-GO (1/7)**.
 
