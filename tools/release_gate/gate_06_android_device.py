@@ -74,8 +74,15 @@ if run_log_clear.returncode!=0:
  out['reason']='Android logcat could not be cleared before acceptance; stale logs must not count as proof.';save()
 launch=cmd(['shell','am','start','-W','-n',f'{pkg}/.MainActivity','--es','provoware_acceptance','run']);out['run_launch_output']=(launch.stdout+launch.stderr)[-1500:]
 time.sleep(8)
-logs=cmd(['logcat','-d','-s','ProvowareAcceptance:I','*:S']).stdout
+run_log_result=cmd(['logcat','-d','-s','ProvowareAcceptance:I','*:S'])
+logs=run_log_result.stdout
 out['run_log_tail']=logs[-6000:]
+# Even a partial logcat failure may contain plausible but unverified PASS lines.
+if run_log_result.returncode!=0:
+ out['failure_class']='LOGCAT_READ_FAILED'
+ out['failed_step']='logcat -d run'
+ out['reason']='Android logcat read failed during initial acceptance; output cannot prove a fresh PASS.'
+ save()
 run_result=parse_acceptance(logs,'run');out['run_result']=run_result;out['reminder_fired']='REMINDER_FIRED:' in logs
 if launch.returncode!=0 or not run_result or run_result.get('status')!='PASS' or not out['reminder_fired']:
  out['reason']='Native run did not prove microphone + reminder + mobile core acceptance.';save()
@@ -89,8 +96,14 @@ if verify_log_clear.returncode!=0:
 time.sleep(.5)
 verify_launch=cmd(['shell','am','start','-W','-n',f'{pkg}/.MainActivity','--es','provoware_acceptance','verify']);out['verify_launch_output']=(verify_launch.stdout+verify_launch.stderr)[-1500:]
 time.sleep(5)
-verify_logs=cmd(['logcat','-d','-s','ProvowareAcceptance:I','*:S']).stdout
-out['verify_log_tail']=verify_logs[-5000:];verify=parse_acceptance(verify_logs,'verify');out['verify_result']=verify
+verify_log_result=cmd(['logcat','-d','-s','ProvowareAcceptance:I','*:S'])
+verify_logs=verify_log_result.stdout
+out['verify_log_tail']=verify_logs[-5000:]
+if verify_log_result.returncode!=0:
+ out['failure_class']='LOGCAT_READ_FAILED'
+ out['failed_step']='logcat -d verify'
+ out['reason']='Android logcat read failed during persistence verification; output cannot prove a fresh PASS.'
+ save();verify=parse_acceptance(verify_logs,'verify');out['verify_result']=verify
 if not (verify_launch.returncode==0 and verify and verify.get('status')=='PASS'):
  out['reason']='Initial Android run passed, but persistence verification after process restart failed.';save()
 # Acceptance hooks are deliberately disabled in non-debuggable release. Uninstall debug APK, then prove signed release installs and launches normally.

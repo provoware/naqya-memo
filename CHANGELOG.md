@@ -1,3 +1,7 @@
+## [UNRELEASED] – 2026-11-02 · Android-Logcat-Lesefehler nicht als PASS zählen
+- Gate 06 verwirft Logcat-Ausgaben mit Fehlercode in beiden Abnahmephasen, auch wenn enthaltene Teilzeilen `PASS` behaupten. `BLOCKED` und `LOGCAT_READ_FAILED`; keine signierte Release-Installation.
+- Zwei synthetische Negativtests, keine neuen Abhängigkeiten. Reale Geräte-Evidence bleibt ausstehend; Gesamtfreigabe NO-GO (1/7).
+
 ## [UNRELEASED] – 2026-11-02 · Android-Debug-APK vor Release-Abnahme sicher entfernen
 - Gate 06 verlangt nach der Debug-Abnahme eine erfolgreiche Deinstallation (Exitcode 0 und `Success`) vor Installation der signierten Release-APK; andernfalls `BLOCKED` mit Fehlerklasse und ohne Release-Installationsversuch.
 - Zwei synthetische Negativfälle im vorhandenen Android-Test; keine neuen Abhängigkeiten. GitHub Quality am endgültigen PR-HEAD prüfen; reale Android-Abnahme offen, NO-GO (1/7).

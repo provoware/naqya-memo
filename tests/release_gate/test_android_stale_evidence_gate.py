@@ -127,6 +127,8 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                     read_logs += 1
                     mode = 'run' if read_logs == 1 else 'verify'
                     logs = 'I/ProvowareAcceptance: {"mode":"' + mode + '","status":"PASS"}\nREMINDER_FIRED:1\n'
+                    if failed_step == mode + '_read_error':
+                        return subprocess.CompletedProcess(args, 1, logs, 'logcat read failed')
                     return subprocess.CompletedProcess(args, 0, logs, '')
                 if command[:2] == ['shell', 'pidof']:
                     return subprocess.CompletedProcess(args, 0, '1234\n', '')
@@ -156,6 +158,9 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 self.assertEqual(data['failure_class'], 'DEBUG_APK_UNINSTALL_FAILED')
                 self.assertEqual(data['failed_step'], 'uninstall')
                 self.assertTrue(any(call[3:4] == ['uninstall'] for call in calls))
+            if failed_step.endswith('_read_error'):
+                self.assertEqual(data['failure_class'], 'LOGCAT_READ_FAILED')
+                self.assertEqual(data['failed_step'], 'logcat -d ' + failed_step.split('_')[0])
             if failed_step.startswith('sdk_'):
                 self.assertEqual(data['failure_class'], 'INVALID_DEVICE_METADATA')
                 self.assertEqual(data['failed_step'], 'shell getprop ro.build.version.sdk')
@@ -175,6 +180,12 @@ class AndroidResetPreconditionTests(unittest.TestCase):
 
     def test_adb_verify_logcat_timeout_is_blocked_with_evidence(self):
         self.assertIn('ADB logcat failed (TimeoutExpired)', self.exercise('verify_logs_timeout'))
+
+    def test_failed_initial_logcat_read_blocks_forged_pass(self):
+        self.assertIn('logcat read failed during initial acceptance', self.exercise('run_read_error'))
+
+    def test_failed_verify_logcat_read_blocks_forged_pass(self):
+        self.assertIn('logcat read failed during persistence verification', self.exercise('verify_read_error'))
 
     def test_debug_uninstall_failure_blocks_release_install(self):
         for case in ('uninstall_nonzero', 'uninstall_false_success'):
