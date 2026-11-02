@@ -1,3 +1,8 @@
+## [FIREFOX-GATE-STALE-PASS-GUARD] – 2026-11-01 · Konfliktaufgelöste Integration
+- Gate 03 konnte bei Unterbrechung der Firefox-Erkennung oder Versionsabfrage einen alten `PASS`-Nachweis stehen lassen.
+- Die kanonische Gate-Datei wird vor jeder externen Prüfung auf `BLOCKED` gesetzt; drei synthetische Negativ-/Normalfalltests laufen im Qualitätsworkflow.
+- Keine reale Firefox-Abnahme; 1/7 reale Gates, NO-GO; keine neuen Abhängigkeiten.
+
 ## [CHROMIUM-SCREENSHOT-PRECHECK-ONLY] – 2026-11-01 · Konfliktaufgelöste Integration
 - Reproduziert: Ein künstlicher HTTP-Server ohne Memo-Oberfläche und ein Fake-Chromium, das nur eine Bilddatei schreibt, genügten bisher für Gate-02-`PASS`.
 - Der reine Bildschirmfoto-Lauf meldet jetzt `PRECHECK_PASS` mit Exit-Code 2; ein echtes Chromium-App-E2E bleibt zwingend erforderlich.

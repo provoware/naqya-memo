@@ -17,6 +17,16 @@
 ---
 
 
+[2026-11-01] [BRAIN-0044] [FIREFOX-STALE-PASS] [REPRODUCED]
+- Beobachtung: Eine Unterbrechung vor dem bisherigen Abschluss-Schreibvorgang beließ einen früheren Firefox-Gate-PASS unverändert.
+- Ursache: `GATE_03_FIREFOX.json` wurde erst nach `shutil.which` und `firefox --version` aktualisiert.
+- Schutzregel: Vor externen Firefox-Proben zuerst `BLOCKED` schreiben; nur echte Browser-E2E-Evidence darf später `PASS` belegen.
+- Regression: zwei simulierte Startunterbrechungen und ein Normalfall ohne Firefox, keine reale Browserfreigabe.
+- Betroffene Komponenten: `tools/release_gate/gate_03_firefox.py`, `tests/release_gate/test_firefox_stale_evidence_gate.py`.
+- Release-Gates: 1/7 PASS, NO-GO.
+
+
+
 [2026-11-01] [BRAIN-CHROMIUM-SCREENSHOT-20261101] [RELEASE-GATE-FALSE-PASS] [REPRODUCED]
 - Beobachtung: Eine neue Bilddatei von einem Fake-Chromium und ein HTTP-Server ohne funktionsfähige Memo-App reichten für Gate-02-PASS.
 - Ursache: Die Gate-Entscheidung verwechselte das Erstellen eines Bildschirmfotos mit der realen Browser-Endabnahme.
