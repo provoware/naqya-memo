@@ -94,7 +94,13 @@ out['verify_log_tail']=verify_logs[-5000:];verify=parse_acceptance(verify_logs,'
 if not (verify_launch.returncode==0 and verify and verify.get('status')=='PASS'):
  out['reason']='Initial Android run passed, but persistence verification after process restart failed.';save()
 # Acceptance hooks are deliberately disabled in non-debuggable release. Uninstall debug APK, then prove signed release installs and launches normally.
-cmd(['uninstall',pkg],60)
+uninstalled=cmd(['uninstall',pkg],60)
+# A failed debug removal must never be mistaken for a clean signed-release install.
+if uninstalled.returncode!=0 or uninstalled.stdout.strip()!='Success':
+ out['failure_class']='DEBUG_APK_UNINSTALL_FAILED'
+ out['failed_step']='uninstall'
+ out['reason']='Debug acceptance APK could not be removed; signed release verification must not run.'
+ save()
 rel=cmd(['install','-r',str(release_apk)],60);out['release_install_output']=(rel.stdout+rel.stderr)[-2000:]
 if rel.returncode!=0:out['reason']='Acceptance APK passed, but signed release APK install failed.';save()
 release_info=cmd(['shell','dumpsys','package',pkg]).stdout;rv=re.search(r'versionName=([^\s]+)',release_info);out['release_version_name']=rv.group(1) if rv else None

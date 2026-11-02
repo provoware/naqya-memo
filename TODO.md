@@ -24,6 +24,8 @@
 
 ## 🔐 Android-Gate 06 · ADB-Zeitüberschreitungen (02.11.2026)
 
+- [x] 2026-11-02 | P0 · Gate 06 | Debug-APK vor signiertem Release-Test zwingend erfolgreich deinstallieren (PR #140) | prüfen: ADB-Fehlercode und Exitcode 0 mit `Failure` führen zu `BLOCKED`, kein Release-Installationsaufruf; GitHub Quality am endgültigen Commit prüfen | fertig wenn: beide synthetischen Negativfälle bestehen; reale Android-Abnahme bleibt gesondert offen.
+
 - [x] 2026-11-02 | P0 · Gate 06 | Leere, ungültige oder fehlerhaft gelesene SDK-Version vor APK-Installation als BLOCKED abweisen (PR #140) | geprüft: drei Negativfälle, kein Installationsaufruf, Quality-CI auf Patch-Commit PASS (41407190034); finalen Dokumentations-HEAD erneut prüfen | Quellschutz nachgewiesen, reale Android-Abnahme bleibt separat.
 
 - [x] 2026-11-02 | P0 · Gate 06 | ADB-Timeout und Betriebssystemfehler bei Gerätebefehlen fail-closed als BLOCKED dokumentieren | prüfen: drei neue isolierte Negativtests (Installations-Timeout, Geräteabfrage-Fehler, zweiter Logcat-Timeout) plus Quality-CI (PR #140: PASS) | fertig wenn: Ausnahme nicht unkontrolliert ausbricht und keine alte PASS-Evidence wiederverwendet wird.

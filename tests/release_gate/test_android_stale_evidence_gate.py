@@ -102,6 +102,11 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                     if failed_step == 'sdk_command_error':
                         return subprocess.CompletedProcess(args, 1, '34\n', 'Device error')
                     return subprocess.CompletedProcess(args, 0, '34\n', '')
+                if command[:1] == ['uninstall'] and failed_step.startswith('uninstall_'):
+                    return subprocess.CompletedProcess(
+                        args, 1 if failed_step == 'uninstall_nonzero' else 0,
+                        'Failure [DELETE_FAILED_INTERNAL_ERROR]\n', ''
+                    )
                 if command[:3] == ['shell', 'pm', 'clear']:
                     if failed_step == 'app_data':
                         return subprocess.CompletedProcess(args, 1, 'Failed\n', '')
@@ -147,6 +152,10 @@ class AndroidResetPreconditionTests(unittest.TestCase):
             if failed_step.endswith('_oserror'):
                 self.assertEqual(data['failure_class'], 'COMMAND_ERROR')
             self.assertFalse(any('release.apk' in str(call) for call in calls))
+            if failed_step.startswith('uninstall_'):
+                self.assertEqual(data['failure_class'], 'DEBUG_APK_UNINSTALL_FAILED')
+                self.assertEqual(data['failed_step'], 'uninstall')
+                self.assertTrue(any(call[3:4] == ['uninstall'] for call in calls))
             if failed_step.startswith('sdk_'):
                 self.assertEqual(data['failure_class'], 'INVALID_DEVICE_METADATA')
                 self.assertEqual(data['failed_step'], 'shell getprop ro.build.version.sdk')
@@ -166,6 +175,11 @@ class AndroidResetPreconditionTests(unittest.TestCase):
 
     def test_adb_verify_logcat_timeout_is_blocked_with_evidence(self):
         self.assertIn('ADB logcat failed (TimeoutExpired)', self.exercise('verify_logs_timeout'))
+
+    def test_debug_uninstall_failure_blocks_release_install(self):
+        for case in ('uninstall_nonzero', 'uninstall_false_success'):
+            with self.subTest(case=case):
+                self.assertIn('Debug acceptance APK could not be removed', self.exercise(case))
 
     def test_app_data_clear_failure_blocks_gate(self):
         self.assertIn('app data', self.exercise('app_data'))

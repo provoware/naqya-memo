@@ -24,6 +24,8 @@
 
 ## 🔐 Android-Gate 06 – ADB-Abbruch sicher dokumentieren (02.11.2026)
 
+**Debug-APK-Isolation (PR #140):** Vor der signierten Release-Abnahme muss die vorherige Debug-/Abnahme-APK nachweislich entfernt werden. Gate 06 prüft den ADB-Exitcode **und** die Erfolgsmeldung `Success`. Bei fehlgeschlagener Entfernung: `BLOCKED`, `failure_class=DEBUG_APK_UNINSTALL_FAILED`, `failed_step=uninstall`, **keine Release-Installation**. Zwei synthetische Negativfälle decken Fehlercode und widersprüchliche Erfolgsmeldung ab. Ein echter Geräte-PASS wird dadurch nicht ersetzt.
+
 **Zusätzlicher Geräte-Metadatenschutz (PR #140):** Eine leere, ungültige oder fehlgeschlagene Android-SDK-Abfrage blockiert die Abnahme vor der APK-Installation. Ohne verlässliche SDK-Version darf die Benachrichtigungsberechtigung nicht stillschweigend ausgelassen werden. Drei synthetische Negativfälle sind ergänzt; die GitHub-Quality-Prüfung am Patch-Commit war erfolgreich ([Lauf 41407190034](https://github.com/provoware/naqya-memo/actions/runs/41407190034)). Die reale Geräteabnahme bleibt ausstehend.
 
 Beim echten Android-Gerätetest werden Zeitüberschreitungen und Betriebssystemfehler **aller ADB-Einzelschritte** kontrolliert als `BLOCKED` protokolliert (`failure_class: TIMEOUT/COMMAND_ERROR`, `failed_step`). Der bisherige, unbehandelte Python-Abbruch wird verhindert. Es gibt **keine automatische Wiederholung** von Installations-, Lösch- oder Gerätebefehlen. Drei neue synthetische Negativtests und die GitHub-Qualitätsprüfung für PR #140 sind bestanden. Das ersetzt keine reale Android-Abnahme; Gate 06 bleibt BLOCKED, Gesamtfreigabe NO-GO (1/7).

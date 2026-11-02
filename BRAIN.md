@@ -16,6 +16,12 @@
 
 ---
 
+[2026-11-02] [BRAIN-GATE06-UNINSTALL-PRECONDITION-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: `adb uninstall` wurde ohne Prüfung des Ergebnisses ausgeführt; trotz fehlgeschlagener Debug-APK-Entfernung konnte der signierte Release-Test beginnen.
+- Schutz: Exitcode 0 und `Success` sind Pflicht, sonst `BLOCKED` mit `DEBUG_APK_UNINSTALL_FAILED`; keine Release-Installation.
+- Regression: zwei synthetische Negativfälle in `test_android_stale_evidence_gate.py`; Quality-CI am endgültigen PR-HEAD erforderlich.
+- Grenze: kein reales Android-Gerät oder signiertes APK geprüft; 1/7 echte Gates, NO-GO.
+
 [2026-11-02] [BRAIN-GATE06-SDK-METADATA-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
 - Befund: Leere SDK-Ausgabe wurde als 0 interpretiert; nichtnumerische Ausgabe konnte einen unbehandelten ValueError auslösen. Beides verhindert die sichere Auswahl der Android-13+-Benachrichtigungsberechtigung.
 - Schutz: SDK-Rückgabecode und positive Dezimalzahl vor APK-Installation prüfen; sonst BLOCKED mit Fehlerklasse und betroffenem Schritt.
