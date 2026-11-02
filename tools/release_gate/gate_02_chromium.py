@@ -21,7 +21,7 @@ if exe:
    out['service_ready']=ready
    if ready:
     shot=ROOT/'registry/evidence/v0.12.2/chromium_1366x768.png'
-    # Only a screenshot created by this run can prove the current browser gate.
+    # A fresh screenshot proves rendering only, never the required app E2E.
     # Keep existing evidence intact if Chromium fails or times out.
     with tempfile.TemporaryDirectory(prefix='.chromium-gate-',dir=shot.parent) as screenshot_dir:
      fresh_shot=Path(screenshot_dir)/shot.name
@@ -31,7 +31,8 @@ if exe:
       out['return_code']=cp.returncode; out['stderr_tail']=cp.stderr[-2000:]
       if cp.returncode==0 and fresh_shot.is_file() and fresh_shot.stat().st_size>1000:
        os.replace(fresh_shot,shot)
-       out['status']='PASS';out['screenshot']=shot.name
+       out['status']='PRECHECK_PASS';out['screenshot']=shot.name
+       out['reason']='Fresh screenshot captured; real Chromium app E2E and accessibility acceptance are still required.'
       else: out['reason']='Chromium returned without valid fresh screenshot'
      except subprocess.TimeoutExpired as exc:
       out['reason']='Chromium headless timed out in this execution environment'; out['timeout_seconds']=12

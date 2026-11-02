@@ -22,6 +22,12 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Chromium-Gate 02 · echte Browser-Endabnahme (01.11.2026)
+
+- [ ] 2026-11-01 | P0 · Gate 02 | Bildschirmfoto nur als Vorprüfung zählen, nicht als Browser-Endabnahme | prüfen: drei isolierte Chromium-Regressionstests und GitHub-Qualitätsprüfung; danach echte Memo-, Tastatur-, Barrierefreiheits- und Wiederherstellungsabläufe im Browser | fertig wenn: echte Browser-Endabnahme unabhängig belegt und Gate 02 erst danach PASS meldet.
+
+
+
 ## Speicher-Gate 05 · Wiederanlauf-Sicherheit (01.11.2026)
 
 - [ ] 2026-11-01 | P0 · Gate 05 | Frühabbruch eines neuen Speicherfehlertests darf keinen alten PASS erhalten | prüfen: 2 Abbruch-Regressionen und 3 bestehende Speicherfehler-Tests im Qualitätsworkflow, anschließend realer Linux-Prüflauf | fertig wenn: CI am PR-HEAD grün und reale Gate-Evidence unabhängig neu erzeugt ist.

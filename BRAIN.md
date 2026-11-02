@@ -16,6 +16,14 @@
 
 ---
 
+
+[2026-11-01] [BRAIN-CHROMIUM-SCREENSHOT-20261101] [RELEASE-GATE-FALSE-PASS] [REPRODUCED]
+- Beobachtung: Eine neue Bilddatei von einem Fake-Chromium und ein HTTP-Server ohne funktionsfähige Memo-App reichten für Gate-02-PASS.
+- Ursache: Die Gate-Entscheidung verwechselte das Erstellen eines Bildschirmfotos mit der realen Browser-Endabnahme.
+- Schutz: Frisches Bild = PRECHECK_PASS/Exit 2; vollständige App-E2E-, Bedien- und Barrierefreiheitsabnahme bleibt notwendig.
+- Regression: Drei isolierte Chromium-Tests; Vorher-Negativtest fehlgeschlagen, nachher lokal bestanden.
+- Restrisiko: Ein vollwertiger Chromium-E2E-Gate-Runner muss separat bereitgestellt und real ausgeführt werden.
+
 [2026-11-01] [BRAIN-0044] [STORAGE-GATE-STALE-PASS] [REPRODUCED]
 - Beobachtung: Ein Abbruch des Speicherfehler-Gates vor dem ersten Kernel-Zugriff ließ eine alte PASS-Datei stehen.
 - Ursache: Der Nachweis wurde erst am Ende des Prüflaufs überschrieben.

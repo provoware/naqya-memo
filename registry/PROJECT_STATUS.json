@@ -170,5 +170,6 @@
     "real_release_gate_promotion": false,
     "report": "docs/QA_RUNTIME_UI_20261101.md",
     "backup_sqlite_inspection": "READ_ONLY_IMMUTABLE_WITH_SIDECAR_REJECTION_AND_PRE_POST_HASH"
-  }
+  },
+  "chromium_screenshot_gate": "PRECHECK_ONLY_REAL_E2E_PENDING"
 }
