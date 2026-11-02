@@ -16,6 +16,13 @@
 
 ---
 
+[2026-11-01] [BRAIN-0044] [STORAGE-GATE-STALE-PASS] [REPRODUCED]
+- Beobachtung: Ein Abbruch des Speicherfehler-Gates vor dem ersten Kernel-Zugriff ließ eine alte PASS-Datei stehen.
+- Ursache: Der Nachweis wurde erst am Ende des Prüflaufs überschrieben.
+- Schutz: Neuer Versuch schreibt sofort RUNNING; nur vollständig abgeschlossene Kernel- und Recovery-Prüfungen dürfen PASS setzen.
+- Regression: zwei simulierte Frühabbrüche plus drei vorhandene Speicherfehler-Vertragstests in quality.yml; keine reale Linux-Neuabnahme.
+- Restrisiko: Ist das Evidence-Verzeichnis bereits vor dem ersten Schreiben nicht beschreibbar, kann der alte Dateistand nicht überschrieben werden; ein solcher Schreibfehler beendet den Prüflauf.
+
 [2026-11-01] [BRAIN-0040] [ANDROID-DATA-ISOLATION] [REPRODUCED]
 - Ursache: Fehler von pm clear, logcat -c oder force-stop konnten veraltete Gerätedaten im neuen Test belassen.
 - Schutz: Jeder Fehler blockiert Gate 06; vier neue Negativfälle aus PR #121. Keine echte Android-Abnahme.

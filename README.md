@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## Speicher-Gate: alte PASS-Nachweise bei neuem Prüflauf entwerten · 01.11.2026
+
+Gate 05 schreibt vor dem ersten Kernel-Zugriff `RUNNING` in seine kanonische Nachweisdatei. Ein unterbrochener erneuter Prüflauf kann deshalb keinen alten Erfolg als aktuellen Prüfstand stehen lassen. Zwei isolierte Abbruchtests und die drei vorhandenen Speicherfehler-Vertragstests werden im Qualitätsworkflow ausgeführt. Diese Quellprüfung ersetzt keine neue reale Linux-Speicherfehlerabnahme; Release bleibt NO-GO, bisher 1/7 reale Gates PASS.
+
 ## Sicherheits- und Bedienkorrektur - 01.11.2026
 
 - Statische Dateien bleiben nach URL-Dekodierung und Auflösen von Verknüpfungen im Oberflächenordner; GET und HEAD sperren Ausbruchsversuche mit HTTP 403.

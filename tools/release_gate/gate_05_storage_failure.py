@@ -1,7 +1,11 @@
 from pathlib import Path
 import datetime,errno,json,os,tempfile
 ROOT=Path(__file__).resolve().parents[2];E=ROOT/'registry/evidence/v0.12.2/gates/GATE_05_STORAGE_FAILURE.json'
-out={'gate':'GATE_05_STORAGE_FAILURE','status':'FAIL','timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'tests':{}}
+out={'gate':'GATE_05_STORAGE_FAILURE','status':'RUNNING','timestamp':datetime.datetime.now(datetime.timezone.utc).isoformat(),'tests':{}}
+# Invalidate an older PASS before probing the kernel or loading recovery evidence.
+# Interrupted attempts must never inherit the result of a previous run.
+E.parent.mkdir(parents=True,exist_ok=True)
+E.write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
 # Linux /dev/full is a kernel device that always returns ENOSPC on write.
 try:
  with open('/dev/full','wb',buffering=0) as f:f.write(b'provoware-storage-failure')
