@@ -211,5 +211,6 @@
     "real_device_evidence": false,
     "release_gate_promotion": false,
     "quality_run": "https://github.com/provoware/naqya-memo/actions/runs/41387798815"
-  }
+  },
+  "android_release_query_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING"
 }

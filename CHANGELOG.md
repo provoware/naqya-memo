@@ -1,3 +1,7 @@
+## [UNRELEASED] – 2026-11-02 · Fehlerhafte Release-ADB-Abfragen blockieren
+- Android-Gate 06 wertet `dumpsys package` und `pidof` der signierten Release-APK nur bei ADB-Rückgabecode 0 aus. Teil-Ausgaben mit korrekter Version oder Prozessnummer trotz Fehler führen zu `BLOCKED` statt möglichem falschen PASS.
+- Zwei simulierte Negativfälle ergänzt; GitHub Quality im PR nachzuweisen. Reale Android-Evidence unverändert BLOCKED, Gesamtrelease NO-GO (1/7).
+
 ## [UNRELEASED] – 2026-11-02 · Android-Logcat-Lesefehler nicht als PASS zählen
 - Gate 06 verwirft Logcat-Ausgaben mit Fehlercode in beiden Abnahmephasen, auch wenn enthaltene Teilzeilen `PASS` behaupten. `BLOCKED` und `LOGCAT_READ_FAILED`; keine signierte Release-Installation.
 - Zwei synthetische Negativtests, keine neuen Abhängigkeiten. GitHub Quality auf Quell-HEAD `2f939501` PASS (41454237043), abschließender Dokumentations-HEAD erneut zu prüfen. Reale Geräte-Evidence ausstehend; NO-GO (1/7).

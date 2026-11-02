@@ -22,6 +22,11 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Android Gate 06 – signierte Release-Nachweise (02.11.2026)
+
+- [x] 2026-11-02 | P0 · Gate 06 | ADB-Fehler bei Release-Paketabfrage und Prozessprüfung trotz plausibler Teil-Ausgabe blockieren (PR #140) | prüfen: zwei synthetische Negativfälle `release_dumpsys_error`/`release_pidof_error`, GitHub Quality am finalen PR-HEAD | fertig wenn: `BLOCKED` mit Fehlerklasse und Schritt, keine falsche Freigabe; reale Geräteabnahme bleibt offen.
+- [ ] 2026-11-02 | Gate 06 · echte Abnahme | Debug- und signierte Release-APK auf physischem Android-Gerät vollständig prüfen | prüfen: echte ADB-/Geräte-Evidence und kanonischer Evaluator | fertig wenn: reale Gate-Evidence PASS; Simulationen zählen nicht.
+
 ## 🔐 Android-Gate 06 · ADB-Zeitüberschreitungen (02.11.2026)
 
 - [x] 2026-11-02 | P0 · Gate 06 | Logcat-Lesefehler mit scheinbarer PASS-Ausgabe in Start- und Persistenzphase sicher blockieren (PR #140) | geprüft: zwei synthetische Negativtests + GitHub Quality auf Quell-HEAD `2f939501` PASS (41454237043); finalen Dokumentations-HEAD erneut prüfen | fertig wenn beide Phasen `LOGCAT_READ_FAILED` schreiben, die Release-Installation unterbleibt und echte Geräteabnahme separat offen bleibt.

@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Android Gate 06 – signierte Release-Nachweise (02.11.2026)
+
+**PR #140:** Nach Installation der signierten APK dürfen weder eine fehlgeschlagene `dumpsys package`-Abfrage mit scheinbar korrekter Versionsausgabe noch eine fehlgeschlagene `pidof`-Abfrage mit scheinbarer Prozessnummer als PASS zählen. Beide Abfragen verlangen Rückgabecode 0; Fehler führen zu `BLOCKED` mit eindeutiger Fehlerklasse und betroffenem Schritt. Zwei simulierte Negativtests wurden ergänzt; die GitHub-Qualitätsprüfung ist im PR nachgewiesen. **Keine reale Android-Abnahme, Gate 06 BLOCKED, Release NO-GO (1/7).**
+
 ## 🔐 Android-Gate 06 – ADB-Abbruch sicher dokumentieren (02.11.2026)
 
 **ADB-Logcat-Nachweis (PR #140, 02.11.2026):** Ein `logcat -d`-Befehl mit Fehlercode darf selbst dann keinen Android-PASS belegen, wenn seine unvollständige Ausgabe `PASS` enthält. Beide Log-Lesephasen (Start und Persistenzprüfung) blockieren mit `LOGCAT_READ_FAILED`, ohne signierte Release-APK zu installieren. Zwei simulierte Negativfälle; reale Android-Abnahme und Freigabe bleiben ausstehend. GitHub Quality auf Quell-HEAD `2f939501` bestanden ([Lauf 41454237043](https://github.com/provoware/naqya-memo/actions/runs/41454237043)); der abschließende Dokumentations-HEAD ist erneut zu prüfen.

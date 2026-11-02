@@ -16,6 +16,11 @@
 
 ---
 
+[2026-11-02] [BRAIN-GATE06-RELEASE-ADB-EXIT-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: Release-Paketversion und Prozessnummer wurden aus ADB-stdout übernommen, ohne den Rückgabecode der beiden Abfragen zu prüfen. Fehlerhafte Abfragen mit plausiblen Teil-Ausgaben konnten dadurch einen falschen PASS begünstigen.
+- Schutz: Fehlercode bei `dumpsys package` oder `pidof` setzt `BLOCKED`, Fehlerklasse und Schritt; keine Freigabe anhand ungeprüfter Ausgabe.
+- Regression: zwei simulierte Negativfälle mit Fehlercode 1 und korrekter Schein-Ausgabe; Quality-Nachweis im PR. Physisches Android-Gerät weiterhin nicht geprüft, NO-GO (1/7).
+
 [2026-11-02] [BRAIN-GATE06-LOGCAT-EXITCODE-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
 - Befund: `logcat -d` konnte mit Fehlercode enden, während die Teil-Ausgabe plausible `PASS`-Zeilen enthielt; die Auswertung prüfte nur Text und nicht den Rückgabecode.
 - Schutz: Beide Log-Lesephasen erzwingen Rückgabecode 0; sonst `BLOCKED`, `LOGCAT_READ_FAILED`, eindeutiger Schritt und keine Release-Installation.
