@@ -45,7 +45,15 @@ class IOSLaunchTimeoutTests(unittest.TestCase):
                         if self.mode == timed_out_mode and self.first_call:
                             self.first_call = False
                             raise subprocess.TimeoutExpired(['devicectl', self.mode], timeout)
-                        text = f'ProvowareAcceptance {{"mode":"{self.mode}","status":"PASS"}}\n'
+                        payload = (
+                            {"mode":"run","status":"PASS","audio_bytes":128,"audio_sha256":"a"*64,
+                             "counts":{"memos":1,"todos":1,"events":1},"integrity":"ok",
+                             "platform":{"platform":"ios","native_bridge":True}}
+                            if self.mode == "run" else
+                            {"mode":"verify","status":"PASS","persistence":{"memo":True,"audio":True},
+                             "integrity":"ok"}
+                        )
+                        text = "ProvowareAcceptance " + json.dumps(payload) + "\n"
                         if self.mode == 'run':
                             text += 'REMINDER_FIRED: mock\n'
                         return text, None

@@ -32,7 +32,7 @@
   },
   "next_step": "Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.",
   "next_next_step": "V1.0 RC erst nach 7/7 PASS im kanonischen Evaluator und PASS der Mobile-Runtime-Quelle; automatische oder simulierte Prüfungen dürfen reale Gates nicht hochstufen.",
-  "last_updated": "2026-11-01",
+  "last_updated": "2026-11-02",
   "startup_port_guard": "PASS",
   "startup_collision_policy": "REUSE_SAME_VERSION_SAME_PROJECT_ELSE_SAFE_FALLBACK_NO_AUTO_KILL",
   "release_ui_consistency": "PASS",
@@ -172,5 +172,16 @@
     "backup_sqlite_inspection": "READ_ONLY_IMMUTABLE_WITH_SIDECAR_REJECTION_AND_PRE_POST_HASH"
   },
   "chromium_screenshot_gate": "PRECHECK_ONLY_REAL_E2E_PENDING",
-  "firefox_gate_stale_pass_guard": "SOURCE_INTEGRATED_REAL_BROWSER_PENDING"
+  "firefox_gate_stale_pass_guard": "SOURCE_INTEGRATED_REAL_BROWSER_PENDING",
+  "storage_gate_pass_evidence_contract": "SOURCE_IMPLEMENTED_STRUCTURAL_VALIDATION_ONLY",
+  "microphone_gate_evidence_contract": "SOURCE_IMPLEMENTED_NO_HARDWARE_PASS",
+  "android_pass_evidence_contract": "SOURCE_IMPLEMENTED_REAL_DEVICE_PENDING",
+  "ios_gate07_console_evidence_guard_20261101": {
+    "state": "SOURCE_IMPLEMENTED_REAL_DEVICE_PENDING",
+    "scope": "GATE_07_IOS_IPHONE_X_CONSOLE_EVIDENCE_VALIDATION",
+    "real_device_evidence": false,
+    "release_gate_promotion": false,
+    "risk": "SYNTHETIC_CONSOLE_TEXT_NOT_INDEPENDENT_DEVICE_PROOF"
+  },
+  "release_evidence_symlink_parent_guard": "SOURCE_IMPLEMENTED_REAL_PROVENANCE_NOT_PROVEN"
 }

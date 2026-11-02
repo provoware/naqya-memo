@@ -22,6 +22,30 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### NAQYA Sicherheitsänderung aus PR #137
+
+- [ ] 02.11.2026 | Release-Evidence | Elternordner-Symlinks fail-closed ablehnen (separater konsolidierte Integration) | prüfen: zwei Negativtests + GitHub-Quality auf PR-HEAD | fertig wenn: CI grün, fachlich geprüft und separat integriert; reale Gates weiterhin gesondert abzunehmen.
+
+### NAQYA Sicherheitsänderung aus PR #135
+
+- [ ] 2026-11-02 | NI-20261102-02 · Zeitlimit | Fehlende technische Timeout-/Stillstandsicherung in Browser-/Native-/Backup-/Gerätetestpfaden nachführen | prüfen: individuelle Zeitbudgets, 8-h-Soak-Ausnahme, Original-/Statusschutz, Fehlereinstufung, Negativtests | fertig wenn: auch technische Wächter belegt; dokumentierte Regel ist noch kein Runtime-PASS.
+
+### NAQYA Sicherheitsänderung aus PR #133
+
+- [ ] 2026-11-01 | Release Gate 07 | Entwurfs-PR: Konsolen-PASS ohne Audio-/Persistenz-Nachweise blockieren | `test_ios_launch_timeout_gate.py` und `test_ios_termination_gate.py` + Quality-CI prüfen | fertig wenn CI auf PR-HEAD grün und echte iPhone-X-Abnahme separat nachgewiesen (NO-GO bis dahin)
+
+### Android-Gate 06: PASS-Evidence strukturell absichern (01.11.2026)
+- [ ] 2026-11-01 | Release-Gate 06 | Nur vollstaendige Debug-/Release-Geraetenachweise als PASS akzeptieren | pruefen: nacktes PASS, fehlende und widerspruechliche Felder werden INVALID_EVIDENCE; synthetischer vollstaendiger Fall bleibt PASS; GitHub-CI | fertig wenn: PR validiert, reale Android-Abnahme separat nachgewiesen und weiterhin keine automatische Freigabe erfolgt.
+
+### NAQYA Sicherheitsänderung aus PR #131
+
+- [ ] 2026-11-01 | Gate 04 · Evidenz | Vollständige Aufnahmemetadaten bei `PASS` erzwingen (konsolidierte Integration) | prüfen: sechs synthetische Negativ-/Positivtests, GitHub-Quality-CI, echte Mikrofonabnahme getrennt | fertig wenn: Quellprüfung auf PR-HEAD grün und reale Gate-Evidence später unabhängig erbracht ist.
+
+### NAQYA Sicherheitsänderung aus PR #130
+
+- [ ] 2026-11-01 | Gate 05 · P0 | Unvollständige Speicherfehler-PASS-Nachweise im Evaluator zurückweisen | prüfen: Negativtests für fehlende Proben, falsche Fehlernummer und fehlende Recovery-Matrix; CI auf PR-HEAD | fertig wenn: nur vollständige Struktur PASS ergibt und kanonischer Release-Stand 1/7 NO-GO bleibt.
+
+
 ### 🔐 Firefox-Gate 03: veraltete PASS-Evidence bei neuem Prüflauf sperren · 01.11.2026
 
 Der Firefox-Prüfer setzt die kanonische Gate-Datei **vor der Programmerkennung und Versionsabfrage** auf `BLOCKED`. Ein Abbruch kann dadurch keinen früheren `PASS` als neuen Prüfnachweis stehen lassen. Drei isolierte Regressionstests prüfen Unterbrechungen und fehlendes Firefox. **Keine reale Firefox-Endabnahme; 1/7 reale Gates, NO-GO.** Änderung als isolierter Konfliktaufgelöste Integration.

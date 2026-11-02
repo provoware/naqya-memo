@@ -22,6 +22,28 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+### 🔒 Release-Evidence-Pfadschutz – Entwurf vom 02.11.2026
+Der kanonische Prüfer soll nicht nur direkte symbolische Links auf Gate-Dateien, sondern auch Links in deren Elternordnern ablehnen. Dadurch kann eine umgeleitete Evidence-Ablage nicht als PASS gelesen werden. Zwei synthetische Regressionstests prüfen die Umleitung; echte Geräte- und Browserabnahmen bleiben offen. Dieser Schutz ist bis zur Integration des separaten PRs **nicht auf main aktiv**. Release weiterhin **NO-GO (1/7)**.
+
+## ⏱️ Timeout und sichere Wiederaufnahme
+
+Der [PROVOWARE-Zeitbudgetstandard](docs/PROVOWARE_TIMEOUT_STANDARD.md) unterscheidet kurze CI-Prüfungen, langen Gerätetest und aktive Benutzervorgänge. Nach echtem Stillstand nur den eigenen Vorgang kontrolliert behandeln, Originaldaten behalten und Fehler statt Scheinerfolg melden. Der Release-Freeze bleibt unverändert; Runtime-Watchdogs sind gesondert zu prüfen.
+
+### 2026-11-01 · iPhone-X-Gate 07: Konsolen-PASS nur mit Fachnachweisen (Entwurfs-PR)
+Der iOS-Gerätelauf akzeptiert `PASS` nur mit positivem Audioumfang, SHA-256-Format, Memo/To-do/Termin-Zählern, iOS-Brückenkennung und Integritätsstatus. Der zweite Lauf muss Memo- und Audio-Persistenz bestätigen. Dies sind synthetisch testbare Mindestbedingungen, **kein Ersatz für eine reale iPhone-X-Abnahme**. Release bleibt NO-GO bis 7/7 reale Gates bestanden sind.
+
+### Gate 06: Android-PASS nur mit Geraete-Pruefstruktur (konsolidierte Integration, 01.11.2026)
+
+Der kanonische Evaluator verwirft einen blossen oder unvollstaendigen GATE_06_ANDROID_DEVICE=PASS-Eintrag als INVALID_EVIDENCE. Pflicht sind u. a. genau ein zum Serienwert passendes Geraet, erfolgreiche Debug-run-/verify-Ergebnisse, der Erinnerungsnachweis sowie Version und Prozess der installierten Release-APK. Die Pruefung validiert nur die Struktur der JSON-Datei, nicht die Echtheit eines Geraets oder einer APK. Echte Android-Abnahme steht aus; Release bleibt 1/7, NO-GO.
+
+## 🔐 Gate 04 – Mikrofon-Nachweis absichern (01.11.2026, konsolidierte Integration)
+
+Ein bloßer JSON-Eintrag `status=PASS` reicht für die reale Mikrofonprüfung nicht mehr: Der gemeinsame Release-Evaluator verlangt nun eine Aufnahmedauer von mindestens zwei Sekunden, eine positive Dateigröße, eine Asset-ID und einen SHA-256-Wert. Sechs synthetische Regressionen prüfen die Schutzregel; sie sind **keine** echte Mikrofonabnahme. Der reale Release-Stand bleibt **1/7, NO-GO**. Der Patch ist nur zur Prüfung vorgeschlagen und nicht nach `main` übernommen.
+
+### 🔐 Gate 05: unvollständige Erfolgsnachweise abweisen · 01.11.2026 (konsolidierte Integration)
+Der Release-Evaluator akzeptiert ein `PASS` für Linux-Speicherfehler nur noch, wenn beide Kernel-Fehlerproben (`ENOSPC` und ein zulässiger Nur-Lese-/Rechtefehler) sowie die erfolgreiche Anwendungs-Wiederherstellungsmatrix im Nachweis enthalten sind. Ein bloßes `{"status":"PASS"}` zählt als `INVALID_EVIDENCE`. Die bisherige kanonische Gate-05-Datei erfüllt diese Struktur. Dies prüft die **Vollständigkeit**, nicht die Echtheit der Hardwareprüfung; echte Release-Gates bleiben **1/7 PASS · NO-GO**. Neue Negativtests sind im vorhandenen Qualitätsworkflow eingebunden.
+
+
 ### 🔐 Firefox-Gate 03: veraltete PASS-Evidence bei neuem Prüflauf sperren · 01.11.2026
 
 Der Firefox-Prüfer setzt die kanonische Gate-Datei **vor der Programmerkennung und Versionsabfrage** auf `BLOCKED`. Ein Abbruch kann dadurch keinen früheren `PASS` als neuen Prüfnachweis stehen lassen. Drei isolierte Regressionstests prüfen Unterbrechungen und fehlendes Firefox. **Keine reale Firefox-Endabnahme; 1/7 reale Gates, NO-GO.** Änderung als isolierter Konfliktaufgelöste Integration.
