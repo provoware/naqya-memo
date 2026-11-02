@@ -23,6 +23,18 @@ STATUSES = frozenset(
 )
 
 
+def _has_symlink_component(root: Path, path: Path) -> bool:
+    """Keine Gate-Evidence durch symbolische Links in Elternverzeichnissen lesen."""
+    current = root
+    if current.is_symlink():
+        return True
+    for part in path.relative_to(root).parts:
+        current = current / part
+        if current.is_symlink():
+            return True
+    return False
+
+
 def _invalid(gate: str, reason: str) -> dict:
     return {"gate": gate, "status": "INVALID_EVIDENCE", "reason": reason}
 
@@ -31,7 +43,7 @@ def read_gate(root: Path, number: str, name: str) -> dict:
     """Nur den exakten kanonischen Dateinamen und die passende Gate-ID werten."""
     gate = f"GATE_{number}_{name}"
     path = root / "registry" / "evidence" / "v0.12.2" / "gates" / f"{gate}.json"
-    if path.is_symlink():
+    if _has_symlink_component(root, path):
         return _invalid(gate, "SYMLINK_NOT_ALLOWED")
     if not path.exists():
         return {"gate": gate, "status": "NOT_RUN"}
@@ -71,7 +83,7 @@ def read_gate(root: Path, number: str, name: str) -> dict:
 
 def mobile_source_status(root: Path) -> str:
     path = root / "registry" / "evidence" / "v0.12.2" / "MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json"
-    if path.is_symlink():
+    if _has_symlink_component(root, path):
         return "INVALID_EVIDENCE"
     if not path.exists():
         return "NOT_RUN"

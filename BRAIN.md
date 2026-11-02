@@ -340,3 +340,11 @@
 - Ursache: sqlite3.connect ohne read-only kann beim Schließen WAL in eine Sicherungs-DB übertragen und Sidecars entfernen.
 - Schutz: Statuspfad liest nur über mode=ro&immutable=1; vorhandene/auftauchende Journaldateien sperren READY; Hash vor/nach Prüfung. Medienhashprüfung erhalten, Restorepfade unverändert.
 - Regression: tests/startup/test_runtime_safety.py, 15/15 bestanden, beide Sicherungstypen und Dateibaum-/Zeitstempelvergleich.
+
+
+[2026-11-02] [BRAIN-0044] [RELEASE-EVIDENCE-PATH-SYMLINK] [REPRODUCED]
+- Beobachtung: Ein direkter Datei-Symlink wurde abgewiesen, ein Symlink des übergeordneten Evidence-Ordners jedoch vor dem Patch nicht geprüft.
+- Ursache: Die bisherige Prüfung untersuchte ausschließlich `path.is_symlink()` am Blattpfad.
+- Schutz: Jede Pfadkomponente ab Projektwurzel vor dem Lesen prüfen; umgeleitete Gate- und Mobile-Source-Pfade werden INVALID_EVIDENCE.
+- Regression: zwei synthetische Negativfälle, die vormals durch den Elternordner auf eine PASS-Datei umleiten konnten.
+- Restrisiko: Kein unabhängiger Echtheitsnachweis für normale JSON-Dateien; keine physische Geräteabnahme. PR-Entwurf, noch nicht in main.

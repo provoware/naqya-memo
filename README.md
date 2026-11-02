@@ -655,3 +655,7 @@ Reihenfolge:
 - Hintergrund-Erinnerungen müssen pro Plattform separat akzeptanzgetestet werden.
 - Ein Backup gilt erst als funktionsfähig, wenn ein automatischer Restore-Test bestanden wurde.
 - README, TODO, CHANGELOG, BRAIN und PROJECT_STATUS werden bei jeder relevanten Iteration synchron aktualisiert.
+
+
+### 🔒 Release-Evidence-Pfadschutz – Entwurf vom 02.11.2026
+Der kanonische Prüfer soll nicht nur direkte symbolische Links auf Gate-Dateien, sondern auch Links in deren Elternordnern ablehnen. Dadurch kann eine umgeleitete Evidence-Ablage nicht als PASS gelesen werden. Zwei synthetische Regressionstests prüfen die Umleitung; echte Geräte- und Browserabnahmen bleiben offen. Dieser Schutz ist bis zur Integration des separaten PRs **nicht auf main aktiv**. Release weiterhin **NO-GO (1/7)**.

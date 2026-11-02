@@ -82,6 +82,28 @@ class EvidenceIdentityTests(unittest.TestCase):
         (self.gates / "GATE_05_STORAGE_FAILURE.json").symlink_to(target)
         self.assertEqual(read_gate(self.root, "05", "STORAGE_FAILURE")["status"], "INVALID_EVIDENCE")
 
+    def test_symlinked_gate_parent_is_invalid(self):
+        self.write_gate("03", "FIREFOX", "PASS")
+        outside = self.root / "outside-gates"
+        self.gates.rename(outside)
+        self.gates.symlink_to(outside, target_is_directory=True)
+        self.assertEqual(
+            read_gate(self.root, "03", "FIREFOX")["status"], "INVALID_EVIDENCE"
+        )
+
+    def test_symlinked_mobile_source_parent_is_invalid(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            evidence = root / "registry/evidence"
+            evidence.mkdir(parents=True)
+            outside = root / "outside-source"
+            outside.mkdir()
+            (outside / "MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json").write_text(
+                '{"status":"PASS"}'
+            )
+            (evidence / "v0.12.2").symlink_to(outside, target_is_directory=True)
+            self.assertEqual(mobile_source_status(root), "INVALID_EVIDENCE")
+
     def test_invalid_mobile_source_is_not_pass(self):
         source = self.root / "registry/evidence/v0.12.2/MOBILE_RUNTIME_SOURCE_ACCEPTANCE.json"
         source.write_text('["PASS"]')

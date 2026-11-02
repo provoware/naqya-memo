@@ -546,3 +546,6 @@ Ein TODO darf nur abgehakt werden, wenn:
 - [ ] 01.11.2026 | Abnahme | Reale Zielsystem-Gates schließen | prüfen: kanonischer Evaluator | fertig wenn: alle sieben echten Gates PASS sind.
 
 - [x] 01.11.2026 | Sicherung | Statusprüfung strikt lesend halten | prüfen: echte WAL/SHM, Journal-Verknüpfungen und Dateibaumvergleich | fertig wenn: 15 Sicherheitsfälle bestehen und Statusabrufe keine Sicherungsdatei verändern.
+
+
+- [ ] 02.11.2026 | Release-Evidence | Elternordner-Symlinks fail-closed ablehnen (separater PR-Entwurf) | prüfen: zwei Negativtests + GitHub-Quality auf PR-HEAD | fertig wenn: CI grün, fachlich geprüft und separat integriert; reale Gates weiterhin gesondert abzunehmen.

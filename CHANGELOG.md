@@ -433,3 +433,10 @@
 - gezielte Regression 57/57 PASS
 - Browser-Visual-PASS im aktuellen Build-Runner nicht behauptet
 
+
+
+## [UNRELEASED] – 02.11.2026 · Release-Evidence-Pfadschutz (PR-Entwurf)
+- Sicherheitslücke: Die kanonische Evidence-Prüfung sperrte direkte Dateisymlinks, aber keine umgeleiteten Elternverzeichnisse.
+- Fix im separaten Branch: Pfadkomponenten vom Projektwurzelverzeichnis bis zur Evidence-Datei auf Symlinks prüfen; beide Evidence-Leser lehnen umgeleitete Pfade ab.
+- Zwei synthetische Regressionen für Gate-Verzeichnis und Mobile-Source-Elternordner; CI-Ergebnis erst nach PR-Lauf verbindlich.
+- Keine neuen Abhängigkeiten; keine Änderung realer Evidence, keine Freigabe, 1/7 reale Gates und NO-GO unverändert.
