@@ -27,6 +27,11 @@
 Ein erfolgreiches frisches Chromium-Bildschirmfoto beweist nur, dass der Browser ein Bild erzeugen konnte. Es prüft weder Memo-Bedienung noch Tastatur, Barrierefreiheit oder Wiederherstellung. Gate 02 meldet deshalb für einen reinen Bildnachweis jetzt `PRECHECK_PASS` (Exit-Code 2), **niemals `PASS`**. Die bestehende Bilddatei wird weiterhin nur bei erfolgreicher neuer Aufnahme ersetzt. Drei isolierte Regressionstests prüfen Abbruch, veraltetes Bild und frisches Bild; eine echte Chromium-Endabnahme bleibt offen. Release unverändert **1/7 reale Gates · NO-GO**.
 
 
+
+## Speicher-Gate: alte PASS-Nachweise bei neuem Prüflauf entwerten · 01.11.2026
+
+Gate 05 schreibt vor dem ersten Kernel-Zugriff `RUNNING` in seine kanonische Nachweisdatei. Ein unterbrochener erneuter Prüflauf kann deshalb keinen alten Erfolg als aktuellen Prüfstand stehen lassen. Zwei isolierte Abbruchtests und die drei vorhandenen Speicherfehler-Vertragstests werden im Qualitätsworkflow ausgeführt. Diese Quellprüfung ersetzt keine neue reale Linux-Speicherfehlerabnahme; Release bleibt NO-GO, bisher 1/7 reale Gates PASS.
+
 ## Sicherheits- und Bedienkorrektur - 01.11.2026
 
 - Statische Dateien bleiben nach URL-Dekodierung und Auflösen von Verknüpfungen im Oberflächenordner; GET und HEAD sperren Ausbruchsversuche mit HTTP 403.

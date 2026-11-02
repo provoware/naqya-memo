@@ -27,6 +27,11 @@
 - [ ] 2026-11-01 | P0 · Gate 02 | Bildschirmfoto nur als Vorprüfung zählen, nicht als Browser-Endabnahme | prüfen: drei isolierte Chromium-Regressionstests und GitHub-Qualitätsprüfung; danach echte Memo-, Tastatur-, Barrierefreiheits- und Wiederherstellungsabläufe im Browser | fertig wenn: echte Browser-Endabnahme unabhängig belegt und Gate 02 erst danach PASS meldet.
 
 
+
+## Speicher-Gate 05 · Wiederanlauf-Sicherheit (01.11.2026)
+
+- [ ] 2026-11-01 | P0 · Gate 05 | Frühabbruch eines neuen Speicherfehlertests darf keinen alten PASS erhalten | prüfen: 2 Abbruch-Regressionen und 3 bestehende Speicherfehler-Tests im Qualitätsworkflow, anschließend realer Linux-Prüflauf | fertig wenn: CI am PR-HEAD grün und reale Gate-Evidence unabhängig neu erzeugt ist.
+
 ## 🔐 Sicherheitsintegration – prüfbare Aufgaben vom 01.11.2026
 
 - [ ] 2026-11-01 | P0 · Gate-Schutz | Vier bereits isoliert geprüfte Quellenkorrekturen #121–#124 auf demselben Stand integrieren | prüfen: 14 Schutzregressionen (Android 7, Dauerlauf 2, Chromium 3, Mikrofon 2); unveränderte Release-Gates | fertig wenn: gemeinsame CI auf aktuellem Integrations-HEAD grün und kein alter PASS wiederverwendbar.
