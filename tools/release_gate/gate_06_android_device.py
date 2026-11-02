@@ -103,7 +103,8 @@ if verify_log_result.returncode!=0:
  out['failure_class']='LOGCAT_READ_FAILED'
  out['failed_step']='logcat -d verify'
  out['reason']='Android logcat read failed during persistence verification; output cannot prove a fresh PASS.'
- save();verify=parse_acceptance(verify_logs,'verify');out['verify_result']=verify
+ save()
+verify=parse_acceptance(verify_logs,'verify');out['verify_result']=verify
 if not (verify_launch.returncode==0 and verify and verify.get('status')=='PASS'):
  out['reason']='Initial Android run passed, but persistence verification after process restart failed.';save()
 # Acceptance hooks are deliberately disabled in non-debuggable release. Uninstall debug APK, then prove signed release installs and launches normally.
