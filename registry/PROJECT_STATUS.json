@@ -170,5 +170,5 @@
     "report": "docs/QA_RUNTIME_UI_20261101.md",
     "backup_sqlite_inspection": "READ_ONLY_IMMUTABLE_WITH_SIDECAR_REJECTION_AND_PRE_POST_HASH"
   },
-  "release_evidence_symlink_parent_guard": "SOURCE_PATCH_IN_DRAFT_PR_CI_PENDING"
+  "release_evidence_symlink_parent_guard": "SOURCE_PATCH_IN_DRAFT_PR_NOT_MERGED"
 }
