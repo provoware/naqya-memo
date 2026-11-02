@@ -81,9 +81,10 @@ class AndroidResetPreconditionTests(unittest.TestCase):
             calls = []
             cleared_logs = 0
             read_logs = 0
+            package_queries = 0
 
             def fake_adb(args, **kwargs):
-                nonlocal cleared_logs, read_logs
+                nonlocal cleared_logs, read_logs, package_queries
                 calls.append(args)
                 if args == ['/usr/bin/adb', 'devices']:
                     return subprocess.CompletedProcess(args, 0, 'List of devices attached\nserial-1\tdevice\n', '')
@@ -122,6 +123,10 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                     ):
                         return subprocess.CompletedProcess(args, 1, '', 'Log clear failed')
                 if command[:3] == ['shell', 'dumpsys', 'package']:
+                    package_queries += 1
+                    if failed_step == 'release_dumpsys_error' and package_queries == 2:
+                        # A failed ADB query may still print plausible version data.
+                        return subprocess.CompletedProcess(args, 1, 'versionName=0.12.2\n', 'device disconnected')
                     return subprocess.CompletedProcess(args, 0, 'versionName=0.12.2\n', '')
                 if command[:2] == ['logcat', '-d']:
                     read_logs += 1
@@ -131,6 +136,8 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                         return subprocess.CompletedProcess(args, 1, logs, 'logcat read failed')
                     return subprocess.CompletedProcess(args, 0, logs, '')
                 if command[:2] == ['shell', 'pidof']:
+                    if failed_step == 'release_pidof_error':
+                        return subprocess.CompletedProcess(args, 1, '1234\n', 'device disconnected')
                     return subprocess.CompletedProcess(args, 0, '1234\n', '')
                 return subprocess.CompletedProcess(args, 0, 'Success\n', '')
 
@@ -153,7 +160,12 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 self.assertEqual(data['failure_class'], 'TIMEOUT')
             if failed_step.endswith('_oserror'):
                 self.assertEqual(data['failure_class'], 'COMMAND_ERROR')
-            self.assertFalse(any('release.apk' in str(call) for call in calls))
+            if failed_step.startswith('release_'):
+                self.assertTrue(any('release.apk' in str(call) for call in calls))
+                self.assertEqual(data['failure_class'], 'RELEASE_METADATA_QUERY_FAILED' if failed_step == 'release_dumpsys_error' else 'RELEASE_PROCESS_QUERY_FAILED')
+                self.assertNotIn('release_pid', data)
+            else:
+                self.assertFalse(any('release.apk' in str(call) for call in calls))
             if failed_step.startswith('uninstall_'):
                 self.assertEqual(data['failure_class'], 'DEBUG_APK_UNINSTALL_FAILED')
                 self.assertEqual(data['failed_step'], 'uninstall')
@@ -166,6 +178,12 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 self.assertEqual(data['failed_step'], 'shell getprop ro.build.version.sdk')
                 self.assertFalse(any(call[3:4] == ['install'] for call in calls))
             return data['reason']
+
+    def test_failed_release_metadata_query_blocks_forged_version(self):
+        self.assertIn('release package metadata could not be verified', self.exercise('release_dumpsys_error'))
+
+    def test_failed_release_pid_query_blocks_forged_process(self):
+        self.assertIn('release process could not be verified', self.exercise('release_pidof_error'))
 
     def test_unknown_sdk_blocks_before_installation(self):
         for case in ('sdk_non_numeric', 'sdk_empty', 'sdk_command_error'):
