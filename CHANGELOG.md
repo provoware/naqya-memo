@@ -1,7 +1,17 @@
-## [FIREFOX-GATE-STALE-PASS-GUARD] – 2026-11-01 · PR-Entwurf
+## [FIREFOX-GATE-STALE-PASS-GUARD] – 2026-11-01 · Konfliktaufgelöste Integration
 - Gate 03 konnte bei Unterbrechung der Firefox-Erkennung oder Versionsabfrage einen alten `PASS`-Nachweis stehen lassen.
 - Die kanonische Gate-Datei wird vor jeder externen Prüfung auf `BLOCKED` gesetzt; drei synthetische Negativ-/Normalfalltests laufen im Qualitätsworkflow.
 - Keine reale Firefox-Abnahme; 1/7 reale Gates, NO-GO; keine neuen Abhängigkeiten.
+
+## [CHROMIUM-SCREENSHOT-PRECHECK-ONLY] – 2026-11-01 · Konfliktaufgelöste Integration
+- Reproduziert: Ein künstlicher HTTP-Server ohne Memo-Oberfläche und ein Fake-Chromium, das nur eine Bilddatei schreibt, genügten bisher für Gate-02-`PASS`.
+- Der reine Bildschirmfoto-Lauf meldet jetzt `PRECHECK_PASS` mit Exit-Code 2; ein echtes Chromium-App-E2E bleibt zwingend erforderlich.
+- Drei isolierte Regressionen prüfen alte Nachweise, fehlende und frische Bilder. Keine reale Browserabnahme, Release weiterhin 1/7 und NO-GO.
+
+## [STORAGE-GATE-STALE-PASS-GUARD] – 2026-11-01 · PR-Entwurf
+- Gate 05 schrieb die kanonische Evidence erst am Ende; ein Abbruch vor `/dev/full` oder `/sys` ließ einen alten PASS unverändert.
+- Beim Start wird jetzt `RUNNING` geschrieben, bevor Kernel- und Recovery-Prüfungen beginnen. Nur ein vollständig abgeschlossener Lauf darf PASS setzen.
+- Zwei simulierte Unterbrechungsfälle und die drei vorhandenen Speicherfehler-Vertragstests sind im Qualitätsworkflow eingebunden. Keine neue reale Linux-Abnahme, weiterhin 1/7 reale Gates und NO-GO.
 
 ## [READ-ONLY-BACKUP-STATUS] - 2026-11-01
 - P1 aus Code-Review vor Merge behoben: Sicherungsstatus darf SQLite-WAL niemals checkpointen oder Journaldateien entfernen.

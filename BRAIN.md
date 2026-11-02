@@ -16,6 +16,7 @@
 
 ---
 
+
 [2026-11-01] [BRAIN-0044] [FIREFOX-STALE-PASS] [REPRODUCED]
 - Beobachtung: Eine Unterbrechung vor dem bisherigen Abschluss-Schreibvorgang beließ einen früheren Firefox-Gate-PASS unverändert.
 - Ursache: `GATE_03_FIREFOX.json` wurde erst nach `shutil.which` und `firefox --version` aktualisiert.
@@ -24,6 +25,21 @@
 - Betroffene Komponenten: `tools/release_gate/gate_03_firefox.py`, `tests/release_gate/test_firefox_stale_evidence_gate.py`.
 - Release-Gates: 1/7 PASS, NO-GO.
 
+
+
+[2026-11-01] [BRAIN-CHROMIUM-SCREENSHOT-20261101] [RELEASE-GATE-FALSE-PASS] [REPRODUCED]
+- Beobachtung: Eine neue Bilddatei von einem Fake-Chromium und ein HTTP-Server ohne funktionsfähige Memo-App reichten für Gate-02-PASS.
+- Ursache: Die Gate-Entscheidung verwechselte das Erstellen eines Bildschirmfotos mit der realen Browser-Endabnahme.
+- Schutz: Frisches Bild = PRECHECK_PASS/Exit 2; vollständige App-E2E-, Bedien- und Barrierefreiheitsabnahme bleibt notwendig.
+- Regression: Drei isolierte Chromium-Tests; Vorher-Negativtest fehlgeschlagen, nachher lokal bestanden.
+- Restrisiko: Ein vollwertiger Chromium-E2E-Gate-Runner muss separat bereitgestellt und real ausgeführt werden.
+
+[2026-11-01] [BRAIN-0044] [STORAGE-GATE-STALE-PASS] [REPRODUCED]
+- Beobachtung: Ein Abbruch des Speicherfehler-Gates vor dem ersten Kernel-Zugriff ließ eine alte PASS-Datei stehen.
+- Ursache: Der Nachweis wurde erst am Ende des Prüflaufs überschrieben.
+- Schutz: Neuer Versuch schreibt sofort RUNNING; nur vollständig abgeschlossene Kernel- und Recovery-Prüfungen dürfen PASS setzen.
+- Regression: zwei simulierte Frühabbrüche plus drei vorhandene Speicherfehler-Vertragstests in quality.yml; keine reale Linux-Neuabnahme.
+- Restrisiko: Ist das Evidence-Verzeichnis bereits vor dem ersten Schreiben nicht beschreibbar, kann der alte Dateistand nicht überschrieben werden; ein solcher Schreibfehler beendet den Prüflauf.
 
 [2026-11-01] [BRAIN-0040] [ANDROID-DATA-ISOLATION] [REPRODUCED]
 - Ursache: Fehler von pm clear, logcat -c oder force-stop konnten veraltete Gerätedaten im neuen Test belassen.
