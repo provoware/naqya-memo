@@ -1,3 +1,7 @@
+## [UNRELEASED] – 2026-11-02 · Android-APK-Installation nur mit bestätigtem Erfolg
+- Gate 06 akzeptiert Debug- und signierte Release-Installation nur bei Exitcode 0 und abschließender `Success`-Zeile. Eine `Failure`-Meldung trotz Exitcode 0 blockiert vor der jeweiligen Paketabfrage.
+- Zwei synthetische Negativtests; keine neuen Abhängigkeiten, keine Wiederholungen. Reale Android-Evidence weiterhin BLOCKED; NO-GO (1/7).
+
 ## [UNRELEASED] – 2026-11-02 · Debug-APK-Metadaten nur bei erfolgreicher ADB-Abfrage akzeptieren
 - Gate 06 verwirft `dumpsys package`-Teil-Ausgaben mit Fehlercode bereits bei der Debug-APK; scheinbar gültige Versionsdaten dürfen den Abnahmeablauf nicht fortsetzen.
 - Ein isolierter Negativtest prüft `BLOCKED`, `ACCEPTANCE_METADATA_QUERY_FAILED` und das Ausbleiben von Logcat/Release-Abnahme. Reale Android-Evidence weiterhin BLOCKED; NO-GO (1/7).

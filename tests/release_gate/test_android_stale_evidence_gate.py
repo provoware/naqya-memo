@@ -103,6 +103,11 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                     if failed_step == 'sdk_command_error':
                         return subprocess.CompletedProcess(args, 1, '34\n', 'Device error')
                     return subprocess.CompletedProcess(args, 0, '34\n', '')
+                if command[:1] == ['install'] and failed_step in ('acceptance_install_false_success', 'release_install_false_success'):
+                    target = 'release.apk' if failed_step.startswith('release_') else 'acceptance.apk'
+                    if command[-1].endswith(target):
+                        # Some wrappers report exit 0 while ADB output says installation failed.
+                        return subprocess.CompletedProcess(args, 0, 'Performing Streamed Install\nFailure [INSTALL_FAILED_TEST]\n', '')
                 if command[:1] == ['uninstall'] and failed_step.startswith('uninstall_'):
                     return subprocess.CompletedProcess(
                         args, 1 if failed_step == 'uninstall_nonzero' else 0,
@@ -169,10 +174,23 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 self.assertFalse(any(call[3:5] == ['logcat', '-c'] for call in calls))
             if failed_step.startswith('release_'):
                 self.assertTrue(any('release.apk' in str(call) for call in calls))
-                self.assertEqual(data['failure_class'], 'RELEASE_METADATA_QUERY_FAILED' if failed_step == 'release_dumpsys_error' else 'RELEASE_PROCESS_QUERY_FAILED')
+                self.assertEqual(data['failure_class'], {
+                    'release_dumpsys_error': 'RELEASE_METADATA_QUERY_FAILED',
+                    'release_pidof_error': 'RELEASE_PROCESS_QUERY_FAILED',
+                    'release_install_false_success': 'RELEASE_APK_INSTALL_FAILED',
+                }[failed_step])
                 self.assertNotIn('release_pid', data)
             else:
                 self.assertFalse(any('release.apk' in str(call) for call in calls))
+            if failed_step.endswith('install_false_success'):
+                self.assertEqual(data['failed_step'], 'install -r')
+                self.assertEqual(data['failure_class'], (
+                    'RELEASE_APK_INSTALL_FAILED' if failed_step.startswith('release_')
+                    else 'ACCEPTANCE_APK_INSTALL_FAILED'
+                ))
+                # Neither a debug-install failure nor a release-install failure can reach its package query.
+                package_checks = [call for call in calls if call[3:6] == ['shell', 'dumpsys', 'package']]
+                self.assertEqual(len(package_checks), 1 if failed_step.startswith('release_') else 0)
             if failed_step.startswith('uninstall_'):
                 self.assertEqual(data['failure_class'], 'DEBUG_APK_UNINSTALL_FAILED')
                 self.assertEqual(data['failed_step'], 'uninstall')
@@ -185,6 +203,12 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 self.assertEqual(data['failed_step'], 'shell getprop ro.build.version.sdk')
                 self.assertFalse(any(call[3:4] == ['install'] for call in calls))
             return data['reason']
+
+    def test_debug_install_false_success_blocks_before_package_query(self):
+        self.assertIn('Debug acceptance APK installation was not confirmed', self.exercise('acceptance_install_false_success'))
+
+    def test_release_install_false_success_blocks_before_package_query(self):
+        self.assertIn('Signed release APK installation was not confirmed', self.exercise('release_install_false_success'))
 
     def test_failed_acceptance_metadata_query_blocks_forged_version(self):
         self.assertIn('Debug acceptance package metadata could not be verified', self.exercise('acceptance_dumpsys_error'))

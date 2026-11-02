@@ -16,6 +16,11 @@
 
 ---
 
+[2026-11-02] [BRAIN-GATE06-INSTALL-OUTPUT-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: Debug- und Release-Installation prüften nur den ADB-Exitcode; eine widersprüchliche Failure-Ausgabe mit Exitcode 0 konnte die spätere Paketprüfung erreichen.
+- Schutz: Beide Installationsschritte verlangen abschließende Success-Zeile und Exitcode 0, sonst BLOCKED mit Fehlerklasse und failed_step=install -r.
+- Regression: zwei simulierte Negativfälle für Debug- und Release-APK; keine nachfolgende Paketabfrage. Physische Android-Abnahme weiterhin offen, NO-GO (1/7).
+
 [2026-11-02] [BRAIN-GATE06-ACCEPTANCE-ADB-EXIT-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
 - Befund: Die erste Debug-APK-Versionsabfrage verwendete ADB-stdout ohne Rückgabecodeprüfung. Ein fehlerhafter Befehl mit plausibler Teil-Ausgabe konnte den weiteren Geräteabnahmelauf erreichen.
 - Schutz: Fehlercode bei `dumpsys package` vor Logcat/Release führt zu `BLOCKED`, `ACCEPTANCE_METADATA_QUERY_FAILED` und eindeutigem Schritt.

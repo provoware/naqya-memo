@@ -55,7 +55,12 @@ if sdk_result.returncode!=0 or not sdk.isdecimal() or int(sdk)<=0:
  out['reason']='Android SDK version could not be verified; required permissions are unknown.'
  save()
 ins=cmd(['install','-r',str(apk)],60);out['install_output']=(ins.stdout+ins.stderr)[-2000:]
-if ins.returncode!=0:out['reason']='APK install failed.';save()
+# ADB can return success exit status with a failure message; do not reuse an older installed APK.
+if ins.returncode!=0 or ins.stdout.strip().splitlines()[-1:]!=['Success']:
+ out['failure_class']='ACCEPTANCE_APK_INSTALL_FAILED'
+ out['failed_step']='install -r'
+ out['reason']='Debug acceptance APK installation was not confirmed by ADB Success.'
+ save()
 # Clean application data, then grant only permissions explicitly required by the acceptance run.
 cleared=cmd(['shell','pm','clear',pkg])
 # A previous app session must not supply data for this fresh acceptance attempt.
@@ -123,7 +128,12 @@ if uninstalled.returncode!=0 or uninstalled.stdout.strip()!='Success':
  out['reason']='Debug acceptance APK could not be removed; signed release verification must not run.'
  save()
 rel=cmd(['install','-r',str(release_apk)],60);out['release_install_output']=(rel.stdout+rel.stderr)[-2000:]
-if rel.returncode!=0:out['reason']='Acceptance APK passed, but signed release APK install failed.';save()
+# A failed release install must not be certified by a previously installed package.
+if rel.returncode!=0 or rel.stdout.strip().splitlines()[-1:]!=['Success']:
+ out['failure_class']='RELEASE_APK_INSTALL_FAILED'
+ out['failed_step']='install -r'
+ out['reason']='Signed release APK installation was not confirmed by ADB Success.'
+ save()
 release_info_result=cmd(['shell','dumpsys','package',pkg])
 # A failed metadata query must not certify the signed release using partial stdout.
 if release_info_result.returncode!=0:
