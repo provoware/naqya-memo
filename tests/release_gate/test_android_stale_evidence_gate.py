@@ -182,7 +182,7 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 self.assertNotIn('release_pid', data)
             else:
                 self.assertFalse(any('release.apk' in str(call) for call in calls))
-            if failed_step.endswith('install_false_success'):
+            if failed_step in ('acceptance_install_false_success', 'release_install_false_success'):
                 self.assertEqual(data['failed_step'], 'install -r')
                 self.assertEqual(data['failure_class'], (
                     'RELEASE_APK_INSTALL_FAILED' if failed_step.startswith('release_')
