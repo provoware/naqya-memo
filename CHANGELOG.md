@@ -1,3 +1,8 @@
+## [RELEASE-GATE-READONLY-PREFLIGHT] – 2026-11-02
+- Sicherheitskorrektur: `RUN_GATE_PREFLIGHT.sh` führt keine potenziell destruktiven Browser-/Android-/iOS- und Langzeit-Gates mehr aus.
+- Neue Standardbibliotheks-Voraussetzungsprüfung für Gates 01/02/03/04/06/07; Zustände FOUND/BLOCKED statt vorgetäuschter PASS.
+- Regression prüft Kanon-Evidence vor/nach Vorprüfung per SHA-256 und verwirft unbekannte Gates; reale Hardware-Abnahmen bleiben ausstehend, NO-GO 1/7.
+
 ## [UNRELEASED] – 02.11.2026 · Release-Evidence-Pfadschutz (konsolidierte Integration)
 - Sicherheitslücke: Die kanonische Evidence-Prüfung sperrte direkte Dateisymlinks, aber keine umgeleiteten Elternverzeichnisse.
 - Fix im separaten Branch: Pfadkomponenten vom Projektwurzelverzeichnis bis zur Evidence-Datei auf Symlinks prüfen; beide Evidence-Leser lehnen umgeleitete Pfade ab.

@@ -183,5 +183,19 @@
     "release_gate_promotion": false,
     "risk": "SYNTHETIC_CONSOLE_TEXT_NOT_INDEPENDENT_DEVICE_PROOF"
   },
-  "release_evidence_symlink_parent_guard": "SOURCE_IMPLEMENTED_REAL_PROVENANCE_NOT_PROVEN"
+  "release_evidence_symlink_parent_guard": "SOURCE_IMPLEMENTED_REAL_PROVENANCE_NOT_PROVEN",
+  "release_gate_preflight_20261102": {
+    "state": "READ_ONLY_PREREQUISITE_INSPECTION",
+    "gates": [
+      "01",
+      "02",
+      "03",
+      "04",
+      "06",
+      "07"
+    ],
+    "real_gate_promotion": false,
+    "user_final_acceptance": "LAST_STEP_ONLY",
+    "validation": "SOURCE_CI_REQUIRED"
+  }
 }

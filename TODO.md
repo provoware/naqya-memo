@@ -22,6 +22,18 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 NI-20261102-03 · Sechs reale Release-Gates – technischer Abnahmeplan
+
+- [x] 2026-11-02 | P0 · Gate-Sicherheit | Vorprüfung von realem Hardwarelauf trennen und gegen Daten-/Evidence-Mutation absichern | prüfen: `test_readonly_preflight.py`, GitHub-CI am endgültigen Commit | fertig wenn: ausschließlich 6 Gates auf Voraussetzungen geprüft werden und Nachweisdateien unverändert bleiben.
+- [ ] 2026-11-02 | P0 · Gate 01 | Ungestörten echten 8-Stunden-Lauf auf geeignetem Linux-System durchführen | prüfen: monotone Laufzeit ≥ 28.800 s, echte Integrität und Checkpoints, kein künstlicher PASS | fertig wenn: kanonisches Gate 01 real PASS mit überprüfbarer Abschluss-Evidence.
+- [ ] 2026-11-02 | P0 · Gates 02/03 | Chromium und Firefox mit realem Memo-/Tastatur-/Barrierefreiheits-/Recovery-Test auf Linux ausführen | prüfen: echte Browsersitzungen und Laufzeitbelege; Screenshot oder Versionsabfrage allein nicht PASS | fertig wenn: beide Gate-Verträge unabhängig vollständig belegt und kanonisch PASS.
+- [ ] 2026-11-02 | P0 · Gate 04 | Physisches Linux-Mikrofon mit FFmpeg aufnehmen und Asset-Integrität nachweisen | prüfen: reale Audioaufnahme ≥ 2 s, Hash, Bytes, Device-Zugang, Negativfall | fertig wenn: Gate 04 PASS mit realer Geräte-Evidence.
+- [ ] 2026-11-02 | P0 · Gate 06 | Android Debug- und signierte Release-APK an genau einem echten Gerät prüfen | prüfen: Mikrofon, Erinnerungen, Datenerhalt nach Neustart, signierter Release-Start | fertig wenn: Gate 06 PASS und Device-Evidence vollständig.
+- [ ] 2026-11-02 | P0 · Gate 07 | Signierte iOS-App am realen iPhone X mit erforderlicher iOS-Version prüfen | prüfen: Audio, Erinnerung, Integrity, Persistenz und Neustart über macOS/Xcode | fertig wenn: Gate 07 PASS und Device-Evidence vollständig.
+- [ ] 2026-11-02 | P0 · technische Schlussprüfung | Sieben Gates gemeinsam und erneut auf finalem main prüfen, Status/README/TODO synchronisieren | prüfen: kanonischer Evaluator, CI, Quell- und Geräte-Evidence, keine Freeze-Lockerung | fertig wenn: 7/7 real PASS und Freigabekriterien beweisbar erfüllt.
+- [ ] 2026-11-02 | P0 · Nutzer-Endabnahme | **Ausschließlich allerletzter Projektschritt, niemals vorgezogen** | prüfen: technische Schlussprüfung vollständig bestanden, keine ausstehenden Pflichtaufgaben | fertig wenn: Nutzer nach der vollständig abgeschlossenen Technik selbst abgenommen hat.
+
+
 ### NAQYA Sicherheitsänderung aus PR #137
 
 - [ ] 02.11.2026 | Release-Evidence | Elternordner-Symlinks fail-closed ablehnen (separater konsolidierte Integration) | prüfen: zwei Negativtests + GitHub-Quality auf PR-HEAD | fertig wenn: CI grün, fachlich geprüft und separat integriert; reale Gates weiterhin gesondert abzunehmen.
