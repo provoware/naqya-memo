@@ -16,6 +16,43 @@
 
 ---
 
+[2026-11-02] [BRAIN-0044] [RELEASE-EVIDENCE-PATH-SYMLINK] [REPRODUCED]
+- Beobachtung: Ein direkter Datei-Symlink wurde abgewiesen, ein Symlink des übergeordneten Evidence-Ordners jedoch vor dem Patch nicht geprüft.
+- Ursache: Die bisherige Prüfung untersuchte ausschließlich `path.is_symlink()` am Blattpfad.
+- Schutz: Jede Pfadkomponente ab Projektwurzel vor dem Lesen prüfen; umgeleitete Gate- und Mobile-Source-Pfade werden INVALID_EVIDENCE.
+- Regression: zwei synthetische Negativfälle, die vormals durch den Elternordner auf eine PASS-Datei umleiten konnten.
+- Restrisiko: Kein unabhängiger Echtheitsnachweis für normale JSON-Dateien; keine physische Geräteabnahme. konsolidierte Integration, noch nicht in main.
+
+## 2026-11-01 – Gate-07-Falschpositiv aus Konsolentext
+- **CONFIRMED (Quellcode):** Der iOS-Prüfer akzeptierte `run_result` und `verify_result` allein anhand `mode/status=PASS`, obwohl die native JS-Abnahme weitere Felder liefert. Dadurch konnten leere Konsolenmeldungen zu einem falschen Geräte-PASS führen.
+- **Fix im Entwurf:** Mindestfelder aus dem tatsächlichen iOS-Acceptance-Vertrag validieren; synthetische Negativ- und Positivtests in Quality-CI ausführen.
+- **Grenze:** Ein korrekt geformter Konsolentext ist kein unabhängiger Herkunftsnachweis; echte physische iPhone-X-Abnahme bleibt erforderlich.
+
+[2026-11-01] [BRAIN-0044] [ANDROID-PASS-STRUCTURE] [REPRODUCED]
+- Beobachtung: GATE_06_ANDROID_DEVICE.json mit nur Gate-ID und PASS wurde vom kanonischen Evaluator akzeptiert.
+- Ursache: read_gate() pruefte Android-PASS nicht auf Debug-/Release-Geraetenachweise.
+- Schutzregel: Vollstaendige Felder aus dem bestehenden physischen Gate-06-Pruefer verlangen; fehlende und widerspruechliche Angaben als INVALID_EVIDENCE melden.
+- Regression: synthetischer Minimal-PASS, Voll-PASS, 17 unvollstaendige/widerspruechliche Faelle und BLOCKED-Status; keine reale Geraeteabnahme.
+- Betroffene Komponenten: tools/release_gate/evidence_contract.py und tests/release_gate/test_gate_evidence_contract.py.
+- Release: 1/7 reale Gates, NO-GO. Strukturpruefung beweist keine Herkunft oder Unveraenderlichkeit der JSON-Datei.
+
+[2026-11-01] [BRAIN-0044] [MICROPHONE-EVIDENCE-CONTRACT] [REPRODUCED]
+- Beobachtung: Ein nacktes Gate-04-JSON mit `status=PASS` wurde bisher als echte Mikrofonabnahme gezählt.
+- Ursache: Der gemeinsame Evidence-Vertrag prüfte für Gate 04 nur Identität und Status.
+- Schutz: PASS benötigt Aufnahmedauer, positive Bytes, Asset-ID und gültige SHA-256-Form; fehlende Felder ergeben INVALID_EVIDENCE.
+- Regression: sechs synthetische Positiv-/Negativfälle im bestehenden Quality-Workflow; echte Hardware und Herkunft nicht bewiesen.
+- Betroffene Komponenten: `tools/release_gate/evidence_contract.py`, `tests/release_gate/test_gate_evidence_contract.py`.
+- Release-Gates: unverändert 1/7 PASS, NO-GO; Änderung nur im konsolidierte Integration.
+
+[2026-11-01] [BRAIN-0044] [STORAGE-GATE-PASS-CONTRACT] [REPRODUCED]
+- Beobachtung: Ein synthetisches Gate-05-JSON mit nur Gate-ID und `status=PASS` wurde vom bestehenden Evaluator als gültiger Erfolg gezählt.
+- Ursache: Der Evidence-Vertrag prüfte die Pflichtfelder des 8h-Gates, nicht aber die zwei Kernel-Speicherfehlerproben und die Anwendungs-Recovery-Matrix von Gate 05.
+- Lösung: Fehlende oder widersprüchliche Gate-05-PASS-Pflichtfelder ergeben `INVALID_EVIDENCE`; vorhandene kanonische Evidence bleibt strukturell gültig.
+- Vorbeugeregel: Ein Statusfeld allein ist kein Nachweis. Diese Quellprüfung authentifiziert keine physischen Tests.
+- Regressionstest: fehlende Proben, falsche/Bool-Fehlernummer, fehlgeschlagene Recovery-Matrix, vollständige Struktur in `tests/release_gate/test_gate_evidence_contract.py`.
+- Betroffene Komponenten: `tools/release_gate/evidence_contract.py`, Release-Evaluator, Statuskonsolidierung.
+- Release-Gates: unverändert 1/7 PASS, NO-GO; physische Abnahme weiterhin erforderlich.
+
 
 [2026-11-01] [BRAIN-0044] [FIREFOX-STALE-PASS] [REPRODUCED]
 - Beobachtung: Eine Unterbrechung vor dem bisherigen Abschluss-Schreibvorgang beließ einen früheren Firefox-Gate-PASS unverändert.

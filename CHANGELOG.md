@@ -1,3 +1,30 @@
+## [UNRELEASED] – 02.11.2026 · Release-Evidence-Pfadschutz (konsolidierte Integration)
+- Sicherheitslücke: Die kanonische Evidence-Prüfung sperrte direkte Dateisymlinks, aber keine umgeleiteten Elternverzeichnisse.
+- Fix im separaten Branch: Pfadkomponenten vom Projektwurzelverzeichnis bis zur Evidence-Datei auf Symlinks prüfen; beide Evidence-Leser lehnen umgeleitete Pfade ab.
+- Zwei synthetische Regressionen für Gate-Verzeichnis und Mobile-Source-Elternordner; CI-Ergebnis erst nach PR-Lauf verbindlich.
+- Keine neuen Abhängigkeiten; keine Änderung realer Evidence, keine Freigabe, 1/7 reale Gates und NO-GO unverändert.
+
+## 2026-11-01 – iOS Gate 07 Konsolen-Nachweisprüfung (Entwurf)
+- Kritischer Release-Gate-Fix: Unvollständige `ProvowareAcceptance`-PASS-Meldungen dürfen kein reales iPhone-X-Gate abschließen.
+- Pflichtangaben für Aufnahme, Zähler, iOS-Brücke, Integrität und Persistenz; Regressionen für falsches PASS.
+- Keine neuen Funktionen, keine realen Device-Gates freigegeben.
+
+## [ANDROID-GATE06-PASS-EVIDENCE-CONTRACT] – 2026-11-01 · konsolidierte Integration
+- Kritische Release-Gate-Korrektur: Ein synthetisches JSON mit nur GATE_06_ANDROID_DEVICE und status=PASS wurde zuvor als reales Android-Gate gezaehlt.
+- Der gemeinsame Evidence-Vertrag verlangt bei Android-PASS jetzt passende Geraeteidentitaet, Debug-run und verify, Erinnerungsereignis und Release-APK-Version/-Prozess.
+- Vier synthetische Regressionstests; keine neuen Abhaengigkeiten, keine reale Hardware-Evidence. Release bleibt 1/7, NO-GO.
+
+## [GATE-04-CAPTURE-EVIDENCE-CONTRACT] – 2026-11-01 · konsolidierte Integration
+- Fehler: Der gemeinsame Release-Evaluator akzeptierte für Gate 04 ein nacktes `status=PASS` ohne Aufnahmedaten.
+- Schutz: Bei PASS sind mindestens zwei Sekunden Aufnahmedauer, positive Bytes, Asset-ID und SHA-256-Prüfsumme Pflicht; sonst `INVALID_EVIDENCE`.
+- Sechs synthetische Regressionstests im vorhandenen Quality-Workflow; keine Hardwareprüfung, keine neuen Abhängigkeiten.
+- Release bleibt 1/7 reale Gates PASS, NO-GO. Patch nicht automatisch zusammenführen.
+
+## [GATE-05-PASS-EVIDENCE-CONTRACT] – 2026-11-01 · isolierter konsolidierte Integration
+- Kritische Release-Gate-Lücke: Der Evaluator zählte bisher sogar eine leere Gate-05-`PASS`-Datei als echte Speicherfehler-Abnahme.
+- Für `PASS` werden jetzt zwei konkrete Kernel-Proben mit passenden Fehlernummern sowie die bestätigte Anwendungs-Recovery-Matrix verlangt. Fehlende/widersprüchliche Felder ergeben `INVALID_EVIDENCE`.
+- Vier synthetische Regressionstests ergänzen den bereits im Quality-Workflow laufenden Evidence-Vertrag. Kein neuer physischer Test, keine Änderung an realen Gate-Nachweisen oder Freigaben; 1/7 PASS, NO-GO.
+
 ## [FIREFOX-GATE-STALE-PASS-GUARD] – 2026-11-01 · Konfliktaufgelöste Integration
 - Gate 03 konnte bei Unterbrechung der Firefox-Erkennung oder Versionsabfrage einen alten `PASS`-Nachweis stehen lassen.
 - Die kanonische Gate-Datei wird vor jeder externen Prüfung auf `BLOCKED` gesetzt; drei synthetische Negativ-/Normalfalltests laufen im Qualitätsworkflow.

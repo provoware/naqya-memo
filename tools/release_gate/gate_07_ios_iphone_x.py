@@ -66,7 +66,22 @@ out['run_console_tail']=text[-10000:];run_result=parse_acceptance(text,'run');ou
 out['run_exit_code']=rc
 if run_timed_out:out['reason']='iPhone acceptance run command timed out; native acceptance cannot be verified.';save()
 if rc!=0:out['reason']=f'iPhone acceptance run command failed (exit {rc}); native acceptance cannot be verified.';save()
-if not run_result or run_result.get('status')!='PASS' or not out['reminder_fired']:
+def valid_run_result(value):
+ if not isinstance(value,dict) or value.get('mode')!='run' or value.get('status')!='PASS':return False
+ size=value.get('audio_bytes')
+ digest=value.get('audio_sha256')
+ counts=value.get('counts')
+ info=value.get('platform')
+ if not isinstance(size,int) or isinstance(size,bool) or size<=0:return False
+ if not isinstance(digest,str) or not re.fullmatch(r'[0-9a-fA-F]{64}',digest):return False
+ if not isinstance(counts,dict):return False
+ if any(not isinstance(counts.get(key),int) or isinstance(counts.get(key),bool) or counts[key]<1 for key in ('memos','todos','events')):return False
+ return (value.get('integrity')=='ok' and isinstance(info,dict) and info.get('platform')=='ios' and info.get('native_bridge') is True)
+def valid_verify_result(value):
+ return (isinstance(value,dict) and value.get('mode')=='verify' and value.get('status')=='PASS'
+         and value.get('integrity')=='ok' and isinstance(value.get('persistence'),dict)
+         and value['persistence'].get('memo') is True and value['persistence'].get('audio') is True)
+if not valid_run_result(run_result) or not out['reminder_fired']:
  out['reason']='iPhone acceptance did not prove native microphone + foreground reminder path. Approve system permission prompts and rerun.';save()
 # Terminate app if supported, then verify WebKit/IndexedDB persistence across process lifecycle.
 try:
@@ -85,6 +100,6 @@ out['verify_console_tail']=text2[-8000:];verify=parse_acceptance(text2,'verify')
 out['verify_exit_code']=rc2
 if verify_timed_out:out['reason']='iPhone persistence verify command timed out; relaunch cannot be verified.';save()
 if rc2!=0:out['reason']=f'iPhone persistence verify command failed (exit {rc2}); relaunch cannot be verified.';save()
-if verify and verify.get('status')=='PASS':
+if valid_verify_result(verify):
  out['status']='PASS';out['reason']='Real iPhone X/iOS device acceptance passed: install, native microphone, reminder callback, and persistence after relaunch.';save(0)
 out['reason']='Initial iPhone run passed, but persistence verification after relaunch failed.';save()
