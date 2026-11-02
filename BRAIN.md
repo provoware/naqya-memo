@@ -16,6 +16,46 @@
 
 ---
 
+[2026-11-02] [BRAIN-GATE06-INSTALL-OUTPUT-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: Debug- und Release-Installation prüften nur den ADB-Exitcode; eine widersprüchliche Failure-Ausgabe mit Exitcode 0 konnte die spätere Paketprüfung erreichen.
+- Schutz: Beide Installationsschritte verlangen abschließende Success-Zeile und Exitcode 0, sonst BLOCKED mit Fehlerklasse und failed_step=install -r.
+- Regression: zwei simulierte Negativfälle für Debug- und Release-APK; keine nachfolgende Paketabfrage. Physische Android-Abnahme weiterhin offen, NO-GO (1/7).
+
+[2026-11-02] [BRAIN-GATE06-ACCEPTANCE-ADB-EXIT-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: Die erste Debug-APK-Versionsabfrage verwendete ADB-stdout ohne Rückgabecodeprüfung. Ein fehlerhafter Befehl mit plausibler Teil-Ausgabe konnte den weiteren Geräteabnahmelauf erreichen.
+- Schutz: Fehlercode bei `dumpsys package` vor Logcat/Release führt zu `BLOCKED`, `ACCEPTANCE_METADATA_QUERY_FAILED` und eindeutigem Schritt.
+- Regression: synthetischer Fehlercode 1 mit `versionName=0.12.2`, ohne spätere Logcat-/Release-Abnahme; echte Hardwareprüfung ausstehend, NO-GO (1/7).
+
+[2026-11-02] [BRAIN-GATE06-RELEASE-ADB-EXIT-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: Release-Paketversion und Prozessnummer wurden aus ADB-stdout übernommen, ohne den Rückgabecode der beiden Abfragen zu prüfen. Fehlerhafte Abfragen mit plausiblen Teil-Ausgaben konnten dadurch einen falschen PASS begünstigen.
+- Schutz: Fehlercode bei `dumpsys package` oder `pidof` setzt `BLOCKED`, Fehlerklasse und Schritt; keine Freigabe anhand ungeprüfter Ausgabe.
+- Regression: zwei simulierte Negativfälle mit Fehlercode 1 und korrekter Schein-Ausgabe; Quality-Nachweis im PR. Physisches Android-Gerät weiterhin nicht geprüft, NO-GO (1/7).
+
+[2026-11-02] [BRAIN-GATE06-LOGCAT-EXITCODE-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: `logcat -d` konnte mit Fehlercode enden, während die Teil-Ausgabe plausible `PASS`-Zeilen enthielt; die Auswertung prüfte nur Text und nicht den Rückgabecode.
+- Schutz: Beide Log-Lesephasen erzwingen Rückgabecode 0; sonst `BLOCKED`, `LOGCAT_READ_FAILED`, eindeutiger Schritt und keine Release-Installation.
+- Regression: zwei synthetische Fälle mit Exitcode 1 und gefälschtem PASS-Text in `test_android_stale_evidence_gate.py`; GitHub Quality auf Quell-HEAD `2f939501` PASS (41454237043), finaler Dokumentations-HEAD erneut zu prüfen; reale Hardware-Abnahme getrennt.
+- Risiko: Ein erfolgreicher ADB-Rückgabecode beweist für sich allein keine Echtheit der Log-Zeilen. Release weiterhin NO-GO, 1/7 reale Gates.
+
+[2026-11-02] [BRAIN-GATE06-UNINSTALL-PRECONDITION-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: `adb uninstall` wurde ohne Prüfung des Ergebnisses ausgeführt; trotz fehlgeschlagener Debug-APK-Entfernung konnte der signierte Release-Test beginnen.
+- Schutz: Exitcode 0 und `Success` sind Pflicht, sonst `BLOCKED` mit `DEBUG_APK_UNINSTALL_FAILED`; keine Release-Installation.
+- Regression: zwei synthetische Negativfälle in `test_android_stale_evidence_gate.py`; Quality-CI am endgültigen PR-HEAD erforderlich.
+- Grenze: kein reales Android-Gerät oder signiertes APK geprüft; 1/7 echte Gates, NO-GO.
+
+[2026-11-02] [BRAIN-GATE06-SDK-METADATA-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: Leere SDK-Ausgabe wurde als 0 interpretiert; nichtnumerische Ausgabe konnte einen unbehandelten ValueError auslösen. Beides verhindert die sichere Auswahl der Android-13+-Benachrichtigungsberechtigung.
+- Schutz: SDK-Rückgabecode und positive Dezimalzahl vor APK-Installation prüfen; sonst BLOCKED mit Fehlerklasse und betroffenem Schritt.
+- Regression: drei synthetische Negativfälle in test_android_stale_evidence_gate.py; CI auf Patch-Commit 32ff8e21 erfolgreich (41407190034); finaler Dokumentations-HEAD gesondert zu prüfen.
+- Grenze: keine reale Android-Geräteabnahme, weiterhin NO-GO und 1/7 echte Gates.
+
+[2026-11-02] [BRAIN-GATE06-ADB-FAILCLOSED-20261102] [RELEASE-GATE-ROBUSTHEIT] [REPRODUCED-IN-CODE]
+- Beobachtung: `cmd()` in Gate 06 setzt zwar ein Zeitlimit, fängt `TimeoutExpired` und `OSError` aber nicht ab; die abschließende BLOCKED-Ursache fehlt bei diesen ADB-Abbrüchen.
+- Ursache: Nur `adb devices` hatte einen expliziten Fehlerfang, spätere Gerätebefehle nicht.
+- Abhilfe: Zentraler ADB-Aufruf speichert `failure_class`, `failed_step` und BLOCKED-Evidence; keine automatische Wiederholung nach Gerätefehler.
+- Regression: `tests/release_gate/test_android_stale_evidence_gate.py` (drei zusätzliche synthetische Negativfälle); GitHub Quality für PR #140 erfolgreich; finale PR-HEAD-Prüfung weiterhin verbindlich.
+- Risiko: Physisches Gerät und APKs nicht verfügbar; Gate 06 bleibt bis echter Abnahme BLOCKED.
+
 [2026-11-02] [BRAIN-GATE-PREFLIGHT-MUTATION-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED]
 - Beobachtung: `RUN_GATE_PREFLIGHT.sh` rief tatsächlich alle sieben Gate-Programme auf, darunter lang laufende und Android-/iOS-Geräteaktionen.
 - Ursache: Vorprüfung und reale Abnahme waren technisch nicht getrennt; Gate-Skripte können Nachweise überschreiben und Android-Anwendungsdaten für Akzeptanztests zurücksetzen.
