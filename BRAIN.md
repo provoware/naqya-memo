@@ -16,6 +16,11 @@
 
 ---
 
+[2026-11-02] [BRAIN-GATE06-ACCEPTANCE-ADB-EXIT-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
+- Befund: Die erste Debug-APK-Versionsabfrage verwendete ADB-stdout ohne Rückgabecodeprüfung. Ein fehlerhafter Befehl mit plausibler Teil-Ausgabe konnte den weiteren Geräteabnahmelauf erreichen.
+- Schutz: Fehlercode bei `dumpsys package` vor Logcat/Release führt zu `BLOCKED`, `ACCEPTANCE_METADATA_QUERY_FAILED` und eindeutigem Schritt.
+- Regression: synthetischer Fehlercode 1 mit `versionName=0.12.2`, ohne spätere Logcat-/Release-Abnahme; echte Hardwareprüfung ausstehend, NO-GO (1/7).
+
 [2026-11-02] [BRAIN-GATE06-RELEASE-ADB-EXIT-20261102] [RELEASE-GATE-SAFETY] [CONFIRMED-IN-SOURCE]
 - Befund: Release-Paketversion und Prozessnummer wurden aus ADB-stdout übernommen, ohne den Rückgabecode der beiden Abfragen zu prüfen. Fehlerhafte Abfragen mit plausiblen Teil-Ausgaben konnten dadurch einen falschen PASS begünstigen.
 - Schutz: Fehlercode bei `dumpsys package` oder `pidof` setzt `BLOCKED`, Fehlerklasse und Schritt; keine Freigabe anhand ungeprüfter Ausgabe.

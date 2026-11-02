@@ -124,6 +124,9 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                         return subprocess.CompletedProcess(args, 1, '', 'Log clear failed')
                 if command[:3] == ['shell', 'dumpsys', 'package']:
                     package_queries += 1
+                    if failed_step == 'acceptance_dumpsys_error' and package_queries == 1:
+                        # ADB may emit a plausible version despite failing the query.
+                        return subprocess.CompletedProcess(args, 1, 'versionName=0.12.2\n', 'device disconnected')
                     if failed_step == 'release_dumpsys_error' and package_queries == 2:
                         # A failed ADB query may still print plausible version data.
                         return subprocess.CompletedProcess(args, 1, 'versionName=0.12.2\n', 'device disconnected')
@@ -160,6 +163,10 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 self.assertEqual(data['failure_class'], 'TIMEOUT')
             if failed_step.endswith('_oserror'):
                 self.assertEqual(data['failure_class'], 'COMMAND_ERROR')
+            if failed_step == 'acceptance_dumpsys_error':
+                self.assertEqual(data['failure_class'], 'ACCEPTANCE_METADATA_QUERY_FAILED')
+                self.assertEqual(data['failed_step'], 'shell dumpsys package')
+                self.assertFalse(any(call[3:5] == ['logcat', '-c'] for call in calls))
             if failed_step.startswith('release_'):
                 self.assertTrue(any('release.apk' in str(call) for call in calls))
                 self.assertEqual(data['failure_class'], 'RELEASE_METADATA_QUERY_FAILED' if failed_step == 'release_dumpsys_error' else 'RELEASE_PROCESS_QUERY_FAILED')
@@ -178,6 +185,9 @@ class AndroidResetPreconditionTests(unittest.TestCase):
                 self.assertEqual(data['failed_step'], 'shell getprop ro.build.version.sdk')
                 self.assertFalse(any(call[3:4] == ['install'] for call in calls))
             return data['reason']
+
+    def test_failed_acceptance_metadata_query_blocks_forged_version(self):
+        self.assertIn('Debug acceptance package metadata could not be verified', self.exercise('acceptance_dumpsys_error'))
 
     def test_failed_release_metadata_query_blocks_forged_version(self):
         self.assertIn('release package metadata could not be verified', self.exercise('release_dumpsys_error'))

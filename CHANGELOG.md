@@ -1,3 +1,7 @@
+## [UNRELEASED] – 2026-11-02 · Debug-APK-Metadaten nur bei erfolgreicher ADB-Abfrage akzeptieren
+- Gate 06 verwirft `dumpsys package`-Teil-Ausgaben mit Fehlercode bereits bei der Debug-APK; scheinbar gültige Versionsdaten dürfen den Abnahmeablauf nicht fortsetzen.
+- Ein isolierter Negativtest prüft `BLOCKED`, `ACCEPTANCE_METADATA_QUERY_FAILED` und das Ausbleiben von Logcat/Release-Abnahme. Reale Android-Evidence weiterhin BLOCKED; NO-GO (1/7).
+
 ## [UNRELEASED] – 2026-11-02 · Fehlerhafte Release-ADB-Abfragen blockieren
 - Android-Gate 06 wertet `dumpsys package` und `pidof` der signierten Release-APK nur bei ADB-Rückgabecode 0 aus. Teil-Ausgaben mit korrekter Version oder Prozessnummer trotz Fehler führen zu `BLOCKED` statt möglichem falschen PASS.
 - Zwei simulierte Negativfälle ergänzt; GitHub Quality im PR nachzuweisen. Reale Android-Evidence unverändert BLOCKED, Gesamtrelease NO-GO (1/7).

@@ -65,7 +65,14 @@ rec=cmd(['shell','pm','grant',pkg,'android.permission.RECORD_AUDIO']);notif=None
 if int(sdk)>=33:notif=cmd(['shell','pm','grant',pkg,'android.permission.POST_NOTIFICATIONS'])
 out['record_audio_grant_rc']=rec.returncode;out['notification_grant_rc']=None if notif is None else notif.returncode
 if rec.returncode!=0 or (notif is not None and notif.returncode!=0):out['reason']='Required runtime permissions could not be granted for acceptance.';save()
-info=cmd(['shell','dumpsys','package',pkg]).stdout
+acceptance_info_result=cmd(['shell','dumpsys','package',pkg])
+# Partial stdout from a failed ADB query must not certify the debug acceptance APK.
+if acceptance_info_result.returncode!=0:
+ out['failure_class']='ACCEPTANCE_METADATA_QUERY_FAILED'
+ out['failed_step']='shell dumpsys package'
+ out['reason']='Debug acceptance package metadata could not be verified.'
+ save()
+info=acceptance_info_result.stdout
 vm=re.search(r'versionName=([^\s]+)',info);out['version_name']=vm.group(1) if vm else None
 if out['version_name']!='0.12.2':out['reason']='Installed APK is not V0.12.2.';save()
 # Real run: persistent data, real microphone, real AlarmManager/Receiver notification path.

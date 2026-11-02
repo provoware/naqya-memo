@@ -22,6 +22,10 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Android Gate 06 – Debug-Paketabfrage sicher prüfen (02.11.2026)
+
+**PR #140:** Die erste `adb shell dumpsys package`-Abfrage muss Rückgabecode 0 liefern. Selbst eine scheinbar korrekte `versionName=0.12.2`-Teil-Ausgabe bei ADB-Fehler führt zu `BLOCKED` (`ACCEPTANCE_METADATA_QUERY_FAILED`), bevor Logcat- oder Release-Nachweise ausgewertet werden. Ein synthetischer Negativtest ist ergänzt; reale Android-Abnahme bleibt offen (1/7 reale Gates, NO-GO).
+
 ## 🔐 Android Gate 06 – signierte Release-Nachweise (02.11.2026)
 
 **PR #140:** Nach Installation der signierten APK dürfen weder eine fehlgeschlagene `dumpsys package`-Abfrage mit scheinbar korrekter Versionsausgabe noch eine fehlgeschlagene `pidof`-Abfrage mit scheinbarer Prozessnummer als PASS zählen. Beide Abfragen verlangen Rückgabecode 0; Fehler führen zu `BLOCKED` mit eindeutiger Fehlerklasse und betroffenem Schritt. Zwei simulierte Negativtests wurden ergänzt; die GitHub-Qualitätsprüfung ist im PR nachgewiesen. **Keine reale Android-Abnahme, Gate 06 BLOCKED, Release NO-GO (1/7).**
