@@ -546,3 +546,5 @@ Ein TODO darf nur abgehakt werden, wenn:
 - [ ] 01.11.2026 | Abnahme | Reale Zielsystem-Gates schließen | prüfen: kanonischer Evaluator | fertig wenn: alle sieben echten Gates PASS sind.
 
 - [x] 01.11.2026 | Sicherung | Statusprüfung strikt lesend halten | prüfen: echte WAL/SHM, Journal-Verknüpfungen und Dateibaumvergleich | fertig wenn: 15 Sicherheitsfälle bestehen und Statusabrufe keine Sicherungsdatei verändern.
+
+- [ ] 2026-11-02 | NI-20261102-02 · Zeitlimit | Fehlende technische Timeout-/Stillstandsicherung in Browser-/Native-/Backup-/Gerätetestpfaden nachführen | prüfen: individuelle Zeitbudgets, 8-h-Soak-Ausnahme, Original-/Statusschutz, Fehlereinstufung, Negativtests | fertig wenn: auch technische Wächter belegt; dokumentierte Regel ist noch kein Runtime-PASS.

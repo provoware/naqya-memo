@@ -655,3 +655,7 @@ Reihenfolge:
 - Hintergrund-Erinnerungen müssen pro Plattform separat akzeptanzgetestet werden.
 - Ein Backup gilt erst als funktionsfähig, wenn ein automatischer Restore-Test bestanden wurde.
 - README, TODO, CHANGELOG, BRAIN und PROJECT_STATUS werden bei jeder relevanten Iteration synchron aktualisiert.
+
+## ⏱️ Timeout und sichere Wiederaufnahme
+
+Der [PROVOWARE-Zeitbudgetstandard](docs/PROVOWARE_TIMEOUT_STANDARD.md) unterscheidet kurze CI-Prüfungen, langen Gerätetest und aktive Benutzervorgänge. Nach echtem Stillstand nur den eigenen Vorgang kontrolliert behandeln, Originaldaten behalten und Fehler statt Scheinerfolg melden. Der Release-Freeze bleibt unverändert; Runtime-Watchdogs sind gesondert zu prüfen.
