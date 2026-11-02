@@ -546,3 +546,10 @@ Ein TODO darf nur abgehakt werden, wenn:
 - [ ] 01.11.2026 | Abnahme | Reale Zielsystem-Gates schließen | prüfen: kanonischer Evaluator | fertig wenn: alle sieben echten Gates PASS sind.
 
 - [x] 01.11.2026 | Sicherung | Statusprüfung strikt lesend halten | prüfen: echte WAL/SHM, Journal-Verknüpfungen und Dateibaumvergleich | fertig wenn: 15 Sicherheitsfälle bestehen und Statusabrufe keine Sicherungsdatei verändern.
+
+
+## NEXT QUEUE NI-20261102-02 – sichere Zeitgrenzen unter aktivem Feature-Freeze
+
+- [x] 2026-11-02 | Standard | Differenzierten gemeinsamen Timeoutvertrag dokumentieren | prüfen: `docs/PROVOWARE_TIMEOUT_STANDARD.md`, AGENTS und README | fertig wenn: Regeln ohne Eingriff in eingefrorene Release-Gates nachvollziehbar sind.
+- [ ] 2026-11-02 | Audit | Chromium-/Firefox-, 8h-Soak-, Speicher-/WAL- und Plattform-Prüfpfade sowie Hintergrundprozesse katalogisieren | prüfen: vorhandene Grenzwerte, fehlender Fortschritt, kontrollierter Abbruch | fertig wenn: jedes Budget und jede zulässige Ausnahme dokumentiert ist.
+- [ ] 2026-11-02 | Umsetzung NACH FREEZE | Stillstandserkennung, monotone Zeit, sichere Wiederaufnahme und Fehlerevidenz per isolierten Negativtests ergänzen | prüfen: Originaldaten, WAL/SHM, kein fremder Prozess, keine falsche Freigabe | fertig wenn: zulässiger geprüfter Patch ohne Freeze-Verletzung vorliegt.
