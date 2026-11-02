@@ -24,7 +24,7 @@
 
 ## 🔐 Android-Gate 06 – ADB-Abbruch sicher dokumentieren (02.11.2026)
 
-Beim echten Android-Gerätetest werden Zeitüberschreitungen und Betriebssystemfehler **aller ADB-Einzelschritte** kontrolliert als `BLOCKED` protokolliert (`failure_class: TIMEOUT/COMMAND_ERROR`, `failed_step`). Der bisherige, unbehandelte Python-Abbruch wird verhindert. Es gibt **keine automatische Wiederholung** von Installations-, Lösch- oder Gerätebefehlen. Synthetische Regressionen ersetzen keine reale Android-Abnahme; Gate 06 bleibt BLOCKED, Gesamtfreigabe NO-GO (1/7).
+Beim echten Android-Gerätetest werden Zeitüberschreitungen und Betriebssystemfehler **aller ADB-Einzelschritte** kontrolliert als `BLOCKED` protokolliert (`failure_class: TIMEOUT/COMMAND_ERROR`, `failed_step`). Der bisherige, unbehandelte Python-Abbruch wird verhindert. Es gibt **keine automatische Wiederholung** von Installations-, Lösch- oder Gerätebefehlen. Drei neue synthetische Negativtests und die GitHub-Qualitätsprüfung für PR #140 sind bestanden. Das ersetzt keine reale Android-Abnahme; Gate 06 bleibt BLOCKED, Gesamtfreigabe NO-GO (1/7).
 
 
 
