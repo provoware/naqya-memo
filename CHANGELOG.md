@@ -1,3 +1,32 @@
+## [UNRELEASED] – 2026-11-02 · Android-APK-Installation nur mit bestätigtem Erfolg
+- Gate 06 akzeptiert Debug- und signierte Release-Installation nur bei Exitcode 0 und abschließender `Success`-Zeile. Eine `Failure`-Meldung trotz Exitcode 0 blockiert vor der jeweiligen Paketabfrage.
+- Zwei synthetische Negativtests; keine neuen Abhängigkeiten, keine Wiederholungen. Reale Android-Evidence weiterhin BLOCKED; NO-GO (1/7).
+
+## [UNRELEASED] – 2026-11-02 · Debug-APK-Metadaten nur bei erfolgreicher ADB-Abfrage akzeptieren
+- Gate 06 verwirft `dumpsys package`-Teil-Ausgaben mit Fehlercode bereits bei der Debug-APK; scheinbar gültige Versionsdaten dürfen den Abnahmeablauf nicht fortsetzen.
+- Ein isolierter Negativtest prüft `BLOCKED`, `ACCEPTANCE_METADATA_QUERY_FAILED` und das Ausbleiben von Logcat/Release-Abnahme. Reale Android-Evidence weiterhin BLOCKED; NO-GO (1/7).
+
+## [UNRELEASED] – 2026-11-02 · Fehlerhafte Release-ADB-Abfragen blockieren
+- Android-Gate 06 wertet `dumpsys package` und `pidof` der signierten Release-APK nur bei ADB-Rückgabecode 0 aus. Teil-Ausgaben mit korrekter Version oder Prozessnummer trotz Fehler führen zu `BLOCKED` statt möglichem falschen PASS.
+- Zwei simulierte Negativfälle ergänzt; GitHub Quality im PR nachzuweisen. Reale Android-Evidence unverändert BLOCKED, Gesamtrelease NO-GO (1/7).
+
+## [UNRELEASED] – 2026-11-02 · Android-Logcat-Lesefehler nicht als PASS zählen
+- Gate 06 verwirft Logcat-Ausgaben mit Fehlercode in beiden Abnahmephasen, auch wenn enthaltene Teilzeilen `PASS` behaupten. `BLOCKED` und `LOGCAT_READ_FAILED`; keine signierte Release-Installation.
+- Zwei synthetische Negativtests, keine neuen Abhängigkeiten. GitHub Quality auf Quell-HEAD `2f939501` PASS (41454237043), abschließender Dokumentations-HEAD erneut zu prüfen. Reale Geräte-Evidence ausstehend; NO-GO (1/7).
+
+## [UNRELEASED] – 2026-11-02 · Android-Debug-APK vor Release-Abnahme sicher entfernen
+- Gate 06 verlangt nach der Debug-Abnahme eine erfolgreiche Deinstallation (Exitcode 0 und `Success`) vor Installation der signierten Release-APK; andernfalls `BLOCKED` mit Fehlerklasse und ohne Release-Installationsversuch.
+- Zwei synthetische Negativfälle im vorhandenen Android-Test; keine neuen Abhängigkeiten. GitHub Quality am endgültigen PR-HEAD prüfen; reale Android-Abnahme offen, NO-GO (1/7).
+
+## [UNRELEASED] – 2026-11-02 · Android-SDK-Metadaten vor Geräteabnahme prüfen
+- Gate 06 stoppt vor der APK-Installation bei leerer, ungültiger oder fehlgeschlagener SDK-Versionsabfrage; verhindert stillschweigend ausgelassene Android-13+-Berechtigungen.
+- Drei synthetische Negativfälle mit BLOCKED-Evidence und Installationssperre ergänzt; Quality-CI auf Patch-Commit erfolgreich (41407190034); finale Dokumentationsprüfung und reale Geräteabnahme separat.  Release weiterhin NO-GO (1/7).
+
+## [UNRELEASED] – 2026-11-02 · Android-ADB-Gerätefehler kontrolliert abfangen
+- Release-Gate 06: Zeitüberschreitungen und Betriebssystemfehler aller ADB-Gerätebefehle werden mit Fehlerklasse, Schritt und BLOCKED-Evidence statt unbehandelter Ausnahme dokumentiert.
+- Drei isolierte Negativtests für Installation, Geräteabfrage und zweiten Logcat-Lauf; keine automatische Wiederholung potenziell destruktiver ADB-Aktionen.
+- GitHub Quality auf PR #140 bestanden; reale Android-Abnahme bleibt ausstehend, Release weiterhin NO-GO (1/7).
+
 ## [RELEASE-GATE-READONLY-PREFLIGHT] – 2026-11-02
 - Sicherheitskorrektur: `RUN_GATE_PREFLIGHT.sh` führt keine potenziell destruktiven Browser-/Android-/iOS- und Langzeit-Gates mehr aus.
 - Neue Standardbibliotheks-Voraussetzungsprüfung für Gates 01/02/03/04/06/07; Zustände FOUND/BLOCKED statt vorgetäuschter PASS.

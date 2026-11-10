@@ -16,6 +16,10 @@
   "ios_native_build": "BLOCKED",
   "ios_iphone_x_evidence": false,
   "android_gate_stale_pass_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING",
+  "android_install_output_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING",
+  "android_sdk_metadata_guard": "SOURCE_PATCH_IN_PR_CI_PASS_REAL_DEVICE_PENDING",
+  "android_debug_uninstall_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING",
+  "android_logcat_exit_guard": "SOURCE_PATCH_IN_PR_CI_PASS_REAL_DEVICE_PENDING",
   "storage_gate_stale_pass_guard": "SOURCE_PATCH_IN_PR_REAL_LINUX_RECHECK_PENDING",
   "required_release_gates": 7,
   "passed_release_gates": 1,
@@ -197,5 +201,18 @@
     "real_gate_promotion": false,
     "user_final_acceptance": "LAST_STEP_ONLY",
     "validation": "SOURCE_CI_REQUIRED"
-  }
+  },
+  "android_adb_command_fail_closed_20261102": {
+    "state": "SOURCE_CI_PASS_REAL_DEVICE_PENDING",
+    "failure_classes": [
+      "TIMEOUT",
+      "COMMAND_ERROR"
+    ],
+    "regression_cases": 3,
+    "real_device_evidence": false,
+    "release_gate_promotion": false,
+    "quality_run": "https://github.com/provoware/naqya-memo/actions/runs/41387798815"
+  },
+  "android_release_query_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING",
+  "android_acceptance_query_guard": "SOURCE_PATCH_IN_PR_REAL_DEVICE_PENDING"
 }

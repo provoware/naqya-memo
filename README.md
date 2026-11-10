@@ -22,6 +22,30 @@
 **Nächster erlaubter Schritt:** Nach grünem automatischem Konsolidierungs-Gate ausschließlich reale Release-Gates schließen: Gate 01 8h-Soak, danach Gates 02-04 auf realem Linux, anschließend Gates 06-07 auf echten Mobilgeräten.
 <!-- NAQYA_RELEASE_STATE:END -->
 
+## 🔐 Android Gate 06 – Installationsmeldung verbindlich prüfen (02.11.2026)
+
+**PR #140:** Sowohl Debug- als auch signierte Release-APK müssen bei `adb install -r` Rückgabecode 0 **und** eine abschließende `Success`-Zeile liefern. `Failure` trotz Exitcode 0 führt zu `BLOCKED` (`ACCEPTANCE_APK_INSTALL_FAILED` bzw. `RELEASE_APK_INSTALL_FAILED`), bevor die jeweilige Paketabfrage beginnt. Zwei synthetische Negativtests ergänzt; echte Android-Abnahme weiterhin offen (1/7 reale Gates, NO-GO).
+
+## 🔐 Android Gate 06 – Debug-Paketabfrage sicher prüfen (02.11.2026)
+
+**PR #140:** Die erste `adb shell dumpsys package`-Abfrage muss Rückgabecode 0 liefern. Selbst eine scheinbar korrekte `versionName=0.12.2`-Teil-Ausgabe bei ADB-Fehler führt zu `BLOCKED` (`ACCEPTANCE_METADATA_QUERY_FAILED`), bevor Logcat- oder Release-Nachweise ausgewertet werden. Ein synthetischer Negativtest ist ergänzt; reale Android-Abnahme bleibt offen (1/7 reale Gates, NO-GO).
+
+## 🔐 Android Gate 06 – signierte Release-Nachweise (02.11.2026)
+
+**PR #140:** Nach Installation der signierten APK dürfen weder eine fehlgeschlagene `dumpsys package`-Abfrage mit scheinbar korrekter Versionsausgabe noch eine fehlgeschlagene `pidof`-Abfrage mit scheinbarer Prozessnummer als PASS zählen. Beide Abfragen verlangen Rückgabecode 0; Fehler führen zu `BLOCKED` mit eindeutiger Fehlerklasse und betroffenem Schritt. Zwei simulierte Negativtests wurden ergänzt; die GitHub-Qualitätsprüfung ist im PR nachgewiesen. **Keine reale Android-Abnahme, Gate 06 BLOCKED, Release NO-GO (1/7).**
+
+## 🔐 Android-Gate 06 – ADB-Abbruch sicher dokumentieren (02.11.2026)
+
+**ADB-Logcat-Nachweis (PR #140, 02.11.2026):** Ein `logcat -d`-Befehl mit Fehlercode darf selbst dann keinen Android-PASS belegen, wenn seine unvollständige Ausgabe `PASS` enthält. Beide Log-Lesephasen (Start und Persistenzprüfung) blockieren mit `LOGCAT_READ_FAILED`, ohne signierte Release-APK zu installieren. Zwei simulierte Negativfälle; reale Android-Abnahme und Freigabe bleiben ausstehend. GitHub Quality auf Quell-HEAD `2f939501` bestanden ([Lauf 41454237043](https://github.com/provoware/naqya-memo/actions/runs/41454237043)); der abschließende Dokumentations-HEAD ist erneut zu prüfen.
+
+**Debug-APK-Isolation (PR #140):** Vor der signierten Release-Abnahme muss die vorherige Debug-/Abnahme-APK nachweislich entfernt werden. Gate 06 prüft den ADB-Exitcode **und** die Erfolgsmeldung `Success`. Bei fehlgeschlagener Entfernung: `BLOCKED`, `failure_class=DEBUG_APK_UNINSTALL_FAILED`, `failed_step=uninstall`, **keine Release-Installation**. Zwei synthetische Negativfälle decken Fehlercode und widersprüchliche Erfolgsmeldung ab. Ein echter Geräte-PASS wird dadurch nicht ersetzt.
+
+**Zusätzlicher Geräte-Metadatenschutz (PR #140):** Eine leere, ungültige oder fehlgeschlagene Android-SDK-Abfrage blockiert die Abnahme vor der APK-Installation. Ohne verlässliche SDK-Version darf die Benachrichtigungsberechtigung nicht stillschweigend ausgelassen werden. Drei synthetische Negativfälle sind ergänzt; die GitHub-Quality-Prüfung am Patch-Commit war erfolgreich ([Lauf 41407190034](https://github.com/provoware/naqya-memo/actions/runs/41407190034)). Die reale Geräteabnahme bleibt ausstehend.
+
+Beim echten Android-Gerätetest werden Zeitüberschreitungen und Betriebssystemfehler **aller ADB-Einzelschritte** kontrolliert als `BLOCKED` protokolliert (`failure_class: TIMEOUT/COMMAND_ERROR`, `failed_step`). Der bisherige, unbehandelte Python-Abbruch wird verhindert. Es gibt **keine automatische Wiederholung** von Installations-, Lösch- oder Gerätebefehlen. Drei neue synthetische Negativtests und die GitHub-Qualitätsprüfung für PR #140 sind bestanden. Das ersetzt keine reale Android-Abnahme; Gate 06 bleibt BLOCKED, Gesamtfreigabe NO-GO (1/7).
+
+
+
 ## 🔒 Gate-Vorprüfung ohne Datenänderung · 02.11.2026
 `./RUN_GATE_PREFLIGHT.sh` prüft ausschließlich die **Voraussetzungen** der sechs offenen Gates 01, 02, 03, 04, 06 und 07. `--json` liefert einen maschinenlesbaren Bericht, `--gate 02` prüft gezielt ein Gate. Die Vorprüfung **startet weder Browser-Gates noch ADB/Xcode noch den 8-Stunden-Lauf** und verändert keine kanonischen Gate-Dateien, keine Android-App-Daten und keine Nutzerdaten. `FOUND` bedeutet nur: benötigte Werkzeuge/Pfade sind auffindbar, **niemals realer PASS**. Echte Gate-Abnahmen müssen separat auf geeigneter Hardware mit den ausgewiesenen Befehlen ausgeführt werden. Für Browser-Gates ist die vorhandene Playwright-Bedienungsprüfung erforderlich; bloßes Bildschirmfoto oder Versionsabfrage reichen nicht. iOS benötigt macOS/Xcode und das reale iPhone X. Reale Gates bleiben 1/7, Release NO-GO. Die Nutzer-Endabnahme folgt erst nach technischer Gesamtabnahme, als ausnahmslos letzter Projektschritt.
 
